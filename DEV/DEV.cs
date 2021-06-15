@@ -3,7 +3,7 @@ using HarmonyLib;
 
 namespace DEV
 {
-  [BepInPlugin("valheim.jerekuusela.dev", "DEV", "1.0.0.0")]
+  [BepInPlugin("valheim.jerekuusela.dev", "DEV", "1.1.0.0")]
   public class ESP : BaseUnityPlugin
   {
     void Awake()
@@ -37,7 +37,7 @@ namespace DEV
       if (Cheats.CheckingAdmin)
       {
         Cheats.CheckingAdmin = false;
-        if (text == "Banning user admintest")
+        if (text == "Unbanning user admintest")
           Cheats.Enabled = true;
         else
           Console.instance.Print("Unauthorized to use devcommands.");
@@ -68,7 +68,7 @@ namespace DEV
         else if (ZNet.instance)
         {
           Cheats.CheckingAdmin = true;
-          ZNet.instance.Ban("admintest");
+          ZNet.instance.Unban("admintest");
         }
       }
       return false;
