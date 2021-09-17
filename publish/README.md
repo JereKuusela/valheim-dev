@@ -10,6 +10,8 @@ This client side mod allows devcommands for server admins. Some commands don't w
 4. Add your steamID64 to adminlist.txt (if not already).
 
 # Changelog
+- v1.2.0: 
+	- Added support for Hearth and Home update.
 - v1.1.0: 
 	- Improved admin check
 - v1.0.0: 

@@ -1,75 +1,64 @@
 ﻿using BepInEx;
 using HarmonyLib;
 
-namespace DEV
-{
-  [BepInPlugin("valheim.jerekuusela.dev", "DEV", "1.1.0.0")]
-  public class ESP : BaseUnityPlugin
-  {
-    void Awake()
-    {
-      var harmony = new Harmony("valheim.jerekuusela.dev");
+namespace DEV {
+  [BepInPlugin("valheim.jerekuusela.dev", "DEV", "1.2.0.0")]
+  public class ESP : BaseUnityPlugin {
+    public void Awake() {
+      Harmony harmony = new Harmony("valheim.jerekuusela.dev");
       harmony.PatchAll();
     }
   }
-  public class Cheats
-  {
+  public class Cheats {
     public static bool CheckingAdmin = false;
-    public static bool enabled = false;
-    public static bool Enabled
-    {
-      get => enabled;
-      set
-      {
-        if (value == enabled) return;
-        enabled = value;
-        Console.instance.Print("Dev commands: " + value.ToString());
-        Console.instance.Print("WARNING: using any dev commands is not recommended and is done on your own risk.");
-        Gogan.LogEvent("Cheat", "CheatsEnabled", value.ToString(), 0L);
-      }
-    }
+    public static bool Enabled = false;
   }
   [HarmonyPatch(typeof(ZNet), "RPC_RemotePrint")]
-  public class ZNet_RPC_RemotePrint
-  {
-    public static bool Prefix(string text)
-    {
-      if (Cheats.CheckingAdmin)
-      {
-        Cheats.CheckingAdmin = false;
-        if (text == "Unbanning user admintest")
-          Cheats.Enabled = true;
-        else
+  public class ZNet_RPC_RemotePrint {
+    public static bool Prefix(string text) {
+      if (Cheats.CheckingAdmin) {
+        if (text == "Unbanning user admintest") {
+          Console.instance.TryRunCommand("devcommands");
+        } else {
           Console.instance.Print("Unauthorized to use devcommands.");
+        }
+        Cheats.CheckingAdmin = false;
+
         return false;
       }
       return true;
     }
   }
 
-  [HarmonyPatch(typeof(Console), "InputText")]
-  public class Console_InputText_CheckAdmin
-  {
-    public static bool Prefix(Console __instance)
-    {
-      var text = __instance.m_input.text;
-      var array = text.Split(' ');
-      if (array[0] != "devcommands") return true;
-      if (Cheats.Enabled)
-      {
-        Cheats.Enabled = false;
+  // Replace devcommands check with a custom one.
+  [HarmonyPatch(typeof(Terminal), "TryRunCommand")]
+  public class TryRunCommand {
+    public static bool Prefix(string text) {
+      string[] array = text.Split(' ');
+      // Let other commands pass normally.
+      if (array[0] != "devcommands") {
+        return true;
       }
-      else
-      {
-        if (ZNet.instance && ZNet.instance.IsServer())
-        {
-          Cheats.Enabled = true;
-        }
-        else if (ZNet.instance)
-        {
-          Cheats.CheckingAdmin = true;
-          ZNet.instance.Unban("admintest");
-        }
+
+      // Devcommands during admin check means that the check passed.
+      if (Cheats.CheckingAdmin) {
+        Cheats.Enabled = true;
+        return true;
+      }
+
+      // Disabling doesn't require admin check.
+      if (Cheats.Enabled) {
+        Cheats.Enabled = false;
+        return true;
+      }
+      // Automatically passs locally.
+      if (ZNet.instance && ZNet.instance.IsServer()) {
+        Cheats.Enabled = true;
+        return true;
+      }
+      if (ZNet.instance) {
+        Cheats.CheckingAdmin = true;
+        ZNet.instance.Unban("admintest");
       }
       return false;
     }
@@ -77,30 +66,39 @@ namespace DEV
 
   // Cheats must be disabled when joining servers (so that locally enabling doesn't work).
   [HarmonyPatch(typeof(ZNet), "Start")]
-  public class ZNet_Start
-  {
-    public static void Postfix()
-    {
-      Cheats.enabled = false;
+  public class ZNet_Start {
+    public static void Postfix() {
+      Cheats.Enabled = false;
     }
   }
 
   [HarmonyPatch(typeof(Console), "IsConsoleEnabled")]
-  public class Console_IsConsoleEnabled
-  {
-    public static bool Prefix(ref bool __result)
-    {
+  public class IsConsoleEnabled {
+    public static bool Prefix(ref bool __result) {
       __result = true;
       return false;
     }
   }
-  [HarmonyPatch(typeof(Console), "IsCheatsEnabled")]
-  public class Console_IsCheatsEnabled
-  {
-    public static bool Prefix(ref bool __result)
-    {
-      __result = Cheats.Enabled;
-      return false;
+  // Must be patched because contains a "is server check".
+  [HarmonyPatch(typeof(Terminal), "IsCheatsEnabled")]
+  public class IsCheatsEnabled {
+    public static bool Prefix(ref bool __result) {
+      if (Cheats.Enabled) {
+        __result = true;
+        return false;
+      }
+      return true;
+    }
+  }
+  // Must be patched because contains a "is server check".
+  [HarmonyPatch(typeof(Terminal.ConsoleCommand), "IsValid")]
+  public class IsValid {
+    public static bool Prefix(ref bool __result) {
+      if (Cheats.Enabled) {
+        __result = true;
+        return false;
+      }
+      return true;
     }
   }
 }
