@@ -1,6 +1,6 @@
 {
   "name": "Dedicated_server_devcommands",
-  "version_number": "1.2.0",
+  "version_number": "1.3.0",
   "website_url": "https://github.com/JereKuusela/valheim-dev",
   "description": "Enables most devcommands for server admins.",
   "dependencies": [
