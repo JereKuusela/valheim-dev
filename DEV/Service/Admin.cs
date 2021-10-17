@@ -5,44 +5,58 @@ namespace Service {
   ///<summary>Static accessors for easier usage.</summary>
   public static class Admin {
     public static IAdmin Instance = new DefaultAdmin();
-    public static bool Enabled => Patch.Cheat(Console.instance);
+    ///<summary>Admin status.</summary>
+    public static bool Enabled {
+      get => Instance.Enabled;
+      set => Instance.Enabled = value;
+    }
+    ///<summary>Is admin status currently being checked.</summary>
     public static bool Checking {
       get => Instance.Checking;
       set => Instance.Checking = value;
     }
-    public static void Check(Terminal terminal) => Instance.Check(terminal);
+    ///<summary>Checks for admin status. Terminal is used for the output.</summary>
+    public static void Check(Terminal terminal = null) => Instance.Check(terminal);
+    ///<summary>Verifies the admin status with a given text. Shouldn't be called directly.</summary>
     public static void Verify(string text) => Instance.Verify(text);
   }
 
   public interface IAdmin {
+    bool Enabled { get; set; }
     bool Checking { get; set; }
-    void Check(Terminal terminal);
+    void Check(Terminal terminal = null);
     void Verify(string text);
   }
 
-  ///<summary>Default implementation. Can be extended and overwritten.</summary>
+  ///<summary>Admin checker. Can be extended by overloading OnSuccess and OnFail.</summary>
   public class DefaultAdmin : IAdmin {
+    public virtual bool Enabled { get; set; }
     private Terminal Terminal;
-    public virtual void Check(Terminal terminal) {
+    ///<summary>Admin status is checked by issuing a dummy unban command.</summary>
+    public void Check(Terminal terminal = null) {
       if (!ZNet.instance) return;
-      Terminal = terminal;
+      Terminal = terminal ?? Console.instance;
       Checking = true;
-      // Automatically pass locally.
       if (ZNet.instance.IsServer())
-        Terminal.TryRunCommand("devcommands");
+        OnSuccess(Terminal);
       else
         ZNet.instance.Unban("admintest");
-
     }
-    public virtual void Verify(string text) {
+    public void Verify(string text) {
       if (text == "Unbanning user admintest")
-        Terminal.TryRunCommand("devcommands");
-      else {
-        Checking = false;
-        Terminal.AddString("Unauthorized to use devcommands.");
-      }
+        OnSuccess(Terminal);
+      else
+        OnFail(Terminal);
     }
     public virtual bool Checking { get; set; }
+    protected virtual void OnSuccess(Terminal terminal) {
+      Checking = false;
+      Enabled = true;
+    }
+    protected virtual void OnFail(Terminal terminal) {
+      Checking = false;
+      Enabled = false;
+    }
   }
 
   [HarmonyPatch(typeof(ZNet), "RPC_RemotePrint")]
@@ -54,61 +68,11 @@ namespace Service {
     }
   }
 
-  // Replace devcommands check with a custom one.
-  [HarmonyPatch(typeof(Terminal), "TryRunCommand")]
-  public class TryRunCommand {
-    public static bool Prefix(Terminal __instance, string text) {
-      string[] array = text.Split(' ');
-      // Let other commands pass normally.
-      if (array[0] != "devcommands") {
-        return true;
-      }
-      // Devcommands during admin check means that the check passed.
-      if (Admin.Checking) {
-        Admin.Checking = false;
-        return true;
-      }
-      // Disabling doesn't require admin check.
-      if (Admin.Enabled) return true;
-      // Otherwise go through the admin check.
-      Admin.Check(__instance);
-      return false;
-    }
-  }
-
-  // Cheats must be disabled when joining servers (so that locally enabling doesn't work).
-  [HarmonyPatch(typeof(ZNet), "Start")]
-  public class ZNet_Start {
-    public static void Postfix() {
-      if (Admin.Enabled) Console.instance.TryRunCommand("devcommands");
-    }
-  }
-
-  [HarmonyPatch(typeof(Console), "IsConsoleEnabled")]
-  public class IsConsoleEnabled {
-    public static void Postfix(ref bool __result) {
-      __result = true;
-    }
-  }
-  // Must be patched because contains a "is server check".
-  [HarmonyPatch(typeof(Terminal), "IsCheatsEnabled")]
-  public class IsCheatsEnabled {
-    public static void Postfix(ref bool __result) {
-      __result = __result || Admin.Enabled;
-    }
-  }
-  // Must be patched because contains a "is server check".
-  [HarmonyPatch(typeof(Terminal.ConsoleCommand), "IsValid")]
-  public class IsValid {
-    public static void Postfix(ref bool __result) {
-      __result = __result || Admin.Enabled;
-    }
-  }
-  // Enable autocomplete for secrets (as it still only shows cheats with devcommands).
-  [HarmonyPatch(typeof(Terminal), "Awake")]
-  public class AutoCompleteSecrets {
-    public static void Postfix(ref bool ___m_autoCompleteSecrets) {
-      ___m_autoCompleteSecrets = true;
+  ///<summary>Check admin status on connect to ensure features are enabled/disabled when changing servers.</summary>
+  [HarmonyPatch(typeof(Game), "UpdateRespawn")]
+  public class CheckAdmin {
+    public static void Prefix(bool ___m_firstSpawn) {
+      if (___m_firstSpawn) Admin.Check(Console.instance);
     }
   }
 }

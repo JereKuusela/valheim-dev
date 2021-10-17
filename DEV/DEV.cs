@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using HarmonyLib;
+using Service;
 
 namespace DEV {
   [BepInPlugin("valheim.jerekuusela.dev", "DEV", "1.3.0.0")]
@@ -7,6 +8,7 @@ namespace DEV {
     public void Awake() {
       Harmony harmony = new Harmony("valheim.jerekuusela.dev");
       harmony.PatchAll();
+      Admin.Instance = new DevAdmin();
     }
   }
 }
