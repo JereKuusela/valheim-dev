@@ -1,10 +1,11 @@
+using System;
 using HarmonyLib;
 using Service;
 
 namespace DEV {
 
   public class DevAdmin : DefaultAdmin {
-    public override bool Enabled => GetValue.Cheat(Console.instance);
+    public override bool Enabled => Terminal.m_cheat || ZNet.m_isServer;
     protected override void OnSuccess(Terminal terminal) {
       base.OnSuccess(terminal);
       if (!Enabled) {
@@ -26,6 +27,47 @@ namespace DEV {
   public class TryRunCommand {
     public static bool Prefix(Terminal __instance, string text) {
       string[] array = text.Split(' ');
+      if (!ZNet.m_isServer) {
+        if (array[0] == ServerCommands.RandomEvent) {
+          var server = ZNet.instance.GetServerRPC();
+          if (server != null) server.Invoke(ServerCommands.RPC_RandomEvent, Array.Empty<object>());
+          return false;
+        }
+        if (array[0] == ServerCommands.StopEvent) {
+          var server = ZNet.instance.GetServerRPC();
+          if (server != null) server.Invoke(ServerCommands.RPC_StopEvent, Array.Empty<object>());
+          return false;
+        }
+        if (array[0] == ServerCommands.StartEvent) {
+          var server = ZNet.instance.GetServerRPC();
+          var pos = Player.m_localPlayer.transform.position;
+          var args = new object[] { array.Length > 1 ? array[1] : "", };
+          if (server != null) server.Invoke(ServerCommands.RPC_StartEvent, args);
+          return false;
+        }
+        if (array[0] == ServerCommands.ResetKeys) {
+          var server = ZNet.instance.GetServerRPC();
+          if (server != null) server.Invoke(ServerCommands.RPC_ResetKeys, Array.Empty<object>());
+          return false;
+        }
+        if (array[0] == ServerCommands.SetKey) {
+          var server = ZNet.instance.GetServerRPC();
+          var args = new object[] { array.Length > 1 ? array[1] : "" };
+          if (server != null) server.Invoke(ServerCommands.RPC_SetKey, args);
+          return false;
+        }
+        if (array[0] == ServerCommands.Sleep) {
+          var server = ZNet.instance.GetServerRPC();
+          if (server != null) server.Invoke(ServerCommands.RPC_Sleep, Array.Empty<object>());
+          return false;
+        }
+        if (array[0] == ServerCommands.SkipTime) {
+          var server = ZNet.instance.GetServerRPC();
+          var args = new object[] { array.Length > 1 ? array[1] : "" };
+          if (server != null) server.Invoke(ServerCommands.RPC_SkipTime, args);
+          return false;
+        }
+      }
       // Let other commands pass normally.
       if (array[0] != "devcommands") {
         return true;

@@ -1,6 +1,8 @@
 # Dedicated server devcommands
 
-This client side mod allows devcommands for server admins. Some commands don't work (skipping time or events).
+This client side mod allows devcommands for server admins.
+
+Some commands require also installing the mod on the server (event, randomevent, resetkeys, setkey, skiptime, sleep, stopevent).
 
 # Manual Installation:
 
@@ -12,6 +14,8 @@ This client side mod allows devcommands for server admins. Some commands don't w
 Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available commands and how to use them.
 
 # Changelog
+- v1.4.0:
+	- Added server side support for event, randomevent, resetkeys, setkey, skiptime, sleep, stopevent.
 - v1.3.0: 
 	- Refactored the code to hopefully make it work more reliably.
 	- Added autocomplete to chat window also for cheat commands.
