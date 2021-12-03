@@ -71,8 +71,12 @@ namespace Service {
   ///<summary>Check admin status on connect to ensure features are enabled/disabled when changing servers.</summary>
   [HarmonyPatch(typeof(Game), "UpdateRespawn")]
   public class CheckAdmin {
-    public static void Prefix(bool ___m_firstSpawn) {
-      if (___m_firstSpawn) Admin.Check(Console.instance);
+    public static void Prefix(bool ___m_firstSpawn, ref bool __state) {
+      if (___m_firstSpawn) Admin.Enabled = false;
+      __state = ___m_firstSpawn;
+    }
+    public static void Postfix(bool ___m_firstSpawn, bool __state) {
+      if (__state && !___m_firstSpawn && !Admin.Checking) Admin.Check(Console.instance);
     }
   }
 }
