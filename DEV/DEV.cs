@@ -19,6 +19,7 @@ namespace DEV {
       Commands.AddSpawnLocation();
       Commands.AddSpawnObject();
       Commands.AddUndoSpawn();
+      Commands.AddRedoSpawn();
     }
   }
 }

@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace DEV {
-
   public partial class Commands {
-
     private static void SetLevel(GameObject obj, float level) {
       if (level < 1) return;
       Character component2 = obj.GetComponent<Character>();
@@ -54,7 +53,7 @@ namespace DEV {
     }
 
     public static void AddSpawnObject() {
-      new Terminal.ConsoleCommand("spawn_object", "[name] [...args (rot=z,x,z, pos=x,z,y, scale=x,y,z, level=, amount=, snap=)] - Spawns an object.", delegate (Terminal.ConsoleEventArgs args) {
+      new Terminal.ConsoleCommand("spawn_object", "[name] [...args (rot=z,x,z, pos=x,z,y, scale=x,y,z, level=n, amount=n, snap=1/0)] - Spawns an object.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) {
           return;
         }
@@ -63,9 +62,9 @@ namespace DEV {
         var prefab = GetPrefab(name);
         if (!prefab) return;
 
-        Quaternion rotation = Quaternion.identity;
-        Vector3 scale = Vector3.one;
-        Vector3 position = Player.m_localPlayer ? Player.m_localPlayer.transform.position : Vector3.zero;
+        var rotation = Quaternion.identity;
+        var scale = Vector3.one;
+        var position = Player.m_localPlayer ? Player.m_localPlayer.transform.position : Vector3.zero;
         var level = 1;
         var amount = 1;
         var snap = true;
@@ -126,9 +125,9 @@ namespace DEV {
         ZLog.Log("Spawn time :" + (DateTime.Now - now).TotalMilliseconds + " ms");
         Gogan.LogEvent("Cheat", "Spawn", name, amount);
         Spawns.Push(spawns);
-        if (HistoryOffset == 0)
-          // Disable player based positioning.
-          History.Push("spawn_object pos=" + position.x + "," + position.z + "," + position.y + " snap=" + (snap ? "1" : "0") + " " + string.Join(" ", args.Args));
+
+        // Disable player based positioning.
+        AddToHistory("spawn_object " + name + " redo pos=" + position.x + "," + position.z + "," + position.y + " snap=" + (snap ? "1" : "0") + " " + string.Join(" ", args.Args.Skip(2)));
       }, true, false, true, false, false, () => ZNetScene.instance.GetPrefabNames());
     }
   }

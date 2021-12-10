@@ -7,7 +7,7 @@ namespace DEV {
 
   public partial class Commands {
     public static void AddSpawnLocation() {
-      new Terminal.ConsoleCommand("spawn_location", "[name] [seed/?] [rotation/?] [x,z,y] - Spawns a given location.", delegate (Terminal.ConsoleEventArgs args) {
+      new Terminal.ConsoleCommand("spawn_location", "[name] [...args (rot=y, pos=x,z,y, seed=n)] - Spawns a given location.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) {
           return;
         }
@@ -25,20 +25,36 @@ namespace DEV {
           return;
         }
 
-        var seed = args.TryParameterInt(2, UnityEngine.Random.Range(0, 99999));
-        var rotation = args.TryParameterFloat(3, (float)UnityEngine.Random.Range(0, 16) * 22.5f);
-        var pos = Player.m_localPlayer.transform.position;
-        var split = TryParameterSplit(args.Args, 4, ",");
-        var x = TryParameterFloat(split, 0, pos.x);
-        var z = TryParameterFloat(split, 1, pos.z);
-        if (ZoneSystem.instance.FindFloor(pos, out var value))
-          pos.y = value;
-        var y = TryParameterFloat(split, 2, pos.y);
+        var seed = UnityEngine.Random.Range(0, 99999);
+        var rotation = (float)UnityEngine.Random.Range(0, 16) * 22.5f;
+        var position = Player.m_localPlayer ? Player.m_localPlayer.transform.position : Vector3.zero;
+        var snap = true;
+        foreach (var arg in args.Args) {
+          var split = arg.Split('=');
+          if (split.Length < 2) continue;
+          if (split[0] == "seed")
+            seed = TryInt(split[1], 0);
+          if (split[0] == "rot" || split[0] == "rotation")
+            rotation = TryFloat(split[1], 0);
+          if (split[0] == "pos" || split[0] == "position") {
+            var values = TrySplit(split[1], ",");
+            position.x = TryParameterFloat(values, 0, 0f);
+            position.z = TryParameterFloat(values, 1, 0f);
+            position.y = TryParameterFloat(values, 2, 0f);
+            snap = values.Length < 3;
+          }
+        }
+        if (snap && ZoneSystem.instance.FindFloor(position, out var value))
+          position.y = value;
+
         AddedZDOs.zdos.Clear();
-        ZoneSystem.instance.SpawnLocation(location, seed, new Vector3(x, y, z), Quaternion.Euler(0f, rotation, 0f), ZoneSystem.SpawnMode.Full, new List<GameObject>());
+        ZoneSystem.instance.SpawnLocation(location, seed, position, Quaternion.Euler(0f, rotation, 0f), ZoneSystem.SpawnMode.Full, new List<GameObject>());
         Spawns.Push(AddedZDOs.zdos.ToList());
         AddedZDOs.zdos.Clear();
         args.Context.AddString("Spawned: " + name);
+        // Disable player based positioning.
+        AddToHistory("spawn_location " + name + " pos=" + position.x + "," + position.z + "," + position.y + " seed=" + seed + " rot=" + rotation + " " + string.Join(" ", args.Args.Skip(2)));
+
       }, true, false, true, false, false, () => ZoneSystem.instance.m_locations.Select(location => location.m_prefabName).ToList());
     }
 
