@@ -28,7 +28,7 @@ namespace DEV {
         var seed = args.TryParameterInt(2, UnityEngine.Random.Range(0, 99999));
         var rotation = args.TryParameterFloat(3, (float)UnityEngine.Random.Range(0, 16) * 22.5f);
         var pos = Player.m_localPlayer.transform.position;
-        var split = TrySplit(args.Args, 4, ",");
+        var split = TryParameterSplit(args.Args, 4, ",");
         var x = TryParameterFloat(split, 0, pos.x);
         var z = TryParameterFloat(split, 1, pos.z);
         if (ZoneSystem.instance.FindFloor(pos, out var value))

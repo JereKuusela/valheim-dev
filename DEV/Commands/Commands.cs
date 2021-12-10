@@ -1,27 +1,32 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+
 namespace DEV {
 
   public partial class Commands {
-    public static int TryParameterInt(string[] args, int index, int defaultValue = 1) {
-      int result;
-      if (args.Length <= index || !int.TryParse(args[index], NumberStyles.Integer, CultureInfo.InvariantCulture, out result)) {
+    public static int TryInt(string arg, int defaultValue = 1) {
+      if (!int.TryParse(arg, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
         return defaultValue;
-      }
+      return result;
+    }
+    public static int TryParameterInt(string[] args, int index, int defaultValue = 1) {
+      if (args.Length <= index) return defaultValue;
+      return TryInt(args[index], defaultValue);
+    }
+    public static float TryFloat(string arg, float defaultValue = 1) {
+      if (!float.TryParse(arg, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
+        return defaultValue;
       return result;
     }
     public static float TryParameterFloat(string[] args, int index, float defaultValue = 1f) {
-      float result;
-      if (args.Length <= index || !float.TryParse(args[index], NumberStyles.Float, CultureInfo.InvariantCulture, out result)) {
-        return defaultValue;
-      }
-      return result;
+      if (args.Length <= index) return defaultValue;
+      return TryFloat(args[index], defaultValue);
     }
-    public static string[] TrySplit(string[] args, int index, string separator) {
-      if (args.Length <= index)
-        return new string[0];
-      return args[index].Split(',').Select(s => s.Trim()).ToArray();
+    public static string[] TrySplit(string arg, string separator) => arg.Split(',').Select(s => s.Trim()).ToArray();
+    public static string[] TryParameterSplit(string[] args, int index, string separator) {
+      if (args.Length <= index) return new string[0];
+      return TrySplit(args[index], separator);
     }
     private static string[] AddPlayerPosXZ(string[] args, int count) {
       if (args.Length < count) return args;
