@@ -27,7 +27,11 @@ namespace DEV {
 
         var seed = UnityEngine.Random.Range(0, 99999);
         var rotation = (float)UnityEngine.Random.Range(0, 16) * 22.5f;
-        var position = Player.m_localPlayer ? Player.m_localPlayer.transform.position : Vector3.zero;
+        var position = Vector3.zero;
+        var player = Player.m_localPlayer.transform;
+        if (player) {
+          position = player.position + player.forward * 2f;
+        }
         var snap = true;
         foreach (var arg in args.Args) {
           var split = arg.Split('=');
@@ -38,9 +42,16 @@ namespace DEV {
             rotation = TryFloat(split[1], 0);
           if (split[0] == "pos" || split[0] == "position") {
             var values = TrySplit(split[1], ",");
-            position.x = TryParameterFloat(values, 0, 0f);
-            position.z = TryParameterFloat(values, 1, 0f);
-            position.y = TryParameterFloat(values, 2, 0f);
+            if (player) {
+              position = player.position;
+              position += player.forward * TryParameterFloat(values, 0, 0f);
+              position += player.right * TryParameterFloat(values, 1, 0f);
+              position += player.up * TryParameterFloat(values, 2, 0f);
+            } else {
+              position.x = TryParameterFloat(values, 0, 0f);
+              position.z = TryParameterFloat(values, 0, 0f);
+              position.y = TryParameterFloat(values, 0, 0f);
+            }
             snap = values.Length < 3;
           }
         }

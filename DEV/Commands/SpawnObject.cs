@@ -64,7 +64,11 @@ namespace DEV {
 
         var rotation = Quaternion.identity;
         var scale = Vector3.one;
-        var position = Player.m_localPlayer ? Player.m_localPlayer.transform.position : Vector3.zero;
+        var position = Vector3.zero;
+        var player = Player.m_localPlayer.transform;
+        if (player) {
+          position = player.position + player.forward * 2f;
+        }
         var level = 1;
         var amount = 1;
         var snap = true;
@@ -102,9 +106,16 @@ namespace DEV {
           }
           if (split[0] == "pos" || split[0] == "position") {
             var values = TrySplit(split[1], ",");
-            position.x = TryParameterFloat(values, 0, 0f);
-            position.z = TryParameterFloat(values, 1, 0f);
-            position.y = TryParameterFloat(values, 2, 0f);
+            if (player) {
+              position = player.position;
+              position += player.forward * TryParameterFloat(values, 0, 0f);
+              position += player.right * TryParameterFloat(values, 1, 0f);
+              position += player.up * TryParameterFloat(values, 2, 0f);
+            } else {
+              position.x = TryParameterFloat(values, 0, 0f);
+              position.z = TryParameterFloat(values, 0, 0f);
+              position.y = TryParameterFloat(values, 0, 0f);
+            }
             snap = values.Length < 3;
           }
           if (split[0] == "snap") {
