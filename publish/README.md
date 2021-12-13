@@ -16,7 +16,7 @@ Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available com
 # Features
 
 - Adds optional coordinates to the event command to support dedicated server running the command.
-- New command "spawn_object" that parameters for rotation and scale (not supported for all objects). Also automatically snaps to the ground.
+- New command "spawn_object" that parameters for position, rotation and scale (not supported for all objects). Also automatically snaps to the ground. Position and rotation are relative to the player. Parameters refPos and refRot can be used to override it.
   - spawn_object X rot=90: Spawns object X with 90 degree rotation.
 	- spawn_object X rot=90 scale=10: Spawns object X with 90 degree rotation and 10x size.
 	- spawn_object X rot=0,180: Spawns object X upside down.

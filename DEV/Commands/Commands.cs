@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using UnityEngine;
 
 namespace DEV {
 
@@ -39,6 +40,30 @@ namespace DEV {
         parameters.Add(pos.z.ToString(CultureInfo.InvariantCulture));
       return parameters.ToArray();
     }
+
+    private static Quaternion ParseAngleYXZ(string arg) => ParseAngleYXZ(arg, Quaternion.identity);
+    private static Quaternion ParseAngleYXZ(string arg, Quaternion defaultValue) {
+      var values = TrySplit(arg, ",");
+      var angle = Vector3.zero;
+      angle.y = TryParameterFloat(values, 0, defaultValue.eulerAngles.y);
+      angle.x = TryParameterFloat(values, 1, defaultValue.eulerAngles.x);
+      angle.z = TryParameterFloat(values, 2, defaultValue.eulerAngles.z);
+      return Quaternion.Euler(angle);
+    }
+    private static Vector3 ParsePositionXZY(string arg) => ParsePositionXZY(arg, Vector3.zero);
+    private static Vector3 ParsePositionXZY(string arg, Vector3 defaultValue) {
+      var values = TrySplit(arg, ",");
+      var vector = Vector3.zero;
+      vector.x = TryParameterFloat(values, 0, defaultValue.x);
+      vector.z = TryParameterFloat(values, 1, defaultValue.z);
+      vector.y = TryParameterFloat(values, 2, defaultValue.y);
+      return vector;
+    }
+
+    private static string PrintVectorXZY(Vector3 vector) => vector.x.ToString(CultureInfo.InvariantCulture) + "," + vector.z.ToString(CultureInfo.InvariantCulture) + "," + vector.y.ToString(CultureInfo.InvariantCulture);
+    private static string PrintVectorYXZ(Vector3 vector) => vector.y.ToString(CultureInfo.InvariantCulture) + "," + vector.x.ToString(CultureInfo.InvariantCulture) + "," + vector.z.ToString(CultureInfo.InvariantCulture);
+
+    private static string PrintAngleYXZ(Quaternion quaternion) => PrintVectorYXZ(quaternion.eulerAngles);
 
     public static void SendCommand(string command) {
       var server = ZNet.instance.GetServerRPC();

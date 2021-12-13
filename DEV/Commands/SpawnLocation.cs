@@ -7,7 +7,7 @@ namespace DEV {
 
   public partial class Commands {
     public static void AddSpawnLocation() {
-      new Terminal.ConsoleCommand("spawn_location", "[name] [...args (rot=y, pos=x,z,y, seed=n)] - Spawns a given location.", delegate (Terminal.ConsoleEventArgs args) {
+      new Terminal.ConsoleCommand("spawn_location", "[name] (seed=n pos=x,z,y rot=y refPos=x,z,y refRot=y) - Spawns a given location.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) {
           return;
         }
@@ -26,11 +26,15 @@ namespace DEV {
         }
 
         var seed = UnityEngine.Random.Range(0, 99999);
-        var rotation = (float)UnityEngine.Random.Range(0, 16) * 22.5f;
-        var position = Vector3.zero;
+        var relativeAngle = (float)UnityEngine.Random.Range(0, 16) * 22.5f;
+        var baseAngle = 0f;
+        var relativePosition = Vector3.zero;
+        var basePosition = Vector3.zero;
         var player = Player.m_localPlayer.transform;
         if (player) {
-          position = player.position + player.forward * 2f;
+          basePosition = player.position;
+          relativePosition = 2.0f * player.transform.forward;
+          baseAngle = player.transform.rotation.eulerAngles.y;
         }
         var snap = true;
         foreach (var arg in args.Args) {
@@ -39,32 +43,34 @@ namespace DEV {
           if (split[0] == "seed")
             seed = TryInt(split[1], 0);
           if (split[0] == "rot" || split[0] == "rotation")
-            rotation = TryFloat(split[1], 0);
+            relativeAngle = TryFloat(split[1], 0);
           if (split[0] == "pos" || split[0] == "position") {
-            var values = TrySplit(split[1], ",");
-            if (player) {
-              position = player.position;
-              position += player.forward * TryParameterFloat(values, 0, 0f);
-              position += player.right * TryParameterFloat(values, 1, 0f);
-              position += player.up * TryParameterFloat(values, 2, 0f);
-            } else {
-              position.x = TryParameterFloat(values, 0, 0f);
-              position.z = TryParameterFloat(values, 0, 0f);
-              position.y = TryParameterFloat(values, 0, 0f);
-            }
-            snap = values.Length < 3;
+            relativePosition = ParsePositionXZY(split[1]);
+            snap = split[1].Split(',').Length < 3;
+          }
+          if (split[0] == "refRot" || split[0] == "refRotation") {
+            baseAngle = TryFloat(split[1], baseAngle);
+          }
+          if (split[0] == "refPos" || split[0] == "refPosition") {
+            basePosition = ParsePositionXZY(split[1], basePosition);
           }
         }
-        if (snap && ZoneSystem.instance.FindFloor(position, out var value))
-          position.y = value;
+        var baseRotation = Quaternion.Euler(0f, baseAngle, 0f);
+        var spawnPosition = basePosition;
+        spawnPosition += baseRotation * Vector3.forward * relativePosition.x;
+        spawnPosition += baseRotation * Vector3.right * relativePosition.z;
+        spawnPosition += baseRotation * Vector3.up * relativePosition.y;
+        var spawnRotation = baseRotation * Quaternion.Euler(0f, relativeAngle, 0f);
+        if (snap && ZoneSystem.instance.FindFloor(spawnPosition, out var value))
+          spawnPosition.y = value;
 
         AddedZDOs.zdos.Clear();
-        ZoneSystem.instance.SpawnLocation(location, seed, position, Quaternion.Euler(0f, rotation, 0f), ZoneSystem.SpawnMode.Full, new List<GameObject>());
+        ZoneSystem.instance.SpawnLocation(location, seed, spawnPosition, spawnRotation, ZoneSystem.SpawnMode.Full, new List<GameObject>());
         Spawns.Push(AddedZDOs.zdos.ToList());
         AddedZDOs.zdos.Clear();
-        args.Context.AddString("Spawned: " + name);
+        args.Context.AddString("Spawned: " + name + " at " + PrintVectorXZY(spawnPosition));
         // Disable player based positioning.
-        AddToHistory("spawn_location " + name + " pos=" + position.x + "," + position.z + "," + position.y + " seed=" + seed + " rot=" + rotation + " " + string.Join(" ", args.Args.Skip(2)));
+        AddToHistory("spawn_location " + name + " refRot=" + baseAngle + " refPos=" + PrintVectorXZY(basePosition) + " seed=" + seed + " rot=" + relativePosition + " " + string.Join(" ", args.Args.Skip(2)));
 
       }, true, false, true, false, false, () => ZoneSystem.instance.m_locations.Select(location => location.m_prefabName).ToList());
     }

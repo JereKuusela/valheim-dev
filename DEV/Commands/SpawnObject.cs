@@ -1,7 +1,6 @@
-using System;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using UnityEngine;
 
 namespace DEV {
   public partial class Commands {
@@ -53,21 +52,24 @@ namespace DEV {
     }
 
     public static void AddSpawnObject() {
-      new Terminal.ConsoleCommand("spawn_object", "[name] [...args (rot=z,x,z, pos=x,z,y, scale=x,y,z, level=n, amount=n, snap=1/0)] - Spawns an object.", delegate (Terminal.ConsoleEventArgs args) {
+      new Terminal.ConsoleCommand("spawn_object", "[name] (level=n amount=n pos=x,z,y rot=z,x,z scale=x,y,z refPos=x,z,y refRot=y,x,z) - Spawns an object.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) {
           return;
         }
         string name = args[1];
-        DateTime now = DateTime.Now;
         var prefab = GetPrefab(name);
         if (!prefab) return;
 
-        var rotation = Quaternion.identity;
+        var relativeRotation = Quaternion.identity;
+        var baseRotation = Quaternion.identity;
         var scale = Vector3.one;
-        var position = Vector3.zero;
+        var relativePosition = Vector3.zero;
+        var basePosition = Vector3.zero;
         var player = Player.m_localPlayer.transform;
         if (player) {
-          position = player.position + player.forward * 2f;
+          basePosition = player.position;
+          relativePosition = new Vector3(2.0f, 0, 0);
+          baseRotation = player.transform.rotation;
         }
         var level = 1;
         var amount = 1;
@@ -82,12 +84,10 @@ namespace DEV {
           if (split[0] == "amount")
             amount = TryInt(split[1], 1);
           if (split[0] == "rot" || split[0] == "rotation") {
-            var values = TrySplit(split[1], ",");
-            var angle = Vector3.zero;
-            angle.y = TryParameterFloat(values, 0, 1f);
-            angle.x = TryParameterFloat(values, 1, 1f);
-            angle.z = TryParameterFloat(values, 2, 1f);
-            rotation = Quaternion.Euler(angle);
+            relativeRotation = ParseAngleYXZ(split[1]);
+          }
+          if (split[0] == "refRot" || split[0] == "refRotation") {
+            baseRotation = ParseAngleYXZ(split[1], baseRotation);
           }
           if (split[0] == "sc" || split[0] == "scale") {
             var values = TrySplit(split[1], ",");
@@ -105,40 +105,33 @@ namespace DEV {
             if (scale.z == 0) scale.z = 1;
           }
           if (split[0] == "pos" || split[0] == "position") {
-            var values = TrySplit(split[1], ",");
-            if (player) {
-              position = player.position;
-              position += player.forward * TryParameterFloat(values, 0, 0f);
-              position += player.right * TryParameterFloat(values, 1, 0f);
-              position += player.up * TryParameterFloat(values, 2, 0f);
-            } else {
-              position.x = TryParameterFloat(values, 0, 0f);
-              position.z = TryParameterFloat(values, 0, 0f);
-              position.y = TryParameterFloat(values, 0, 0f);
-            }
-            snap = values.Length < 3;
+            relativePosition = ParsePositionXZY(split[1]);
+            snap = split[1].Split(',').Length < 3;
           }
-          if (split[0] == "snap") {
-            snap = split[1].ToLower() == "true" || split[1] == "1";
+          if (split[0] == "refPos" || split[0] == "refPosition") {
+            basePosition = ParsePositionXZY(split[1], basePosition);
           }
         }
-
-        var spawned = DoSpawnObject(prefab, position, amount, snap);
+        var spawnPosition = basePosition;
+        spawnPosition += baseRotation * Vector3.forward * relativePosition.x;
+        spawnPosition += baseRotation * Vector3.right * relativePosition.z;
+        spawnPosition += baseRotation * Vector3.up * relativePosition.y;
+        var spawnRotation = baseRotation * relativeRotation;
+        var spawned = DoSpawnObject(prefab, spawnPosition, amount, snap);
         Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "Spawning object " + name, spawned.Count, null);
         var spawns = new List<ZDO>();
         foreach (var obj in spawned) {
           SetLevel(obj, level);
-          RotateAndScale(obj, rotation, scale);
+          RotateAndScale(obj, spawnRotation, scale);
           var netView = obj.GetComponent<ZNetView>();
           if (netView)
             spawns.Add(netView.GetZDO());
         }
-        ZLog.Log("Spawn time :" + (DateTime.Now - now).TotalMilliseconds + " ms");
-        Gogan.LogEvent("Cheat", "Spawn", name, amount);
+        args.Context.AddString("Spawned: " + name + " at " + PrintVectorXZY(spawnPosition));
         Spawns.Push(spawns);
 
         // Disable player based positioning.
-        AddToHistory("spawn_object " + name + " redo pos=" + position.x + "," + position.z + "," + position.y + " snap=" + (snap ? "1" : "0") + " " + string.Join(" ", args.Args.Skip(2)));
+        AddToHistory("spawn_object " + name + " refRot=" + PrintAngleYXZ(baseRotation) + " refPos=" + PrintVectorXZY(basePosition) + " " + string.Join(" ", args.Args.Skip(2)));
       }, true, false, true, false, false, () => ZNetScene.instance.GetPrefabNames());
     }
   }
