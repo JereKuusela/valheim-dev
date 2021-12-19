@@ -11,9 +11,23 @@ namespace DEV {
         return defaultValue;
       return result;
     }
+    public static uint TryUInt(string arg, uint defaultValue = 1) {
+      if (!uint.TryParse(arg, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
+        return defaultValue;
+      return result;
+    }
+    public static long TryLong(string arg, long defaultValue = 1) {
+      if (!long.TryParse(arg, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
+        return defaultValue;
+      return result;
+    }
     public static int TryParameterInt(string[] args, int index, int defaultValue = 1) {
       if (args.Length <= index) return defaultValue;
       return TryInt(args[index], defaultValue);
+    }
+    public static long TryParameterLong(string[] args, int index, long defaultValue = 1) {
+      if (args.Length <= index) return defaultValue;
+      return TryLong(args[index], defaultValue);
     }
     public static float TryFloat(string arg, float defaultValue = 1) {
       if (!float.TryParse(arg, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
@@ -23,6 +37,10 @@ namespace DEV {
     public static float TryParameterFloat(string[] args, int index, float defaultValue = 1f) {
       if (args.Length <= index) return defaultValue;
       return TryFloat(args[index], defaultValue);
+    }
+    public static uint TryParameterUInt(string[] args, int index, uint defaultValue = 0) {
+      if (args.Length <= index) return defaultValue;
+      return TryUInt(args[index], defaultValue);
     }
     public static string[] TrySplit(string arg, string separator) => arg.Split(',').Select(s => s.Trim()).ToArray();
     public static string[] TryParameterSplit(string[] args, int index, string separator) {
