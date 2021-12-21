@@ -20,6 +20,8 @@ namespace DEV {
       Commands.AddSpawnObject();
       Commands.AddUndoSpawn();
       Commands.AddRedoSpawn();
+      Commands.AddManipulate();
+      Commands.AddChangeEquipment();
     }
   }
 }
