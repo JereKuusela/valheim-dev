@@ -77,6 +77,15 @@ namespace DEV {
       vector.y = TryParameterFloat(values, 2, defaultValue.y);
       return vector;
     }
+    private static Vector3 ParsePositionYXZ(string arg) => ParsePositionYXZ(arg, Vector3.zero);
+    private static Vector3 ParsePositionYXZ(string arg, Vector3 defaultValue) {
+      var values = TrySplit(arg, ",");
+      var vector = Vector3.zero;
+      vector.y = TryParameterFloat(values, 0, defaultValue.y);
+      vector.x = TryParameterFloat(values, 1, defaultValue.x);
+      vector.z = TryParameterFloat(values, 2, defaultValue.z);
+      return vector;
+    }
 
     private static string PrintVectorXZY(Vector3 vector) => vector.x.ToString(CultureInfo.InvariantCulture) + "," + vector.z.ToString(CultureInfo.InvariantCulture) + "," + vector.y.ToString(CultureInfo.InvariantCulture);
     private static string PrintVectorYXZ(Vector3 vector) => vector.y.ToString(CultureInfo.InvariantCulture) + "," + vector.x.ToString(CultureInfo.InvariantCulture) + "," + vector.z.ToString(CultureInfo.InvariantCulture);
