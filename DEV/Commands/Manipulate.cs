@@ -132,6 +132,10 @@ namespace DEV {
           monster.SetDespawnInDay(false);
           monster.SetEventCreature(false);
         }
+        var animal = obj.GetComponent<AnimalAI>();
+        if (animal) {
+          animal.m_target = null;
+        }
       }
       return "Target made tame.";
     }
