@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 namespace DEV {
   public partial class Commands {
     private static ZNetView GetView(Terminal.ConsoleEventArgs args) {
-      if (args.Length < 2) return null;
       if (Player.m_localPlayer == null) return null;
       var obj = Player.m_localPlayer.GetHoverObject();
       if (obj == null) {
@@ -67,27 +67,59 @@ namespace DEV {
         if (view.m_syncInitialScale)
           view.SetLocalScale(scale);
       }, true, false, true, false, false);
-      new Terminal.ConsoleCommand("target", "[operation] [amount] - Modifies the targeted object.", delegate (Terminal.ConsoleEventArgs args) {
-        var view = GetView(args);
-        if (!view) return;
+      new Terminal.ConsoleCommand("target", "[operation] [amount] [id=*] [radius=0] - Modifies the targeted object.", delegate (Terminal.ConsoleEventArgs args) {
+        if (args.Length < 2) return;
         var operation = args[1];
-        var character = view.GetComponent<Character>();
-        var output = "Error: Invalid operation.";
-        if (operation == "health")
-          output = ChangeHealth(character, args.TryParameterInt(2, 1));
-        if (operation == "stars")
-          output = SetStars(character, args.TryParameterInt(2, 1));
-        if (operation == "tame")
-          output = MakeTame(character);
-        if (operation == "wild")
-          output = MakeWild(character);
-        if (operation == "baby")
-          output = SetBaby(view.GetComponent<Growup>());
-        if (operation == "info")
-          output = GetInfo(view, args.Context);
-        if (operation == "sleep")
-          output = MakeSleep(view.GetComponent<MonsterAI>());
-        args.Context.AddString(output);
+        if (!Operations.Contains(operation)) {
+          args.Context.AddString("Error: Invalid operation.");
+          return;
+        }
+        var radiusArg = args.Args.FirstOrDefault(arg => arg.StartsWith("radius="));
+        var idArg = args.Args.FirstOrDefault(arg => arg.StartsWith("id="));
+        var id = idArg == null ? "*" : TryParameterString(idArg.Split('='), 1, "*");
+        IEnumerable<ZDO> zdos;
+        if (radiusArg != null) {
+          var radius = TryParameterFloat(radiusArg.Split('='), 1, 100f);
+          radius = Math.Min(radius, 100f);
+          zdos = GetZDOs(id, radius);
+        } else {
+          var view = GetView(args);
+          if (!view) return;
+          if (!GetPrefabs(id).Contains(view.GetZDO().GetPrefab())) {
+            args.Context.AddString("Error: ¤ has invalid id.");
+            return;
+          }
+          zdos = new ZDO[] { view.GetZDO() };
+        }
+        var scene = ZNetScene.instance;
+        foreach (var zdo in zdos) {
+          var view = scene.FindInstance(zdo);
+          if (view == null) {
+            args.Context.AddString("Error: ¤ is not loaded.");
+            continue;
+          }
+          var character = view.GetComponent<Character>();
+          var output = "Error: Invalid operation.";
+          if (operation == "health")
+            output = ChangeHealth(character, args.TryParameterInt(2, 1));
+          if (operation == "stars")
+            output = SetStars(character, args.TryParameterInt(2, 1));
+          if (operation == "tame")
+            output = MakeTame(character);
+          if (operation == "wild")
+            output = MakeWild(character);
+          if (operation == "baby")
+            output = SetBaby(view.GetComponent<Growup>());
+          if (operation == "info")
+            output = GetInfo(view, args.Context);
+          if (operation == "sleep")
+            output = MakeSleep(view.GetComponent<MonsterAI>());
+          if (operation == "remove") {
+            scene.Destroy(view.gameObject);
+            output = "Entity ¤ destroyed.";
+          }
+          args.Context.AddString(output.Replace("¤", Utils.GetPrefabName(view.gameObject)));
+        }
       }, true, false, true, false, false, () => Operations);
     }
     private static List<string> Operations = new List<string>(){
@@ -97,27 +129,29 @@ namespace DEV {
       "wild",
       "tame",
       "info",
-      "sleep"
+      "sleep",
+      "remove"
     };
-
     private static string ChangeHealth(Character obj, int amount) {
       if (obj == null) return "Error: Not a creature.";
+      var previous = obj.GetMaxHealth();
       obj.SetMaxHealth(amount);
       obj.SetHealth(obj.GetMaxHealth());
-      return "Health changed.";
+      return $"¤ health changed from {previous.ToString("F0")} to {amount.ToString("F0")}.";
     }
     private static string SetStars(Character obj, int amount) {
-      if (obj == null) return "Error: Not a creature.";
+      if (obj == null) return "Error: ¤ is not a creature.";
+      var previous = obj.GetLevel() + 1;
       obj.SetLevel(amount + 1);
-      return "Stars changed.";
+      return $"¤ stars changed from {previous} to {amount + 1}.";
     }
     private static string SetBaby(Growup obj) {
-      if (obj == null) return "Error: Not an offspring.";
+      if (obj == null) return "Error: ¤ is not an offspring.";
       obj.m_nview.GetZDO().Set("spawntime", DateTime.MaxValue.Ticks);
-      return "Growth disabled.";
+      return "¤ growth disabled.";
     }
     private static string MakeTame(Character obj) {
-      if (obj == null) return "Error: Not a creature.";
+      if (obj == null) return "Error: ¤ is not a creature.";
       obj.SetTamed(true);
       var AI = obj.GetComponent<BaseAI>();
       if (AI) {
@@ -137,10 +171,10 @@ namespace DEV {
           animal.m_target = null;
         }
       }
-      return "Target made tame.";
+      return "¤ made tame.";
     }
     private static string MakeWild(Character obj) {
-      if (obj == null) return "Error: Not a creature.";
+      if (obj == null) return "Error: ¤ is not a creature.";
       obj.SetTamed(false);
       var AI = obj.GetComponent<BaseAI>();
       if (AI) {
@@ -152,25 +186,27 @@ namespace DEV {
           monster.m_targetStatic = null;
         }
       }
-      return "Target made wild.";
+      return "¤ made wild.";
     }
     private static string MakeSleep(MonsterAI obj) {
-      if (obj == null) return "Error: Not a creature.";
+      if (obj == null) return "Error: ¤ is not a creature.";
       obj.m_nview.GetZDO().Set("sleeping", true);
-      return "Target made to sleep.";
+      return "¤ made to sleep.";
     }
     private static string GetInfo(ZNetView obj, Terminal terminal) {
-      terminal.AddString("Id: " + obj.GetPrefabName());
+      var info = new List<string>();
+      info.Add("Id: ¤");
+      info.Add("Pos: " + obj.transform.position.ToString("F1"));
       var character = obj.GetComponent<Character>();
       if (character) {
-        terminal.AddString("Health: " + character.GetHealth().ToString("F0") + " / " + character.GetMaxHealth());
-        terminal.AddString("Stars: " + (character.GetLevel() - 1));
-        terminal.AddString("Tamed: " + (character.IsTamed() ? "Yes" : "No"));
+        info.Add("Health: " + character.GetHealth().ToString("F0") + " / " + character.GetMaxHealth());
+        info.Add("Stars: " + (character.GetLevel() - 1));
+        info.Add("Tamed: " + (character.IsTamed() ? "Yes" : "No"));
         var growUp = obj.GetComponent<Growup>();
         if (growUp)
-          terminal.AddString("Baby: " + (growUp.m_baseAI.GetTimeSinceSpawned().TotalSeconds < 0 ? "Yes" : "No"));
+          info.Add("Baby: " + (growUp.m_baseAI.GetTimeSinceSpawned().TotalSeconds < 0 ? "Yes" : "No"));
       }
-      return "";
+      return string.Join(", ", info);
     }
   }
 }

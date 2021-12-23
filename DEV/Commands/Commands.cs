@@ -42,6 +42,10 @@ namespace DEV {
       if (args.Length <= index) return defaultValue;
       return TryUInt(args[index], defaultValue);
     }
+    public static string TryParameterString(string[] args, int index, string defaultValue = "") {
+      if (args.Length <= index) return defaultValue;
+      return args[index];
+    }
     public static string[] TrySplit(string arg, string separator) => arg.Split(',').Select(s => s.Trim()).ToArray();
     public static string[] TryParameterSplit(string[] args, int index, string separator) {
       if (args.Length <= index) return new string[0];
