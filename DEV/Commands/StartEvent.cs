@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DEV {
 
-  public partial class Commands {
+  public class StartEventCommand : BaseCommands {
     private static void DoStartEvent(string[] args, Terminal context) {
       if (args.Length < 2) return;
       var name = args[1];
@@ -16,7 +16,7 @@ namespace DEV {
       RandEventSystem.instance.SetRandomEventByName(name, new Vector3(x, 0, z));
     }
     ///<summary>Must be replaced because base game command uses the player position which won't work on the server. </summary>
-    public static void ReplaceStartEvent() {
+    public StartEventCommand() {
       new Terminal.ConsoleCommand("event", "[name] [x] [z] - start event.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) return;
         var parameters = AddPlayerPosXZ(args.Args, 2);

@@ -32,7 +32,7 @@ namespace DEV {
     public static bool Prefix(Terminal __instance, string text) {
       string[] array = text.Split(' ');
       if (!ZNet.instance.IsServer() && IsServerSide(array[0])) {
-        Commands.SendCommand(text);
+        BaseCommands.SendCommand(text);
         return false;
       }
       // Let other commands pass normally.

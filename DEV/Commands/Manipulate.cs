@@ -1,26 +1,40 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using UnityEngine;
 namespace DEV {
-  public partial class Commands {
-    private static ZNetView GetView(Terminal.ConsoleEventArgs args) {
-      if (Player.m_localPlayer == null) return null;
-      var obj = Player.m_localPlayer.GetHoverObject();
-      if (obj == null) {
-        args.Context.AddString("Error: Nothing being hovered");
-        return null;
+  public class ManipulateCommand : BaseCommands {
+    private static bool IsIncluded(string id, string name) {
+      if (id.StartsWith("*") && id.EndsWith("*")) {
+        return name.Contains(id.Substring(1, id.Length - 3));
       }
-      var view = obj.GetComponentInParent<ZNetView>();
-      if (view == null) {
-        args.Context.AddString("Error: No net view.");
-        return null;
-      }
-      return view;
+      if (id.StartsWith("*")) return name.EndsWith(id.Substring(1));
+      if (id.EndsWith("*")) return name.StartsWith(id.Substring(0, id.Length - 2));
+      return id == name;
     }
-    public static void AddManipulate() {
+    public static IEnumerable<int> GetPrefabs(string id) {
+      IEnumerable<GameObject> values = ZNetScene.instance.m_namedPrefabs.Values;
+      if (id == "*") { } // Pass
+      else if (id.Contains("*"))
+        values = values.Where(prefab => IsIncluded(id, prefab.name));
+      else
+        values = values.Where(prefab => prefab.name == id);
+      return values.Where(prefab => prefab.name != "Player").Select(prefab => prefab.name.GetStableHashCode());
+    }
+    public static IEnumerable<ZDO> GetZDOs(string id, float distance) {
+      var codes = GetPrefabs(id);
+      var sector = Player.m_localPlayer ? Player.m_localPlayer.m_nview.GetZDO().GetSector() : new Vector2i(0, 0);
+      var index = ZDOMan.instance.SectorToIndex(sector);
+      IEnumerable<ZDO> zdos = ZDOMan.instance.m_objectsBySector[index];
+      zdos = zdos.Where(zdo => codes.Contains(zdo.GetPrefab()));
+      var position = Player.m_localPlayer ? Player.m_localPlayer.transform.position : Vector3.zero;
+      if (distance > 0)
+        return zdos.Where(zdo => Utils.DistanceXZ(zdo.GetPosition(), position) <= distance);
+      return zdos;
+    }
+    public ManipulateCommand() {
       new Terminal.ConsoleCommand("move", "[x,z,y] [player/object/world] - Moves hovered object relative to selected origin (relative to player if not given).", delegate (Terminal.ConsoleEventArgs args) {
-        var view = GetView(args);
+        var view = GetHovered(args);
         if (!view) return;
         var zdo = view.GetZDO();
         var position = view.transform.position;
@@ -38,7 +52,7 @@ namespace DEV {
         view.transform.position = position;
       }, true, false, true, false, false);
       new Terminal.ConsoleCommand("rotate", "[x,y,z/reset] [player/object/world] - Rotates hovered object around a given axis relative to selected origin (relative to player y axis if not given).", delegate (Terminal.ConsoleEventArgs args) {
-        var view = GetView(args);
+        var view = GetHovered(args);
         if (!view) return;
         var zdo = view.GetZDO();
         if (args[1].ToLower() == "reset") {
@@ -61,7 +75,7 @@ namespace DEV {
         zdo.SetRotation(view.transform.rotation);
       }, true, false, true, false, false);
       new Terminal.ConsoleCommand("scale", "[x,z,y] - Scales hovered object.", delegate (Terminal.ConsoleEventArgs args) {
-        var view = GetView(args);
+        var view = GetHovered(args);
         if (!view) return;
         var scale = ParsePositionXZY(args.Args[1], Vector3.one);
         if (view.m_syncInitialScale)
@@ -71,7 +85,7 @@ namespace DEV {
         if (args.Length < 2) return;
         var operation = args[1];
         if (!Operations.Contains(operation)) {
-          args.Context.AddString("Error: Invalid operation.");
+          AddMessage(args.Context, "Error: Invalid operation.");
           return;
         }
         var radiusArg = args.Args.FirstOrDefault(arg => arg.StartsWith("radius="));
@@ -83,10 +97,10 @@ namespace DEV {
           radius = Math.Min(radius, 100f);
           zdos = GetZDOs(id, radius);
         } else {
-          var view = GetView(args);
+          var view = GetHovered(args);
           if (!view) return;
           if (!GetPrefabs(id).Contains(view.GetZDO().GetPrefab())) {
-            args.Context.AddString("Error: ¤ has invalid id.");
+            AddMessage(args.Context, "Skipped: ¤ has invalid id.");
             return;
           }
           zdos = new ZDO[] { view.GetZDO() };
@@ -95,7 +109,7 @@ namespace DEV {
         foreach (var zdo in zdos) {
           var view = scene.FindInstance(zdo);
           if (view == null) {
-            args.Context.AddString("Error: ¤ is not loaded.");
+            args.Context.AddString("Skipped: ¤ is not loaded.");
             continue;
           }
           var character = view.GetComponent<Character>();
@@ -118,7 +132,11 @@ namespace DEV {
             scene.Destroy(view.gameObject);
             output = "Entity ¤ destroyed.";
           }
-          args.Context.AddString(output.Replace("¤", Utils.GetPrefabName(view.gameObject)));
+          var message = output.Replace("¤", Utils.GetPrefabName(view.gameObject));
+          if (radiusArg == null)
+            AddMessage(args.Context, message);
+          else
+            args.Context.AddString(message);
         }
       }, true, false, true, false, false, () => Operations);
     }
@@ -133,25 +151,25 @@ namespace DEV {
       "remove"
     };
     private static string ChangeHealth(Character obj, int amount) {
-      if (obj == null) return "Error: Not a creature.";
+      if (obj == null) return "Skipped: Not a creature.";
       var previous = obj.GetMaxHealth();
       obj.SetMaxHealth(amount);
       obj.SetHealth(obj.GetMaxHealth());
       return $"¤ health changed from {previous.ToString("F0")} to {amount.ToString("F0")}.";
     }
     private static string SetStars(Character obj, int amount) {
-      if (obj == null) return "Error: ¤ is not a creature.";
+      if (obj == null) return "Skipped: ¤ is not a creature.";
       var previous = obj.GetLevel() + 1;
       obj.SetLevel(amount + 1);
       return $"¤ stars changed from {previous} to {amount + 1}.";
     }
     private static string SetBaby(Growup obj) {
-      if (obj == null) return "Error: ¤ is not an offspring.";
+      if (obj == null) return "Skipped: ¤ is not an offspring.";
       obj.m_nview.GetZDO().Set("spawntime", DateTime.MaxValue.Ticks);
       return "¤ growth disabled.";
     }
     private static string MakeTame(Character obj) {
-      if (obj == null) return "Error: ¤ is not a creature.";
+      if (obj == null) return "Skipped: ¤ is not a creature.";
       obj.SetTamed(true);
       var AI = obj.GetComponent<BaseAI>();
       if (AI) {
@@ -174,7 +192,7 @@ namespace DEV {
       return "¤ made tame.";
     }
     private static string MakeWild(Character obj) {
-      if (obj == null) return "Error: ¤ is not a creature.";
+      if (obj == null) return "Skipped: ¤ is not a creature.";
       obj.SetTamed(false);
       var AI = obj.GetComponent<BaseAI>();
       if (AI) {
@@ -189,7 +207,7 @@ namespace DEV {
       return "¤ made wild.";
     }
     private static string MakeSleep(MonsterAI obj) {
-      if (obj == null) return "Error: ¤ is not a creature.";
+      if (obj == null) return "Skipped: ¤ is not a creature.";
       obj.m_nview.GetZDO().Set("sleeping", true);
       return "¤ made to sleep.";
     }

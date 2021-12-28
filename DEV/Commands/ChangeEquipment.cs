@@ -1,5 +1,5 @@
 namespace DEV {
-  public partial class Commands {
+  public class ChangeEquipmentCommand : BaseCommands {
     private static void ChangeHelmet(Character obj, string item) {
       if (obj == null) return;
       var equipment = obj.GetComponent<VisEquipment>();
@@ -30,7 +30,7 @@ namespace DEV {
       if (equipment == null) return;
       equipment.SetBeardItem(item);
     }
-    public static void AddChangeEquipment() {
+    public ChangeEquipmentCommand() {
       new Terminal.ConsoleCommand("check_equipment", "Checks some equipment slots.", delegate (Terminal.ConsoleEventArgs args) {
         if (Player.m_localPlayer == null) return;
         var creature = Player.m_localPlayer.GetHoverCreature();

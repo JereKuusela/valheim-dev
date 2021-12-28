@@ -5,7 +5,18 @@ using UnityEngine;
 
 namespace DEV {
 
-  public partial class Commands {
+  public abstract class BaseCommands {
+    public static void AddMessage(Terminal context, string message) {
+      context.AddString(message);
+      Player.m_localPlayer?.Message(MessageHud.MessageType.TopLeft, message);
+    }
+    public static GameObject GetPrefab(string name) {
+      var prefab = ZNetScene.instance.GetPrefab(name);
+      if (!prefab)
+        Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "Missing object " + name, 0, null);
+      return prefab;
+    }
+
     public static int TryInt(string arg, int defaultValue = 1) {
       if (!int.TryParse(arg, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
         return defaultValue;
@@ -51,7 +62,7 @@ namespace DEV {
       if (args.Length <= index) return new string[0];
       return TrySplit(args[index], separator);
     }
-    private static string[] AddPlayerPosXZ(string[] args, int count) {
+    public static string[] AddPlayerPosXZ(string[] args, int count) {
       if (args.Length < count) return args;
       if (Player.m_localPlayer == null) return args;
       var parameters = args.ToList();
@@ -63,8 +74,8 @@ namespace DEV {
       return parameters.ToArray();
     }
 
-    private static Quaternion ParseAngleYXZ(string arg) => ParseAngleYXZ(arg, Quaternion.identity);
-    private static Quaternion ParseAngleYXZ(string arg, Quaternion defaultValue) {
+    public static Quaternion ParseAngleYXZ(string arg) => ParseAngleYXZ(arg, Quaternion.identity);
+    public static Quaternion ParseAngleYXZ(string arg, Quaternion defaultValue) {
       var values = TrySplit(arg, ",");
       var angle = Vector3.zero;
       angle.y = TryParameterFloat(values, 0, defaultValue.eulerAngles.y);
@@ -72,8 +83,8 @@ namespace DEV {
       angle.z = TryParameterFloat(values, 2, defaultValue.eulerAngles.z);
       return Quaternion.Euler(angle);
     }
-    private static Vector3 ParsePositionXZY(string arg) => ParsePositionXZY(arg, Vector3.zero);
-    private static Vector3 ParsePositionXZY(string arg, Vector3 defaultValue) {
+    public static Vector3 ParsePositionXZY(string arg) => ParsePositionXZY(arg, Vector3.zero);
+    public static Vector3 ParsePositionXZY(string arg, Vector3 defaultValue) {
       var values = TrySplit(arg, ",");
       var vector = Vector3.zero;
       vector.x = TryParameterFloat(values, 0, defaultValue.x);
@@ -81,8 +92,8 @@ namespace DEV {
       vector.y = TryParameterFloat(values, 2, defaultValue.y);
       return vector;
     }
-    private static Vector3 ParsePositionYXZ(string arg) => ParsePositionYXZ(arg, Vector3.zero);
-    private static Vector3 ParsePositionYXZ(string arg, Vector3 defaultValue) {
+    public static Vector3 ParsePositionYXZ(string arg) => ParsePositionYXZ(arg, Vector3.zero);
+    public static Vector3 ParsePositionYXZ(string arg, Vector3 defaultValue) {
       var values = TrySplit(arg, ",");
       var vector = Vector3.zero;
       vector.y = TryParameterFloat(values, 0, defaultValue.y);
@@ -91,18 +102,37 @@ namespace DEV {
       return vector;
     }
 
-    private static string PrintVectorXZY(Vector3 vector) => vector.x.ToString(CultureInfo.InvariantCulture) + "," + vector.z.ToString(CultureInfo.InvariantCulture) + "," + vector.y.ToString(CultureInfo.InvariantCulture);
-    private static string PrintVectorYXZ(Vector3 vector) => vector.y.ToString(CultureInfo.InvariantCulture) + "," + vector.x.ToString(CultureInfo.InvariantCulture) + "," + vector.z.ToString(CultureInfo.InvariantCulture);
+    public static string PrintVectorXZY(Vector3 vector) => vector.x.ToString(CultureInfo.InvariantCulture) + "," + vector.z.ToString(CultureInfo.InvariantCulture) + "," + vector.y.ToString(CultureInfo.InvariantCulture);
+    public static string PrintVectorYXZ(Vector3 vector) => vector.y.ToString(CultureInfo.InvariantCulture) + "," + vector.x.ToString(CultureInfo.InvariantCulture) + "," + vector.z.ToString(CultureInfo.InvariantCulture);
 
-    private static string PrintAngleYXZ(Quaternion quaternion) => PrintVectorYXZ(quaternion.eulerAngles);
+    public static string PrintAngleYXZ(Quaternion quaternion) => PrintVectorYXZ(quaternion.eulerAngles);
 
     public static void SendCommand(string command) {
       var server = ZNet.instance.GetServerRPC();
       Console.instance.AddString("Sending command: " + command);
       if (server != null) server.Invoke(ServerCommands.RPC_Command, new object[] { command });
     }
-    private static void SendCommand(IEnumerable<string> args) => SendCommand(string.Join(" ", args));
-    private static void SendCommand(Terminal.ConsoleEventArgs args) => SendCommand(args.Args);
+    public static void SendCommand(IEnumerable<string> args) => SendCommand(string.Join(" ", args));
+    public static void SendCommand(Terminal.ConsoleEventArgs args) => SendCommand(args.Args);
+
+    ///<summary>Returns the hovered object within 50 meters.</summary>
+    public static ZNetView GetHovered(Terminal.ConsoleEventArgs args) {
+      if (Player.m_localPlayer == null) return null;
+      var interact = Player.m_localPlayer.m_maxInteractDistance;
+      Player.m_localPlayer.m_maxInteractDistance = 50f;
+      Player.m_localPlayer.FindHoverObject(out var obj, out var creature);
+      Player.m_localPlayer.m_maxInteractDistance = interact;
+      if (obj == null) {
+        AddMessage(args.Context, "Nothing is being hovered.");
+        return null;
+      }
+      var view = obj.GetComponentInParent<ZNetView>();
+      if (view == null) {
+        AddMessage(args.Context, "Nothing is being hovered.");
+        return null;
+      }
+      return view;
+    }
   }
 
 }

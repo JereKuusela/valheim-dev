@@ -5,8 +5,8 @@ using UnityEngine;
 
 namespace DEV {
 
-  public partial class Commands {
-    public static void AddSpawnLocation() {
+  public class SpawnLocationCommand : UndoCommand {
+    public SpawnLocationCommand() {
       new Terminal.ConsoleCommand("spawn_location", "[name] (seed=n pos=x,z,y rot=y refPos=x,z,y refRot=y) - Spawns a given location.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) {
           return;

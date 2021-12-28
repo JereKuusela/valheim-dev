@@ -3,20 +3,24 @@ using System.Linq;
 using UnityEngine;
 
 namespace DEV {
-  public partial class Commands {
+  public class SpawnObjectCommand : UndoCommand {
     private static void SetLevel(GameObject obj, float level) {
       if (level < 1) return;
-      Character component2 = obj.GetComponent<Character>();
-      if (component2)
-        component2.SetLevel((int)level);
+      var character = obj.GetComponent<Character>();
+      if (character)
+        character.SetLevel((int)level);
     }
-    private static void Rotate(GameObject obj, float level) {
-      if (level < 1) return;
-      Character component2 = obj.GetComponent<Character>();
-      if (component2)
-        component2.SetLevel((int)level);
-      else
-        obj.transform.rotation = Quaternion.Euler(0, level, 0);
+    private static void SetHealth(GameObject obj, float health) {
+      if (health == 0) return;
+      var character = obj.GetComponent<Character>();
+      if (character) {
+        character.SetMaxHealth(health);
+        character.SetHealth(character.GetMaxHealth());
+      }
+      var wearNTear = obj.GetComponent<WearNTear>();
+      if (wearNTear) {
+        wearNTear.m_nview.GetZDO().Set("health", health);
+      }
     }
     private static void RotateAndScale(GameObject obj, Quaternion rotation, Vector3 scale) {
       var view = obj.GetComponent<ZNetView>();
@@ -28,9 +32,6 @@ namespace DEV {
       if (scale != Vector3.one && view.m_syncInitialScale)
         view.SetLocalScale(scale);
     }
-    private static GameObject SpawnObject(GameObject prefab, Vector3 position) {
-      return UnityEngine.Object.Instantiate<GameObject>(prefab, position, Quaternion.identity);
-    }
     private static List<GameObject> DoSpawnObject(GameObject prefab, Vector3 position, int count, bool snap) {
       var spawned = new List<GameObject>();
       for (int i = 0; i < count; i++) {
@@ -39,20 +40,14 @@ namespace DEV {
           spawnPosition += UnityEngine.Random.insideUnitSphere * 0.5f;
         if (snap && ZoneSystem.instance.FindFloor(spawnPosition, out var height))
           spawnPosition.y = height;
-        var obj = SpawnObject(prefab, spawnPosition);
+        var obj = UnityEngine.Object.Instantiate<GameObject>(prefab, spawnPosition, Quaternion.identity);
         spawned.Add(obj);
       }
       return spawned;
     }
-    private static GameObject GetPrefab(string name) {
-      var prefab = ZNetScene.instance.GetPrefab(name);
-      if (!prefab)
-        Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "Missing object " + name, 0, null);
-      return prefab;
-    }
 
-    public static void AddSpawnObject() {
-      new Terminal.ConsoleCommand("spawn_object", "[name] (level=n amount=n pos=x,z,y rot=z,x,z scale=x,y,z refPos=x,z,y refRot=y,x,z) - Spawns an object.", delegate (Terminal.ConsoleEventArgs args) {
+    public SpawnObjectCommand() {
+      new Terminal.ConsoleCommand("spawn_object", "[name] (stars=n amount=n pos=x,z,y rot=z,x,z scale=x,y,z refPos=x,z,y refRot=y,x,z health=n) - Spawns an object.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) {
           return;
         }
@@ -73,10 +68,13 @@ namespace DEV {
         }
         var level = 1;
         var amount = 1;
+        var health = 0f;
         var snap = true;
         foreach (var arg in args.Args) {
           var split = arg.Split('=');
           if (split.Length < 2) continue;
+          if (split[0] == "health")
+            health = TryFloat(split[1], 0);
           if (split[0] == "star" || split[0] == "stars")
             level = TryInt(split[1], 0) + 1;
           if (split[0] == "level" || split[0] == "levels")
@@ -122,6 +120,7 @@ namespace DEV {
         var spawns = new List<ZDO>();
         foreach (var obj in spawned) {
           SetLevel(obj, level);
+          SetHealth(obj, health);
           RotateAndScale(obj, spawnRotation, scale);
           var netView = obj.GetComponent<ZNetView>();
           if (netView)

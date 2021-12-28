@@ -29,6 +29,20 @@ Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available com
   - spawn_location X pos=100,100,50: Spawns location X at coordinates 100,50,100 (no snap to the ground).
 - New command "undo_spawn" which reverts commands "spawn_object" and "spawn_locations".
 - New command "redo_spawn" which restored reverted spawns.
+- New command "hammer" that allows placing any object with the hammer tool.
+  - hammer StatueCorqi: Adds corqi statues to the hammer placement.
+	- hammer: Adds the hovered object to the hammer placement. Very useful when bound to key (for example bind LeftAlt hammer).
+- New command "target" that allows modifying the hovered object or all objects within a radius.
+  - target tame: Tames the target.
+  - target wild: Untames the target.
+	- target baby: Prevents growth for an offspring.
+	- target sleep: Makes the target sleep (only works for naturally sleeping creatures).
+	- target info: Prints information about the target.
+	- target remove: Removes the target.
+	- target stars: Sets amount of stars for the target.
+	- target health: Sets target health (and maximum health for creatures).
+	- target wild radius=10: Makes all creatures wild within 10 meters.
+	- target tame id=Grey* radius=100: Tames all greylings, greydwarves, etc. within 100 meters.
 
 
 # Changelog
@@ -36,8 +50,11 @@ Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available com
   - Changed setkey command to work client side.
 	- New command "spawn_object" with rotation and scale.
 	- New command "spawn_location" to spawn points of interests.
-	- New commanad "undo_spawn".
+	- New command "undo_spawn".
 	- New command "redo_spawn".
+	- New command "target".
+	- New command "hammer".
+	- Fixed console spam (should also make the admin check work more reliably).
 - v1.4.0:
 	- Added server side support for event, randomevent, resetkeys, setkey, skiptime, sleep, stopevent.
 - v1.3.0: 

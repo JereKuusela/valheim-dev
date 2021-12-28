@@ -15,13 +15,14 @@ namespace DEV {
   [HarmonyPatch(typeof(Terminal), "InitTerminal")]
   public class SetCommands {
     public static void Postfix() {
-      Commands.ReplaceStartEvent();
-      Commands.AddSpawnLocation();
-      Commands.AddSpawnObject();
-      Commands.AddUndoSpawn();
-      Commands.AddRedoSpawn();
-      Commands.AddManipulate();
-      Commands.AddChangeEquipment();
+      new UndoSpawnCommand();
+      new RedoSpawnCommand();
+      new HammerCommand();
+      new StartEventCommand();
+      new SpawnLocationCommand();
+      new SpawnObjectCommand();
+      new ManipulateCommand();
+      new ChangeEquipmentCommand();
     }
   }
 }

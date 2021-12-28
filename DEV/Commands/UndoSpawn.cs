@@ -2,11 +2,11 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace DEV {
-  public partial class Commands {
+  public class UndoCommand : BaseCommands {
     public static Stack<IEnumerable<ZDO>> Spawns = new Stack<IEnumerable<ZDO>>();
     public static List<string> History = new List<string>();
     public static int HistoryIndex = 0;
-    private static bool Redo = false;
+    protected static bool Redo = false;
     public static void AddToHistory(string command) {
       if (Redo && HistoryIndex < History.Count)
         HistoryIndex++;
@@ -16,8 +16,9 @@ namespace DEV {
         HistoryIndex++;
       }
     }
-
-    public static void AddUndoSpawn() {
+  }
+  public class UndoSpawnCommand : UndoCommand {
+    public UndoSpawnCommand() {
       new Terminal.ConsoleCommand("undo_spawn", "- Removes spawned objects.", delegate (Terminal.ConsoleEventArgs args) {
         if (Spawns.Count == 0)
           return;
@@ -31,8 +32,9 @@ namespace DEV {
         Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "Removing " + toRemove.Count() + " spawned objects", 0, null);
       }, true, false, true, false, false);
     }
-
-    public static void AddRedoSpawn() {
+  }
+  public class RedoSpawnCommand : UndoCommand {
+    public RedoSpawnCommand() {
       new Terminal.ConsoleCommand("redo_spawn", "- Restores undoed spawned objects.", delegate (Terminal.ConsoleEventArgs args) {
         if (HistoryIndex >= History.Count)
           return;
