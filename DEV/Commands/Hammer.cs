@@ -7,10 +7,11 @@ namespace DEV {
     public static void SetHammerOverride(Player player, GameObject obj) {
       if (player != Player.m_localPlayer) return;
       var piece = obj.GetComponent<Piece>();
-      if (!piece)
+      if (!piece) {
         piece = obj.AddComponent<Piece>();
+        piece.m_clipEverything = true;
+      }
       piece.m_allowedInDungeons = true;
-      piece.m_clipEverything = true;
       piece.m_canBeRemoved = true;
 
       Override = obj;

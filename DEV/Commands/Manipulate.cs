@@ -125,7 +125,7 @@ namespace DEV {
           if (operation == "baby")
             output = SetBaby(view.GetComponent<Growup>());
           if (operation == "info")
-            output = GetInfo(view, args.Context);
+            output = GetInfo(view);
           if (operation == "sleep")
             output = MakeSleep(view.GetComponent<MonsterAI>());
           if (operation == "remove") {
@@ -211,7 +211,7 @@ namespace DEV {
       obj.m_nview.GetZDO().Set("sleeping", true);
       return "¤ made to sleep.";
     }
-    private static string GetInfo(ZNetView obj, Terminal terminal) {
+    private static string GetInfo(ZNetView obj) {
       var info = new List<string>();
       info.Add("Id: ¤");
       info.Add("Pos: " + obj.transform.position.ToString("F1"));

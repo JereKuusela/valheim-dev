@@ -55,6 +55,7 @@ Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available com
 	- New command "target".
 	- New command "hammer".
 	- Fixed console spam (should also make the admin check work more reliably).
+	- Fixed console commands not working in the character selection.
 - v1.4.0:
 	- Added server side support for event, randomevent, resetkeys, setkey, skiptime, sleep, stopevent.
 - v1.3.0: 
