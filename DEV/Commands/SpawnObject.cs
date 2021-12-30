@@ -1,16 +1,57 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 namespace DEV {
   public class SpawnObjectCommand : UndoCommand {
-    private static void SetLevel(GameObject obj, float level) {
+    private static void SetLevel(GameObject obj, int level) {
       if (level < 1) return;
       var character = obj.GetComponent<Character>();
       if (character)
-        character.SetLevel((int)level);
+        character.SetLevel(level);
+      var item = obj.GetComponent<ItemDrop>();
+      if (item) {
+        item.m_itemData.m_quality = level;
+        item.m_nview.GetZDO().Set("quality", level);
+      }
+    }
+    private static void SetName(GameObject obj, string name) {
+      if (name == "") return;
+      var tameable = obj.GetComponent<Tameable>();
+      if (tameable)
+        tameable.m_nview.GetZDO().Set("TamedName", name);
+      var item = obj.GetComponent<ItemDrop>();
+      if (item) {
+        item.m_itemData.m_crafterID = -1;
+        item.m_nview.GetZDO().Set("crafterID", -1);
+        item.m_itemData.m_crafterName = name;
+        item.m_nview.GetZDO().Set("crafterName", name);
+      }
+    }
+    private static void SetVariant(GameObject obj, int variant) {
+      if (variant == 0) return;
+      var item = obj.GetComponent<ItemDrop>();
+      if (item) {
+        item.m_itemData.m_variant = variant;
+        item.m_nview.GetZDO().Set("variant", variant);
+      }
+    }
+    private static int SetStack(GameObject obj, int remaining) {
+      if (remaining <= 0) return 0;
+      var item = obj.GetComponent<ItemDrop>();
+      if (!item) return 0;
+      var stack = Math.Min(remaining, item.m_itemData.m_shared.m_maxStackSize);
+      item.m_itemData.m_stack = stack;
+      item.m_nview.GetZDO().Set("stack", stack);
+      return stack;
     }
     private static void SetHealth(GameObject obj, float health) {
+      var item = obj.GetComponent<ItemDrop>();
+      if (item) {
+        item.m_itemData.m_durability = health == 0 ? item.m_itemData.GetMaxDurability() : health;
+        item.m_nview.GetZDO().Set("durability", item.m_itemData.m_durability);
+      }
       if (health == 0) return;
       var character = obj.GetComponent<Character>();
       if (character) {
@@ -51,8 +92,8 @@ namespace DEV {
         if (args.Length < 2) {
           return;
         }
-        string name = args[1];
-        var prefab = GetPrefab(name);
+        string prefabName = args[1];
+        var prefab = GetPrefab(prefabName);
         if (!prefab) return;
 
         var relativeRotation = Quaternion.identity;
@@ -69,12 +110,18 @@ namespace DEV {
         var level = 1;
         var amount = 1;
         var health = 0f;
+        var name = "";
+        var variant = 0;
         var snap = true;
         foreach (var arg in args.Args) {
           var split = arg.Split('=');
           if (split.Length < 2) continue;
-          if (split[0] == "health")
+          if (split[0] == "health" || split[0] == "durability")
             health = TryFloat(split[1], 0);
+          if (split[0] == "name" || split[0] == "crafter")
+            name = split[1];
+          if (split[0] == "variant")
+            variant = TryInt(split[1], 0);
           if (split[0] == "star" || split[0] == "stars")
             level = TryInt(split[1], 0) + 1;
           if (split[0] == "level" || split[0] == "levels")
@@ -110,27 +157,36 @@ namespace DEV {
             basePosition = ParsePositionXZY(split[1], basePosition);
           }
         }
+        var itemDrop = prefab.GetComponent<ItemDrop>();
+        var total = 0;
+        if (itemDrop) {
+          total = amount;
+          amount = (int)Math.Ceiling((double)amount / itemDrop.m_itemData.m_shared.m_maxStackSize);
+        }
         var spawnPosition = basePosition;
         spawnPosition += baseRotation * Vector3.forward * relativePosition.x;
         spawnPosition += baseRotation * Vector3.right * relativePosition.z;
         spawnPosition += baseRotation * Vector3.up * relativePosition.y;
         var spawnRotation = baseRotation * relativeRotation;
         var spawned = DoSpawnObject(prefab, spawnPosition, amount, snap);
-        Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "Spawning object " + name, spawned.Count, null);
+        Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "Spawning object " + prefabName, spawned.Count, null);
         var spawns = new List<ZDO>();
         foreach (var obj in spawned) {
           SetLevel(obj, level);
           SetHealth(obj, health);
+          SetVariant(obj, variant);
+          SetName(obj, name);
+          total -= SetStack(obj, total);
           RotateAndScale(obj, spawnRotation, scale);
           var netView = obj.GetComponent<ZNetView>();
           if (netView)
             spawns.Add(netView.GetZDO());
         }
-        args.Context.AddString("Spawned: " + name + " at " + PrintVectorXZY(spawnPosition));
+        args.Context.AddString("Spawned: " + prefabName + " at " + PrintVectorXZY(spawnPosition));
         Spawns.Push(spawns);
 
         // Disable player based positioning.
-        AddToHistory("spawn_object " + name + " refRot=" + PrintAngleYXZ(baseRotation) + " refPos=" + PrintVectorXZY(basePosition) + " " + string.Join(" ", args.Args.Skip(2)));
+        AddToHistory("spawn_object " + prefabName + " refRot=" + PrintAngleYXZ(baseRotation) + " refPos=" + PrintVectorXZY(basePosition) + " " + string.Join(" ", args.Args.Skip(2)));
       }, true, false, true, false, false, () => ZNetScene.instance.GetPrefabNames());
     }
   }

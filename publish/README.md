@@ -20,8 +20,10 @@ Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available com
   - spawn_object X rot=90: Spawns object X with 90 degree rotation.
 	- spawn_object X rot=90 scale=10: Spawns object X with 90 degree rotation and 10x size.
 	- spawn_object X rot=0,180: Spawns object X upside down.
-	- spawn_object X scale=1,10,1: Spawns object X stretched upwards.
-	- spawn_object X amount=10: Spawns 10 of object X.
+	- spawn_object X scale=1,10,1: Spawns object X stretched upwards (only supported for a few things like trees).
+	- spawn_object X amount=10: Spawns 10 of object X (items are autostacked, 10000 Coins won't crash the game).
+	- spawn_object X level=4 crafter=Hero durability=0: Spawns a broken level 4 of item X with crafter name set to Hero.
+	- spawn_object X variant=1: Spawns a variant 1 of item X (like shields or linen cape).
 - New command "spawn_location" that allows spawning points of interests with a fixed seed and rotation.
   - spawn_location X: Spawns location X at player's position.
   - spawn_location X seed=0 rot=90: Spawns location X with seed 0 and 90 degree rotation.
