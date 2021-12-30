@@ -4,76 +4,24 @@ using System.Linq;
 using UnityEngine;
 
 namespace DEV {
+
+  class SpawnObjectParameters {
+    public Quaternion RelativeRotation = Quaternion.identity;
+    public Quaternion BaseRotation = Quaternion.identity;
+    public Vector3 Scale = Vector3.one;
+    public Vector3 RelativePosition = Vector3.zero;
+    public Vector3 BasePosition = Vector3.zero;
+    public int Level = 1;
+    public int Amount = 1;
+    public float Health = 0f;
+    public string Name = "";
+    public int Variant = 0;
+    public bool Tamed = false;
+    public bool Hunt = false;
+    public bool Snap = true;
+  }
   public class SpawnObjectCommand : UndoCommand {
-    private static void SetLevel(GameObject obj, int level) {
-      if (level < 1) return;
-      var character = obj.GetComponent<Character>();
-      if (character)
-        character.SetLevel(level);
-      var item = obj.GetComponent<ItemDrop>();
-      if (item) {
-        item.m_itemData.m_quality = level;
-        item.m_nview.GetZDO().Set("quality", level);
-      }
-    }
-    private static void SetName(GameObject obj, string name) {
-      if (name == "") return;
-      var tameable = obj.GetComponent<Tameable>();
-      if (tameable)
-        tameable.m_nview.GetZDO().Set("TamedName", name);
-      var item = obj.GetComponent<ItemDrop>();
-      if (item) {
-        item.m_itemData.m_crafterID = -1;
-        item.m_nview.GetZDO().Set("crafterID", -1);
-        item.m_itemData.m_crafterName = name;
-        item.m_nview.GetZDO().Set("crafterName", name);
-      }
-    }
-    private static void SetVariant(GameObject obj, int variant) {
-      if (variant == 0) return;
-      var item = obj.GetComponent<ItemDrop>();
-      if (item) {
-        item.m_itemData.m_variant = variant;
-        item.m_nview.GetZDO().Set("variant", variant);
-      }
-    }
-    private static int SetStack(GameObject obj, int remaining) {
-      if (remaining <= 0) return 0;
-      var item = obj.GetComponent<ItemDrop>();
-      if (!item) return 0;
-      var stack = Math.Min(remaining, item.m_itemData.m_shared.m_maxStackSize);
-      item.m_itemData.m_stack = stack;
-      item.m_nview.GetZDO().Set("stack", stack);
-      return stack;
-    }
-    private static void SetHealth(GameObject obj, float health) {
-      var item = obj.GetComponent<ItemDrop>();
-      if (item) {
-        item.m_itemData.m_durability = health == 0 ? item.m_itemData.GetMaxDurability() : health;
-        item.m_nview.GetZDO().Set("durability", item.m_itemData.m_durability);
-      }
-      if (health == 0) return;
-      var character = obj.GetComponent<Character>();
-      if (character) {
-        character.SetMaxHealth(health);
-        character.SetHealth(character.GetMaxHealth());
-      }
-      var wearNTear = obj.GetComponent<WearNTear>();
-      if (wearNTear) {
-        wearNTear.m_nview.GetZDO().Set("health", health);
-      }
-    }
-    private static void RotateAndScale(GameObject obj, Quaternion rotation, Vector3 scale) {
-      var view = obj.GetComponent<ZNetView>();
-      if (view == null) return;
-      if (rotation != Quaternion.identity) {
-        view.GetZDO().SetRotation(rotation);
-        obj.transform.rotation = rotation;
-      }
-      if (scale != Vector3.one && view.m_syncInitialScale)
-        view.SetLocalScale(scale);
-    }
-    private static List<GameObject> DoSpawnObject(GameObject prefab, Vector3 position, int count, bool snap) {
+    private static List<GameObject> SpawnObject(GameObject prefab, Vector3 position, int count, bool snap) {
       var spawned = new List<GameObject>();
       for (int i = 0; i < count; i++) {
         var spawnPosition = position;
@@ -86,107 +34,134 @@ namespace DEV {
       }
       return spawned;
     }
-
+    private static ZNet.PlayerInfo FindPlayer(string name) {
+      var players = ZNet.instance.m_players;
+      var player = players.FirstOrDefault(player => player.m_name == name);
+      if (!player.m_characterID.IsNone()) return player;
+      player = players.FirstOrDefault(player => player.m_name.ToLower().StartsWith(name.ToLower()));
+      if (!player.m_characterID.IsNone()) return player;
+      return players.FirstOrDefault(player => player.m_name.ToLower().Contains(name.ToLower()));
+    }
+    private static SpawnObjectParameters ParseArgs(Terminal.ConsoleEventArgs args) {
+      var pars = new SpawnObjectParameters();
+      if (Player.m_localPlayer) {
+        pars.BasePosition = Player.m_localPlayer.transform.position;
+        pars.BaseRotation = Player.m_localPlayer.transform.rotation;
+      }
+      var useDefaultRelativePosition = true;
+      foreach (var arg in args.Args) {
+        var split = arg.Split('=');
+        if (split[0] == "tame" || split[0] == "tamed")
+          pars.Tamed = true;
+        if (split[0] == "hunt")
+          pars.Hunt = true;
+        if (split.Length < 2) continue;
+        if (split[0] == "health" || split[0] == "durability")
+          pars.Health = TryFloat(split[1], 0);
+        if (split[0] == "name" || split[0] == "crafter")
+          pars.Name = split[1];
+        if (split[0] == "variant")
+          pars.Variant = TryInt(split[1], 0);
+        if (split[0] == "star" || split[0] == "stars")
+          pars.Level = TryInt(split[1], 0) + 1;
+        if (split[0] == "level" || split[0] == "levels")
+          pars.Level = TryInt(split[1], 1);
+        if (split[0] == "amount")
+          pars.Amount = TryInt(split[1], 1);
+        if (split[0] == "rot" || split[0] == "rotation") {
+          pars.RelativeRotation = ParseAngleYXZ(split[1]);
+        }
+        if (split[0] == "refRot" || split[0] == "refRotation") {
+          pars.BaseRotation = ParseAngleYXZ(split[1], pars.BaseRotation);
+        }
+        if (split[0] == "sc" || split[0] == "scale") {
+          var values = TrySplit(split[1], ",");
+          if (values.Length == 1) {
+            var value = TryParameterFloat(values, 0, 1);
+            pars.Scale = new Vector3(value, value, value);
+          } else {
+            pars.Scale.x = TryParameterFloat(values, 0, 1f);
+            pars.Scale.y = TryParameterFloat(values, 1, 1f);
+            pars.Scale.z = TryParameterFloat(values, 2, 1f);
+          }
+          // Sanity check.
+          if (pars.Scale.x == 0) pars.Scale.x = 1;
+          if (pars.Scale.y == 0) pars.Scale.y = 1;
+          if (pars.Scale.z == 0) pars.Scale.z = 1;
+        }
+        if (split[0] == "pos" || split[0] == "position") {
+          useDefaultRelativePosition = false;
+          pars.RelativePosition = ParsePositionXZY(split[1]);
+          pars.Snap = split[1].Split(',').Length < 3;
+        }
+        if (split[0] == "refPos" || split[0] == "refPosition") {
+          useDefaultRelativePosition = false;
+          if (split[1].Contains(","))
+            pars.BasePosition = ParsePositionXZY(split[1], pars.BasePosition);
+          else {
+            var player = FindPlayer(split[1]);
+            if (player.m_characterID.IsNone()) {
+              args.Context.AddString("Error: Unable to find the player.");
+              return null;
+            } else if (!player.m_publicPosition) {
+              args.Context.AddString("Error: Player doesn't have a public position.");
+              return null;
+            } else {
+              pars.BasePosition = player.m_position;
+            }
+          }
+        }
+      }
+      // For usability, spawn in front of the player if nothing is specified (similar to the base game command).
+      if (useDefaultRelativePosition)
+        pars.RelativePosition = new Vector3(2.0f, 0, 0);
+      return pars;
+    }
+    private static Vector3 GetPosition(Vector3 basePosition, Vector3 relativePosition, Quaternion rotation) {
+      var position = basePosition;
+      position += rotation * Vector3.forward * relativePosition.x;
+      position += rotation * Vector3.right * relativePosition.z;
+      position += rotation * Vector3.up * relativePosition.y;
+      return position;
+    }
+    private static void Manipulate(IEnumerable<GameObject> spawned, SpawnObjectParameters pars) {
+      var rotation = pars.BaseRotation * pars.RelativeRotation;
+      var total = pars.Amount;
+      foreach (var obj in spawned) {
+        Actions.SetLevel(obj, pars.Level);
+        Actions.SetHealth(obj, pars.Health);
+        Actions.SetVariant(obj, pars.Variant);
+        Actions.SetName(obj, pars.Name);
+        Actions.SetHunt(obj, pars.Hunt);
+        Actions.SetTame(obj, pars.Tamed);
+        total -= Actions.SetStack(obj, total);
+        Actions.SetRotation(obj, rotation);
+        Actions.SetScale(obj, pars.Scale);
+      }
+    }
     public SpawnObjectCommand() {
       new Terminal.ConsoleCommand("spawn_object", "[name] (stars=n amount=n pos=x,z,y rot=z,x,z scale=x,y,z refPos=x,z,y refRot=y,x,z health=n) - Spawns an object.", delegate (Terminal.ConsoleEventArgs args) {
-        if (args.Length < 2) {
-          return;
-        }
-        string prefabName = args[1];
+        if (args.Length < 2) return;
+        var prefabName = args[1];
         var prefab = GetPrefab(prefabName);
         if (!prefab) return;
 
-        var relativeRotation = Quaternion.identity;
-        var baseRotation = Quaternion.identity;
-        var scale = Vector3.one;
-        var relativePosition = Vector3.zero;
-        var basePosition = Vector3.zero;
-        var player = Player.m_localPlayer.transform;
-        if (player) {
-          basePosition = player.position;
-          relativePosition = new Vector3(2.0f, 0, 0);
-          baseRotation = player.transform.rotation;
-        }
-        var level = 1;
-        var amount = 1;
-        var health = 0f;
-        var name = "";
-        var variant = 0;
-        var snap = true;
-        foreach (var arg in args.Args) {
-          var split = arg.Split('=');
-          if (split.Length < 2) continue;
-          if (split[0] == "health" || split[0] == "durability")
-            health = TryFloat(split[1], 0);
-          if (split[0] == "name" || split[0] == "crafter")
-            name = split[1];
-          if (split[0] == "variant")
-            variant = TryInt(split[1], 0);
-          if (split[0] == "star" || split[0] == "stars")
-            level = TryInt(split[1], 0) + 1;
-          if (split[0] == "level" || split[0] == "levels")
-            level = TryInt(split[1], 1);
-          if (split[0] == "amount")
-            amount = TryInt(split[1], 1);
-          if (split[0] == "rot" || split[0] == "rotation") {
-            relativeRotation = ParseAngleYXZ(split[1]);
-          }
-          if (split[0] == "refRot" || split[0] == "refRotation") {
-            baseRotation = ParseAngleYXZ(split[1], baseRotation);
-          }
-          if (split[0] == "sc" || split[0] == "scale") {
-            var values = TrySplit(split[1], ",");
-            if (values.Length == 1) {
-              var value = TryParameterFloat(values, 0, 1);
-              scale = new Vector3(value, value, value);
-            } else {
-              scale.x = TryParameterFloat(values, 0, 1f);
-              scale.y = TryParameterFloat(values, 1, 1f);
-              scale.z = TryParameterFloat(values, 2, 1f);
-            }
-            // Sanity check.
-            if (scale.x == 0) scale.x = 1;
-            if (scale.y == 0) scale.y = 1;
-            if (scale.z == 0) scale.z = 1;
-          }
-          if (split[0] == "pos" || split[0] == "position") {
-            relativePosition = ParsePositionXZY(split[1]);
-            snap = split[1].Split(',').Length < 3;
-          }
-          if (split[0] == "refPos" || split[0] == "refPosition") {
-            basePosition = ParsePositionXZY(split[1], basePosition);
-          }
-        }
+        var pars = ParseArgs(args);
+        if (pars == null) return;
         var itemDrop = prefab.GetComponent<ItemDrop>();
-        var total = 0;
-        if (itemDrop) {
-          total = amount;
-          amount = (int)Math.Ceiling((double)amount / itemDrop.m_itemData.m_shared.m_maxStackSize);
-        }
-        var spawnPosition = basePosition;
-        spawnPosition += baseRotation * Vector3.forward * relativePosition.x;
-        spawnPosition += baseRotation * Vector3.right * relativePosition.z;
-        spawnPosition += baseRotation * Vector3.up * relativePosition.y;
-        var spawnRotation = baseRotation * relativeRotation;
-        var spawned = DoSpawnObject(prefab, spawnPosition, amount, snap);
+        var count = pars.Amount;
+        if (itemDrop)
+          count = (int)Math.Ceiling((double)count / itemDrop.m_itemData.m_shared.m_maxStackSize);
+        var position = GetPosition(pars.BasePosition, pars.RelativePosition, pars.BaseRotation);
+        var spawned = SpawnObject(prefab, position, count, pars.Snap);
+        Manipulate(spawned, pars);
         Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "Spawning object " + prefabName, spawned.Count, null);
-        var spawns = new List<ZDO>();
-        foreach (var obj in spawned) {
-          SetLevel(obj, level);
-          SetHealth(obj, health);
-          SetVariant(obj, variant);
-          SetName(obj, name);
-          total -= SetStack(obj, total);
-          RotateAndScale(obj, spawnRotation, scale);
-          var netView = obj.GetComponent<ZNetView>();
-          if (netView)
-            spawns.Add(netView.GetZDO());
-        }
-        args.Context.AddString("Spawned: " + prefabName + " at " + PrintVectorXZY(spawnPosition));
+        args.Context.AddString("Spawned: " + prefabName + " at " + PrintVectorXZY(position));
+        var spawns = spawned.Select(obj => obj.GetComponent<ZNetView>()?.GetZDO()).Where(obj => obj != null).ToList();
         Spawns.Push(spawns);
 
         // Disable player based positioning.
-        AddToHistory("spawn_object " + prefabName + " refRot=" + PrintAngleYXZ(baseRotation) + " refPos=" + PrintVectorXZY(basePosition) + " " + string.Join(" ", args.Args.Skip(2)));
+        AddToHistory("spawn_object " + prefabName + " refRot=" + PrintAngleYXZ(pars.BaseRotation) + " refPos=" + PrintVectorXZY(pars.BasePosition) + " " + string.Join(" ", args.Args.Skip(2)));
       }, true, false, true, false, false, () => ZNetScene.instance.GetPrefabNames());
     }
   }

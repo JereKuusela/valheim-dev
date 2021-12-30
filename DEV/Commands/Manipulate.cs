@@ -129,7 +129,7 @@ namespace DEV {
           if (operation == "sleep")
             output = MakeSleep(view.GetComponent<MonsterAI>());
           if (operation == "remove") {
-            scene.Destroy(view.gameObject);
+            Actions.Remove(view.gameObject);
             output = "Entity ¤ destroyed.";
           }
           var message = output.Replace("¤", Utils.GetPrefabName(view.gameObject));
@@ -151,64 +151,35 @@ namespace DEV {
       "remove"
     };
     private static string ChangeHealth(Character obj, int amount) {
-      if (obj == null) return "Skipped: Not a creature.";
+      if (obj == null) return "Skipped: ¤ is not a creature..";
       var previous = obj.GetMaxHealth();
-      obj.SetMaxHealth(amount);
-      obj.SetHealth(obj.GetMaxHealth());
+      Actions.SetHealth(obj, amount);
       return $"¤ health changed from {previous.ToString("F0")} to {amount.ToString("F0")}.";
     }
     private static string SetStars(Character obj, int amount) {
       if (obj == null) return "Skipped: ¤ is not a creature.";
-      var previous = obj.GetLevel() + 1;
-      obj.SetLevel(amount + 1);
-      return $"¤ stars changed from {previous} to {amount + 1}.";
+      var previous = obj.GetLevel() - 1;
+      Actions.SetLevel(obj.gameObject, amount + 1);
+      return $"¤ stars changed from {previous} to {amount}.";
     }
     private static string SetBaby(Growup obj) {
       if (obj == null) return "Skipped: ¤ is not an offspring.";
-      obj.m_nview.GetZDO().Set("spawntime", DateTime.MaxValue.Ticks);
+      Actions.SetBaby(obj);
       return "¤ growth disabled.";
     }
     private static string MakeTame(Character obj) {
       if (obj == null) return "Skipped: ¤ is not a creature.";
-      obj.SetTamed(true);
-      var AI = obj.GetComponent<BaseAI>();
-      if (AI) {
-        AI.SetAlerted(false);
-        AI.SetHuntPlayer(false);
-        AI.SetPatrolPoint();
-        AI.SetTargetInfo(ZDOID.None);
-        var monster = obj.GetComponent<MonsterAI>();
-        if (monster) {
-          monster.m_targetCreature = null;
-          monster.m_targetStatic = null;
-          monster.SetDespawnInDay(false);
-          monster.SetEventCreature(false);
-        }
-        var animal = obj.GetComponent<AnimalAI>();
-        if (animal) {
-          animal.m_target = null;
-        }
-      }
+      Actions.SetTame(obj, true);
       return "¤ made tame.";
     }
     private static string MakeWild(Character obj) {
       if (obj == null) return "Skipped: ¤ is not a creature.";
-      obj.SetTamed(false);
-      var AI = obj.GetComponent<BaseAI>();
-      if (AI) {
-        AI.SetAlerted(false);
-        AI.SetTargetInfo(ZDOID.None);
-        var monster = obj.GetComponent<MonsterAI>();
-        if (monster) {
-          monster.m_targetCreature = null;
-          monster.m_targetStatic = null;
-        }
-      }
+      Actions.SetTame(obj, false);
       return "¤ made wild.";
     }
     private static string MakeSleep(MonsterAI obj) {
       if (obj == null) return "Skipped: ¤ is not a creature.";
-      obj.m_nview.GetZDO().Set("sleeping", true);
+      Actions.SetSleeping(obj, true);
       return "¤ made to sleep.";
     }
     private static string GetInfo(ZNetView obj) {
