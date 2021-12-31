@@ -4,6 +4,7 @@ using UnityEngine;
 namespace DEV {
   public class HammerCommand : BaseCommands {
     private static GameObject Override = null;
+    public static bool ApplyRotation = false;
     public static void SetHammerOverride(Player player, GameObject obj) {
       if (player != Player.m_localPlayer) return;
       var piece = obj.GetComponent<Piece>();
@@ -35,12 +36,14 @@ namespace DEV {
         if (args.Length > 1) {
           string name = args[1];
           var prefab = GetPrefab(name);
+          ApplyRotation = false;
           if (prefab)
             SetHammerOverride(Player.m_localPlayer, prefab);
 
         } else {
           var view = GetHovered(args);
           if (!view) return;
+          ApplyRotation = true;
           SetHammerOverride(Player.m_localPlayer, view.gameObject);
         }
       }, true, false, true, false, false, () => ZNetScene.instance.GetPrefabNames());
@@ -67,12 +70,12 @@ namespace DEV {
     }
   }
 
-  ///<summary>Disables problematic scripts.</summary>
+  ///<summary>Disables problematic scripts and sets initial rotation.</summary>
   [HarmonyPatch(typeof(Player), "SetupPlacementGhost")]
   public class SetupPlacementGhost {
     public static void Postfix(Player __instance) {
       var obj = __instance.m_placementGhost;
-      if (!obj) return;
+      if (!obj || !HammerCommand.GetHammerOverride()) return;
       var baseAI = obj.GetComponent<BaseAI>();
       var monsterAI = obj.GetComponent<MonsterAI>();
       var humanoid = obj.GetComponent<Humanoid>();
@@ -81,6 +84,13 @@ namespace DEV {
       if (monsterAI) monsterAI.enabled = false;
       if (humanoid) humanoid.enabled = false;
       if (character) character.enabled = false;
+      if (HammerCommand.ApplyRotation) {
+        var rotation = obj.transform.rotation;
+        __instance.m_placeRotation = Mathf.RoundToInt(rotation.eulerAngles.y / 22.5f);
+        var gizmo = GameObject.Find("GizmoRoot(Clone)");
+        if (gizmo)
+          gizmo.transform.rotation = rotation;
+      }
     }
   }
   ///<summary>Prevents script error by creature awake functions trying to do ZNetView stuff.</summary>

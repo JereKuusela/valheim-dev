@@ -33,7 +33,7 @@ Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available com
 - New command "redo_spawn" which restored reverted spawns.
 - New command "hammer" that allows placing any object with the hammer tool.
   - hammer StatueCorqi: Adds corqi statues to the hammer placement.
-	- hammer: Adds the hovered object to the hammer placement. Very useful when bound to key (for example bind LeftAlt hammer).
+	- hammer: Adds the hovered object to the hammer placement. Very useful when bound to key (for example bind LeftAlt hammer). Also automatically rotates the hammer selection (not fully accurate as limited by the rotate steps, also works with the Gizmo mod).
 - New command "target" that allows modifying the hovered object or all objects within a radius.
   - target tame: Tames the target.
   - target wild: Untames the target.

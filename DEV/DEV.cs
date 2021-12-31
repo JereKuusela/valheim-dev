@@ -4,7 +4,8 @@ using Service;
 
 namespace DEV {
   [BepInPlugin("valheim.jerekuusela.dev", "DEV", "1.5.0.0")]
-  public class ESP : BaseUnityPlugin {
+  [BepInDependency("m3to.mods.GizmoReloaded", BepInDependency.DependencyFlags.SoftDependency)]
+  public class DEV : BaseUnityPlugin {
     public void Awake() {
       Harmony harmony = new Harmony("valheim.jerekuusela.dev");
       harmony.PatchAll();

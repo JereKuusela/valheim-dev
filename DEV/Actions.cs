@@ -84,6 +84,7 @@ namespace DEV {
     public static void SetHealth(WearNTear obj, float health) {
       if (!obj) return;
       obj.m_nview.GetZDO().Set("health", health);
+      obj.m_health = health;
     }
     public static void SetHealth(ItemDrop obj, float health) {
       if (!obj) return;
