@@ -36,6 +36,7 @@ namespace DEV {
       new Terminal.ConsoleCommand("move", "[x,z,y] [player/object/world] - Moves hovered object relative to selected origin (relative to player if not given).", delegate (Terminal.ConsoleEventArgs args) {
         var view = GetHovered(args);
         if (!view) return;
+        view.ClaimOwnership();
         var zdo = view.GetZDO();
         var position = view.transform.position;
         var relative = ParsePositionXZY(args.Args[1]);
@@ -50,10 +51,11 @@ namespace DEV {
         position += rotation * Vector3.up * relative.y;
         zdo.SetPosition(position);
         view.transform.position = position;
-      }, true, false, true, false, false);
+      }, true, true);
       new Terminal.ConsoleCommand("rotate", "[x,y,z/reset] [player/object/world] - Rotates hovered object around a given axis relative to selected origin (relative to player y axis if not given).", delegate (Terminal.ConsoleEventArgs args) {
         var view = GetHovered(args);
         if (!view) return;
+        view.ClaimOwnership();
         var zdo = view.GetZDO();
         if (args[1].ToLower() == "reset") {
           zdo.SetRotation(Quaternion.identity);
@@ -77,29 +79,25 @@ namespace DEV {
       new Terminal.ConsoleCommand("scale", "[x,z,y] - Scales hovered object.", delegate (Terminal.ConsoleEventArgs args) {
         var view = GetHovered(args);
         if (!view) return;
+        view.ClaimOwnership();
         var scale = ParsePositionXZY(args.Args[1], Vector3.one);
         if (view.m_syncInitialScale)
           view.SetLocalScale(scale);
       }, true, false, true, false, false);
-      new Terminal.ConsoleCommand("target", "[operation] [amount] [id=*] [radius=0] - Modifies the targeted object.", delegate (Terminal.ConsoleEventArgs args) {
+      new Terminal.ConsoleCommand("target", "[operation=value] [id=*] [radius=0] - Modifies the targeted object.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) return;
-        var operation = args[1];
-        if (!Operations.Contains(operation)) {
+        var pars = ParseArgs(args);
+        if (!Operations.Contains(pars.Operation)) {
           AddMessage(args.Context, "Error: Invalid operation.");
           return;
         }
-        var radiusArg = args.Args.FirstOrDefault(arg => arg.StartsWith("radius="));
-        var idArg = args.Args.FirstOrDefault(arg => arg.StartsWith("id="));
-        var id = idArg == null ? "*" : TryParameterString(idArg.Split('='), 1, "*");
         IEnumerable<ZDO> zdos;
-        if (radiusArg != null) {
-          var radius = TryParameterFloat(radiusArg.Split('='), 1, 100f);
-          radius = Math.Min(radius, 100f);
-          zdos = GetZDOs(id, radius);
+        if (pars.Radius > 0f) {
+          zdos = GetZDOs(pars.Id, pars.Radius);
         } else {
           var view = GetHovered(args);
           if (!view) return;
-          if (!GetPrefabs(id).Contains(view.GetZDO().GetPrefab())) {
+          if (!GetPrefabs(pars.Id).Contains(view.GetZDO().GetPrefab())) {
             AddMessage(args.Context, "Skipped: ¤ has invalid id.");
             return;
           }
@@ -112,33 +110,52 @@ namespace DEV {
             args.Context.AddString("Skipped: ¤ is not loaded.");
             continue;
           }
+          view.ClaimOwnership();
           var character = view.GetComponent<Character>();
           var output = "Error: Invalid operation.";
-          if (operation == "health")
+          if (pars.Operation == "health")
             output = ChangeHealth(character, args.TryParameterInt(2, 1));
-          if (operation == "stars")
+          if (pars.Operation == "stars")
             output = SetStars(character, args.TryParameterInt(2, 1));
-          if (operation == "tame")
+          if (pars.Operation == "tame")
             output = MakeTame(character);
-          if (operation == "wild")
+          if (pars.Operation == "wild")
             output = MakeWild(character);
-          if (operation == "baby")
+          if (pars.Operation == "baby")
             output = SetBaby(view.GetComponent<Growup>());
-          if (operation == "info")
+          if (pars.Operation == "info")
             output = GetInfo(view);
-          if (operation == "sleep")
+          if (pars.Operation == "sleep")
             output = MakeSleep(view.GetComponent<MonsterAI>());
-          if (operation == "remove") {
+          if (pars.Operation == "visual")
+            output = SetVisual(view.GetComponent<ItemStand>(), TryParameterString(args.Args, 2), TryParameterInt(args.Args, 3, 0));
+          if (pars.Operation == "remove") {
             Actions.Remove(view.gameObject);
             output = "Entity ¤ destroyed.";
           }
           var message = output.Replace("¤", Utils.GetPrefabName(view.gameObject));
-          if (radiusArg == null)
+          if (pars.Radius == 0)
             AddMessage(args.Context, message);
           else
             args.Context.AddString(message);
         }
-      }, true, false, true, false, false, () => Operations);
+      }, true, true, optionsFetcher: () => Operations);
+    }
+    private static TargetParameters ParseArgs(Terminal.ConsoleEventArgs args) {
+      var parameters = new TargetParameters();
+      foreach (var arg in args.Args) {
+        var split = arg.Split('=');
+        if (Operations.Contains(split[0]))
+          parameters.Operation = split[0];
+        if (split.Length < 2) continue;
+        if (split[0] == "radius")
+          parameters.Radius = Math.Min(TryFloat(split[1], 100f), 100f);
+        if (split[0] == "id")
+          parameters.Id = split[1];
+        if (Operations.Contains(split[0]))
+          parameters.Value = split[1];
+      }
+      return parameters;
     }
     private static List<string> Operations = new List<string>(){
       "health",
@@ -148,6 +165,7 @@ namespace DEV {
       "tame",
       "info",
       "sleep",
+      "visual",
       "remove"
     };
     private static string ChangeHealth(Character obj, int amount) {
@@ -182,6 +200,11 @@ namespace DEV {
       Actions.SetSleeping(obj, true);
       return "¤ made to sleep.";
     }
+    private static string SetVisual(ItemStand obj, string item, int variant) {
+      if (obj == null) return "Skipped: ¤ is not an item stand.";
+      Actions.SetVisual(obj, item, variant);
+      return $"Visual of ¤ set to {item} with variant {variant} .";
+    }
     private static string GetInfo(ZNetView obj) {
       var info = new List<string>();
       info.Add("Id: ¤");
@@ -197,5 +220,12 @@ namespace DEV {
       }
       return string.Join(", ", info);
     }
+  }
+
+  public class TargetParameters {
+    public float Radius = 0f;
+    public string Id = "*";
+    public string Operation = "";
+    public string Value = "";
   }
 }

@@ -1,7 +1,6 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using HarmonyLib;
-using System;
 
 namespace DEV {
   public static class CommandParameters {
@@ -21,6 +20,7 @@ namespace DEV {
       });
     }
   }
+  /*
   [HarmonyPatch(typeof(Terminal.ConsoleCommand), "GetTabOptions")]
   public class UseParameterSpecificOptions {
     private string CachedCommand = "";
@@ -40,12 +40,12 @@ namespace DEV {
     }
   }
 
+    [HarmonyPatch(typeof(Terminal), "tabCycle")]
+    public class UseParameterSpecificAutocomplete {
+      public void Prefix(Terminal __instance, ref string word) {
+        word = __instance.m_input.text.Split(' ').Last();
+      }
 
-  [HarmonyPatch(typeof(Terminal), "tabCycle")]
-  public class UseParameterSpecificAutocomplete {
-    public void Prefix(Terminal __instance, ref string word) {
-      word = __instance.m_input.text.Split(' ').Last();
     }
-
-  }
+    */
 }

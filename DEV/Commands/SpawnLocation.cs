@@ -72,7 +72,7 @@ namespace DEV {
         // Disable player based positioning.
         AddToHistory("spawn_location " + name + " refRot=" + baseAngle + " refPos=" + PrintVectorXZY(basePosition) + " seed=" + seed + " rot=" + relativePosition + " " + string.Join(" ", args.Args.Skip(2)));
 
-      }, true, false, true, false, false, () => ZoneSystem.instance.m_locations.Select(location => location.m_prefabName).ToList());
+      }, true, true, optionsFetcher: () => ZoneSystem.instance.m_locations.Select(location => location.m_prefabName).ToList());
     }
 
     ///<summary>Catch new zdos for undo.</summary>

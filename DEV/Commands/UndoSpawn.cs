@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Service;
 
 namespace DEV {
   public class UndoCommand : BaseCommands {
@@ -30,7 +31,7 @@ namespace DEV {
         if (HistoryIndex > 0)
           HistoryIndex--;
         Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "Removing " + toRemove.Count() + " spawned objects", 0, null);
-      }, true, false, true, false, false);
+      }, true, true);
     }
   }
   public class RedoSpawnCommand : UndoCommand {
@@ -41,7 +42,15 @@ namespace DEV {
         Redo = true;
         Console.instance.TryRunCommand(History[HistoryIndex]);
         Redo = false;
-      }, true, false, true, false, false);
+      }, true, true);
+      new Terminal.ConsoleCommand("dev_undo", "Reverts some commands.", delegate (Terminal.ConsoleEventArgs args) {
+        if (!Player.m_localPlayer) return;
+        if (!UndoManager.Undo()) AddMessage(args.Context, "Nothing to undo.");
+      }, true, true);
+      new Terminal.ConsoleCommand("dev_redo", "Restores reverted commands.", delegate (Terminal.ConsoleEventArgs args) {
+        if (!Player.m_localPlayer) return;
+        if (!UndoManager.Redo()) AddMessage(args.Context, "Nothing to redo.");
+      }, true, true);
     }
   }
 }

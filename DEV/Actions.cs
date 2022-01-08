@@ -144,5 +144,14 @@ namespace DEV {
       if (scale != Vector3.one && view.m_syncInitialScale)
         view.SetLocalScale(scale);
     }
+    public static void SetVisual(GameObject obj, string item, int variant) {
+      SetVisual(obj.GetComponent<ItemStand>(), item, variant);
+    }
+    public static void SetVisual(ItemStand obj, string item, int variant) {
+      if (!obj) return;
+      obj.m_nview.GetZDO().Set("item", item);
+      obj.m_nview.GetZDO().Set("variant", variant);
+      obj.UpdateVisual();
+    }
   }
 }

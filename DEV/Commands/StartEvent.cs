@@ -22,7 +22,7 @@ namespace DEV {
         var parameters = AddPlayerPosXZ(args.Args, 2);
         if (ZNet.instance.IsServer()) DoStartEvent(parameters, args.Context);
         else SendCommand(parameters);
-      }, true, false, true, false, false, () => RandEventSystem.instance.m_events.Select(ev => ev.m_name).ToList());
+      }, true, true, optionsFetcher: () => RandEventSystem.instance.m_events.Select(ev => ev.m_name).ToList());
     }
   }
 }

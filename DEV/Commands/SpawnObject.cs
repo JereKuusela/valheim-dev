@@ -162,7 +162,7 @@ namespace DEV {
 
         // Disable player based positioning.
         AddToHistory("spawn_object " + prefabName + " refRot=" + PrintAngleYXZ(pars.BaseRotation) + " refPos=" + PrintVectorXZY(pars.BasePosition) + " " + string.Join(" ", args.Args.Skip(2)));
-      }, true, false, true, false, false, () => ZNetScene.instance.GetPrefabNames());
+      }, true, true, optionsFetcher: () => ZNetScene.instance.GetPrefabNames());
     }
   }
 }

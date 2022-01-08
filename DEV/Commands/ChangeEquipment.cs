@@ -44,27 +44,27 @@ namespace DEV {
         if (equipment.m_helmet)
           args.Context.AddString("Helmet: " + equipment.m_helmetItem);
         args.Context.AddString("Beard: " + equipment.m_beardItem);
-      }, true, false, true, false, false, () => ZNetScene.instance.GetPrefabNames());
+      }, true, true, optionsFetcher: () => ZNetScene.instance.GetPrefabNames());
       new Terminal.ConsoleCommand("change_helmet", "[item name] - Changes visual helmet of hovered creature.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) return;
         if (Player.m_localPlayer == null) return;
         ChangeHelmet(Player.m_localPlayer.GetHoverCreature(), args[1]);
-      }, true, false, true, false, false, () => ZNetScene.instance.GetPrefabNames());
+      }, true, true, optionsFetcher: () => ZNetScene.instance.GetPrefabNames());
       new Terminal.ConsoleCommand("change_left_hand", "[item name] [variant = 0] - Changes visual let hand item of hovered creature.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) return;
         if (Player.m_localPlayer == null) return;
         ChangeLeftHand(Player.m_localPlayer.GetHoverCreature(), args[1], TryParameterInt(args.Args, 2, 0));
-      }, true, false, true, false, false, () => ZNetScene.instance.GetPrefabNames());
+      }, true, true, optionsFetcher: () => ZNetScene.instance.GetPrefabNames());
       new Terminal.ConsoleCommand("change_right_hand", "[item name] - Changes own visual left hand item.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) return;
         if (Player.m_localPlayer == null) return;
         ChangeRightHand(Player.m_localPlayer.GetHoverCreature(), args[1]);
-      }, true, false, true, false, false, () => ZNetScene.instance.GetPrefabNames());
+      }, true, true, optionsFetcher: () => ZNetScene.instance.GetPrefabNames());
       new Terminal.ConsoleCommand("change_chest", "[item name] - Changes visual chest armor of hovered creature..", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) return;
         if (Player.m_localPlayer == null) return;
         ChangeChest(Player.m_localPlayer.GetHoverCreature(), args[1]);
-      }, true, false, true, false, false, () => ZNetScene.instance.GetPrefabNames());
+      }, true, true, optionsFetcher: () => ZNetScene.instance.GetPrefabNames());
     }
   }
 }
