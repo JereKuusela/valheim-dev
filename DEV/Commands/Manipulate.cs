@@ -114,9 +114,9 @@ namespace DEV {
           var character = view.GetComponent<Character>();
           var output = "Error: Invalid operation.";
           if (pars.Operation == "health")
-            output = ChangeHealth(character, args.TryParameterInt(2, 1));
+            output = ChangeHealth(character, TryInt(pars.Value));
           if (pars.Operation == "stars")
-            output = SetStars(character, args.TryParameterInt(2, 1));
+            output = SetStars(character, TryInt(pars.Value));
           if (pars.Operation == "tame")
             output = MakeTame(character);
           if (pars.Operation == "wild")
@@ -128,7 +128,7 @@ namespace DEV {
           if (pars.Operation == "sleep")
             output = MakeSleep(view.GetComponent<MonsterAI>());
           if (pars.Operation == "visual")
-            output = SetVisual(view.GetComponent<ItemStand>(), TryParameterString(args.Args, 2), TryParameterInt(args.Args, 3, 0));
+            output = SetVisual(view.GetComponent<ItemStand>(), TryParameterString(pars.Value.Split('|'), 0), TryParameterInt(pars.Value.Split('|'), 1, 0));
           if (pars.Operation == "remove") {
             Actions.Remove(view.gameObject);
             output = "Entity ¤ destroyed.";

@@ -53,6 +53,8 @@ namespace DEV {
           parameters.BlockCheck = true;
         if (split[0] == "level")
           parameters.Level = height;
+        if (TryInt(split[0], -1) != -1)
+          parameters.Radius = TryInt(split[0], -1);
         if (split.Length < 2) continue;
         if (split[0] == "radius")
           parameters.Radius = Mathf.Min(64f, TryFloat(split[1], 0f));

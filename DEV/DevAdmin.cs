@@ -1,5 +1,8 @@
+using System;
+using System.Linq;
 using HarmonyLib;
 using Service;
+using UnityEngine;
 
 namespace DEV {
 
@@ -29,7 +32,28 @@ namespace DEV {
     private static bool IsServerSide(string command) {
       return command == "randomevent" || command == "stopevent" || command == "genloc" || command == "sleep" || command == "skiptime";
     }
-    public static bool Prefix(Terminal __instance, string text) {
+    ///<summary>Only executes the command when specified keys are down.</summary>
+    private static bool CheckModifierKeys(string command) {
+      if (!command.Contains("keys=")) return true;
+      var args = command.Split(' ');
+      var arg = args.First(arg => arg.StartsWith("keys=")).Split('=');
+      if (arg.Length < 2) return true;
+      var keys = arg[1].Split(',');
+      foreach (var key in keys) {
+        if (Enum.TryParse<KeyCode>(key, true, out var keyCode)) {
+          if (!Input.GetKey(keyCode)) return false;
+        }
+      }
+      return true;
+    }
+    private static string RemoveModifierKeys(string command) =>
+      string.Join(" ", command.Split(' ').Where(arg => !arg.StartsWith("keys=")));
+
+    public static bool Prefix(Terminal __instance, ref string text) {
+      if (!text.StartsWith("bind ")) {
+        if (!CheckModifierKeys(text)) return false;
+        text = RemoveModifierKeys(text);
+      }
       string[] array = text.Split(' ');
       if (ZNet.instance && !ZNet.instance.IsServer() && IsServerSide(array[0])) {
         BaseCommands.SendCommand(text);

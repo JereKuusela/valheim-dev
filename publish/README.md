@@ -15,6 +15,11 @@ Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available com
 
 # Features
 
+- Key bindings support modifier keys with "keys=" parameter. For example:
+	- bind j god: Toggles god mode when pressing J.
+	- bind j god keys=leftalt: Toggles god mode when pressing J while left alt is down.
+	- bind j god keys=leftalt,h: Toggles god mode when pressing J while both left alt and h are down.
+- Adds coordinates of the cursor to the big map window. Can be disabled from the config.
 - Adds optional coordinates to the event command to support dedicated server running the command.
 - New command "spawn_object" that parameters for position, rotation and scale (not supported for all objects). Also automatically snaps to the ground. Position and rotation are relative to the player. Parameters refPos and refRot can be used to override it.
   - spawn_object X rot=90: Spawns object X with 90 degree rotation.
