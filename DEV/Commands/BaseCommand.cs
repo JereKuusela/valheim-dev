@@ -73,6 +73,14 @@ namespace DEV {
         parameters.Add(pos.z.ToString(CultureInfo.InvariantCulture));
       return parameters.ToArray();
     }
+    public static ZNet.PlayerInfo FindPlayer(string name) {
+      var players = ZNet.instance.m_players;
+      var player = players.FirstOrDefault(player => player.m_name == name);
+      if (!player.m_characterID.IsNone()) return player;
+      player = players.FirstOrDefault(player => player.m_name.ToLower().StartsWith(name.ToLower()));
+      if (!player.m_characterID.IsNone()) return player;
+      return players.FirstOrDefault(player => player.m_name.ToLower().Contains(name.ToLower()));
+    }
 
     public static Quaternion ParseAngleYXZ(string arg) => ParseAngleYXZ(arg, Quaternion.identity);
     public static Quaternion ParseAngleYXZ(string arg, Quaternion defaultValue) {

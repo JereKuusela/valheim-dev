@@ -34,14 +34,7 @@ namespace DEV {
       }
       return spawned;
     }
-    private static ZNet.PlayerInfo FindPlayer(string name) {
-      var players = ZNet.instance.m_players;
-      var player = players.FirstOrDefault(player => player.m_name == name);
-      if (!player.m_characterID.IsNone()) return player;
-      player = players.FirstOrDefault(player => player.m_name.ToLower().StartsWith(name.ToLower()));
-      if (!player.m_characterID.IsNone()) return player;
-      return players.FirstOrDefault(player => player.m_name.ToLower().Contains(name.ToLower()));
-    }
+
     private static SpawnObjectParameters ParseArgs(Terminal.ConsoleEventArgs args) {
       var pars = new SpawnObjectParameters();
       if (Player.m_localPlayer) {

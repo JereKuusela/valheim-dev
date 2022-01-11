@@ -40,8 +40,16 @@ namespace DEV {
       if (arg.Length < 2) return true;
       var keys = arg[1].Split(',');
       foreach (var key in keys) {
-        if (Enum.TryParse<KeyCode>(key, true, out var keyCode)) {
-          if (!Input.GetKey(keyCode)) return false;
+        if (key.StartsWith("-")) {
+          if (Enum.TryParse<KeyCode>(key.Substring(1), true, out var keyCode)) {
+            if (Input.GetKey(keyCode)) return false;
+          }
+
+        } else {
+          if (Enum.TryParse<KeyCode>(key, true, out var keyCode)) {
+            if (!Input.GetKey(keyCode)) return false;
+          }
+
         }
       }
       return true;

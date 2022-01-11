@@ -18,7 +18,7 @@ namespace DEV {
 
   /// <summary>Registers the server to accept resetkeys message (like clients do).</summary>
   [HarmonyPatch(typeof(ZoneSystem), "Start")]
-  public class Faa {
+  public class RegisterResetKeys {
     public static void Postfix(ZoneSystem __instance) {
       if (ZNet.instance.IsServer()) {
         ZRoutedRpc.instance.Register<List<string>>("GlobalKeys", new Action<long, List<string>>(__instance.RPC_GlobalKeys));
