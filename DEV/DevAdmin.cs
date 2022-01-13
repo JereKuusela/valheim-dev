@@ -24,8 +24,6 @@ namespace DEV {
     }
   }
 
-
-
   // Replace devcommands check with a custom one.
   [HarmonyPatch(typeof(Terminal), "TryRunCommand")]
   public class TryRunCommand {
