@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using HarmonyLib;
 
 namespace DEV {
   public static class CommandParameters {
@@ -20,25 +21,26 @@ namespace DEV {
       });
     }
   }
+
   /*
-  [HarmonyPatch(typeof(Terminal.ConsoleCommand), "GetTabOptions")]
-  public class UseParameterSpecificOptions {
-    private string CachedCommand = "";
-    private Dictionary<int, List<string>> Options = null;
-    private string GetInput() => Console.instance.m_input.text == "" ? Chat.instance.m_input.text : Console.instance.m_input.text;
-    private int GetInputLength() => GetInput().Split(' ').Length;
-    public bool Prefix(Terminal.ConsoleCommand __instance, ref List<string> __result) {
-      if (__instance.Command != CachedCommand) Options = new Dictionary<int, List<string>>();
-      CachedCommand = __instance.Command;
-      var index = GetInputLength();
-      if (index == 0) return true;
-      index -= 1; // Ignore the command name.
-      if (!Options.ContainsKey(index))
-        Options[index] = CommandParameters.Fetch(CachedCommand, index);
-      __result = Options[index];
-      return false;
+    [HarmonyPatch(typeof(Terminal.ConsoleCommand), "GetTabOptions")]
+    public class UseParameterSpecificOptions {
+      private string CachedCommand = "";
+      private Dictionary<int, List<string>> Options = null;
+      private string GetInput() => Console.instance.m_input.text == "" ? Chat.instance.m_input.text : Console.instance.m_input.text;
+      private int GetInputLength() => GetInput().Split(' ').Length;
+      public bool Prefix(Terminal.ConsoleCommand __instance, ref List<string> __result) {
+        if (__instance.Command != CachedCommand) Options = new Dictionary<int, List<string>>();
+        CachedCommand = __instance.Command;
+        var index = GetInputLength();
+        if (index == 0) return true;
+        index -= 1; // Ignore the command name.
+        if (!Options.ContainsKey(index))
+          Options[index] = CommandParameters.Fetch(CachedCommand, index);
+        __result = Options[index];
+        return false;
+      }
     }
-  }
 
     [HarmonyPatch(typeof(Terminal), "tabCycle")]
     public class UseParameterSpecificAutocomplete {
@@ -47,5 +49,5 @@ namespace DEV {
       }
 
     }
-    */
+  */
 }

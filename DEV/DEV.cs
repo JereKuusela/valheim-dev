@@ -20,15 +20,16 @@ namespace DEV {
   public class SetCommands {
     public static void Postfix() {
       new ConfigCommand();
+      new StartEventCommand();
+      new PosCommand();
       new UndoSpawnCommand();
       new RedoSpawnCommand();
-      new StartEventCommand();
       new SpawnLocationCommand();
       new SpawnObjectCommand();
       new ManipulateCommand();
       new ChangeEquipmentCommand();
       new TerrainCommand();
-      new PosCommand();
+      //CommandParameters.RegisterBaseGameFetchers();
     }
   }
 }

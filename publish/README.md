@@ -2,7 +2,7 @@
 
 This client side mod allows devcommands for server admins.
 
-Some commands require also installing the mod on the server (event, randomevent, resetkeys, skiptime, sleep, stopevent).
+Some features and commands require also installing the mod on the server (event, randomevent, resetkeys, skiptime, sleep, stopevent).
 
 # Manual Installation:
 
@@ -15,15 +15,38 @@ Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available com
 
 # Features
 
-- Key bindings support modifier keys with "keys=" parameter. For example:
-	- bind j god: Toggles god mode when pressing J.
-	- bind j god keys=leftalt: Toggles god mode when pressing J while left alt is down.
-	- bind j god keys=-leftalt: Toggles god mode when pressing J while left alt is not down.
-	- bind j god keys=leftalt,h: Toggles god mode when pressing J while both left alt and h are down.
-- Adds coordinates of the cursor to the big map window. Can be disabled from the config.
-- Adds position information of "private players" to the minimap.
-- Command `pos`: Adds an optional parameter to print position of any player.
-- Adds optional coordinates to the event command to support dedicated server running the command.
+## Improved key bindings
+
+`bind` command supports a new named parameter `keys=` that allows configuring which keys must or must not be down when pressing the bound key ([key codes](https://docs.unity3d.com/ScriptReference/KeyCode.html)).
+
+For example:
+
+- `bind j god`: Toggles god mode when pressing J.
+- `bind j god keys=leftalt`: Toggles god mode when pressing J while left alt is down.
+- `bind j god keys=-leftalt`: Toggles god mode when pressing J while left alt is not down.
+- `bind j god keys=leftalt,h`: Toggles god mode when pressing J while both left alt and h are down.
+
+After removing this mod, these binds very likely stop working or lead to unexpected behavior. Recommended to clear all binds with the `resetbinds` command.
+
+## Enhanced commands
+
+- `pos` command allows getting the position of any player.
+	- `pos`: Returns your position.
+	- `pos jay`: Returns the position of a player named Jay,Heyjay or whatever is the closest match.
+- `event` command allows setting the event coordinates.
+	- `event army_eikthyr`: Starts an event at your position.
+	- `event army_eikthyr 100 -100`: Starts an event at coordinates 100,-100.
+
+## Enhanced map
+
+The large map shows coordinates of the cursor when hovered. This can be useful for any commands that require coordinates. The feature can be toggled with `dev_config map_coordinates` command.
+
+If this mod is also installed on the server, admins will also receive position of players who have set their position as private.
+
+These players are shown on the map with a ticked off icon and will also be available for the `pos` command.
+
+The feature can be toggled with `dev_config private_players` command or by editing the config.
+
 - New command "spawn_object" that parameters for position, rotation and scale (not supported for all objects). Also automatically snaps to the ground. Position and rotation are relative to the player. Parameters refPos and refRot can be used to override it.
   - spawn_object X rot=90: Spawns object X with 90 degree rotation.
 	- spawn_object X rot=90 scale=10: Spawns object X with 90 degree rotation and 10x size.
@@ -52,25 +75,30 @@ Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available com
 	- target tame id=Grey* radius=100: Tames all greylings, greydwarves, etc. within 100 meters.
 
 
+
 # Changelog
-- v1.5.0:
-  - Changed setkey command to work client side.
-	- New command "spawn_object" with rotation and scale.
-	- New command "spawn_location" to spawn points of interests.
-	- New command "undo_spawn".
-	- New command "redo_spawn".
-	- New command "target".
-	- New command "hammer".
-	- Fixed console spam (should also make the admin check work more reliably).
-	- Fixed console commands not working in the character selection.
-- v1.4.0:
-	- Added server side support for event, randomevent, resetkeys, setkey, skiptime, sleep, stopevent.
-- v1.3.0: 
-	- Refactored the code to hopefully make it work more reliably.
-	- Added autocomplete to chat window also for cheat commands.
-- v1.2.0: 
-	- Added support for Hearth and Home update.
-- v1.1.0: 
-	- Improved admin check
-- v1.0.0: 
-	- Initial release
+
+- v1.5:
+	- Adds modifier key support to key bindings.
+	- Adds new parameter to the pos command (allows getting position of any player).
+	- Adds support for showing private player positions (requires also server side).
+	- Changes setkey command to work client side.
+	- Fixes console spam.
+	- Fixes console commands not working in the character selection.
+	- Attempts to further improve the admin check reliability.
+
+- v1.4:
+	- Adds server side support for event, randomevent, resetkeys, setkey, skiptime, sleep, stopevent.
+
+- v1.3: 
+	- Refactores the code to hopefully make it work more reliably.
+	- Adds autocomplete to chat window also for cheat commands.
+
+- v1.2: 
+	- Adds support for Hearth and Home update.
+
+- v1.1: 
+	- Improves admin check.
+
+- v1.0: 
+	- Initial release.
