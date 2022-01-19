@@ -80,7 +80,7 @@ namespace DEV {
         var view = GetHovered(args);
         if (!view) return;
         view.ClaimOwnership();
-        var scale = ParsePositionXZY(args.Args[1], Vector3.one);
+        var scale = ParseScale(args.Args[1]);
         if (view.m_syncInitialScale)
           view.SetLocalScale(scale);
       }, true, false, true, false, false);
@@ -129,6 +129,20 @@ namespace DEV {
             output = MakeSleep(view.GetComponent<MonsterAI>());
           if (pars.Operation == "visual")
             output = SetVisual(view.GetComponent<ItemStand>(), TryParameterString(pars.Value.Split('|'), 0), TryParameterInt(pars.Value.Split('|'), 1, 0));
+          if (pars.Operation == "helmet")
+            output = SetHelmet(character, TryParameterString(pars.Value.Split('|'), 0), TryParameterInt(pars.Value.Split('|'), 1, 0));
+          if (pars.Operation == "left_hand")
+            output = SetLeftHand(character, TryParameterString(pars.Value.Split('|'), 0), TryParameterInt(pars.Value.Split('|'), 1, 0));
+          if (pars.Operation == "right_hand")
+            output = SetRightHand(character, TryParameterString(pars.Value.Split('|'), 0), TryParameterInt(pars.Value.Split('|'), 1, 0));
+          if (pars.Operation == "chest")
+            output = SetChest(character, TryParameterString(pars.Value.Split('|'), 0), TryParameterInt(pars.Value.Split('|'), 1, 0));
+          if (pars.Operation == "shoulders")
+            output = SetShoulder(character, TryParameterString(pars.Value.Split('|'), 0), TryParameterInt(pars.Value.Split('|'), 1, 0));
+          if (pars.Operation == "legs")
+            output = SetLegs(character, TryParameterString(pars.Value.Split('|'), 0), TryParameterInt(pars.Value.Split('|'), 1, 0));
+          if (pars.Operation == "utility")
+            output = SetUtility(character, TryParameterString(pars.Value.Split('|'), 0), TryParameterInt(pars.Value.Split('|'), 1, 0));
           if (pars.Operation == "remove") {
             Actions.Remove(view.gameObject);
             output = "Entity ¤ destroyed.";
@@ -140,6 +154,13 @@ namespace DEV {
             args.Context.AddString(message);
         }
       }, true, true, optionsFetcher: () => Operations);
+      CommandParameters.AddFetcher("target", (int index, string parameter) => {
+        if (parameter == "baby" || parameter == "tame" || parameter == "wild" || parameter == "remove" || parameter == "sleep" || parameter == "info") return Parameters.None;
+        if (parameter == "id") return Parameters.Ids;
+        if (parameter == "left_hand" || parameter == "right_hand" || parameter == "helmet" || parameter == "chest" || parameter == "shoulders" || parameter == "legs" || parameter == "utility") return Parameters.ItemIds;
+        if (parameter == "radius" || parameter == "health" || parameter == "stars") return Parameters.Number;
+        return Operations;
+      });
     }
     private static TargetParameters ParseArgs(Terminal.ConsoleEventArgs args) {
       var parameters = new TargetParameters();
@@ -166,7 +187,16 @@ namespace DEV {
       "info",
       "sleep",
       "visual",
-      "remove"
+      "remove",
+      "ids",
+      "radius",
+      "helmet",
+      "left_hand",
+      "right_hand",
+      "legs",
+      "chest",
+      "shoulder",
+      "utility"
     };
     private static string ChangeHealth(Character obj, int amount) {
       if (obj == null) return "Skipped: ¤ is not a creature..";
@@ -205,6 +235,41 @@ namespace DEV {
       Actions.SetVisual(obj, item, variant);
       return $"Visual of ¤ set to {item} with variant {variant} .";
     }
+    private static string SetHelmet(Character obj, string item, int variant) {
+      if (obj == null) return "Skipped: ¤ is not a creature.";
+      Actions.SetVisual(obj, VisSlot.Helmet, item, variant);
+      return $"Helmet of ¤ set to {item} with variant {variant} .";
+    }
+    private static string SetLeftHand(Character obj, string item, int variant) {
+      if (obj == null) return "Skipped: ¤ is not a creature.";
+      Actions.SetVisual(obj, VisSlot.HandLeft, item, variant);
+      return $"Left hand of ¤ set to {item} with variant {variant} .";
+    }
+    private static string SetRightHand(Character obj, string item, int variant) {
+      if (obj == null) return "Skipped: ¤ is not a creature.";
+      Actions.SetVisual(obj, VisSlot.HandRight, item, variant);
+      return $"Right hand of ¤ set to {item} with variant {variant} .";
+    }
+    private static string SetChest(Character obj, string item, int variant) {
+      if (obj == null) return "Skipped: ¤ is not a creature.";
+      Actions.SetVisual(obj, VisSlot.Chest, item, variant);
+      return $"Chest of ¤ set to {item} with variant {variant} .";
+    }
+    private static string SetShoulder(Character obj, string item, int variant) {
+      if (obj == null) return "Skipped: ¤ is not a creature.";
+      Actions.SetVisual(obj, VisSlot.Shoulder, item, variant);
+      return $"Shoulder of ¤ set to {item} with variant {variant} .";
+    }
+    private static string SetLegs(Character obj, string item, int variant) {
+      if (obj == null) return "Skipped: ¤ is not a creature.";
+      Actions.SetVisual(obj, VisSlot.Legs, item, variant);
+      return $"Legs of ¤ set to {item} with variant {variant} .";
+    }
+    private static string SetUtility(Character obj, string item, int variant) {
+      if (obj == null) return "Skipped: ¤ is not a creature.";
+      Actions.SetVisual(obj, VisSlot.Utility, item, variant);
+      return $"Utility item of ¤ set to {item} with variant {variant} .";
+    }
     private static string GetInfo(ZNetView obj) {
       var info = new List<string>();
       info.Add("Id: ¤");
@@ -217,6 +282,27 @@ namespace DEV {
         var growUp = obj.GetComponent<Growup>();
         if (growUp)
           info.Add("Baby: " + (growUp.m_baseAI.GetTimeSinceSpawned().TotalSeconds < 0 ? "Yes" : "No"));
+      } else {
+        var health = obj.GetZDO().GetFloat("health", -1f);
+        if (health > -1f)
+          info.Add("Health: " + health.ToString("F0"));
+      }
+      var equipment = obj.GetComponent<VisEquipment>();
+      if (equipment) {
+        if (equipment.m_rightItem != "")
+          info.Add("Right hand: " + equipment.m_rightItem);
+        if (equipment.m_leftItem != "")
+          info.Add("Left hand: " + equipment.m_leftItem);
+        if (equipment.m_helmetItem != "")
+          info.Add("Helmet: " + equipment.m_helmetItem);
+        if (equipment.m_shoulderItem != "")
+          info.Add("Shoulders: " + equipment.m_shoulderItem);
+        if (equipment.m_chestItem != "")
+          info.Add("Chest: " + equipment.m_chestItem);
+        if (equipment.m_legItem != "")
+          info.Add("Legs: " + equipment.m_legItem);
+        if (equipment.m_utilityItem != "")
+          info.Add("Utility: " + equipment.m_utilityItem);
       }
       return string.Join(", ", info);
     }

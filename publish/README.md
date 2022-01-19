@@ -78,6 +78,9 @@ The feature can be toggled with `dev_config private_players` command or by editi
 
 # Changelog
 
+- v1.6:
+	- Improved autocomplete (different options per parameter).
+
 - v1.5:
 	- Adds modifier key support to key bindings.
 	- Adds new parameter to the pos command (allows getting position of any player).

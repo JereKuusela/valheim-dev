@@ -68,19 +68,7 @@ namespace DEV {
           pars.BaseRotation = ParseAngleYXZ(split[1], pars.BaseRotation);
         }
         if (split[0] == "sc" || split[0] == "scale") {
-          var values = TrySplit(split[1], ",");
-          if (values.Length == 1) {
-            var value = TryParameterFloat(values, 0, 1);
-            pars.Scale = new Vector3(value, value, value);
-          } else {
-            pars.Scale.x = TryParameterFloat(values, 0, 1f);
-            pars.Scale.y = TryParameterFloat(values, 1, 1f);
-            pars.Scale.z = TryParameterFloat(values, 2, 1f);
-          }
-          // Sanity check.
-          if (pars.Scale.x == 0) pars.Scale.x = 1;
-          if (pars.Scale.y == 0) pars.Scale.y = 1;
-          if (pars.Scale.z == 0) pars.Scale.z = 1;
+          pars.Scale = ParseScale(split[1]);
         }
         if (split[0] == "pos" || split[0] == "position") {
           useDefaultRelativePosition = false;
@@ -155,7 +143,7 @@ namespace DEV {
 
         // Disable player based positioning.
         AddToHistory("spawn_object " + prefabName + " refRot=" + PrintAngleYXZ(pars.BaseRotation) + " refPos=" + PrintVectorXZY(pars.BasePosition) + " " + string.Join(" ", args.Args.Skip(2)));
-      }, true, true, optionsFetcher: () => ZNetScene.instance.GetPrefabNames());
+      }, true, true, optionsFetcher: () => Parameters.Ids);
     }
   }
 }

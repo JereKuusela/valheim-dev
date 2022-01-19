@@ -27,9 +27,8 @@ namespace DEV {
       new SpawnLocationCommand();
       new SpawnObjectCommand();
       new ManipulateCommand();
-      new ChangeEquipmentCommand();
       new TerrainCommand();
-      //CommandParameters.RegisterBaseGameFetchers();
+      CommandParameters.RegisterBaseGameFetchers();
     }
   }
 }

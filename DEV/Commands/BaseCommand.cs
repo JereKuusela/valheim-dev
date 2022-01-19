@@ -100,6 +100,21 @@ namespace DEV {
       vector.y = TryParameterFloat(values, 2, defaultValue.y);
       return vector;
     }
+    public static Vector3 ParseScale(string arg) {
+      var values = TrySplit(arg, ",");
+      var vector = Vector3.one;
+      if (values.Length == 1) {
+        var value = TryFloat(arg, 1);
+        vector = new Vector3(value, value, value);
+      } else {
+        vector = ParsePositionXZY(arg, vector);
+      }
+      // Sanity check.
+      if (vector.x == 0) vector.x = 1;
+      if (vector.y == 0) vector.y = 1;
+      if (vector.z == 0) vector.z = 1;
+      return vector;
+    }
     public static Vector3 ParsePositionYXZ(string arg) => ParsePositionYXZ(arg, Vector3.zero);
     public static Vector3 ParsePositionYXZ(string arg, Vector3 defaultValue) {
       var values = TrySplit(arg, ",");

@@ -147,11 +147,20 @@ namespace DEV {
     public static void SetVisual(GameObject obj, string item, int variant) {
       SetVisual(obj.GetComponent<ItemStand>(), item, variant);
     }
+    public static void SetVisual(GameObject obj, VisSlot slot, string item, int variant) {
+      SetVisual(obj.GetComponent<Character>(), slot, item, variant);
+    }
     public static void SetVisual(ItemStand obj, string item, int variant) {
       if (!obj) return;
       obj.m_nview.GetZDO().Set("item", item);
       obj.m_nview.GetZDO().Set("variant", variant);
       obj.UpdateVisual();
+    }
+    public static void SetVisual(Character obj, VisSlot slot, string item, int variant) {
+      if (!obj) return;
+      var equipment = obj.GetComponent<VisEquipment>();
+      if (equipment == null) return;
+      equipment.SetItem(slot, item, variant);
     }
   }
 }
