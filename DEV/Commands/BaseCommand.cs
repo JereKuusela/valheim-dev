@@ -36,6 +36,14 @@ namespace DEV {
       if (args.Length <= index) return defaultValue;
       return TryInt(args[index], defaultValue);
     }
+    public static Vector3 TryParameterVectorXZY(string[] args, int index) {
+      if (args.Length <= index) return Vector3.zero;
+      return TryVectorXZY(args[index]);
+    }
+    public static Vector3 TryParameterVectorYXZ(string[] args, int index) {
+      if (args.Length <= index) return Vector3.zero;
+      return TryVectorXZY(args[index]);
+    }
     public static long TryParameterLong(string[] args, int index, long defaultValue = 1) {
       if (args.Length <= index) return defaultValue;
       return TryLong(args[index], defaultValue);
@@ -91,8 +99,8 @@ namespace DEV {
       angle.z = TryParameterFloat(values, 2, defaultValue.eulerAngles.z);
       return Quaternion.Euler(angle);
     }
-    public static Vector3 ParsePositionXZY(string arg) => ParsePositionXZY(arg, Vector3.zero);
-    public static Vector3 ParsePositionXZY(string arg, Vector3 defaultValue) {
+    public static Vector3 TryVectorXZY(string arg) => TryVectorXZY(arg, Vector3.zero);
+    public static Vector3 TryVectorXZY(string arg, Vector3 defaultValue) {
       var values = TrySplit(arg, ",");
       var vector = Vector3.zero;
       vector.x = TryParameterFloat(values, 0, defaultValue.x);
@@ -107,7 +115,7 @@ namespace DEV {
         var value = TryFloat(arg, 1);
         vector = new Vector3(value, value, value);
       } else {
-        vector = ParsePositionXZY(arg, vector);
+        vector = TryVectorXZY(arg, vector);
       }
       // Sanity check.
       if (vector.x == 0) vector.x = 1;
@@ -115,8 +123,8 @@ namespace DEV {
       if (vector.z == 0) vector.z = 1;
       return vector;
     }
-    public static Vector3 ParsePositionYXZ(string arg) => ParsePositionYXZ(arg, Vector3.zero);
-    public static Vector3 ParsePositionYXZ(string arg, Vector3 defaultValue) {
+    public static Vector3 TryVectorYXZ(string arg) => TryVectorYXZ(arg, Vector3.zero);
+    public static Vector3 TryVectorYXZ(string arg, Vector3 defaultValue) {
       var values = TrySplit(arg, ",");
       var vector = Vector3.zero;
       vector.y = TryParameterFloat(values, 0, defaultValue.y);

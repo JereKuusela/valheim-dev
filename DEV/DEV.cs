@@ -26,9 +26,12 @@ namespace DEV {
       new RedoSpawnCommand();
       new SpawnLocationCommand();
       new SpawnObjectCommand();
-      new ManipulateCommand();
+      new ObjectCommand();
       new TerrainCommand();
+      new DevCommandsCommand();
+      new AliasCommand();
       CommandParameters.RegisterBaseGameFetchers();
+      Settings.RegisterCommands();
     }
   }
 }

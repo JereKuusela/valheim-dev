@@ -72,13 +72,13 @@ namespace DEV {
         }
         if (split[0] == "pos" || split[0] == "position") {
           useDefaultRelativePosition = false;
-          pars.RelativePosition = ParsePositionXZY(split[1]);
+          pars.RelativePosition = TryVectorXZY(split[1]);
           pars.Snap = split[1].Split(',').Length < 3;
         }
         if (split[0] == "refPos" || split[0] == "refPosition") {
           useDefaultRelativePosition = false;
           if (split[1].Contains(","))
-            pars.BasePosition = ParsePositionXZY(split[1], pars.BasePosition);
+            pars.BasePosition = TryVectorXZY(split[1], pars.BasePosition);
           else {
             var player = FindPlayer(split[1]);
             if (player.m_characterID.IsNone()) {

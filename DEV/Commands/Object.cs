@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 namespace DEV {
-  public class ManipulateCommand : BaseCommands {
+  public class ObjectCommand : BaseCommands {
     private static bool IsIncluded(string id, string name) {
       if (id.StartsWith("*") && id.EndsWith("*")) {
         return name.Contains(id.Substring(1, id.Length - 3));
@@ -13,12 +13,13 @@ namespace DEV {
       return id == name;
     }
     public static IEnumerable<int> GetPrefabs(string id) {
+      id = id.ToLower();
       IEnumerable<GameObject> values = ZNetScene.instance.m_namedPrefabs.Values;
       if (id == "*") { } // Pass
       else if (id.Contains("*"))
-        values = values.Where(prefab => IsIncluded(id, prefab.name));
+        values = values.Where(prefab => IsIncluded(id, prefab.name.ToLower()));
       else
-        values = values.Where(prefab => prefab.name == id);
+        values = values.Where(prefab => prefab.name.ToLower() == id);
       return values.Where(prefab => prefab.name != "Player").Select(prefab => prefab.name.GetStableHashCode());
     }
     public static IEnumerable<ZDO> GetZDOs(string id, float distance) {
@@ -32,65 +33,82 @@ namespace DEV {
         return zdos.Where(zdo => Utils.DistanceXZ(zdo.GetPosition(), position) <= distance);
       return zdos;
     }
-    public ManipulateCommand() {
-      new Terminal.ConsoleCommand("move", "[x,z,y] [player/object/world] - Moves hovered object relative to selected origin (relative to player if not given).", delegate (Terminal.ConsoleEventArgs args) {
-        var view = GetHovered(args);
-        if (!view) return;
-        view.ClaimOwnership();
-        var zdo = view.GetZDO();
-        var position = view.transform.position;
-        var relative = ParsePositionXZY(args.Args[1]);
-        var origin = args.Length > 2 ? args[2].ToLower() : "player";
-        var rotation = Player.m_localPlayer.transform.rotation;
-        if (origin == "world")
-          rotation = Quaternion.identity;
-        if (origin == "object")
-          rotation = view.transform.rotation;
-        position += rotation * Vector3.forward * relative.x;
-        position += rotation * Vector3.right * relative.z;
-        position += rotation * Vector3.up * relative.y;
-        zdo.SetPosition(position);
-        view.transform.position = position;
-      }, true, true);
-      new Terminal.ConsoleCommand("rotate", "[x,y,z/reset] [player/object/world] - Rotates hovered object around a given axis relative to selected origin (relative to player y axis if not given).", delegate (Terminal.ConsoleEventArgs args) {
-        var view = GetHovered(args);
-        if (!view) return;
-        view.ClaimOwnership();
-        var zdo = view.GetZDO();
-        if (args[1].ToLower() == "reset") {
-          zdo.SetRotation(Quaternion.identity);
-          view.transform.rotation = Quaternion.identity;
+    private static void Execute(Terminal context, IEnumerable<string> operations, IEnumerable<ZDO> zdos) {
+      foreach (var operation in operations) {
+        var name = operation.Split('=')[0];
+        if (!Operations.Contains(name)) {
+          AddMessage(context, $"Error: Invalid operation {name}.");
           return;
         }
-        var relative = ParsePositionYXZ(args.Args[1]);
-        var origin = args.Length > 2 ? args[2].ToLower() : "player";
-        var originRotation = Player.m_localPlayer.transform.rotation;
-        if (origin == "world")
-          originRotation = Quaternion.identity;
-        if (origin == "object")
-          originRotation = view.transform.rotation;
-        var transform = view.transform;
-        var position = transform.position;
-        transform.RotateAround(position, originRotation * Vector3.up, relative.y);
-        transform.RotateAround(position, originRotation * Vector3.forward, relative.x);
-        transform.RotateAround(position, originRotation * Vector3.right, relative.z);
-        zdo.SetRotation(view.transform.rotation);
-      }, true, false, true, false, false);
-      new Terminal.ConsoleCommand("scale", "[x,z,y] - Scales hovered object.", delegate (Terminal.ConsoleEventArgs args) {
-        var view = GetHovered(args);
-        if (!view) return;
-        view.ClaimOwnership();
-        var scale = ParseScale(args.Args[1]);
-        if (view.m_syncInitialScale)
-          view.SetLocalScale(scale);
-      }, true, false, true, false, false);
-      new Terminal.ConsoleCommand("target", "[operation=value] [id=*] [radius=0] - Modifies the targeted object.", delegate (Terminal.ConsoleEventArgs args) {
+      }
+      var scene = ZNetScene.instance;
+      zdos = zdos.Where(zdo => {
+        var view = scene.FindInstance(zdo);
+        if (view == null)
+          context.AddString($"Skipped: {view.name} is not loaded.");
+        return view != null;
+      });
+      foreach (var operation in operations) {
+        var split = operation.Split('=');
+        var name = split[0];
+        var values = (split.Length > 1 ? split[1] : "").Split('|');
+        foreach (var zdo in zdos) {
+          var view = scene.FindInstance(zdo);
+          view.ClaimOwnership();
+          var character = view.GetComponent<Character>();
+          var output = "Error: Invalid operation.";
+          if (name == "health")
+            output = ChangeHealth(view, TryParameterFloat(values, 0));
+          if (name == "stars")
+            output = SetStars(character, TryParameterInt(values, 0));
+          if (name == "tame")
+            output = MakeTame(character);
+          if (name == "wild")
+            output = MakeWild(character);
+          if (name == "baby")
+            output = SetBaby(view.GetComponent<Growup>());
+          if (name == "info")
+            output = GetInfo(view);
+          if (name == "sleep")
+            output = MakeSleep(view.GetComponent<MonsterAI>());
+          if (name == "visual")
+            output = SetVisual(view.GetComponent<ItemStand>(), TryParameterString(values, 0), TryParameterInt(values, 1, 0));
+          if (name == "helmet")
+            output = SetHelmet(character, TryParameterString(values, 0), TryParameterInt(values, 1, 0));
+          if (name == "left_hand")
+            output = SetLeftHand(character, TryParameterString(values, 0), TryParameterInt(values, 1, 0));
+          if (name == "right_hand")
+            output = SetRightHand(character, TryParameterString(values, 0), TryParameterInt(values, 1, 0));
+          if (name == "chest")
+            output = SetChest(character, TryParameterString(values, 0), TryParameterInt(values, 1, 0));
+          if (name == "shoulders")
+            output = SetShoulder(character, TryParameterString(values, 0), TryParameterInt(values, 1, 0));
+          if (name == "legs")
+            output = SetLegs(character, TryParameterString(values, 0), TryParameterInt(values, 1, 0));
+          if (name == "utility")
+            output = SetUtility(character, TryParameterString(values, 0), TryParameterInt(values, 1, 0));
+          if (name == "move")
+            output = Move(view, values);
+          if (name == "rotate")
+            output = Rotate(view, values);
+          if (name == "scale")
+            output = Scale(view, values);
+          if (name == "remove") {
+            Actions.Remove(view.gameObject);
+            output = "Entity ¤ destroyed.";
+          }
+          var message = output.Replace("¤", Utils.GetPrefabName(view.gameObject));
+          if (zdos.Count() == 1)
+            AddMessage(context, message);
+          else
+            context.AddString(message);
+        }
+      }
+    }
+    public ObjectCommand() {
+      new Terminal.ConsoleCommand("object", "[operation=value] [id=*] [radius=0] - Modifies the targeted object.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) return;
         var pars = ParseArgs(args);
-        if (!Operations.Contains(pars.Operation)) {
-          AddMessage(args.Context, "Error: Invalid operation.");
-          return;
-        }
         IEnumerable<ZDO> zdos;
         if (pars.Radius > 0f) {
           zdos = GetZDOs(pars.Id, pars.Radius);
@@ -98,68 +116,46 @@ namespace DEV {
           var view = GetHovered(args);
           if (!view) return;
           if (!GetPrefabs(pars.Id).Contains(view.GetZDO().GetPrefab())) {
-            AddMessage(args.Context, "Skipped: ¤ has invalid id.");
+            AddMessage(args.Context, $"Skipped: {view.name}  has invalid id.");
             return;
           }
           zdos = new ZDO[] { view.GetZDO() };
         }
-        var scene = ZNetScene.instance;
-        foreach (var zdo in zdos) {
-          var view = scene.FindInstance(zdo);
-          if (view == null) {
-            args.Context.AddString("Skipped: ¤ is not loaded.");
-            continue;
-          }
-          view.ClaimOwnership();
-          var character = view.GetComponent<Character>();
-          var output = "Error: Invalid operation.";
-          if (pars.Operation == "health")
-            output = ChangeHealth(character, TryInt(pars.Value));
-          if (pars.Operation == "stars")
-            output = SetStars(character, TryInt(pars.Value));
-          if (pars.Operation == "tame")
-            output = MakeTame(character);
-          if (pars.Operation == "wild")
-            output = MakeWild(character);
-          if (pars.Operation == "baby")
-            output = SetBaby(view.GetComponent<Growup>());
-          if (pars.Operation == "info")
-            output = GetInfo(view);
-          if (pars.Operation == "sleep")
-            output = MakeSleep(view.GetComponent<MonsterAI>());
-          if (pars.Operation == "visual")
-            output = SetVisual(view.GetComponent<ItemStand>(), TryParameterString(pars.Value.Split('|'), 0), TryParameterInt(pars.Value.Split('|'), 1, 0));
-          if (pars.Operation == "helmet")
-            output = SetHelmet(character, TryParameterString(pars.Value.Split('|'), 0), TryParameterInt(pars.Value.Split('|'), 1, 0));
-          if (pars.Operation == "left_hand")
-            output = SetLeftHand(character, TryParameterString(pars.Value.Split('|'), 0), TryParameterInt(pars.Value.Split('|'), 1, 0));
-          if (pars.Operation == "right_hand")
-            output = SetRightHand(character, TryParameterString(pars.Value.Split('|'), 0), TryParameterInt(pars.Value.Split('|'), 1, 0));
-          if (pars.Operation == "chest")
-            output = SetChest(character, TryParameterString(pars.Value.Split('|'), 0), TryParameterInt(pars.Value.Split('|'), 1, 0));
-          if (pars.Operation == "shoulders")
-            output = SetShoulder(character, TryParameterString(pars.Value.Split('|'), 0), TryParameterInt(pars.Value.Split('|'), 1, 0));
-          if (pars.Operation == "legs")
-            output = SetLegs(character, TryParameterString(pars.Value.Split('|'), 0), TryParameterInt(pars.Value.Split('|'), 1, 0));
-          if (pars.Operation == "utility")
-            output = SetUtility(character, TryParameterString(pars.Value.Split('|'), 0), TryParameterInt(pars.Value.Split('|'), 1, 0));
-          if (pars.Operation == "remove") {
-            Actions.Remove(view.gameObject);
-            output = "Entity ¤ destroyed.";
-          }
-          var message = output.Replace("¤", Utils.GetPrefabName(view.gameObject));
-          if (pars.Radius == 0)
-            AddMessage(args.Context, message);
-          else
-            args.Context.AddString(message);
-        }
+        Execute(args.Context, pars.Operations, zdos);
+
       }, true, true, optionsFetcher: () => Operations);
-      CommandParameters.AddFetcher("target", (int index, string parameter) => {
-        if (parameter == "baby" || parameter == "tame" || parameter == "wild" || parameter == "remove" || parameter == "sleep" || parameter == "info") return Parameters.None;
-        if (parameter == "id") return Parameters.Ids;
-        if (parameter == "left_hand" || parameter == "right_hand" || parameter == "helmet" || parameter == "chest" || parameter == "shoulders" || parameter == "legs" || parameter == "utility") return Parameters.ItemIds;
-        if (parameter == "radius" || parameter == "health" || parameter == "stars") return Parameters.Number;
-        return Operations;
+      CommandParameters.AddFetcher("object", (int index, string parameter) => {
+        if (parameter == "baby" || parameter == "tame" || parameter == "wild" || parameter == "remove" || parameter == "sleep" || parameter == "info") return Parameters.Create(parameter, "none");
+        if (parameter == "id") {
+          if (index == 0) return Parameters.Ids;
+          return Parameters.Create(parameter, "none");
+        }
+        if (parameter == "left_hand" || parameter == "right_hand" || parameter == "helmet" || parameter == "chest" || parameter == "shoulders" || parameter == "legs" || parameter == "utility") {
+          if (index == 0) return Parameters.ItemIds;
+          if (index == 1) return Parameters.Create("visual", "number");
+          return Parameters.Create(parameter, "none");
+        }
+        if (parameter == "radius" || parameter == "range" || parameter == "health" || parameter == "stars") {
+          if (index == 0) return Parameters.Create(parameter, "number");
+          return Parameters.Create(parameter, "none");
+        }
+        if (parameter == "move") {
+          if (index == 0) return Parameters.Create(parameter, "x,z,y");
+          if (index == 1) return Parameters.Origin;
+          return Parameters.Create(parameter, "none");
+        }
+        if (parameter == "rotate") {
+          if (index == 0) return Parameters.Create(parameter, "y,x,z|reset");
+          if (index == 1) return Parameters.Origin;
+          return Parameters.Create(parameter, "none");
+        }
+        if (parameter == "scale") {
+          if (index == 0) return Parameters.Create(parameter, "x,z,y|number");
+          return Parameters.Create(parameter, "none");
+        }
+        var args = Operations.Concat(Params).ToList();
+        args.Sort();
+        return args;
       });
     }
     private static TargetParameters ParseArgs(Terminal.ConsoleEventArgs args) {
@@ -167,14 +163,12 @@ namespace DEV {
       foreach (var arg in args.Args) {
         var split = arg.Split('=');
         if (Operations.Contains(split[0]))
-          parameters.Operation = split[0];
+          parameters.Operations.Add(arg);
         if (split.Length < 2) continue;
-        if (split[0] == "radius")
-          parameters.Radius = Math.Min(TryFloat(split[1], 100f), 100f);
+        if (split[0] == "radius" || split[0] == "range")
+          parameters.Radius = Math.Min(TryFloat(split[1], 0f), 100f);
         if (split[0] == "id")
-          parameters.Id = split[1];
-        if (Operations.Contains(split[0]))
-          parameters.Value = split[1];
+          parameters.Id = split[1] == "" ? "*" : split[1];
       }
       return parameters;
     }
@@ -188,20 +182,28 @@ namespace DEV {
       "sleep",
       "visual",
       "remove",
-      "ids",
-      "radius",
       "helmet",
       "left_hand",
       "right_hand",
       "legs",
       "chest",
-      "shoulder",
-      "utility"
+      "shoulders",
+      "utility",
+      "move",
+      "rotate",
+      "scale"
     };
-    private static string ChangeHealth(Character obj, int amount) {
-      if (obj == null) return "Skipped: ¤ is not a creature..";
-      var previous = obj.GetMaxHealth();
-      Actions.SetHealth(obj, amount);
+    private static List<string> Params = new List<string>(){
+      "id",
+      "radius",
+      "range",
+    };
+
+    private static string ChangeHealth(ZNetView obj, float amount) {
+      var character = obj.GetComponent<Character>();
+      if (character == null && obj.GetComponent<WearNTear>() == null && obj.GetComponent<TreeLog>() == null && obj.GetComponent<Destructible>() == null && obj.GetComponent<TreeBase>() == null)
+        return "Skipped: ¤ is not a creature or a destructible.";
+      var previous = Actions.SetHealth(obj.gameObject, amount);
       return $"¤ health changed from {previous.ToString("F0")} to {amount.ToString("F0")}.";
     }
     private static string SetStars(Character obj, int amount) {
@@ -209,6 +211,27 @@ namespace DEV {
       var previous = obj.GetLevel() - 1;
       Actions.SetLevel(obj.gameObject, amount + 1);
       return $"¤ stars changed from {previous} to {amount}.";
+    }
+    private static string Move(ZNetView obj, string[] values) {
+      var offset = TryParameterVectorXZY(values, 0);
+      var origin = TryParameterString(values, 1, "player").ToLower();
+      Actions.Move(obj, offset, origin);
+      return $"¤ moved {offset.ToString("F1")} from {origin}.";
+    }
+    private static string Rotate(ZNetView obj, string[] values) {
+      if (TryParameterString(values, 0) == "reset") {
+        Actions.ResetRotation(obj);
+        return $"¤ rotation reseted.";
+      }
+      var relative = TryParameterVectorYXZ(values, 0);
+      var origin = TryParameterString(values, 1, "player").ToLower();
+      Actions.Rotate(obj, relative, origin);
+      return $"¤ rotated {relative.ToString("F1")} from {origin}.";
+    }
+    private static string Scale(ZNetView obj, string[] values) {
+      var scale = TryParameterVectorXZY(values, 0);
+      Actions.Scale(obj, scale);
+      return $"¤ scaled to {scale.ToString("F1")}.";
     }
     private static string SetBaby(Growup obj) {
       if (obj == null) return "Skipped: ¤ is not an offspring.";
@@ -311,7 +334,6 @@ namespace DEV {
   public class TargetParameters {
     public float Radius = 0f;
     public string Id = "*";
-    public string Operation = "";
-    public string Value = "";
+    public List<string> Operations = new List<string>();
   }
 }

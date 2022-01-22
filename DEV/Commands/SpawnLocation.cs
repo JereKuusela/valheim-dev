@@ -45,14 +45,14 @@ namespace DEV {
           if (split[0] == "rot" || split[0] == "rotation")
             relativeAngle = TryFloat(split[1], 0);
           if (split[0] == "pos" || split[0] == "position") {
-            relativePosition = ParsePositionXZY(split[1]);
+            relativePosition = TryVectorXZY(split[1]);
             snap = split[1].Split(',').Length < 3;
           }
           if (split[0] == "refRot" || split[0] == "refRotation") {
             baseAngle = TryFloat(split[1], baseAngle);
           }
           if (split[0] == "refPos" || split[0] == "refPosition") {
-            basePosition = ParsePositionXZY(split[1], basePosition);
+            basePosition = TryVectorXZY(split[1], basePosition);
           }
         }
         var baseRotation = Quaternion.Euler(0f, baseAngle, 0f);

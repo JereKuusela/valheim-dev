@@ -70,26 +70,60 @@ namespace DEV {
       obj.m_itemData.m_quality = level;
       obj.m_nview.GetZDO().Set("quality", level);
     }
-    public static void SetHealth(GameObject obj, float health) {
-      SetHealth(obj.GetComponent<ItemDrop>(), health);
-      if (health == 0) return;
-      SetHealth(obj.GetComponent<Character>(), health);
-      SetHealth(obj.GetComponent<WearNTear>(), health);
+    public static float SetHealth(GameObject obj, float health) {
+      var itemDrop = obj.GetComponent<ItemDrop>();
+      if (itemDrop) return SetHealth(itemDrop, health);
+      if (health == 0) return 0;
+      var character = obj.GetComponent<Character>();
+      if (character) return SetHealth(character, health);
+      var wearNTear = obj.GetComponent<WearNTear>();
+      if (wearNTear) return SetHealth(wearNTear, health);
+      var treeLog = obj.GetComponent<TreeLog>();
+      if (treeLog) return SetHealth(treeLog, health);
+      var treeBase = obj.GetComponent<TreeBase>();
+      if (treeBase) return SetHealth(treeBase, health);
+      var destructible = obj.GetComponent<Destructible>();
+      if (destructible) return SetHealth(destructible, health);
+      return 0;
     }
-    public static void SetHealth(Character obj, float health) {
-      if (!obj) return;
-      obj.SetMaxHealth(health); // Ok to use (no owner check).
-      obj.m_nview.GetZDO().Set("health", obj.GetMaxHealth());
+    public static float SetHealth(Character obj, float health) {
+      if (!obj) return 0f;
+      var previous = obj.GetMaxHealth();
+      obj.SetMaxHealth(health);
+      // Max health resets on awake if health is equal to max.
+      obj.SetHealth(health * 1.000001f);
+      return previous;
     }
-    public static void SetHealth(WearNTear obj, float health) {
-      if (!obj) return;
+    public static float SetHealth(WearNTear obj, float health) {
+      if (!obj) return 0f;
+      var previous = obj.m_nview.GetZDO().GetFloat("health", obj.m_health);
       obj.m_nview.GetZDO().Set("health", health);
-      obj.m_health = health;
+      return previous;
     }
-    public static void SetHealth(ItemDrop obj, float health) {
-      if (!obj) return;
+    public static float SetHealth(TreeLog obj, float health) {
+      if (!obj) return 0f;
+      var previous = obj.m_nview.GetZDO().GetFloat("health", obj.m_health);
+      obj.m_nview.GetZDO().Set("health", health);
+      return previous;
+    }
+    public static float SetHealth(Destructible obj, float health) {
+      if (!obj) return 0f;
+      var previous = obj.m_nview.GetZDO().GetFloat("health", obj.m_health);
+      obj.m_nview.GetZDO().Set("health", health);
+      return previous;
+    }
+    public static float SetHealth(TreeBase obj, float health) {
+      if (!obj) return 0f;
+      var previous = obj.m_nview.GetZDO().GetFloat("health", obj.m_health);
+      obj.m_nview.GetZDO().Set("health", health);
+      return previous;
+    }
+    public static float SetHealth(ItemDrop obj, float health) {
+      if (!obj) return 0f;
+      var previous = obj.m_itemData.m_durability;
       obj.m_itemData.m_durability = health == 0 ? obj.m_itemData.GetMaxDurability() : health;
       obj.m_nview.GetZDO().Set("durability", obj.m_itemData.m_durability);
+      return previous;
     }
     public static void SetVariant(GameObject obj, int variant) {
       SetVariant(obj.GetComponent<ItemDrop>(), variant);
@@ -161,6 +195,44 @@ namespace DEV {
       var equipment = obj.GetComponent<VisEquipment>();
       if (equipment == null) return;
       equipment.SetItem(slot, item, variant);
+    }
+    public static void Move(ZNetView obj, Vector3 offset, string origin) {
+      var zdo = obj.GetZDO();
+      var position = obj.transform.position;
+      var rotation = Player.m_localPlayer.transform.rotation;
+      if (origin == "world")
+        rotation = Quaternion.identity;
+      if (origin == "object")
+        rotation = obj.transform.rotation;
+      position += rotation * Vector3.forward * offset.x;
+      position += rotation * Vector3.right * offset.z;
+      position += rotation * Vector3.up * offset.y;
+      zdo.SetPosition(position);
+      obj.transform.position = position;
+    }
+
+    public static void Rotate(ZNetView obj, Vector3 relative, string origin) {
+      var zdo = obj.GetZDO();
+      var originRotation = Player.m_localPlayer.transform.rotation;
+      if (origin == "world")
+        originRotation = Quaternion.identity;
+      if (origin == "object")
+        originRotation = obj.transform.rotation;
+      var transform = obj.transform;
+      var position = transform.position;
+      transform.RotateAround(position, originRotation * Vector3.up, relative.y);
+      transform.RotateAround(position, originRotation * Vector3.forward, relative.x);
+      transform.RotateAround(position, originRotation * Vector3.right, relative.z);
+      zdo.SetRotation(obj.transform.rotation);
+    }
+    public static void ResetRotation(ZNetView obj) {
+      var zdo = obj.GetZDO();
+      zdo.SetRotation(Quaternion.identity);
+      obj.transform.rotation = Quaternion.identity;
+    }
+    public static void Scale(ZNetView obj, Vector3 scale) {
+      if (obj.m_syncInitialScale)
+        obj.SetLocalScale(scale);
     }
   }
 }

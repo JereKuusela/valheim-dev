@@ -10,6 +10,7 @@ namespace DEV {
     public static void AddFetcher(string command, Fetcher fetcher) => Fetchers[command] = fetcher;
     public static List<string> Fetch(string command, int index, string parameter) {
       if (Fetchers.ContainsKey(command)) return Fetchers[command](index, parameter);
+      if (!Terminal.commands.ContainsKey(command)) return new List<string>();
       var fetcher = Terminal.commands[command].m_tabOptionsFetcher;
       if (fetcher != null)
         return fetcher();
@@ -44,24 +45,69 @@ namespace DEV {
         return itemIds;
       }
     }
-    public static List<string> None = new List<string>() { "No parameters!" };
+    public static List<string> None = new List<string>() { "[NONE]" };
     public static List<string> Number = new List<string>() { "[NUMBER]" };
+    public static List<string> Origin = new List<string>() { "player", "object", "world" };
+    public static List<string> CreateNone(string name, string type) => new List<string>() { $"[{name} has no parameters]" };
+    public static List<string> Create(string name, string type) => new List<string>() { $"[{name} must be a {type}]" };
   }
 
   [HarmonyPatch(typeof(Terminal.ConsoleCommand), "GetTabOptions")]
   public class UseParameterSpecificOptions {
-    private static string GetInput() => Console.instance.m_input.text == "" ? Chat.instance.m_input.text : Console.instance.m_input.text;
-    private static int GetInputLength() => GetInput().Split(' ').Length;
-    private static string GetParameter() {
-      var split = GetInput().Split(' ').Last().Split('=');
+    private static string GetInput() {
+      if (!Console.instance && !Chat.instance) return "";
+      var input = Console.instance ? Console.instance.m_input : Chat.instance.m_input;
+      if (input.text == "" && Chat.instance) input = Chat.instance.m_input;
+      return input.text;
+    }
+    private static string GetName(string parameter) {
+      var split = parameter.Split('=');
       if (split.Length < 2) return "";
       return split[0];
     }
-    public static bool Prefix(Terminal.ConsoleCommand __instance, ref List<string> __result) {
-      var length = GetInputLength();
-      if (length < 2) return true;
-      var index = length - 2; // -1 -> Lenght to index. -1 -> Ignore the command name.
-      __result = CommandParameters.Fetch(__instance.Command, index, GetParameter());
+    private static int GetNameIndex(string parameter) => parameter.Split('|').Length - 1;
+    public static bool Prefix(ref List<string> __result) {
+      var input = GetInput();
+      var parameters = input.Split(' ');
+      if (parameters.Length < 2) return true;
+      var command = parameters.First();
+      parameters = parameters.Skip(1).ToArray();
+      var parameter = parameters.Last();
+      var name = GetName(parameter);
+      var index = 0;
+      if (name != "") {
+        // Named parameter can appear anywhere so makes more sense to return their internal index.
+        index = GetNameIndex(parameter);
+      } else {
+        // Ignore named parameters for the index.
+        index = TerminalUtils.GetPositionalParameters(parameters).Count() - 1;
+        var substitutions = TerminalUtils.GetSubstitutions(parameters).Count();
+        for (var i = 0; i < parameters.Length; i++) {
+          var par = parameters[i];
+          var count = par.Count(character => character == '$');
+          // Ignore substituded parameters for the index.
+          index -= count;
+          substitutions -= count;
+          if (substitutions <= 0) {
+            // For substituded, use the name/index where it appears.
+            name = GetName(par);
+            if (name != "") {
+              // Cases to handle:
+              // 1. =$ foo|bar -> substitutions: 0, parameter: 1, par: 0 => 1
+              // 2. =$|$ foo ->  substitutions: -1, parameter: 0, par: 1 => 0
+              // 3. =$|$ foo bar -> substitutions: 0, parameter: 0, par: 1 => 1
+              // 4. =foo|$ bar -> substitutions: 0, parameter: 0, par: 1 => 1
+              DEV.Log.LogInfo("Par: " + par + "input: " + input);
+              DEV.Log.LogInfo("Subs: " + substitutions + " params: " + GetNameIndex(parameter) + " par: " + GetNameIndex(par));
+              index = substitutions + GetNameIndex(parameter) + GetNameIndex(par);
+            } else {
+              index = i;
+            }
+            break;
+          }
+        }
+      }
+      __result = CommandParameters.Fetch(command, index, name);
       return false;
     }
   }
@@ -69,14 +115,14 @@ namespace DEV {
   [HarmonyPatch(typeof(Terminal), "tabCycle")]
   public class UseParameterSpecificCycling {
     public static void Prefix(Terminal __instance, ref string word) {
-      word = __instance.m_input.text.Split(' ').Last().Split('=').Last();
+      word = TerminalUtils.GetLastWord(__instance);
     }
   }
 
   [HarmonyPatch(typeof(Terminal), "updateSearch")]
   public class UseParameterSpecificSearch {
     public static void Prefix(Terminal __instance, ref string word) {
-      word = __instance.m_input.text.Split(' ').Last().Split('=').Last();
+      word = TerminalUtils.GetLastWord(__instance);
     }
   }
 }

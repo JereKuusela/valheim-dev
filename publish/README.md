@@ -1,3 +1,5 @@
+TODO: Config to debug alias/substitution (show final command).
+
 # Dedicated server devcommands
 
 This client side mod allows devcommands for server admins.
@@ -15,16 +17,33 @@ Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available com
 
 # Features
 
+## Improved autocomplete
+
+Console now provides autocomplete for all parameters instead of just the first one.
+
+Console also supports autocomplete for named parameters to more easily use the new commands.
+
+## Command aliasing
+
+New commands can be created to shorten commonly used commands.
+
+- `alias [name] [value]`: Adds a new command alias.
+	- `alias dm debugmode`: Adds a new command `dm` as a shorter version of `debugmode`.
+	- `alias move target move`: Adds a new command `move` as a shorter version of `target move`.
+	- `alias remove target remove radius=10 id`: Adds a new command `remove` that converts `remove=[id]` to `target remove radius=10 id=[id]` which allows more easily to remove nearby objects.
+	- `alias remove_corgi remove=StatueCorgi`: Adds a new command `remove_corgi` as a shorter version of `target remove radius=10 id=StatueCorgi` (aliases can be nested up to 10 times).
+- `alias`: Prints all aliases.
+- `alias [name]`: Removes the given alias.
+
 ## Improved key bindings
 
-`bind` command supports a new named parameter `keys=` that allows configuring which keys must or must not be down when pressing the bound key ([key codes](https://docs.unity3d.com/ScriptReference/KeyCode.html)).
+Keybindings now work with modifier keys ([key codes](https://docs.unity3d.com/ScriptReference/KeyCode.html)).
 
-For example:
-
-- `bind j god`: Toggles god mode when pressing J.
-- `bind j god keys=leftalt`: Toggles god mode when pressing J while left alt is down.
-- `bind j god keys=-leftalt`: Toggles god mode when pressing J while left alt is not down.
-- `bind j god keys=leftalt,h`: Toggles god mode when pressing J while both left alt and h are down.
+- `bind [keycode] [value] [keys=]`: Adds a new key binding with modifier keys.
+	- `bind j god`: Toggles god mode when pressing J.
+	- `bind j god keys=leftalt`: Toggles god mode when pressing J while left alt is down.
+	- `bind j god keys=-leftalt`: Toggles god mode when pressing J while left alt is not down.
+	- `bind j god keys=leftalt,h`: Toggles god mode when pressing J while both left alt and h are down.	
 
 After removing this mod, these binds very likely stop working or lead to unexpected behavior. Recommended to clear all binds with the `resetbinds` command.
 
@@ -80,6 +99,7 @@ The feature can be toggled with `dev_config private_players` command or by editi
 
 - v1.6:
 	- Improved autocomplete (different options per parameter).
+	- Added command aliasing.
 
 - v1.5:
 	- Adds modifier key support to key bindings.
