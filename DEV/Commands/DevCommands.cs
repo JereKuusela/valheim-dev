@@ -18,6 +18,8 @@ namespace DEV {
     public static void Set(bool value) {
       if (Terminal.m_cheat == value) return;
       Terminal.m_cheat = value;
+      Console.instance?.updateCommandList();
+      Chat.instance?.updateCommandList();
       if (Settings.AutoDebugMode)
         Player.m_debugMode = Terminal.m_cheat;
       if (Settings.AutoGodMode)
