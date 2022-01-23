@@ -27,13 +27,17 @@ namespace DEV {
       return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
     }
     public static string Substitute(string input) {
+      if (input.StartsWith("alias ")) return input;
       if (!input.Contains("$")) return input;
       var substitutions = GetSubstitutions(input.Split(' '));
       foreach (var parameter in substitutions) {
-        input = ReplaceFirst(ReplaceFirst(input, "$", parameter), " " + parameter, "");
+        input = ReplaceFirst(input, "$", parameter);
+        if (parameter != "")
+          input = ReplaceFirst(input, " " + parameter, "");
       }
-      input = string.Join(" ", input.Split(' ').Where(par => !par.Contains("$")));
-      return input;
+      // Removes any extra parameters that didn't receive substitution so "foo cmd=$|$" works with "foo 3".
+      input = input.Replace("|$", "");
+      return string.Join(" ", input.Split(' ').Where(par => !par.Contains("$")));
     }
   }
 

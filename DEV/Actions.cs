@@ -70,10 +70,25 @@ namespace DEV {
       obj.m_itemData.m_quality = level;
       obj.m_nview.GetZDO().Set("quality", level);
     }
+    public static float GetHealth(ZNetView obj) {
+      var zdo = obj.GetZDO();
+      var itemDrop = obj.GetComponent<ItemDrop>();
+      if (itemDrop) return itemDrop.m_itemData.m_durability;
+      var character = obj.GetComponent<Character>();
+      if (character) return character.GetHealth();
+      var wearNTear = obj.GetComponent<WearNTear>();
+      if (wearNTear) return zdo.GetFloat("health", wearNTear.m_health);
+      var destructible = obj.GetComponent<Destructible>();
+      if (destructible) return zdo.GetFloat("health", destructible.m_health);
+      var treeLog = obj.GetComponent<TreeLog>();
+      if (treeLog) return zdo.GetFloat("health", treeLog.m_health);
+      var treeBase = obj.GetComponent<TreeBase>();
+      if (treeBase) return zdo.GetFloat("health", treeBase.m_health);
+      return -1;
+    }
     public static float SetHealth(GameObject obj, float health) {
       var itemDrop = obj.GetComponent<ItemDrop>();
       if (itemDrop) return SetHealth(itemDrop, health);
-      if (health == 0) return 0;
       var character = obj.GetComponent<Character>();
       if (character) return SetHealth(character, health);
       var wearNTear = obj.GetComponent<WearNTear>();
@@ -89,6 +104,10 @@ namespace DEV {
     public static float SetHealth(Character obj, float health) {
       if (!obj) return 0f;
       var previous = obj.GetMaxHealth();
+      if (health == 0) {
+        obj.SetupMaxHealth();
+        return previous;
+      }
       obj.SetMaxHealth(health);
       // Max health resets on awake if health is equal to max.
       obj.SetHealth(health * 1.000001f);
@@ -96,32 +115,37 @@ namespace DEV {
     }
     public static float SetHealth(WearNTear obj, float health) {
       if (!obj) return 0f;
+      if (health == 0) health = obj.m_health;
       var previous = obj.m_nview.GetZDO().GetFloat("health", obj.m_health);
       obj.m_nview.GetZDO().Set("health", health);
       return previous;
     }
     public static float SetHealth(TreeLog obj, float health) {
       if (!obj) return 0f;
+      if (health == 0) health = obj.m_health;
       var previous = obj.m_nview.GetZDO().GetFloat("health", obj.m_health);
       obj.m_nview.GetZDO().Set("health", health);
       return previous;
     }
     public static float SetHealth(Destructible obj, float health) {
       if (!obj) return 0f;
+      if (health == 0) health = obj.m_health;
       var previous = obj.m_nview.GetZDO().GetFloat("health", obj.m_health);
       obj.m_nview.GetZDO().Set("health", health);
       return previous;
     }
     public static float SetHealth(TreeBase obj, float health) {
       if (!obj) return 0f;
+      if (health == 0) health = obj.m_health;
       var previous = obj.m_nview.GetZDO().GetFloat("health", obj.m_health);
       obj.m_nview.GetZDO().Set("health", health);
       return previous;
     }
     public static float SetHealth(ItemDrop obj, float health) {
       if (!obj) return 0f;
+      if (health == 0) health = obj.m_itemData.GetMaxDurability();
       var previous = obj.m_itemData.m_durability;
-      obj.m_itemData.m_durability = health == 0 ? obj.m_itemData.GetMaxDurability() : health;
+      obj.m_itemData.m_durability = health;
       obj.m_nview.GetZDO().Set("durability", obj.m_itemData.m_durability);
       return previous;
     }

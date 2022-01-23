@@ -97,8 +97,6 @@ namespace DEV {
               // 2. =$|$ foo ->  substitutions: -1, parameter: 0, par: 1 => 0
               // 3. =$|$ foo bar -> substitutions: 0, parameter: 0, par: 1 => 1
               // 4. =foo|$ bar -> substitutions: 0, parameter: 0, par: 1 => 1
-              DEV.Log.LogInfo("Par: " + par + "input: " + input);
-              DEV.Log.LogInfo("Subs: " + substitutions + " params: " + GetNameIndex(parameter) + " par: " + GetNameIndex(par));
               index = substitutions + GetNameIndex(parameter) + GetNameIndex(par);
             } else {
               index = i;

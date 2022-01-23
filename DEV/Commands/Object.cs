@@ -204,7 +204,8 @@ namespace DEV {
       if (character == null && obj.GetComponent<WearNTear>() == null && obj.GetComponent<TreeLog>() == null && obj.GetComponent<Destructible>() == null && obj.GetComponent<TreeBase>() == null)
         return "Skipped: ¤ is not a creature or a destructible.";
       var previous = Actions.SetHealth(obj.gameObject, amount);
-      return $"¤ health changed from {previous.ToString("F0")} to {amount.ToString("F0")}.";
+      var amountStr = amount == 0f ? "default" : amount.ToString("F0");
+      return $"¤ health changed from {previous.ToString("F0")} to {amountStr}.";
     }
     private static string SetStars(Character obj, int amount) {
       if (obj == null) return "Skipped: ¤ is not a creature.";
@@ -213,7 +214,7 @@ namespace DEV {
       return $"¤ stars changed from {previous} to {amount}.";
     }
     private static string Move(ZNetView obj, string[] values) {
-      var offset = TryParameterVectorXZY(values, 0);
+      var offset = TryParameterOffset(values, 0);
       var origin = TryParameterString(values, 1, "player").ToLower();
       Actions.Move(obj, offset, origin);
       return $"¤ moved {offset.ToString("F1")} from {origin}.";
@@ -223,13 +224,13 @@ namespace DEV {
         Actions.ResetRotation(obj);
         return $"¤ rotation reseted.";
       }
-      var relative = TryParameterVectorYXZ(values, 0);
+      var relative = TryParameterRotation(values, 0);
       var origin = TryParameterString(values, 1, "player").ToLower();
       Actions.Rotate(obj, relative, origin);
       return $"¤ rotated {relative.ToString("F1")} from {origin}.";
     }
     private static string Scale(ZNetView obj, string[] values) {
-      var scale = TryParameterVectorXZY(values, 0);
+      var scale = TryParameterScale(values, 0);
       Actions.Scale(obj, scale);
       return $"¤ scaled to {scale.ToString("F1")}.";
     }
@@ -306,7 +307,7 @@ namespace DEV {
         if (growUp)
           info.Add("Baby: " + (growUp.m_baseAI.GetTimeSinceSpawned().TotalSeconds < 0 ? "Yes" : "No"));
       } else {
-        var health = obj.GetZDO().GetFloat("health", -1f);
+        var health = Actions.GetHealth(obj);
         if (health > -1f)
           info.Add("Health: " + health.ToString("F0"));
       }

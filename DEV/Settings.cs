@@ -23,13 +23,15 @@ namespace DEV {
     public static bool DebugConsole => configDebugConsole.Value;
     public static ConfigEntry<bool> configAutoFly;
     public static bool AutoFly => configAutoFly.Value;
+    public static ConfigEntry<bool> configNoDrops;
+    public static bool NoDrops => Cheats && configNoDrops.Value;
     public static ConfigEntry<bool> configDefaultAliases;
     public static ConfigEntry<string> configCommandAliases;
     private static Dictionary<string, string> CustomAliases = new Dictionary<string, string>();
     private static Dictionary<string, string> DefaultAliases = new Dictionary<string, string>() {
       {"move", "object move=$|$ radius=$ id=$"},
       {"rotate", "object rotate=$|$ radius=$ id=$"},
-      {"scale", "object scale=$|$ radius=$ id=$"},
+      {"scale", "object scale=$ radius=$ id=$"},
       {"stars", "object stars=$ radius=$ id=$"},
       {"health", "object health=$ radius=$ id=$"},
       {"remove", "object remove id=$ radius=$"},
@@ -56,7 +58,7 @@ namespace DEV {
             Aliases.Add(kvp.Key, kvp.Value);
         }
       }
-      AliasKeys = Aliases.Keys.OrderByDescending(key => key.Length).ToArray();
+      AliasKeys = Aliases.Keys.OrderBy(key => key).ToArray();
     }
     public static string GetAlias(string key) => Aliases.ContainsKey(key) ? Aliases[key] : "_";
     public static void RegisterCommands() {
@@ -99,6 +101,7 @@ namespace DEV {
 
     public static void Init(ConfigFile config) {
       var section = "1. General";
+      configNoDrops = config.Bind(section, "No creature drops", false, "Disables drops from creatures (if you control the zone), intended to fix high star enemies crashing the game.");
       configDefaultAliases = config.Bind(section, "Default aliases", true, "Adds some useful aliases for common operations.");
       configDefaultAliases.SettingChanged += (s, e) => {
         ParseAliases(configCommandAliases.Value);
@@ -121,7 +124,7 @@ namespace DEV {
 
     public static List<string> Options = new List<string>() {
       "map_coordinates", "private_players", "auto_devcommands", "auto_debugmode", "auto_fly",
-      "auto_nocost", "auto_ghost", "auto_god", "default_aliases", "debug_console"
+      "auto_nocost", "auto_ghost", "auto_god", "default_aliases", "debug_console", "no_drops"
     };
     private static string State(bool value) => value ? "enabled" : "disabled";
     private static void Toggle(Terminal context, ConfigEntry<bool> setting, string name, bool reverse = false) {
@@ -140,6 +143,7 @@ namespace DEV {
       if (key == "auto_ghost") Toggle(context, configAutoGhostMode, "Automatic ghost mode");
       if (key == "default_aliases") Toggle(context, configDefaultAliases, "Default aliases");
       if (key == "debug_console") Toggle(context, configDebugConsole, "Debug console");
+      if (key == "no_drops") Toggle(context, configNoDrops, "No creature drops");
     }
   }
 }

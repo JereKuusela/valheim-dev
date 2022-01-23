@@ -7,12 +7,18 @@ namespace DEV {
     public static string Plain(string command, int round = 0) {
       // This functions gets constantly called so this can help with the performance.
       if (command == "") return "";
+      if (command.StartsWith("alias ")) return command;
       if (round == 10) return command;
       foreach (var key in Settings.AliasKeys) {
-        if (command.StartsWith(key)) {
-          command = Settings.GetAlias(key) + command.Substring(key.Length);
-          return Plain(command, round + 1);
+        if (command.Length < key.Length) continue;
+        if (command != key) {
+          if (!command.StartsWith(key)) continue;
+          var nextChar = command[key.Length];
+          if (nextChar != ' ' && nextChar != '|' && nextChar != '=') continue;
         }
+        command = Settings.GetAlias(key) + command.Substring(key.Length);
+        return Plain(command, round + 1);
+
       }
       return command;
     }
@@ -20,8 +26,15 @@ namespace DEV {
     public static string GetAlias(string command) {
       // This functions gets constantly called so this can help with the performance.
       if (command == "") return "";
+      if (command.StartsWith("alias ")) return ""; ;
       foreach (var key in Settings.AliasKeys) {
-        if (command.StartsWith(key)) return key;
+        if (command.Length < key.Length) continue;
+        if (command != key) {
+          if (!command.StartsWith(key)) continue;
+          var nextChar = command[key.Length];
+          if (nextChar != ' ' && nextChar != '|' && nextChar != '=') continue;
+        }
+        return key;
       }
       return "";
     }
@@ -37,7 +50,7 @@ namespace DEV {
     public AliasCommand() {
       new Terminal.ConsoleCommand("alias", "[command] - Sets a command alias.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) {
-          args.Context.AddString(string.Join("\n", Settings.AliasKeys.OrderBy(key => key).Select(key => key + " -> " + Settings.GetAlias(key))));
+          args.Context.AddString(string.Join("\n", Settings.AliasKeys.Select(key => key + " -> " + Settings.GetAlias(key))));
         } else if (args.Length < 3) {
           Settings.RemoveAlias(args[1]);
           if (Terminal.commands.ContainsKey(args[1])) Terminal.commands.Remove(args[1]);
@@ -61,14 +74,9 @@ namespace DEV {
       if (pos < 0) return text;
       return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
     }
-    public static bool Prefix(ref string text, Terminal __instance) {
+    public static void Prefix(ref string text, Terminal __instance) {
       text = AliasCommand.Plain(text);
-      if (text.StartsWith("alias")) return true;
-      var substitutions = TerminalUtils.GetSubstitutions(text.Split(' '));
-      foreach (var parameter in substitutions) {
-        text = ReplaceFirst(text, "$", parameter);
-      }
-      return true;
+      text = TerminalUtils.Substitute(text);
     }
   }
   [HarmonyPatch(typeof(Terminal), "InputText")]
@@ -86,14 +94,8 @@ namespace DEV {
   }
   [HarmonyPatch(typeof(Terminal), "UpdateInput")]
   public class AliasInput {
-    private static string lastInput = "";
-    private static string lastPlain = "";
+    private static string LastActual = "";
     public static void Prefix(Terminal __instance, ref string __state) {
-      if (lastInput == __instance.m_input.text) {
-        __instance.m_input.text = lastPlain;
-        __instance.m_input.caretPosition += lastPlain.Length - lastInput.Length;
-        return;
-      }
       __state = AliasCommand.GetAlias(__instance.m_input.text);
       if (__state == string.Empty) return;
       var alias = AliasCommand.Plain(__state);
@@ -101,15 +103,12 @@ namespace DEV {
       __instance.m_input.caretPosition += alias.Length - __state.Length;
       if (Settings.DebugConsole) {
         var actual = TerminalUtils.Substitute(__instance.m_input.text);
-        DEV.Log.LogInfo("Command: " + actual);
+        if (actual != LastActual)
+          DEV.Log.LogInfo("Command: " + actual);
+        LastActual = actual;
       }
     }
     public static void Postfix(Terminal __instance, string __state) {
-      if (lastPlain == __instance.m_input.text) {
-        __instance.m_input.caretPosition -= lastPlain.Length - lastInput.Length;
-        __instance.m_input.text = lastInput;
-        return;
-      }
       if (__state == string.Empty) return;
       var alias = AliasCommand.Plain(__state);
       if (__instance.m_input.text.StartsWith(alias)) {

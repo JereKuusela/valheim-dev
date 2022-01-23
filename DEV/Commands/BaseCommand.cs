@@ -36,14 +36,7 @@ namespace DEV {
       if (args.Length <= index) return defaultValue;
       return TryInt(args[index], defaultValue);
     }
-    public static Vector3 TryParameterVectorXZY(string[] args, int index) {
-      if (args.Length <= index) return Vector3.zero;
-      return TryVectorXZY(args[index]);
-    }
-    public static Vector3 TryParameterVectorYXZ(string[] args, int index) {
-      if (args.Length <= index) return Vector3.zero;
-      return TryVectorXZY(args[index]);
-    }
+
     public static long TryParameterLong(string[] args, int index, long defaultValue = 1) {
       if (args.Length <= index) return defaultValue;
       return TryLong(args[index], defaultValue);
@@ -108,7 +101,7 @@ namespace DEV {
       vector.y = TryParameterFloat(values, 2, defaultValue.y);
       return vector;
     }
-    public static Vector3 ParseScale(string arg) {
+    public static Vector3 TryScale(string arg) {
       var values = TrySplit(arg, ",");
       var vector = Vector3.one;
       if (values.Length == 1) {
@@ -122,6 +115,18 @@ namespace DEV {
       if (vector.y == 0) vector.y = 1;
       if (vector.z == 0) vector.z = 1;
       return vector;
+    }
+    public static Vector3 TryParameterOffset(string[] args, int index) {
+      if (args.Length <= index) return Vector3.zero;
+      return TryVectorXZY(args[index], Vector3.zero);
+    }
+    public static Vector3 TryParameterRotation(string[] args, int index) {
+      if (args.Length <= index) return Vector3.zero;
+      return TryVectorYXZ(args[index], Vector3.zero);
+    }
+    public static Vector3 TryParameterScale(string[] args, int index) {
+      if (args.Length <= index) return Vector3.one;
+      return TryScale(args[index]);
     }
     public static Vector3 TryVectorYXZ(string arg) => TryVectorYXZ(arg, Vector3.zero);
     public static Vector3 TryVectorYXZ(string arg, Vector3 defaultValue) {

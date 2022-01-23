@@ -1,7 +1,9 @@
-﻿using BepInEx;
+﻿using System.Collections.Generic;
+using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
 using Service;
+using UnityEngine;
 
 namespace DEV {
   [BepInPlugin("valheim.jerekuusela.dev", "DEV", "1.5.0.0")]
@@ -32,6 +34,17 @@ namespace DEV {
       new AliasCommand();
       CommandParameters.RegisterBaseGameFetchers();
       Settings.RegisterCommands();
+    }
+  }
+
+  [HarmonyPatch(typeof(CharacterDrop), "GenerateDropList")]
+  public class GenerateDropList {
+    public static bool Prefix(ref List<KeyValuePair<GameObject, int>> __result) {
+      if (Settings.NoDrops) {
+        __result = new List<KeyValuePair<GameObject, int>>();
+        return false;
+      }
+      return true;
     }
   }
 }

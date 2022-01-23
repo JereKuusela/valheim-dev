@@ -68,7 +68,7 @@ namespace DEV {
           pars.BaseRotation = ParseAngleYXZ(split[1], pars.BaseRotation);
         }
         if (split[0] == "sc" || split[0] == "scale") {
-          pars.Scale = ParseScale(split[1]);
+          pars.Scale = TryScale(split[1]);
         }
         if (split[0] == "pos" || split[0] == "position") {
           useDefaultRelativePosition = false;
