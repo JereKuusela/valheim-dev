@@ -25,9 +25,9 @@ namespace Service {
     public static bool Undo() {
       if (Index < 0) return false;
       Executing = true;
-      //try {
-      History[Index].Undo();
-      //} catch { }
+      try {
+        History[Index].Undo();
+      } catch { }
       Index--;
       Executing = false;
       return true;

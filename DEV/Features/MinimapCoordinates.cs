@@ -2,6 +2,7 @@ using HarmonyLib;
 using UnityEngine;
 
 namespace DEV {
+
   [HarmonyPatch(typeof(Minimap), "UpdateBiome")]
 
   public class Minimap_ShowPos {

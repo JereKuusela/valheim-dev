@@ -1,9 +1,11 @@
 using System.Linq;
+using HarmonyLib;
 using UnityEngine;
 
 namespace DEV {
 
-  public class StartEventCommand : BaseCommands {
+  ///<summary>Adds coordinates to the parameters (required for server side support).</summary>
+  public class StartEventCommand : BaseCommand {
     private static void DoStartEvent(string[] args, Terminal context) {
       if (args.Length < 2) return;
       var name = args[1];
@@ -15,7 +17,6 @@ namespace DEV {
       var z = TryParameterFloat(args, 3, 0);
       RandEventSystem.instance.SetRandomEventByName(name, new Vector3(x, 0, z));
     }
-    ///<summary>Must be replaced because base game command uses the player position which won't work on the server. </summary>
     public StartEventCommand() {
       new Terminal.ConsoleCommand("event", "[name] [x] [z] - start event.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) return;
@@ -23,6 +24,18 @@ namespace DEV {
         if (ZNet.instance.IsServer()) DoStartEvent(parameters, args.Context);
         else SendCommand(parameters);
       }, true, true, optionsFetcher: () => RandEventSystem.instance.m_events.Select(ev => ev.m_name).ToList());
+      AutoComplete.Register("event", (int index, string parameter) => {
+        if (parameter != "") return ParameterInfo.InvalidNamed;
+        if (index == 0) return Terminal.commands["event"].m_tabOptionsFetcher();
+        if (index == 1) return ParameterInfo.Create("X coordinate", "number (default is the current position)");
+        if (index == 2) return ParameterInfo.Create("Z coordinate", "number (default is the current position)");
+        return ParameterInfo.None;
+      });
     }
+  }
+
+  [HarmonyPatch(typeof(RandEventSystem), "StartRandomEvent")]
+  public class DisableRandomEvents {
+    public static bool Prefix() => !Settings.DisableEvents;
   }
 }

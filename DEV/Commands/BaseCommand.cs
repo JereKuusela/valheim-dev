@@ -5,7 +5,8 @@ using UnityEngine;
 
 namespace DEV {
 
-  public abstract class BaseCommands {
+  ///<summary>Contains functions for parsing arguments, etc.</summary>
+  public abstract class BaseCommand {
     public static void AddMessage(Terminal context, string message) {
       context.AddString(message);
       Player.m_localPlayer?.Message(MessageHud.MessageType.TopLeft, message);
@@ -143,12 +144,15 @@ namespace DEV {
 
     public static string PrintAngleYXZ(Quaternion quaternion) => PrintVectorYXZ(quaternion.eulerAngles);
 
+    ///<summary>Sends command to the server so that it can be executed there.</summary>
     public static void SendCommand(string command) {
       var server = ZNet.instance.GetServerRPC();
       Console.instance.AddString("Sending command: " + command);
       if (server != null) server.Invoke(ServerCommands.RPC_Command, new object[] { command });
     }
+    ///<summary>Sends command to the server so that it can be executed there.</summary>
     public static void SendCommand(IEnumerable<string> args) => SendCommand(string.Join(" ", args));
+    ///<summary>Sends command to the server so that it can be executed there.</summary>
     public static void SendCommand(Terminal.ConsoleEventArgs args) => SendCommand(args.Args);
 
     ///<summary>Returns the hovered object within 50 meters.</summary>

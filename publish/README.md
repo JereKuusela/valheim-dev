@@ -1,15 +1,13 @@
-TODO: Config to debug alias/substitution (show final command).
-
 # Dedicated server devcommands
 
-This client side mod allows devcommands for server admins.
+This client side mod allows devcommands and utilities for server admins.
 
 Some features and commands require also installing the mod on the server (event, randomevent, resetkeys, skiptime, sleep, stopevent).
 
 # Manual Installation:
 
 1. Install the [BepInExPack Valheim](https://valheim.thunderstore.io/package/denikson/BepInExPack_Valheim)
-2. Download the latest zip
+2. Download the latest zip.
 3. Extract it in the \<GameDirectory\>\BepInEx\plugins\ folder.
 4. Add your steamID64 to adminlist.txt (if not already).
 
@@ -17,23 +15,16 @@ Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available com
 
 # Features
 
-## Improved autocomplete
-
-Console now provides autocomplete for all parameters instead of just the first one.
-
-Console also supports autocomplete for named parameters to more easily use the new commands.
-
-## Command aliasing
-
-New commands can be created to shorten commonly used commands.
-
-- `alias [name] [value]`: Adds a new command alias.
-	- `alias dm debugmode`: Adds a new command `dm` as a shorter version of `debugmode`.
-	- `alias move target move`: Adds a new command `move` as a shorter version of `target move`.
-	- `alias remove target remove radius=10 id`: Adds a new command `remove` that converts `remove=[id]` to `target remove radius=10 id=[id]` which allows more easily to remove nearby objects.
-	- `alias remove_corgi remove=StatueCorgi`: Adds a new command `remove_corgi` as a shorter version of `target remove radius=10 id=StatueCorgi` (aliases can be nested up to 10 times).
-- `alias`: Prints all aliases.
-- `alias [name]`: Removes the given alias.
+- Console is enabled without having to set the start parameter.
+- Cheat commands can also be used from the chat window (with autocomplete).
+- Autocomplete works for every parameter, always providing some information.
+- Multiple commands can be executed at the same time (when separated with `;`).
+- New commands can be created with `alias` command.
+- Modifier keys work when binding commands to keys.
+- `devcommands` is used automatically (if the admin check passes).
+- `debugmode`, `fly`, `ghost`, `god` and `nocost` can be configured to be used automatically.
+- God mode removes stamina usage and staggering.
+- Minor tweaks to existing commands and other useful admin features.
 
 ## Improved key bindings
 
@@ -47,59 +38,110 @@ Keybindings now work with modifier keys ([key codes](https://docs.unity3d.com/Sc
 
 After removing this mod, these binds very likely stop working or lead to unexpected behavior. Recommended to clear all binds with the `resetbinds` command.
 
+## Command aliasing
+
+New commands can be created to shorten command names or to set parameter values.
+
+This is intended to be used with other mods that add more complex commands than in the base game.
+
+- `alias [name] [value]`: Adds a new command alias.
+- `alias`: Prints all aliases.
+- `alias [name]`: Removes the given alias.
+
+Examples:
+
+- `alias dm debugmode`: Adds a new command `dm` as a shorter version of `debugmode`.
+- `alias spawn5 spawn $ 5 $`: Adds a new command `spawn5` with the spawn amount fixed at 5.
+- `alias maxskill raiseskill $ 100`: Adds a new command `skill_max` that raises the given skill to max level.
+- `alias resetskill raiseskill $ -100`: Adds a new command `skill_reset` that resets the given skill.
+- `alias cheat debugmode;nocost;fly`: Adds a new command `cheat` to quickly toggle cheats (if you don't want to use the config).
+
 ## Enhanced commands
 
-- `pos` command allows getting the position of any player.
+- `pos [player name]` allows getting the position of any player.
 	- `pos`: Returns your position.
 	- `pos jay`: Returns the position of a player named Jay,Heyjay or whatever is the closest match.
-- `event` command allows setting the event coordinates.
+- `event [event] [x] [z]` allows setting the event coordinates.
 	- `event army_eikthyr`: Starts an event at your position.
 	- `event army_eikthyr 100 -100`: Starts an event at coordinates 100,-100.
+- `devcommands` includes an admin check to allow using on servers.
+- `dev_config [value]` toggles settings.
+- `dev_server_config [value]` toggles settings on the server.
+- `search [term] [max_lines=5]` allows searching the object ID list.
+	- `search wolf`: Prints all object IDs that contain word "wolf".
+	- `search fx_ 10`: Prints all object IDs that contain word "fx_" on up to 10 lines.
 
 ## Enhanced map
 
-The large map shows coordinates of the cursor when hovered. This can be useful for any commands that require coordinates. The feature can be toggled with `dev_config map_coordinates` command.
+The large map shows coordinates of the cursor when hovered. This can be useful for any commands that require coordinates.
 
-If this mod is also installed on the server, admins will also receive position of players who have set their position as private.
+If this mod is also installed on the server, admins can also receive position of players who have set their position as private (disabled by default).
 
 These players are shown on the map with a ticked off icon and will also be available for the `pos` command.
 
-The feature can be toggled with `dev_config private_players` command or by editing the config.
+# Configuration
 
-- New command "spawn_object" that parameters for position, rotation and scale (not supported for all objects). Also automatically snaps to the ground. Position and rotation are relative to the player. Parameters refPos and refRot can be used to override it.
-  - spawn_object X rot=90: Spawns object X with 90 degree rotation.
-	- spawn_object X rot=90 scale=10: Spawns object X with 90 degree rotation and 10x size.
-	- spawn_object X rot=0,180: Spawns object X upside down.
-	- spawn_object X scale=1,10,1: Spawns object X stretched upwards (only supported for a few things like trees).
-	- spawn_object X amount=10: Spawns 10 of object X (items are autostacked, 10000 Coins won't crash the game).
-	- spawn_object X level=4 crafter=Hero durability=0: Spawns a broken level 4 of item X with crafter name set to Hero.
-	- spawn_object X variant=1: Spawns a variant 1 of item X (like shields or linen cape).
-- New command "spawn_location" that allows spawning points of interests with a fixed seed and rotation.
-  - spawn_location X: Spawns location X at player's position.
-  - spawn_location X seed=0 rot=90: Spawns location X with seed 0 and 90 degree rotation.
-  - spawn_location X pos=1000,1000: Spawns location X at coordinates 1000,1000.
-  - spawn_location X pos=100,100,50: Spawns location X at coordinates 100,50,100 (no snap to the ground).
-- New command "undo_spawn" which reverts commands "spawn_object" and "spawn_locations".
-- New command "redo_spawn" which restored reverted spawns.
-- New command "target" that allows modifying the hovered object or all objects within a radius.
-  - target tame: Tames the target.
-  - target wild: Untames the target.
-	- target baby: Prevents growth for an offspring.
-	- target sleep: Makes the target sleep (only works for naturally sleeping creatures).
-	- target info: Prints information about the target.
-	- target remove: Removes the target.
-	- target stars: Sets amount of stars for the target.
-	- target health: Sets target health (and maximum health for creatures).
-	- target wild radius=10: Makes all creatures wild within 10 meters.
-	- target tame id=Grey* radius=100: Tames all greylings, greydwarves, etc. within 100 meters.
+Three ways to edit the settings:
 
+- Use `dev_config` and `dev_server_config` commands to instantly toggle values.
+- Use the [Configuration manager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases/tag/v16.4) if installed to instantly toggle values for the client.
+- Manually edit the `valheim.jerekuusela.dev.cfg` in the config folder (requires restarting the client / server).
 
+Recommended way is to use the commands since you can configure the server and also `bind` them to keys.
+
+## General
+
+- Automatic debug mode (default `false`, key: `auto_debugmode`): Automatically turns debug mode on/off when devcommands are enabled or disabled.
+- Automatic devcommands (default `true`, key: `auto_devcommands`): Automatically tries to enable devcommands when joining servers.
+- Automatic fly mode (default `false`, key: `auto_fly`): Automatically turns fly mode on/off when devcommands are enabled or disabled. Requires automatic debug mode.
+- Automatic ghost mode (default `false`, key: `auto_ghost`): Automatically turns ghost mode on/off when devcommands are enabled or disabled.
+- Automatic god mode (default `false`, key: `auto_god`): Automatically turns god mode on/off when devcommands are enabled or disabled.
+- Automatic no cost mode (default `false`, key: `auto_nocost`): Automatically turns no cost mode on/off when devcommands are enabled or disabled. Requires automatic debug mode.
+- Disable random events (default `false`, key: `disable_events`): Prevents random events from happening (server side setting).
+- No creature drops (default `false`, key: `no_drops`): Prevents creatures from dropping loot, can be useful if people accidentally spawn very high star creatures. Only works when as the zone owner.
+- No staggering with god mode (default `true`, key: `god_no_stagger`): Removes staggering for an even godlier god mode.
+- No stamina usage with god mode (default `true`, key: `god_no_stamina`): Removes stamina usage for an even godlier god mode.
+- Show map coordinates (default `true`, key: `map_coordinates`): Shows cursor coordinates when hovering the map.
+- Show private players (default `false`, key: `private_players`): Shows players on the map even if they have set their position as private. Must be enabled both client and server side to work (admins can individually keep the feature off even when enabled from the server). 
+
+## Console
+
+Recommended to keep all settings on default values, unless there are errors or mod conflicts.
+
+- Alias system (default `true`, key: `aliasing`): Enables command aliasing.
+- Command aliases: Saved command aliases.
+- Debug console (default `false`, key: `debug_console`): Prints debug output to the console related to aliasing and parameter substitution.
+- Disable parameter warnings (default `false`, key: `disable_warnings`): Removes warning texts from some command parameter descriptions.
+- Improved auto complete (default `true`, key: `improved_autocomplete`): Enables parameter info or options for every parameter.
+- Multiple commands per line (default `true`, key: `multiple_commands`): Enables multiple commands per line (when separate by `;`).
+- Substitution system (default `true`, key: `substitution`): Enables parameter substitution (with `$`).
 
 # Changelog
 
 - v1.6:
-	- Improved autocomplete (different options per parameter).
-	- Added command aliasing.
+	- Added better autocomplete that provides options and information for all parameters.
+	- Added alias system which allows creating simpler commands out of existing ones.
+	- Added parameter substitution system which allows mapping command parameters.
+	- Added support for multiple commands per line.
+	- Added new command for setting server config values.
+	- Added new command to search object ids.
+	- Improved admin check to support more features.
+	- Added setting for automatic admin check (enabled by default).
+	- Added setting for automatic debugmode.
+	- Added setting for automatic god mode.
+	- Added setting for automatic fly mode.
+	- Added setting for automatic ghost mode.
+	- Added setting for automatic no cost mode.
+	- Added setting for improved autocomplete (enabled by default).
+	- Added setting for command aliasing (enabled by default).
+	- Added setting for command parameter substitution (enabled by default).
+	- Added setting for multiple commands per line (enabled by default).
+	- Added setting to remove stamina usage with god mode (enabled by default).
+	- Added setting to remove staggering with god mode (enabled by default).
+	- Added setting to disable creature drops.
+	- Added setting to disable random events.
+	- Changed default value of "show private player positions" to false.
+	- Fixed server crash (caused by too many players connecting if private position feature was on).
 
 - v1.5:
 	- Adds modifier key support to key bindings.

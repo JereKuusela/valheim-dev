@@ -2,8 +2,8 @@ using HarmonyLib;
 using Service;
 
 namespace DEV {
-
-  public class DevCommandsCommand : BaseCommands {
+  ///<summary>Replaces the default devcommands with an admin check.</summary>
+  public class DevCommandsCommand : BaseCommand {
     public static void Toggle(Terminal terminal) {
       var value = !Terminal.m_cheat;
       terminal?.AddString("Dev commands: " + value.ToString());
@@ -34,7 +34,6 @@ namespace DEV {
         Player.m_localPlayer.m_noPlacementCost = Player.m_debugMode;
     }
 
-    ///<summary>Replaced to make overriding the logic easier. </summary>
     public DevCommandsCommand() {
       new Terminal.ConsoleCommand("devcommands", "Toggles cheats", delegate (Terminal.ConsoleEventArgs args) {
         if (Terminal.m_cheat) {
@@ -45,11 +44,11 @@ namespace DEV {
           args.Context.AddString("Authenticating for devcommands...");
           Admin.ManualCheck();
         }
-
       });
+      AutoComplete.RegisterEmpty("devcommands");
     }
   }
-
+  ///<summary>Custom admin check to update devcommands.</summary>
   public class DevAdmin : DefaultAdmin {
     protected override void OnSuccess(Terminal terminal) {
       base.OnSuccess(terminal);
@@ -68,30 +67,45 @@ namespace DEV {
     }
   }
 
-  [HarmonyPatch(typeof(Console), "IsConsoleEnabled")]
-  public class EnableConsole {
-    public static void Postfix(ref bool __result) {
-      __result = true;
-    }
-  }
   [HarmonyPatch(typeof(Terminal), "IsCheatsEnabled")]
-  public class RemoveServerRequirementFromCheatCheck {
+  public class IsCheatsEnabledWithoutServerCheck {
     public static void Postfix(ref bool __result) {
       __result = Terminal.m_cheat;
     }
   }
-  // Must be patched because contains a "is server check".
   [HarmonyPatch(typeof(Terminal.ConsoleCommand), "IsValid")]
-  public class RemoveServerRequirementFromIsValid {
+  public class IsValidWithoutServerCheck {
     public static void Postfix(ref bool __result) {
       __result = __result || Terminal.m_cheat;
     }
   }
-  // Enable autocomplete for secrets (as it still only shows cheats with devcommands).
+  // Probably needed to provide autocomplete for the chat window.
   [HarmonyPatch(typeof(Terminal), "Awake")]
   public class AutoCompleteSecrets {
     public static void Postfix(ref bool ___m_autoCompleteSecrets) {
       ___m_autoCompleteSecrets = true;
+    }
+  }
+  [HarmonyPatch(typeof(Player), "HaveStamina")]
+  public class HaveStaminaWithGodMode {
+    public static bool Prefix(Player __instance, ref bool __result) {
+      var noUsage = Settings.GodModeNoStamina && __instance.InGodMode();
+      __result = noUsage;
+      return !noUsage;
+    }
+  }
+  [HarmonyPatch(typeof(Player), "UseStamina")]
+  public class UseStaminaWithGodMode {
+    public static bool Prefix(Player __instance) {
+      var noUsage = Settings.GodModeNoStamina && __instance.InGodMode();
+      return !noUsage;
+    }
+  }
+  [HarmonyPatch(typeof(Character), "AddStaggerDamage")]
+  public class AddStaggerDamage {
+    public static bool Prefix(Character __instance) {
+      var noStaggering = Settings.GodModeNoStagger && __instance.InGodMode() && __instance.IsPlayer();
+      return !noStaggering;
     }
   }
 }

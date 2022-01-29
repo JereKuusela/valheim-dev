@@ -6,11 +6,27 @@ using UnityEngine;
 
 namespace DEV {
   public static class TerminalUtils {
-    public static string GetLastWord(Terminal obj) => obj.m_input.text.Split(' ').Last().Split('=').Last().Split('|').Last();
+    // Logic for input:
+    // - Discard any previous commands (separated by ';') so other code doesn't have to consider ';' at all.
+    // - Convert aliases to plain text to get parameter options working.
+    // - Substitutions don't have to be handled (no need to worry about converting back).
+    // - At end of handling, convert plain to aliases and restore discarded commands.
+
+    public static void ToCurrentInput(Terminal terminal) {
+      var input = terminal.m_input;
+      MultiCommands.DiscardPreviousCommands(input);
+      Aliasing.RemoveAlias(input);
+    }
+    public static void ToActualInput(Terminal terminal) {
+      var input = terminal.m_input;
+      Aliasing.RestoreAlias(input);
+      MultiCommands.RestorePreviousCommands(input);
+    }
+    public static string GetLastWord(Terminal obj) => obj.m_input.text.Split(' ').Last().Split('=').Last().Split(',').Last();
     public static IEnumerable<string> GetPositionalParameters(string[] parameters) {
       return parameters.Where(par => !par.Contains("="));
     }
-    public static IEnumerable<string> GetSubstitutions(string[] parameters) {
+    public static void GetSubstitutions(string[] parameters, out IEnumerable<string> mainPars, out IEnumerable<string> substitutions) {
       // Substitutions can only appear after the last substitution.
       // This allows using commands like "target remove id=$" without 'remove' always replacing '$'.
       // However still "target id=$ remove" won't work.
@@ -18,9 +34,24 @@ namespace DEV {
       for (var i = 0; i < parameters.Length; i++) {
         if (parameters[i].Contains("$")) start = i + 1;
       }
-      if (start == -1) return new string[0];
-      return parameters.Skip(start).Where(par => !par.Contains("="));
+      if (start == -1) {
+        mainPars = parameters;
+        substitutions = new string[0];
+        return;
+      }
+      mainPars = parameters.Take(start);
+      substitutions = parameters.Skip(start);
     }
+
+    public static int GetAmountOfSubstitutions(string[] parameters) {
+      var start = -1;
+      for (var i = 0; i < parameters.Length; i++) {
+        if (parameters[i].Contains("$")) start = i + 1;
+      }
+      if (start == -1) return 0;
+      return parameters.Skip(start).Where(par => !par.Contains("=")).Count();
+    }
+
     private static string ReplaceFirst(string text, string search, string replace) {
       var pos = text.IndexOf(search);
       if (pos < 0) return text;
@@ -29,16 +60,24 @@ namespace DEV {
     public static string Substitute(string input) {
       if (input.StartsWith("alias ")) return input;
       if (!input.Contains("$")) return input;
-      var substitutions = GetSubstitutions(input.Split(' '));
+      GetSubstitutions(input.Split(' '), out var mainPars, out var substitutions);
+      input = string.Join(" ", mainPars);
       foreach (var parameter in substitutions) {
-        input = ReplaceFirst(input, "$", parameter);
-        if (parameter != "")
-          input = ReplaceFirst(input, " " + parameter, "");
+        if (parameter.Contains("=") || !input.Contains("$")) {
+          input += " " + parameter;
+        } else
+          input = ReplaceFirst(input, "$", parameter);
       }
-      // Removes any extra parameters that didn't receive substitution so "foo cmd=$|$" works with "foo 3".
-      input = input.Replace("|$", "");
-      return string.Join(" ", input.Split(' ').Where(par => !par.Contains("$")));
+      // Removes any extra substitutions that didn't receive values so "cmd par=$,$" works with "foo 3".
+      input = input.Replace(",$", "");
+      // Remove any trailing substitution that didn't receive a parameter so "cmd $ $" works with "foo 3".
+      var parameters = input.Split(' ');
+      while (parameters.Length > 0 && parameters.Last().Contains("$"))
+        parameters = parameters.Take(parameters.Length - 1).ToArray();
+      input = string.Join(" ", parameters);
+      return input;
     }
+    public static bool SkipProcessing(string command) => command.StartsWith("bind ") || command.StartsWith("alias ");
   }
 
   // Replace devcommands check with a custom one.
@@ -73,18 +112,54 @@ namespace DEV {
       string.Join(" ", command.Split(' ').Where(arg => !arg.StartsWith("keys=")));
 
     public static bool Prefix(Terminal __instance, ref string text) {
-      if (!text.StartsWith("bind ")) {
-        if (!CheckModifierKeys(text)) return false;
-        text = RemoveModifierKeys(text);
+      // Alias and bind can contain any kind of commands so avoid any processing.
+      if (TerminalUtils.SkipProcessing(text)) return true;
+      // Multiple commands in actual input.
+      if (MultiCommands.IsMulti(text)) {
+        foreach (var cmd in MultiCommands.Split(text)) __instance.TryRunCommand(cmd);
+        return false;
       }
+      if (Settings.Aliasing)
+        text = Aliasing.Plain(text);
+      if (Settings.Substitution)
+        text = TerminalUtils.Substitute(text);
+      // Multiple commands in an alias.
+      if (MultiCommands.IsMulti(text)) {
+        foreach (var cmd in MultiCommands.Split(text)) __instance.TryRunCommand(cmd);
+        return false;
+      }
+      if (!CheckModifierKeys(text)) return false;
+      text = RemoveModifierKeys(text);
       string[] array = text.Split(' ');
       if (ZNet.instance && !ZNet.instance.IsServer() && IsServerSide(array[0])) {
-        BaseCommands.SendCommand(text);
+        BaseCommand.SendCommand(text);
         return false;
       }
       return true;
     }
   }
 
-
+  [HarmonyPatch(typeof(Terminal), "UpdateInput")]
+  public class AliasInput {
+    private static string LastActual = "";
+    public static bool Prefix(Terminal __instance, ref string __state) {
+      // Safe-guard because actions need different kind of input.
+      if (Input.GetKeyDown(KeyCode.Return) && Input.GetKeyDown(KeyCode.Tab)) return false;
+      // For execution, keep the actual input so that the history is saved properly.
+      if (Input.GetKeyDown(KeyCode.Return)) return true;
+      TerminalUtils.ToCurrentInput(__instance);
+      if (Settings.DebugConsole) {
+        var actual = __instance.m_input.text;
+        if (Settings.Substitution)
+          actual = TerminalUtils.Substitute(actual);
+        if (actual != LastActual)
+          DEV.Log.LogInfo("Command: " + actual);
+        LastActual = actual;
+      }
+      return true;
+    }
+    public static void Postfix(Terminal __instance) {
+      TerminalUtils.ToActualInput(__instance);
+    }
+  }
 }
