@@ -93,50 +93,44 @@ namespace DEV {
       angle.z = TryParameterFloat(values, 2, defaultValue.eulerAngles.z);
       return Quaternion.Euler(angle);
     }
-    public static Vector3 TryVectorXZY(string arg) => TryVectorXZY(arg, Vector3.zero);
-    public static Vector3 TryVectorXZY(string arg, Vector3 defaultValue) {
-      var values = TrySplit(arg, ",");
+    ///<summary>Parses XZY vector starting at zero index. Zero is used for missing values.</summary>
+    public static Vector3 TryVectorXZY(string[] args) => TryVectorXZY(args, 0, Vector3.zero);
+    ///<summary>Parses XZY vector starting at zero index. Default values is used for missing values.</summary>
+    public static Vector3 TryVectorXZY(string[] args, Vector3 defaultValue) => TryVectorXZY(args, 0, defaultValue);
+    ///<summary>Parses XZY vector starting at given index. Zero is used for missing values.</summary>
+    public static Vector3 TryVectorXZY(string[] args, int index) => TryVectorXZY(args, index, Vector3.zero);
+    ///<summary>Parses XZY vector starting at given index. Default values is used for missing values.</summary>
+    public static Vector3 TryVectorXZY(string[] args, int index, Vector3 defaultValue) {
       var vector = Vector3.zero;
-      vector.x = TryParameterFloat(values, 0, defaultValue.x);
-      vector.z = TryParameterFloat(values, 1, defaultValue.z);
-      vector.y = TryParameterFloat(values, 2, defaultValue.y);
+      vector.x = TryParameterFloat(args, index, defaultValue.x);
+      vector.z = TryParameterFloat(args, index + 1, defaultValue.z);
+      vector.y = TryParameterFloat(args, index + 2, defaultValue.y);
       return vector;
     }
-    public static Vector3 TryScale(string arg) {
-      var values = TrySplit(arg, ",");
-      var vector = Vector3.one;
-      if (values.Length == 1) {
-        var value = TryFloat(arg, 1);
-        vector = new Vector3(value, value, value);
-      } else {
-        vector = TryVectorXZY(arg, vector);
-      }
-      // Sanity check.
-      if (vector.x == 0) vector.x = 1;
-      if (vector.y == 0) vector.y = 1;
-      if (vector.z == 0) vector.z = 1;
-      return vector;
-    }
-    public static Vector3 TryParameterOffset(string[] args, int index) {
-      if (args.Length <= index) return Vector3.zero;
-      return TryVectorXZY(args[index], Vector3.zero);
-    }
-    public static Vector3 TryParameterRotation(string[] args, int index) {
-      if (args.Length <= index) return Vector3.zero;
-      return TryVectorYXZ(args[index], Vector3.zero);
-    }
-    public static Vector3 TryParameterScale(string[] args, int index) {
-      if (args.Length <= index) return Vector3.one;
-      return TryScale(args[index]);
-    }
-    public static Vector3 TryVectorYXZ(string arg) => TryVectorYXZ(arg, Vector3.zero);
-    public static Vector3 TryVectorYXZ(string arg, Vector3 defaultValue) {
-      var values = TrySplit(arg, ",");
+    ///<summary>Parses YXZ vector starting at zero index. Zero is used for missing values.</summary>
+    public static Vector3 TryVectorYXZ(string[] args) => TryVectorYXZ(args, 0, Vector3.zero);
+    ///<summary>Parses YXZ vector starting at zero index. Default values is used for missing values.</summary>
+    public static Vector3 TryVectorYXZ(string[] args, Vector3 defaultValue) => TryVectorYXZ(args, 0, defaultValue);
+    ///<summary>Parses YXZ vector starting at given index. Zero is used for missing values.</summary>
+    public static Vector3 TryVectorYXZ(string[] args, int index) => TryVectorYXZ(args, index, Vector3.zero);
+    ///<summary>Parses YXZ vector starting at given index. Default values is used for missing values.</summary>
+    public static Vector3 TryVectorYXZ(string[] args, int index, Vector3 defaultValue) {
       var vector = Vector3.zero;
-      vector.y = TryParameterFloat(values, 0, defaultValue.y);
-      vector.x = TryParameterFloat(values, 1, defaultValue.x);
-      vector.z = TryParameterFloat(values, 2, defaultValue.z);
+      vector.y = TryParameterFloat(args, index, defaultValue.y);
+      vector.x = TryParameterFloat(args, index + 1, defaultValue.x);
+      vector.z = TryParameterFloat(args, index + 2, defaultValue.z);
       return vector;
+    }
+    ///<summary>Parses scale starting at zero index. Includes a sanity check and giving a single value for all axis.</summary>
+    public static Vector3 TryScale(string[] args) => TryScale(args, 0);
+    ///<summary>Parses scale starting at given index. Includes a sanity check and giving a single value for all axis.</summary>
+    public static Vector3 TryScale(string[] args, int index) {
+      var scale = TryVectorXZY(args, index);
+      // Sanity check and also adds support for setting all values with a single number.
+      if (scale.x == 0) scale.x = 1;
+      if (scale.y == 0) scale.y = scale.x;
+      if (scale.z == 0) scale.z = scale.x;
+      return scale;
     }
 
     public static string PrintVectorXZY(Vector3 vector) => vector.x.ToString(CultureInfo.InvariantCulture) + "," + vector.z.ToString(CultureInfo.InvariantCulture) + "," + vector.y.ToString(CultureInfo.InvariantCulture);
