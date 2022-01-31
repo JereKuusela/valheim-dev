@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using UnityEngine;
@@ -7,16 +6,6 @@ namespace DEV {
 
   ///<summary>Contains functions for parsing arguments, etc.</summary>
   public abstract class BaseCommand {
-    public static void AddMessage(Terminal context, string message) {
-      context.AddString(message);
-      Player.m_localPlayer?.Message(MessageHud.MessageType.TopLeft, message);
-    }
-    public static GameObject GetPrefab(string name) {
-      var prefab = ZNetScene.instance.GetPrefab(name);
-      if (!prefab)
-        Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "Missing object " + name, 0, null);
-      return prefab;
-    }
 
     public static int TryInt(string arg, int defaultValue = 1) {
       if (!int.TryParse(arg, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
@@ -137,36 +126,6 @@ namespace DEV {
     public static string PrintVectorYXZ(Vector3 vector) => vector.y.ToString(CultureInfo.InvariantCulture) + "," + vector.x.ToString(CultureInfo.InvariantCulture) + "," + vector.z.ToString(CultureInfo.InvariantCulture);
 
     public static string PrintAngleYXZ(Quaternion quaternion) => PrintVectorYXZ(quaternion.eulerAngles);
-
-    ///<summary>Sends command to the server so that it can be executed there.</summary>
-    public static void SendCommand(string command) {
-      var server = ZNet.instance.GetServerRPC();
-      Console.instance.AddString("Sending command: " + command);
-      if (server != null) server.Invoke(ServerCommands.RPC_Command, new object[] { command });
-    }
-    ///<summary>Sends command to the server so that it can be executed there.</summary>
-    public static void SendCommand(IEnumerable<string> args) => SendCommand(string.Join(" ", args));
-    ///<summary>Sends command to the server so that it can be executed there.</summary>
-    public static void SendCommand(Terminal.ConsoleEventArgs args) => SendCommand(args.Args);
-
-    ///<summary>Returns the hovered object within 50 meters.</summary>
-    public static ZNetView GetHovered(Terminal.ConsoleEventArgs args) {
-      if (Player.m_localPlayer == null) return null;
-      var interact = Player.m_localPlayer.m_maxInteractDistance;
-      Player.m_localPlayer.m_maxInteractDistance = 50f;
-      Player.m_localPlayer.FindHoverObject(out var obj, out var creature);
-      Player.m_localPlayer.m_maxInteractDistance = interact;
-      if (obj == null) {
-        AddMessage(args.Context, "Nothing is being hovered.");
-        return null;
-      }
-      var view = obj.GetComponentInParent<ZNetView>();
-      if (view == null) {
-        AddMessage(args.Context, "Nothing is being hovered.");
-        return null;
-      }
-      return view;
-    }
   }
 
 }

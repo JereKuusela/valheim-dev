@@ -67,9 +67,11 @@ Examples:
 - `devcommands` includes an admin check to allow using on servers.
 - `dev_config [value]` toggles settings.
 - `dev_server_config [value]` toggles settings on the server.
+- `redo` restores an action added to the undo/redo manager.
 - `search [term] [max_lines=5]` allows searching the object ID list.
 	- `search wolf`: Prints all object IDs that contain word "wolf".
 	- `search fx_ 10`: Prints all object IDs that contain word "fx_" on up to 10 lines.
+- `undo` reverts an action added to the undo/redo manager.
 
 ## Enhanced map
 
@@ -118,36 +120,42 @@ Recommended to keep all settings on default values, unless there are errors or m
 
 # Changelog
 
+- v1.7:
+	- Adds an undo/redo system (currently only for other mods to use).
+	- New icon (thanks Azumatt!).
+	- Improves autocomplete for default commands.
+	- Fixes possible server crash if private players are enabled (another attempt).
+
 - v1.6:
-	- Added better autocomplete that provides options and information for all parameters.
-	- Added alias system which allows creating simpler commands out of existing ones.
-	- Added parameter substitution system which allows mapping command parameters.
-	- Added support for multiple commands per line.
-	- Added new command for setting server config values.
-	- Added new command to search object ids.
-	- Improved admin check to support more features.
-	- Added setting for automatic admin check (enabled by default).
-	- Added setting for automatic debugmode.
-	- Added setting for automatic god mode.
-	- Added setting for automatic fly mode.
-	- Added setting for automatic ghost mode.
-	- Added setting for automatic no cost mode.
-	- Added setting for improved autocomplete (enabled by default).
-	- Added setting for command aliasing (enabled by default).
-	- Added setting for command parameter substitution (enabled by default).
-	- Added setting for multiple commands per line (enabled by default).
-	- Added setting to remove stamina usage with god mode (enabled by default).
-	- Added setting to remove staggering with god mode (enabled by default).
-	- Added setting to disable creature drops.
-	- Added setting to disable random events.
-	- Changed default value of "show private player positions" to false.
-	- Fixed server crash (caused by too many players connecting if private position feature was on).
+	- Adds a better autocomplete that provides options and information for all parameters.
+	- Adds an alias system which allows creating simpler commands out of existing ones.
+	- Adds a parameter substitution system which allows mapping command parameters.
+	- Adds support for multiple commands per line.
+	- Adds a new command for setting server config values.
+	- Adds a new command to search object ids.
+	- Improves the admin check to support more features.
+	- Adds a setting for automatic admin check (enabled by default).
+	- Adds a setting for automatic debugmode.
+	- Adds a setting for automatic god mode.
+	- Adds a setting for automatic fly mode.
+	- Adds a setting for automatic ghost mode.
+	- Adds a setting for automatic no cost mode.
+	- Adds a setting for improved autocomplete (enabled by default).
+	- Adds a setting for command aliasing (enabled by default).
+	- Adds a setting for command parameter substitution (enabled by default).
+	- Adds a setting for multiple commands per line (enabled by default).
+	- Adds a setting to remove stamina usage with god mode (enabled by default).
+	- Adds a setting to remove staggering with god mode (enabled by default).
+	- Adds a setting to disable creature drops.
+	- Adds a setting to disable random events.
+	- Changes the default value of "show private player positions" to false.
+	- Fixes a server crash (caused by too many players connecting if private position feature was on).
 
 - v1.5:
-	- Adds modifier key support to key bindings.
-	- Adds new parameter to the pos command (allows getting position of any player).
+	- Adds a modifier key support to key bindings.
+	- Adds a new parameter to the pos command (allows getting position of any player).
 	- Adds support for showing private player positions (requires also server side).
-	- Changes setkey command to work client side.
+	- Changes the setkey command to work client side.
 	- Fixes console spam.
 	- Fixes console commands not working in the character selection.
 	- Attempts to further improve the admin check reliability.
@@ -167,3 +175,5 @@ Recommended to keep all settings on default values, unless there are errors or m
 
 - v1.0: 
 	- Initial release.
+	
+Thanks for Azumatt for creating the mod icon!

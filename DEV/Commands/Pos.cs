@@ -1,3 +1,4 @@
+using Service;
 using UnityEngine;
 
 namespace DEV {
@@ -12,12 +13,11 @@ namespace DEV {
           position = info.m_characterID.IsNone() ? null : (Vector3?)info.m_position;
         }
         if (position.HasValue)
-          AddMessage(args.Context, "Player position (X,Y,Z):" + position.Value.ToString("F0"));
+          Helper.AddMessage(args.Context, "Player position (X,Y,Z):" + position.Value.ToString("F0"));
         else
-          AddMessage(args.Context, "Error: Unable to find the player.");
+          Helper.AddMessage(args.Context, "Error: Unable to find the player.");
       }, true, true, optionsFetcher: () => ParameterInfo.PlayerNames);
-      AutoComplete.Register("pos", (int index, string parameter) => {
-        if (parameter != "") return ParameterInfo.InvalidNamed;
+      AutoComplete.Register("pos", (int index) => {
         if (index == 0) return ParameterInfo.PlayerNames;
         return ParameterInfo.None;
       });

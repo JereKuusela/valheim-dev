@@ -5,6 +5,8 @@ namespace Service {
   public interface UndoAction {
     void Undo();
     void Redo();
+    string UndoMessage();
+    string RedoMessage();
   }
   public class UndoManager {
     private static List<UndoAction> History = new List<UndoAction>();
@@ -22,26 +24,32 @@ namespace Service {
       Index = History.Count - 1;
     }
 
-    public static bool Undo() {
-      if (Index < 0) return false;
+    public static bool Undo(Terminal terminal) {
+      if (Index < 0) {
+        Helper.AddMessage(terminal, "Nothing to undo.");
+        return false;
+      }
       Executing = true;
       try {
         History[Index].Undo();
+        Helper.AddMessage(terminal, History[Index].UndoMessage());
       } catch { }
       Index--;
       Executing = false;
       return true;
     }
-    public static bool Redo() {
+    public static bool Redo(Terminal terminal) {
       if (Index < History.Count - 1) {
         Executing = true;
         Index++;
         try {
           History[Index].Redo();
+          Helper.AddMessage(terminal, History[Index].RedoMessage());
         } catch { }
         Executing = false;
         return true;
       }
+      Helper.AddMessage(terminal, "Nothing to redo.");
       return false;
     }
   }

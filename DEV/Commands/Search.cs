@@ -22,11 +22,10 @@ namespace DEV {
           args.Context.AddString(string.Join(", ", buffer));
         }
       }, optionsFetcher: () => ParameterInfo.Create("Search term"));
-      AutoComplete.Register("search", (int index, string parameter) => {
-        if (parameter != "") return ParameterInfo.InvalidNamed;
+      AutoComplete.Register("search", (int index) => {
         if (index == 0) return ParameterInfo.Create("Search term");
         if (index == 1) return ParameterInfo.Create("Max lines", "number (default 5)");
-        return ParameterInfo.None;
+        return null;
       });
     }
   }

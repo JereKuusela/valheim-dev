@@ -28,8 +28,7 @@ namespace DEV {
           args.Context.updateCommandList();
         }
       });
-      AutoComplete.Register("alias", (int index, string parameter) => {
-        if (parameter != "") return ParameterInfo.InvalidNamed;
+      AutoComplete.Register("alias", (int index) => {
         if (index == 0) return ParameterInfo.Create("Name of the new command");
         if (index == 1) return ParameterInfo.CommandNames;
         return ParameterInfo.Create("Command values");

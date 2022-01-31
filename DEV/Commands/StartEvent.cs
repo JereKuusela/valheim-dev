@@ -22,14 +22,13 @@ namespace DEV {
         if (args.Length < 2) return;
         var parameters = AddPlayerPosXZ(args.Args, 2);
         if (ZNet.instance.IsServer()) DoStartEvent(parameters, args.Context);
-        else SendCommand(parameters);
+        else ServerCommand.Send(parameters);
       }, true, true, optionsFetcher: () => RandEventSystem.instance.m_events.Select(ev => ev.m_name).ToList());
-      AutoComplete.Register("event", (int index, string parameter) => {
-        if (parameter != "") return ParameterInfo.InvalidNamed;
+      AutoComplete.Register("event", (int index) => {
         if (index == 0) return Terminal.commands["event"].m_tabOptionsFetcher();
         if (index == 1) return ParameterInfo.Create("X coordinate", "number (default is the current position)");
         if (index == 2) return ParameterInfo.Create("Z coordinate", "number (default is the current position)");
-        return ParameterInfo.None;
+        return null;
       });
     }
   }

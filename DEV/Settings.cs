@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using BepInEx.Configuration;
+using Service;
 
 namespace DEV {
   public static class Settings {
@@ -111,7 +112,7 @@ namespace DEV {
     private static string State(bool value) => value ? "enabled" : "disabled";
     private static void Toggle(Terminal context, ConfigEntry<bool> setting, string name, bool reverse = false) {
       setting.Value = !setting.Value;
-      BaseCommand.AddMessage(context, $"{name} {State(reverse ? !setting.Value : setting.Value)}.");
+      Helper.AddMessage(context, $"{name} {State(reverse ? !setting.Value : setting.Value)}.");
 
     }
     public static void UpdateValue(Terminal context, string key, string value) {

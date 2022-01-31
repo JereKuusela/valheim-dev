@@ -132,7 +132,7 @@ namespace DEV {
       text = RemoveModifierKeys(text);
       string[] array = text.Split(' ');
       if (ZNet.instance && !ZNet.instance.IsServer() && IsServerSide(array[0])) {
-        BaseCommand.SendCommand(text);
+        ServerCommand.Send(text);
         return false;
       }
       return true;

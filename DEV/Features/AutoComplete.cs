@@ -2,130 +2,61 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
-using UnityEngine;
 
 namespace DEV {
-  using OptionsFetcher = Func<int, string, List<string>>;
+  using NamedOptionsFetchers = Dictionary<string, Func<int, List<string>>>;
+
+  using OptionsFetcher = Func<int, List<string>>;
   ///<summary>Provides improved autocomplete (options/some info for each parameter, support for named parameters).</summary>
   public static class AutoComplete {
     private static Dictionary<string, OptionsFetcher> OptionsFetchers = new Dictionary<string, OptionsFetcher>();
+    private static Dictionary<string, NamedOptionsFetchers> OptionsNamedFetchers = new Dictionary<string, NamedOptionsFetchers>();
     ///<summary>Returns options, either from the custom or the default options fetcher.</summary>
-    public static List<string> GetOptions(string command, int index, string parameter) {
-      if (OptionsFetchers.ContainsKey(command)) return OptionsFetchers[command](index, parameter);
-      if (!Terminal.commands.ContainsKey(command)) return new List<string>();
+    public static List<string> GetOptions(string command, int index, string namedParameter) {
+      command = command.ToLower();
+      if (namedParameter != "") {
+        if (OptionsNamedFetchers.TryGetValue(command, out var namedOptions)) {
+          if (namedOptions.TryGetValue(namedParameter.ToLower(), out var namedFetcher)) {
+            return namedFetcher(index);
+          }
+        }
+        return ParameterInfo.InvalidNamed(namedParameter);
+      }
+      if (OptionsFetchers.ContainsKey(command)) return OptionsFetchers[command](index) ?? ParameterInfo.None;
+      if (!Terminal.commands.ContainsKey(command)) return ParameterInfo.None;
       var fetcher = Terminal.commands[command].m_tabOptionsFetcher;
       if (fetcher != null) return fetcher();
-      return new List<string>();
+      return ParameterInfo.None;
     }
     ///<summary>Registers a new custom options fetcher.</summary>
-    public static void Register(string command, OptionsFetcher fetcher) => OptionsFetchers[command] = fetcher;
+    public static void Register(string command, OptionsFetcher fetcher, NamedOptionsFetchers namedFetchers) {
+      OptionsFetchers[command.ToLower()] = fetcher;
+      OptionsNamedFetchers[command.ToLower()] = namedFetchers.ToDictionary(kvp => kvp.Key.ToLower(), kvp => kvp.Value);
+    }
+    public static void Register(string command, OptionsFetcher fetcher) {
+      OptionsFetchers[command] = fetcher;
+    }
 
     ///<summary>Registers an options fetcher without parameters.</summary>
     public static void RegisterEmpty(string command) {
-      Register(command, (int index, string parameter) => {
-        if (parameter != "") return ParameterInfo.InvalidNamed;
-        return ParameterInfo.None;
-      });
+      Register(command, (int index) => null);
     }
     ///<summary>Registers an options fetcher for an admion action.</summary>
     public static void RegisterAdmin(string command) {
-      Register(command, (int index, string parameter) => {
-        if (parameter != "") return ParameterInfo.InvalidNamed;
+      Register(command, (int index) => {
         if (index == 0) return ParameterInfo.Create("Name / IP / UserId");
-        return ParameterInfo.None;
+        return null;
       });
     }
     ///<summary>Registers an options fetcher with only the default fetcher.</summary>
     public static void RegisterDefault(string command) {
-      Register(command, (int index, string parameter) => {
-        if (parameter != "") return ParameterInfo.InvalidNamed;
+      Register(command, (int index) => {
         if (index == 0) return Terminal.commands[command].m_tabOptionsFetcher();
-        return ParameterInfo.None;
+        return null;
       });
     }
   }
 
-  ///<summary>Helper class for parameter options/info. The main purpose is to provide some caching to avoid performance issues.</summary>
-  public static class ParameterInfo {
-    private static List<string> ids = new List<string>();
-    public static List<string> Ids {
-      get {
-        if (ZNetScene.instance && ZNetScene.instance.m_namedPrefabs.Count != ids.Count)
-          ids = ZNetScene.instance.GetPrefabNames();
-        return ids;
-      }
-    }
-    private static List<string> itemIds = new List<string>();
-    public static List<string> ItemIds {
-      get {
-        if (ObjectDB.instance && ObjectDB.instance.m_items.Count != itemIds.Count)
-          itemIds = ObjectDB.instance.m_items.Select(item => item.name).ToList();
-        return itemIds;
-      }
-    }
-    private static List<string> playerNames = new List<string>();
-    public static List<string> PlayerNames {
-      get {
-        if (ZNet.instance && ZNet.instance.m_players.Count != playerNames.Count)
-          playerNames = ZNet.instance.m_players.Select(player => player.m_name).ToList();
-        return playerNames;
-      }
-    }
-    private static List<string> hairs = new List<string>();
-    public static List<string> Hairs {
-      get {
-        // Missing proper caching.
-        if (ObjectDB.instance)
-          hairs = ObjectDB.instance.GetAllItems(ItemDrop.ItemData.ItemType.Customization, "Hair").Select(item => item.name).ToList();
-        return hairs;
-      }
-    }
-    private static List<string> beards = new List<string>();
-    public static List<string> Beards {
-      get {
-        // Missing proper caching.
-        if (ObjectDB.instance)
-          beards = ObjectDB.instance.GetAllItems(ItemDrop.ItemData.ItemType.Customization, "Beard").Select(item => item.name).ToList();
-        return beards;
-      }
-    }
-    private static List<string> keyCodes = new List<string>();
-    public static List<string> KeyCodes {
-      get {
-        if (keyCodes.Count == 0) {
-          var values = Enum.GetNames(typeof(KeyCode));
-          keyCodes = values.Select(value => value.ToLower()).ToList();
-        }
-        return keyCodes;
-      }
-    }
-    private static List<string> keyCodesWithNegative = new List<string>();
-    public static List<string> KeyCodesWithNegative {
-      get {
-        if (keyCodesWithNegative.Count == 0) {
-          var values = Enum.GetNames(typeof(KeyCode));
-          keyCodesWithNegative = values.Select(value => value.ToLower()).ToList();
-          keyCodesWithNegative.AddRange(keyCodesWithNegative.Select(value => "-" + value).ToList());
-        }
-        return keyCodesWithNegative;
-      }
-    }
-    public static List<string> CommandNames {
-      get {
-        return Terminal.commands.Keys.ToList();
-      }
-    }
-    private static string Format(string value) {
-      if (!value.EndsWith(".") && !value.EndsWith("!"))
-        value += ".";
-      return "?" + value;
-    }
-    public static List<string> None = new List<string>() { Format("Too many parameters") };
-    public static List<string> InvalidNamed = new List<string>() { Format("Invalid named parameter") };
-    public static List<string> Origin = new List<string>() { "player", "object", "world" };
-    public static List<string> Create(string name, string type) => new List<string>() { Format($"{name} should be a {type}") };
-    public static List<string> Create(string name) => new List<string>() { Format($"{name}") };
-  }
 
   [HarmonyPatch(typeof(Terminal.ConsoleCommand), "GetTabOptions")]
   public class GetTabOptionsWithImprovedAutoComplete {
@@ -178,7 +109,6 @@ namespace DEV {
               }
             }
           }
-
         }
       }
       return AutoComplete.GetOptions(commandName, index, name);
@@ -222,11 +152,6 @@ namespace DEV {
       // Always show the help text since there isn't any real search option.
       if (helpText)
         __instance.m_search.text = "<color=white>" + string.Join(", ", options.Select(option => option.Substring(1))) + "</color>";
-      if (Settings.DisableParameterWarnings) {
-        var index = __instance.m_search.text.IndexOf(", <color=yellow>WARNING</color>");
-        if (index >= 0)
-          __instance.m_search.text = __instance.m_search.text.Substring(0, index) + "</color>"; // Bit hacky to manually add color tag back.
-      }
     }
   }
 }

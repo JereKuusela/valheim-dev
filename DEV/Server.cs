@@ -27,7 +27,19 @@ namespace DEV {
   }
 
   [HarmonyPatch(typeof(ZNet), "RPC_PeerInfo")]
-  public class ServerCommands {
+  public class ServerCommand {
+
+    ///<summary>Sends command to the server so that it can be executed there.</summary>
+    public static void Send(string command) {
+      var server = ZNet.instance.GetServerRPC();
+      Console.instance.AddString("Sending command: " + command);
+      if (server != null) server.Invoke(ServerCommand.RPC_Command, new object[] { command });
+    }
+    ///<summary>Sends command to the server so that it can be executed there.</summary>
+    public static void Send(IEnumerable<string> args) => Send(string.Join(" ", args));
+    ///<summary>Sends command to the server so that it can be executed there.</summary>
+    public static void Send(Terminal.ConsoleEventArgs args) => Send(args.Args);
+
     public static string RPC_Command = "DEV_Command";
     private static bool IsAllowed(ZRpc rpc) {
       var zNet = ZNet.instance;

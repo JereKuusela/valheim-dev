@@ -4,7 +4,7 @@ using HarmonyLib;
 using Service;
 
 namespace DEV {
-  [BepInPlugin("valheim.jerekuusela.dev", "DEV", "1.6.0.0")]
+  [BepInPlugin("valheim.jerekuusela.dev", "DEV", "1.7.0.0")]
   public class DEV : BaseUnityPlugin {
     public static ManualLogSource Log;
     public void Awake() {
@@ -26,6 +26,7 @@ namespace DEV {
       new PosCommand();
       new AliasCommand();
       new SearchCommand();
+      new UndoRedoCommand();
       DefaultAutoComplete.Register();
       Settings.RegisterCommands();
     }

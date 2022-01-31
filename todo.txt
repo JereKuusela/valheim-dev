@@ -1,0 +1,3 @@
+- Change "is server", etc values of default commands to match the reality (then can automatically execute "server" commands on server).
+- Undo/redo for default commands.
+- Consider using colors more.

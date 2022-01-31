@@ -2,10 +2,9 @@ namespace DEV {
   //<summary>Adds commands for changing the client and server configuration.</summary>
   public class ConfigCommand : BaseCommand {
     private void RegisterAutoComplete(string command) {
-      AutoComplete.Register(command, (int index, string parameter) => {
-        if (parameter != "") return ParameterInfo.InvalidNamed;
+      AutoComplete.Register(command, (int index) => {
         if (index == 0) return Settings.Options;
-        return ParameterInfo.None;
+        return null;
       });
     }
     public ConfigCommand() {
@@ -24,7 +23,7 @@ namespace DEV {
             Settings.UpdateValue(args.Context, args[1], "");
           else
             Settings.UpdateValue(args.Context, args[1], args[2]);
-        } else SendCommand(args.Args);
+        } else ServerCommand.Send(args.Args);
       }, optionsFetcher: () => Settings.Options);
       RegisterAutoComplete("dev_server_config");
     }
