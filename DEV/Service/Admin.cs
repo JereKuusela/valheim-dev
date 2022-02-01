@@ -1,6 +1,6 @@
 using HarmonyLib;
 
-namespace Service {
+namespace DEV {
 
   ///<summary>Static accessors for easier usage.</summary>
   public static class Admin {

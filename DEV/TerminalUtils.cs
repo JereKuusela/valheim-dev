@@ -11,9 +11,12 @@ namespace DEV {
     // - Convert aliases to plain text to get parameter options working.
     // - Substitutions don't have to be handled (no need to worry about converting back).
     // - At end of handling, convert plain to aliases and restore discarded commands.
-
+    private static int Anchor = 0;
+    private static int Focus = 0;
     public static void ToCurrentInput(Terminal terminal) {
       var input = terminal.m_input;
+      Anchor = input.selectionAnchorPosition;
+      Focus = input.selectionFocusPosition;
       MultiCommands.DiscardPreviousCommands(input);
       Aliasing.RemoveAlias(input);
     }
@@ -21,6 +24,11 @@ namespace DEV {
       var input = terminal.m_input;
       Aliasing.RestoreAlias(input);
       MultiCommands.RestorePreviousCommands(input);
+      // Modifies the input and removes selection, so don't set it back.
+      if (!Input.GetKeyDown(KeyCode.Tab)) {
+        input.selectionAnchorPosition = Anchor;
+        input.selectionFocusPosition = Focus;
+      }
     }
     public static string GetLastWord(Terminal obj) => obj.m_input.text.Split(' ').Last().Split('=').Last().Split(',').Last();
     public static IEnumerable<string> GetPositionalParameters(string[] parameters) {
@@ -147,6 +155,8 @@ namespace DEV {
       if (Input.GetKeyDown(KeyCode.Return) && Input.GetKeyDown(KeyCode.Tab)) return false;
       // For execution, keep the actual input so that the history is saved properly.
       if (Input.GetKeyDown(KeyCode.Return)) return true;
+      // Cycling commands doesn't need any modifications.
+      if (ZInput.GetButtonDown("ChatUp") || ZInput.GetButtonDown("ChatDown")) return true;
       TerminalUtils.ToCurrentInput(__instance);
       if (Settings.DebugConsole) {
         var actual = __instance.m_input.text;
@@ -159,6 +169,8 @@ namespace DEV {
       return true;
     }
     public static void Postfix(Terminal __instance) {
+      // Same logic as on Prefix.
+      if (Input.GetKeyDown(KeyCode.Return) || ZInput.GetButtonDown("ChatUp") || ZInput.GetButtonDown("ChatDown")) return;
       TerminalUtils.ToActualInput(__instance);
     }
   }

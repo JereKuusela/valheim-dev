@@ -1,10 +1,9 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-using Service;
 
 namespace DEV {
-  [BepInPlugin("valheim.jerekuusela.dev", "DEV", "1.7.0.0")]
+  [BepInPlugin("valheim.jerekuusela.dev", "DEV", "1.8.0.0")]
   public class DEV : BaseUnityPlugin {
     public static ManualLogSource Log;
     public void Awake() {

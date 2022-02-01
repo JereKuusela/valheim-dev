@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Service {
+namespace DEV {
 
   ///<summary>Contains functions for parsing arguments, etc.</summary>
   public abstract class Helper {

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using BepInEx.Configuration;
-using Service;
 
 namespace DEV {
   public static class Settings {

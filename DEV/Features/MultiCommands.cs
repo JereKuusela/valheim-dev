@@ -28,7 +28,7 @@ namespace DEV {
       if (PreviousCommands == null) return;
       PreviousCommands[CurrentCommand] = input.text;
       input.text = string.Join(";", PreviousCommands);
-      input.caretPosition += DiscardCaretDelta;
+      if (DiscardCaretDelta != 0) input.caretPosition += DiscardCaretDelta;
       PreviousCommands = null;
       CurrentCommand = -1;
     }

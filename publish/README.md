@@ -120,6 +120,11 @@ Recommended to keep all settings on default values, unless there are errors or m
 
 # Changelog
 
+- v1.8:
+	- Improves undo/redo system to work with Infinity Hammer mod.
+	- Fixes selection not working when multiple commands system is on.
+	- Fixes selection issues when using tab to cycle options.
+
 - v1.7:
 	- Adds an undo/redo system (currently only for other mods to use).
 	- New icon (thanks Azumatt!).

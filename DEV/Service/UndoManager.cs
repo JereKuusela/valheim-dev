@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
-namespace Service {
+namespace DEV {
   public interface UndoAction {
     void Undo();
     void Redo();
@@ -9,11 +11,16 @@ namespace Service {
     string RedoMessage();
   }
   public class UndoManager {
-    private static List<UndoAction> History = new List<UndoAction>();
+    private static BindingFlags Binding = BindingFlags.Instance | BindingFlags.Public;
+    private static List<object> History = new List<object>();
     private static int Index = -1;
     private static bool Executing = false;
     public static int MaxSteps = 50;
     public static void Add(UndoAction action) {
+      Add((object)action);
+    }
+    ///<summary>Intended to be used with reflection.</summary>
+    private static void Add(object action) {
       // During undo/redo more steps won't be added.
       if (Executing) return;
       if (History.Count > MaxSteps - 1)
@@ -31,9 +38,11 @@ namespace Service {
       }
       Executing = true;
       try {
-        History[Index].Undo();
-        Helper.AddMessage(terminal, History[Index].UndoMessage());
-      } catch { }
+        var obj = History[Index];
+        obj.GetType().GetMethod("Undo", Binding).Invoke(obj, null);
+        var message = obj.GetType().GetMethod("UndoMessage", Binding).Invoke(obj, null);
+        Helper.AddMessage(terminal, (string)message);
+      } catch (Exception e) { DEV.Log.LogWarning(e); }
       Index--;
       Executing = false;
       return true;
@@ -43,9 +52,11 @@ namespace Service {
         Executing = true;
         Index++;
         try {
-          History[Index].Redo();
-          Helper.AddMessage(terminal, History[Index].RedoMessage());
-        } catch { }
+          var obj = History[Index];
+          obj.GetType().GetMethod("Redo", Binding).Invoke(obj, null);
+          var message = obj.GetType().GetMethod("RedoMessage", Binding).Invoke(obj, null);
+          Helper.AddMessage(terminal, (string)message);
+        } catch (Exception e) { DEV.Log.LogWarning(e); }
         Executing = false;
         return true;
       }
