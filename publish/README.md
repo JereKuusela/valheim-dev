@@ -68,9 +68,17 @@ Examples:
 - `dev_config [value]` toggles settings.
 - `dev_server_config [value]` toggles settings on the server.
 - `redo` restores an action added to the undo/redo manager.
+- `resolution` prints the screen properties.
+- `resolution [mode] [width] [height] [refresh rate]` sets the screen properties.
+	- `resolution exclusive`: Sets to full screen with the maximum supported resolution and refresh rate.
+	- `resolution max`: Sets to maximized window with the maximum supported resolution.
+	- `resolution full`: Sets to full screen window with the maximum supported resolution.
+	- `resolution window 1920 1080`: Sets to windowed with HD resolution.
 - `search [term] [max_lines=5]` allows searching the object ID list.
 	- `search wolf`: Prints all object IDs that contain word "wolf".
 	- `search fx_ 10`: Prints all object IDs that contain word "fx_" on up to 10 lines.
+- `tutorialtoggle [value]` allows directly setting the value.
+  - `dev_config auto_exec tutorialtoggle 0`: Automatically disables tutorials.
 - `undo` reverts an action added to the undo/redo manager.
 
 ## Enhanced map
@@ -101,6 +109,7 @@ Recommended way is to use the commands since you can configure the server and al
 - Automatic no cost mode (default `false`, key: `auto_nocost`): Automatically turns no cost mode on/off when devcommands are enabled or disabled. Requires automatic debug mode.
 - Disable random events (default `false`, key: `disable_events`): Prevents random events from happening (server side setting).
 - No creature drops (default `false`, key: `no_drops`): Prevents creatures from dropping loot, can be useful if people accidentally spawn very high star creatures. Only works when as the zone owner.
+- No knockback with god mode (default `true`, key: `god_no_knockback`): Removes knockback for an even godlier god mode.
 - No staggering with god mode (default `true`, key: `god_no_stagger`): Removes staggering for an even godlier god mode.
 - No stamina usage with god mode (default `true`, key: `god_no_stamina`): Removes stamina usage for an even godlier god mode.
 - Show map coordinates (default `true`, key: `map_coordinates`): Shows cursor coordinates when hovering the map.
@@ -111,7 +120,12 @@ Recommended way is to use the commands since you can configure the server and al
 Recommended to keep all settings on default values, unless there are errors or mod conflicts.
 
 - Alias system (default `true`, key: `aliasing`): Enables command aliasing.
+- Auto exec (key: `auto_exec`): Executes the given command when joining a server (before admin is checked).
+- Auto exec boot (key: `auto_exec_boot`): Executes the given command when starting the game.
+- Auto exec dev off (key: `auto_exec_dev_off`): Executes the given command when disabling devcommands.
+- Auto exec dev on (key: `auto_exec_dev_off`): Executes the given command when enabling devcommands.
 - Command aliases: Saved command aliases.
+- Command descriptions (default `true`, key: `command_descriptions`): Shows command descriptions as autocomplete.
 - Debug console (default `false`, key: `debug_console`): Prints debug output to the console related to aliasing and parameter substitution.
 - Disable parameter warnings (default `false`, key: `disable_warnings`): Removes warning texts from some command parameter descriptions.
 - Improved auto complete (default `true`, key: `improved_autocomplete`): Enables parameter info or options for every parameter.
@@ -119,6 +133,21 @@ Recommended to keep all settings on default values, unless there are errors or m
 - Substitution system (default `true`, key: `substitution`): Enables parameter substitution (with `$`).
 
 # Changelog
+
+- v1.9:
+	- Adds a new command `resolution` to print or set screen properties.
+	- Adds a new setting `command_descriptions` to show command descriptions instead of the autocomplete.
+	- Adds a new setting `ghost_invibisility` to turn invisible to other players with the ghost mode.
+	- Adds a new setting `god_no_knockback` to disable knockback with the god mode.
+	- Adds a new setting `auto_exec_boot` that automatically executes the given command when starting the game.
+	- Adds a new setting `auto_exec` that automatically executes the given command when joining a server.
+	- Adds a new setting `auto_exec_dev_on` that automatically executes the given command when enabling `devcommands`.
+	- Adds a new setting `auto_exec_dev_off` that automatically executes the given command when disabling `devcommands`.
+	- Adds a parameter to command `tutorialtoggle` which directly sets the value (instead of toggling).
+	- Changes the command `tutorialtoggle` to work without needing Hugin to appear first.
+	- Changes the command `alias` to add the plain text as the description instead of the original command description.
+	- Fixes case insensitivity being broken for some commands.
+	- Fixes server side commands not working.
 
 - v1.8:
 	- Improves undo/redo system to work with Infinity Hammer mod.

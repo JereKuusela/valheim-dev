@@ -3,7 +3,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 
 namespace DEV {
-  [BepInPlugin("valheim.jerekuusela.dev", "DEV", "1.8.0.0")]
+  [BepInPlugin("valheim.jerekuusela.dev", "DEV", "1.9.0.0")]
   public class DEV : BaseUnityPlugin {
     public static ManualLogSource Log;
     public void Awake() {
@@ -26,6 +26,8 @@ namespace DEV {
       new AliasCommand();
       new SearchCommand();
       new UndoRedoCommand();
+      new TutorialToggleCommand();
+      new ResolutionCommand();
       DefaultAutoComplete.Register();
       Settings.RegisterCommands();
     }

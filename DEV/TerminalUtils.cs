@@ -86,6 +86,8 @@ namespace DEV {
       return input;
     }
     public static bool SkipProcessing(string command) => command.StartsWith("bind ") || command.StartsWith("alias ");
+
+    public static bool IsExecuting = false;
   }
 
   // Replace devcommands check with a custom one.
@@ -173,5 +175,14 @@ namespace DEV {
       if (Input.GetKeyDown(KeyCode.Return) || ZInput.GetButtonDown("ChatUp") || ZInput.GetButtonDown("ChatDown")) return;
       TerminalUtils.ToActualInput(__instance);
     }
+  }
+
+
+  ///<summary>Needed to temporarily disable better autocomplete to provide case insensitivity for the first parameter.</summary>
+  [HarmonyPatch(typeof(Terminal.ConsoleCommand), "RunAction")]
+  public class RunAction {
+    public static void Prefix() => TerminalUtils.IsExecuting = true;
+    public static void Postfix() => TerminalUtils.IsExecuting = false;
+
   }
 }

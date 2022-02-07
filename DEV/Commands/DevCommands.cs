@@ -2,7 +2,7 @@ using HarmonyLib;
 
 namespace DEV {
   ///<summary>Replaces the default devcommands with an admin check.</summary>
-  public class DevCommandsCommand : BaseCommand {
+  public class DevCommandsCommand {
     public static void Toggle(Terminal terminal) {
       var value = !Terminal.m_cheat;
       terminal?.AddString("Dev commands: " + value.ToString());
@@ -31,6 +31,8 @@ namespace DEV {
       }
       if (Settings.AutoNoCost && Player.m_localPlayer)
         Player.m_localPlayer.m_noPlacementCost = Player.m_debugMode;
+      if (value && Settings.AutoExecDevOn != "") Console.instance.TryRunCommand(Settings.AutoExecDevOn);
+      if (!value && Settings.AutoExecDevOff != "") Console.instance.TryRunCommand(Settings.AutoExecDevOff);
     }
 
     public DevCommandsCommand() {
@@ -69,13 +71,13 @@ namespace DEV {
   [HarmonyPatch(typeof(Terminal), "IsCheatsEnabled")]
   public class IsCheatsEnabledWithoutServerCheck {
     public static void Postfix(ref bool __result) {
-      __result = Terminal.m_cheat;
+      __result = Terminal.m_cheat || ZNet.instance?.IsDedicated() == true;
     }
   }
   [HarmonyPatch(typeof(Terminal.ConsoleCommand), "IsValid")]
   public class IsValidWithoutServerCheck {
     public static void Postfix(ref bool __result) {
-      __result = __result || Terminal.m_cheat;
+      __result = __result || Terminal.m_cheat || ZNet.instance?.IsDedicated() == true;
     }
   }
   // Probably needed to provide autocomplete for the chat window.
@@ -105,6 +107,13 @@ namespace DEV {
     public static bool Prefix(Character __instance) {
       var noStaggering = Settings.GodModeNoStagger && __instance.InGodMode() && __instance.IsPlayer();
       return !noStaggering;
+    }
+  }
+  [HarmonyPatch(typeof(Character), "ApplyPushback")]
+  public class ApplyPushback {
+    public static bool Prefix(Character __instance) {
+      var noKnockback = Settings.GodModeNoKnockback && __instance.InGodMode() && __instance.IsPlayer();
+      return !noKnockback;
     }
   }
 }

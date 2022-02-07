@@ -1,6 +1,6 @@
 namespace DEV {
   ///<summary>Commands for undo/redo.</summary>
-  public class UndoRedoCommand : BaseCommand {
+  public class UndoRedoCommand {
     public UndoRedoCommand() {
       new Terminal.ConsoleCommand("undo", "Reverts some commands.", delegate (Terminal.ConsoleEventArgs args) {
         UndoManager.Undo(args.Context);

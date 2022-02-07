@@ -4,12 +4,12 @@ using System.Linq;
 namespace DEV {
 
   ///<summary>New command to search to list object or location ids.</summary>
-  public class SearchCommand : BaseCommand {
+  public class SearchCommand {
     public SearchCommand() {
       new Terminal.ConsoleCommand("search", "[term] [max_lines=5] - Prints object ids matching the search term.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) return;
         var term = args[1].ToLower();
-        var maxLines = TryParameterInt(args.Args, 2, 5);
+        var maxLines = Parse.TryInt(args.Args, 2, 5);
         var objects = ParameterInfo.Ids.Where(id => id.ToLower().Contains(term)).ToArray();
         var bufferSize = (int)Math.Ceiling((float)objects.Length / maxLines);
         var buffer = new string[bufferSize];

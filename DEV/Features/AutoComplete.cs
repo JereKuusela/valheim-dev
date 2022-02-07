@@ -114,14 +114,14 @@ namespace DEV {
       return AutoComplete.GetOptions(commandName, index, name);
     }
     public static bool Prefix(ref List<string> __result) {
+      // While executing, options are used to make the first parameter case insensitive. So the default options should be returned.
+      if (TerminalUtils.IsExecuting) return true;
       if (!Settings.ImprovedAutoComplete) return true;
       var input = GetInput();
-      var command = input.m_input.text;
-      var parameters = command.Split(' ');
-      if (parameters.Length < 2)
-        __result = input.m_commandList;
-      else
-        __result = GetOptions(parameters);
+      var text = input.m_input.text;
+      var parameters = text.Split(' ');
+      if (parameters.Length < 2) __result = input.m_commandList;
+      else __result = GetOptions(parameters);
       return false;
     }
   }
@@ -148,6 +148,10 @@ namespace DEV {
     }
     public static void Postfix(Terminal __instance, List<string> options, ref string word) {
       if (!Settings.ImprovedAutoComplete || options == null || !__instance.m_search) return;
+      if (Settings.CommandDescriptions && options == __instance.m_commandList) {
+        if (Terminal.commands.TryGetValue(word, out var command))
+          options = ParameterInfo.Create(command.Description);
+      }
       var helpText = options.All(option => option.StartsWith("?"));
       // Always show the help text since there isn't any real search option.
       if (helpText)

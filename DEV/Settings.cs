@@ -29,6 +29,8 @@ namespace DEV {
     public static bool GodModeNoStamina => configGodModeNoStamina.Value;
     public static ConfigEntry<bool> configGodModeNoStagger;
     public static bool GodModeNoStagger => configGodModeNoStagger.Value;
+    public static ConfigEntry<bool> configGodModeNoKnockback;
+    public static bool GodModeNoKnockback => configGodModeNoKnockback.Value;
     public static ConfigEntry<bool> configAliasing;
     public static bool Aliasing => configAliasing.Value;
     public static ConfigEntry<bool> configDisableParameterWarnings;
@@ -39,9 +41,21 @@ namespace DEV {
     public static bool ImprovedAutoComplete => configImprovedAutoComplete.Value;
     public static ConfigEntry<bool> configMultiCommand;
     public static bool MultiCommand => configMultiCommand.Value;
+    public static ConfigEntry<bool> configGhostInvisibility;
+    public static bool GhostInvisibility => configGhostInvisibility.Value;
     public static ConfigEntry<bool> configNoDrops;
     public static bool NoDrops => Cheats && configNoDrops.Value;
     public static ConfigEntry<string> configCommandAliases;
+    public static ConfigEntry<string> configAutoExecBoot;
+    public static string AutoExecBoot => configAutoExecBoot.Value;
+    public static ConfigEntry<string> configAutoExec;
+    public static string AutoExec => configAutoExec.Value;
+    public static ConfigEntry<string> configAutoExecDevOn;
+    public static string AutoExecDevOn => configAutoExecDevOn.Value;
+    public static ConfigEntry<string> configAutoExecDevOff;
+    public static string AutoExecDevOff => configAutoExecDevOff.Value;
+    public static ConfigEntry<bool> configCommandDescriptions;
+    public static bool CommandDescriptions => configCommandDescriptions.Value;
     private static Dictionary<string, string> Aliases = new Dictionary<string, string>();
     public static string[] AliasKeys = new string[0];
 
@@ -78,6 +92,7 @@ namespace DEV {
 
     public static void Init(ConfigFile config) {
       var section = "1. General";
+      configGhostInvisibility = config.Bind(section, "Invisible to players with ghost mode", true, "");
       configNoDrops = config.Bind(section, "No creature drops", false, "Disables drops from creatures (if you control the zone), intended to fix high star enemies crashing the game.");
       configAutoDebugMode = config.Bind(section, "Automatic debug mode", false, "Automatically enables debug mode when enabling devcommands.");
       configAutoFly = config.Bind(section, "Automatic fly mode", false, "Automatically enables fly mode when enabling devcommands (if debug mode).");
@@ -87,10 +102,16 @@ namespace DEV {
       configAutoDevcommands = config.Bind(section, "Automatic devcommands", true, "Automatically enables devcommands when joining servers.");
       configGodModeNoStamina = config.Bind(section, "No stamina usage with god mode", true, "");
       configGodModeNoStagger = config.Bind(section, "No staggering with god mode", true, "");
+      configGodModeNoKnockback = config.Bind(section, "No knockback with god mode", true, "");
       configMapCoordinates = config.Bind(section, "Show map coordinates", true, "The map shows coordinates on hover.");
       configShowPrivatePlayers = config.Bind(section, "Show private players", false, "The map shows private players.");
       configDisableEvents = config.Bind(section, "Disable random events", false, "Disables random events (server side setting).");
       section = "2. Console";
+      configAutoExecBoot = config.Bind(section, "Auto exec boot", "", "Executes the given command when starting the game.");
+      configAutoExecDevOn = config.Bind(section, "Auto exec dev on", "", "Executes the given command when enabling devcommands.");
+      configAutoExecDevOff = config.Bind(section, "Auto exec dev off", "", "Executes the given command when disabling devcommands.");
+      configAutoExec = config.Bind(section, "Auto exec", "", "Executes the given command when joining a server (before admin is checked).");
+      configCommandDescriptions = config.Bind(section, "Command descriptions", true, "Shows command descriptions as autocomplete.");
       configAliasing = config.Bind(section, "Alias system", true, "Enables the command aliasing system (allows creating new commands).");
       configImprovedAutoComplete = config.Bind(section, "Improved autocomplete", true, "Enables parameter info or options for every parameter.");
       configCommandAliases = config.Bind(section, "Command aliases", "", "Internal data for aliases.");
@@ -106,7 +127,9 @@ namespace DEV {
     public static List<string> Options = new List<string>() {
       "map_coordinates", "private_players", "auto_devcommands", "auto_debugmode", "auto_fly", "god_no_stagger",
       "auto_nocost", "auto_ghost", "auto_god","debug_console", "no_drops", "aliasing", "god_no_stamina",
-      "substitution", "improved_autocomplete", "disable_events", "disable_warnings", "multiple_commands"
+      "substitution", "improved_autocomplete", "disable_events", "disable_warnings", "multiple_commands",
+      "god_no_knockback", "ghost_invibisility", "auto_exec_dev_on", "auto_exec_dev_off", "auto_exec_boot", "auto_exec",
+      "command_descriptions"
     };
     private static string State(bool value) => value ? "enabled" : "disabled";
     private static void Toggle(Terminal context, ConfigEntry<bool> setting, string name, bool reverse = false) {
@@ -115,6 +138,23 @@ namespace DEV {
 
     }
     public static void UpdateValue(Terminal context, string key, string value) {
+      if (key == "auto_exec_dev_on") {
+        configAutoExecDevOn.Value = value;
+        Helper.AddMessage(context, $"{key} set to {value}.");
+      }
+      if (key == "auto_exec_dev_off") {
+        configAutoExecDevOff.Value = value;
+        Helper.AddMessage(context, $"{key} set to {value}.");
+      }
+      if (key == "auto_exec_boot") {
+        configAutoExecBoot.Value = value;
+        Helper.AddMessage(context, $"{key} set to {value}.");
+      }
+      if (key == "auto_exec") {
+        configAutoExec.Value = value;
+        Helper.AddMessage(context, $"{key} set to {value}.");
+      }
+      if (key == "command_descriptions") Toggle(context, configCommandDescriptions, "Command descriptions");
       if (key == "map_coordinates") Toggle(context, configMapCoordinates, "Map coordinates");
       if (key == "private_players") Toggle(context, configShowPrivatePlayers, "Private players");
       if (key == "auto_devcommands") Toggle(context, configAutoDevcommands, "Automatic devcommands");
@@ -133,6 +173,8 @@ namespace DEV {
       if (key == "multiple_commands") Toggle(context, configMultiCommand, "Multiple commands per line");
       if (key == "god_no_stamina") Toggle(context, configGodModeNoStamina, "Stamina usage with god mode", true);
       if (key == "god_no_stagger") Toggle(context, configGodModeNoStagger, "Staggering with god mode", true);
+      if (key == "god_no_knockback") Toggle(context, configGodModeNoKnockback, "Knockback with god mode", true);
+      if (key == "ghost_invibisility") Toggle(context, configGhostInvisibility, "Invisibility with ghost mode", true);
     }
   }
 }

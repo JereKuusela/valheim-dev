@@ -1,10 +1,12 @@
+using System.Linq;
+
 namespace DEV {
   //<summary>Adds commands for changing the client and server configuration.</summary>
-  public class ConfigCommand : BaseCommand {
+  public class ConfigCommand {
     private void RegisterAutoComplete(string command) {
       AutoComplete.Register(command, (int index) => {
         if (index == 0) return Settings.Options;
-        return null;
+        return ParameterInfo.Create("Value");
       });
     }
     public ConfigCommand() {
@@ -13,7 +15,7 @@ namespace DEV {
         if (args.Length == 2)
           Settings.UpdateValue(args.Context, args[1], "");
         else
-          Settings.UpdateValue(args.Context, args[1], args[2]);
+          Settings.UpdateValue(args.Context, args[1], string.Join(" ", args.Args.Skip(2)));
       }, optionsFetcher: () => Settings.Options);
       RegisterAutoComplete("dev_config");
       new Terminal.ConsoleCommand("dev_server_config", "[key] [value] - Toggles or sets config value for server.", delegate (Terminal.ConsoleEventArgs args) {

@@ -49,10 +49,6 @@ namespace DEV {
         Console.instance.AddString("Unauthorized to use devcommands.");
         return false;
       }
-      if (!Admin.Enabled) {
-        Console.instance.AddString("Server not authorized to use devcommands.");
-        return false;
-      }
       return true;
     }
     private static void RPC_Do_Command(ZRpc rpc, string command) {

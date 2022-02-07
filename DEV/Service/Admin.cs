@@ -21,6 +21,8 @@ namespace DEV {
     public static void Verify(string text) => Instance.Verify(text);
     ///<summary>Automatic check at the start of joining servers. Shouldn't be called directly.</summary>
     public static void AutomaticCheck(Terminal terminal = null) => Instance.AutomaticCheck(terminal);
+    ///<summary>Resets the admin status when joining servers. Shouldn't be called directly.</summary>
+    public static void Reset(Terminal terminal = null) => Instance.Reset(terminal);
   }
 
   public interface IAdmin {
@@ -29,6 +31,7 @@ namespace DEV {
     void ManualCheck(Terminal terminal = null);
     void Verify(string text);
     void AutomaticCheck(Terminal terminal = null);
+    void Reset(Terminal terminal = null);
   }
 
   ///<summary>Admin checker. Can be extended by overloading OnSuccess and OnFail.</summary>
@@ -69,6 +72,9 @@ namespace DEV {
     public void ManualCheck(Terminal terminal = null) {
       Check(terminal);
     }
+    public void Reset(Terminal terminal = null) {
+      OnFail(terminal);
+    }
   }
 
   [HarmonyPatch(typeof(ZNet), "RPC_RemotePrint")]
@@ -81,14 +87,16 @@ namespace DEV {
   }
 
   ///<summary>Check admin status on connect to ensure features are enabled/disabled when changing servers.</summary>
-  [HarmonyPatch(typeof(Game), "UpdateRespawn")]
-  public class CheckAdmin {
-    public static void Prefix(bool ___m_firstSpawn, ref bool __state) {
-      if (___m_firstSpawn) Admin.Enabled = false;
-      __state = ___m_firstSpawn;
+  [HarmonyPatch(typeof(ZNet), "RPC_PeerInfo")]
+  public class AdminReset {
+    public static void Postfix() {
+      if (ZNet.m_connectionStatus == ZNet.ConnectionStatus.Connected) Admin.Reset(Console.instance);
     }
-    public static void Postfix(bool ___m_firstSpawn, bool __state) {
-      if (__state && !___m_firstSpawn && !Admin.Checking) Admin.AutomaticCheck(Console.instance);
+  }  ///<summary>Check admin status on connect to ensure features are enabled/disabled when changing servers.</summary>
+  [HarmonyPatch(typeof(Player), "OnSpawned")]
+  public class AdminCheck {
+    public static void Postfix() {
+      if (!Admin.Checking) Admin.AutomaticCheck(Console.instance);
     }
   }
 }
