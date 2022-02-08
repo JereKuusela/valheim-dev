@@ -22,9 +22,10 @@ Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available com
 - New commands can be created with `alias` command.
 - Modifier keys work when binding commands to keys.
 - `devcommands` is used automatically (if the admin check passes).
-- `debugmode`, `fly`, `ghost`, `god` and `nocost` can be configured to be used automatically.
-- God mode removes stamina usage and staggering.
-- Minor tweaks to existing commands and other useful admin features.
+- `debugmode`, `fly`, `ghost`, `god`, `nocost` and other commands can be configured to be used automatically.
+- God mode removes stamina usage, knockback and staggering.
+- Ghost mode makes you invisible also to other players.
+- Minor tweaks to existing commands, some new commands and other useful admin features.
 
 ## Improved key bindings
 
@@ -108,6 +109,7 @@ Recommended way is to use the commands since you can configure the server and al
 - Automatic god mode (default `false`, key: `auto_god`): Automatically turns god mode on/off when devcommands are enabled or disabled.
 - Automatic no cost mode (default `false`, key: `auto_nocost`): Automatically turns no cost mode on/off when devcommands are enabled or disabled. Requires automatic debug mode.
 - Disable random events (default `false`, key: `disable_events`): Prevents random events from happening (server side setting).
+- Invisible to players with ghost mode (default `true`, key: `ghost_invibisility`):  Invisible to other players with ghost mode.
 - No creature drops (default `false`, key: `no_drops`): Prevents creatures from dropping loot, can be useful if people accidentally spawn very high star creatures. Only works when as the zone owner.
 - No knockback with god mode (default `true`, key: `god_no_knockback`): Removes knockback for an even godlier god mode.
 - No staggering with god mode (default `true`, key: `god_no_stagger`): Removes staggering for an even godlier god mode.

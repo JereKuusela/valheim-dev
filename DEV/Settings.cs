@@ -92,7 +92,7 @@ namespace DEV {
 
     public static void Init(ConfigFile config) {
       var section = "1. General";
-      configGhostInvisibility = config.Bind(section, "Invisible to players with ghost mode", true, "");
+      configGhostInvisibility = config.Bind(section, "Invisible to other players with ghost mode", true, "");
       configNoDrops = config.Bind(section, "No creature drops", false, "Disables drops from creatures (if you control the zone), intended to fix high star enemies crashing the game.");
       configAutoDebugMode = config.Bind(section, "Automatic debug mode", false, "Automatically enables debug mode when enabling devcommands.");
       configAutoFly = config.Bind(section, "Automatic fly mode", false, "Automatically enables fly mode when enabling devcommands (if debug mode).");
