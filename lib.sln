@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DEV", "DEV\DEV.csproj", "{DF51A7C1-7980-4836-ADA4-DD60FB88AE31}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerDevcommands", "ServerDevcommands\ServerDevcommands.csproj", "{DF51A7C1-7980-4836-ADA4-DD60FB88AE31}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,6 +1,6 @@
 using System.Linq;
 
-namespace DEV {
+namespace ServerDevcommands {
   ///<summary>Add commands for managing command aliases.</summary>
   public class AliasCommand {
 

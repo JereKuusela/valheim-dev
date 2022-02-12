@@ -1,6 +1,6 @@
 using HarmonyLib;
 
-namespace DEV {
+namespace ServerDevcommands {
   [HarmonyPatch(typeof(FejdStartup), "Awake")]
   public class FejdStartupAwake {
     public static void Postfix() {

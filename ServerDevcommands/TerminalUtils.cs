@@ -4,7 +4,7 @@ using System.Linq;
 using HarmonyLib;
 using UnityEngine;
 
-namespace DEV {
+namespace ServerDevcommands {
   public static class TerminalUtils {
     // Logic for input:
     // - Discard any previous commands (separated by ';') so other code doesn't have to consider ';' at all.

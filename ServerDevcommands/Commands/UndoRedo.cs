@@ -1,4 +1,4 @@
-namespace DEV {
+namespace ServerDevcommands {
   ///<summary>Commands for undo/redo.</summary>
   public class UndoRedoCommand {
     public UndoRedoCommand() {

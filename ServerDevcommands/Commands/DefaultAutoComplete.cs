@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace DEV {
+namespace ServerDevcommands {
   ///<summary>Adds the improved auto complete to the default commands.</summary>
   public static class DefaultAutoComplete {
     public static void Register() {

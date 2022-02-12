@@ -1,4 +1,4 @@
-namespace DEV {
+namespace ServerDevcommands {
 
   ///<summary>Adds support for directly setting the value and makes it work without needing the raven appear first.</summary>
   public class TutorialToggleCommand {

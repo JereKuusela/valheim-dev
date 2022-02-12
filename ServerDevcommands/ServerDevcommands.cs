@@ -2,15 +2,15 @@
 using BepInEx.Logging;
 using HarmonyLib;
 
-namespace DEV {
-  [BepInPlugin("valheim.jerekuusela.dev", "DEV", "1.9.0.0")]
-  public class DEV : BaseUnityPlugin {
+namespace ServerDevcommands {
+  [BepInPlugin("valheim.jerekuusela.server_devcommands", "ServerDevcommands", "1.10.0.0")]
+  public class ServerDevcommands : BaseUnityPlugin {
     public static ManualLogSource Log;
     public void Awake() {
       Log = Logger;
-      Harmony harmony = new Harmony("valheim.jerekuusela.dev");
+      Harmony harmony = new Harmony("valheim.jerekuusela.server_devcommands");
       harmony.PatchAll();
-      Admin.Instance = new DevAdmin();
+      Admin.Instance = new DevCommandsAdmin();
       Settings.Init(Config);
       Console.SetConsoleEnabled(true);
     }
@@ -19,7 +19,7 @@ namespace DEV {
   [HarmonyPatch(typeof(Terminal), "InitTerminal")]
   public class SetCommands {
     public static void Postfix() {
-      new DevCommandsCommand();
+      new DevcommandsCommand();
       new ConfigCommand();
       new StartEventCommand();
       new PosCommand();

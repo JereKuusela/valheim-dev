@@ -1,4 +1,4 @@
-namespace DEV {
+namespace ServerDevcommands {
   public static class Aliasing {
     private static string Alias = "";
     public static void RemoveAlias(UnityEngine.UI.InputField input) {

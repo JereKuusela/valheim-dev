@@ -1,4 +1,4 @@
-# Dedicated server devcommands
+# Sserver Devcommands
 
 This client side mod allows devcommands and utilities for server admins.
 
@@ -109,7 +109,7 @@ Recommended way is to use the commands since you can configure the server and al
 - Automatic god mode (default `false`, key: `auto_god`): Automatically turns god mode on/off when devcommands are enabled or disabled.
 - Automatic no cost mode (default `false`, key: `auto_nocost`): Automatically turns no cost mode on/off when devcommands are enabled or disabled. Requires automatic debug mode.
 - Disable random events (default `false`, key: `disable_events`): Prevents random events from happening (server side setting).
-- Invisible to players with ghost mode (default `true`, key: `ghost_invibisility`):  Invisible to other players with ghost mode.
+- Invisible to players with ghost mode (default `true`, key: `ghost_invibisility`): Invisible to other players with ghost mode.
 - No creature drops (default `false`, key: `no_drops`): Prevents creatures from dropping loot, can be useful if people accidentally spawn very high star creatures. Only works when as the zone owner.
 - No knockback with god mode (default `true`, key: `god_no_knockback`): Removes knockback for an even godlier god mode.
 - No staggering with god mode (default `true`, key: `god_no_stagger`): Removes staggering for an even godlier god mode.
@@ -135,6 +135,10 @@ Recommended to keep all settings on default values, unless there are errors or m
 - Substitution system (default `true`, key: `substitution`): Enables parameter substitution (with `$`).
 
 # Changelog
+
+- v1.10:
+	- Renamed the file from DEV.dll to ServerDevcommands.dll.
+	- Changed the default value of the `ghost_invibisility` to false.
 
 - v1.9:
 	- Adds a new command `resolution` to print or set screen properties.

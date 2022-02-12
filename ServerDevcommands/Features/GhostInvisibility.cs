@@ -1,6 +1,6 @@
 using HarmonyLib;
 
-namespace DEV {
+namespace ServerDevcommands {
 
   [HarmonyPatch(typeof(ZDOMan), "SendZDOs")]
   public class SendZDOsWithGhostMode {

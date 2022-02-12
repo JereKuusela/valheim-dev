@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Linq;
 using UnityEngine;
 
-namespace DEV {
+namespace ServerDevcommands {
 
   ///<summary>Contains functions for parsing arguments, etc.</summary>
   public abstract class Helper {

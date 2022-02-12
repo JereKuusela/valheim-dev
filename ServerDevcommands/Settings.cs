@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using BepInEx.Configuration;
 
-namespace DEV {
+namespace ServerDevcommands {
   public static class Settings {
-    public static bool Cheats => (ZNet.instance && ZNet.instance.IsServer()) || Console.instance.IsCheatsEnabled();
+    public static bool Cheats => (ZNet.instance && ZNet.instance.IsServer()) || (Console.instance.IsCheatsEnabled() && Admin.Enabled);
     public static ConfigEntry<bool> configMapCoordinates;
     public static bool MapCoordinates => Cheats && configMapCoordinates.Value;
     public static ConfigEntry<bool> configShowPrivatePlayers;
@@ -20,17 +20,17 @@ namespace DEV {
     public static ConfigEntry<bool> configAutoNoCost;
     public static bool AutoNoCost => configAutoNoCost.Value;
     public static ConfigEntry<bool> configDisableEvents;
-    public static bool DisableEvents => configDisableEvents.Value;
+    public static bool DisableEvents => Cheats && configDisableEvents.Value;
     public static ConfigEntry<bool> configDebugConsole;
     public static bool DebugConsole => configDebugConsole.Value;
     public static ConfigEntry<bool> configAutoFly;
     public static bool AutoFly => configAutoFly.Value;
     public static ConfigEntry<bool> configGodModeNoStamina;
-    public static bool GodModeNoStamina => configGodModeNoStamina.Value;
+    public static bool GodModeNoStamina => Cheats && configGodModeNoStamina.Value;
     public static ConfigEntry<bool> configGodModeNoStagger;
-    public static bool GodModeNoStagger => configGodModeNoStagger.Value;
+    public static bool GodModeNoStagger => Cheats && configGodModeNoStagger.Value;
     public static ConfigEntry<bool> configGodModeNoKnockback;
-    public static bool GodModeNoKnockback => configGodModeNoKnockback.Value;
+    public static bool GodModeNoKnockback => Cheats && configGodModeNoKnockback.Value;
     public static ConfigEntry<bool> configAliasing;
     public static bool Aliasing => configAliasing.Value;
     public static ConfigEntry<bool> configDisableParameterWarnings;
@@ -42,7 +42,7 @@ namespace DEV {
     public static ConfigEntry<bool> configMultiCommand;
     public static bool MultiCommand => configMultiCommand.Value;
     public static ConfigEntry<bool> configGhostInvisibility;
-    public static bool GhostInvisibility => configGhostInvisibility.Value;
+    public static bool GhostInvisibility => Cheats && configGhostInvisibility.Value;
     public static ConfigEntry<bool> configNoDrops;
     public static bool NoDrops => Cheats && configNoDrops.Value;
     public static ConfigEntry<string> configCommandAliases;
@@ -92,7 +92,7 @@ namespace DEV {
 
     public static void Init(ConfigFile config) {
       var section = "1. General";
-      configGhostInvisibility = config.Bind(section, "Invisible to other players with ghost mode", true, "");
+      configGhostInvisibility = config.Bind(section, "Invisible to other players with ghost mode", false, "");
       configNoDrops = config.Bind(section, "No creature drops", false, "Disables drops from creatures (if you control the zone), intended to fix high star enemies crashing the game.");
       configAutoDebugMode = config.Bind(section, "Automatic debug mode", false, "Automatically enables debug mode when enabling devcommands.");
       configAutoFly = config.Bind(section, "Automatic fly mode", false, "Automatically enables fly mode when enabling devcommands (if debug mode).");

@@ -1,4 +1,4 @@
-namespace DEV {
+namespace ServerDevcommands {
   ///<summary>Code related to handling multiple commands per line.</summary>
   public static class MultiCommands {
     private static string[] PreviousCommands = null;

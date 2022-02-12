@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
 
-namespace DEV {
+namespace ServerDevcommands {
 
   ///<summary>Server side code to include private player positions.</summary>
   [HarmonyPatch(typeof(ZNet), "UpdatePlayerList")]

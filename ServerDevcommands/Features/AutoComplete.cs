@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
 
-namespace DEV {
+namespace ServerDevcommands {
   using NamedOptionsFetchers = Dictionary<string, Func<int, List<string>>>;
 
   using OptionsFetcher = Func<int, List<string>>;

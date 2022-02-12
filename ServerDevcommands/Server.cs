@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using HarmonyLib;
 
-namespace DEV {
+namespace ServerDevcommands {
 
   [HarmonyPatch(typeof(Terminal), "AddString")]
   public class RedirectOutput {

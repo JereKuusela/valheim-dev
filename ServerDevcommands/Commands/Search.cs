@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace DEV {
+namespace ServerDevcommands {
 
   ///<summary>New command to search to list object or location ids.</summary>
   public class SearchCommand {

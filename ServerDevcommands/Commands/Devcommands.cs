@@ -1,16 +1,16 @@
 using HarmonyLib;
 
-namespace DEV {
+namespace ServerDevcommands {
   ///<summary>Replaces the default devcommands with an admin check.</summary>
-  public class DevCommandsCommand {
+  public class DevcommandsCommand {
     public static void Toggle(Terminal terminal) {
       var value = !Terminal.m_cheat;
-      terminal?.AddString("Dev commands: " + value.ToString());
+      terminal?.AddString("Devcommands: " + value.ToString());
       Gogan.LogEvent("Cheat", "CheatsEnabled", value.ToString(), 0L);
       Set(value);
     }
     public static void Set(Terminal terminal, bool value) {
-      terminal?.AddString("Dev commands: " + value.ToString());
+      terminal?.AddString("Devcommands: " + value.ToString());
       Gogan.LogEvent("Cheat", "CheatsEnabled", value.ToString(), 0L);
       Set(value);
     }
@@ -35,7 +35,7 @@ namespace DEV {
       if (!value && Settings.AutoExecDevOff != "") Console.instance.TryRunCommand(Settings.AutoExecDevOff);
     }
 
-    public DevCommandsCommand() {
+    public DevcommandsCommand() {
       new Terminal.ConsoleCommand("devcommands", "Toggles cheats", delegate (Terminal.ConsoleEventArgs args) {
         if (Terminal.m_cheat) {
           Set(args.Context, false);
@@ -50,19 +50,19 @@ namespace DEV {
     }
   }
   ///<summary>Custom admin check to update devcommands.</summary>
-  public class DevAdmin : DefaultAdmin {
+  public class DevCommandsAdmin : DefaultAdmin {
     protected override void OnSuccess(Terminal terminal) {
       base.OnSuccess(terminal);
-      DevCommandsCommand.Toggle(terminal);
+      DevcommandsCommand.Toggle(terminal);
     }
     protected override void OnFail(Terminal terminal) {
       base.OnFail(terminal);
-      DevCommandsCommand.Set(false);
+      DevcommandsCommand.Set(false);
       terminal.AddString("Unauthorized to use devcommands.");
     }
     public override void AutomaticCheck(Terminal terminal) {
       Enabled = false;
-      DevCommandsCommand.Set(false);
+      DevcommandsCommand.Set(false);
       if (Settings.AutoDevcommands)
         Check(terminal);
     }

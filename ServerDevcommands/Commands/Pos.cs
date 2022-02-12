@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace DEV {
+namespace ServerDevcommands {
 
   ///<summary>Adds support for other player's position. </summary>
   public class PosCommand {

@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Linq;
 using UnityEngine;
 
-namespace DEV {
+namespace ServerDevcommands {
   public class Range<T> {
     public T Min;
     public T Max;

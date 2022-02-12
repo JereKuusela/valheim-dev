@@ -1,7 +1,7 @@
 using HarmonyLib;
 using UnityEngine;
 
-namespace DEV {
+namespace ServerDevcommands {
 
   [HarmonyPatch(typeof(Minimap), "UpdateBiome")]
 

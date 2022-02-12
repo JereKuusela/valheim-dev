@@ -2,7 +2,7 @@ using System.Linq;
 using HarmonyLib;
 using UnityEngine;
 
-namespace DEV {
+namespace ServerDevcommands {
 
   ///<summary>Adds coordinates to the parameters (required for server side support).</summary>
   public class StartEventCommand {
