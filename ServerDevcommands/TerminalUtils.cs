@@ -165,7 +165,7 @@ namespace ServerDevcommands {
         if (Settings.Substitution)
           actual = TerminalUtils.Substitute(actual);
         if (actual != LastActual)
-          DEV.Log.LogInfo("Command: " + actual);
+          ServerDevcommands.Log.LogInfo("Command: " + actual);
         LastActual = actual;
       }
       return true;

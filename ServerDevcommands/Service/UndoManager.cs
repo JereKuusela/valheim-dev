@@ -42,7 +42,7 @@ namespace ServerDevcommands {
         obj.GetType().GetMethod("Undo", Binding).Invoke(obj, null);
         var message = obj.GetType().GetMethod("UndoMessage", Binding).Invoke(obj, null);
         Helper.AddMessage(terminal, (string)message);
-      } catch (Exception e) { DEV.Log.LogWarning(e); }
+      } catch (Exception e) { ServerDevcommands.Log.LogWarning(e); }
       Index--;
       Executing = false;
       return true;
@@ -56,7 +56,7 @@ namespace ServerDevcommands {
           obj.GetType().GetMethod("Redo", Binding).Invoke(obj, null);
           var message = obj.GetType().GetMethod("RedoMessage", Binding).Invoke(obj, null);
           Helper.AddMessage(terminal, (string)message);
-        } catch (Exception e) { DEV.Log.LogWarning(e); }
+        } catch (Exception e) { ServerDevcommands.Log.LogWarning(e); }
         Executing = false;
         return true;
       }

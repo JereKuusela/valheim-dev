@@ -15,7 +15,7 @@ namespace ServerDevcommands {
         var player = __instance.m_players[i];
         if (player.m_characterID == __instance.m_characterID) continue;
         if (!idToPeer.TryGetValue(player.m_characterID, out var peer)) {
-          DEV.Log.LogError("Unable to find the peer to set private position.");
+          ServerDevcommands.Log.LogError("Unable to find the peer to set private position.");
           continue;
         }
         if (peer.m_publicRefPos) continue;
