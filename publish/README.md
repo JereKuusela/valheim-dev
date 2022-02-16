@@ -109,7 +109,7 @@ Recommended way is to use the commands since you can configure the server and al
 - Automatic god mode (default `false`, key: `auto_god`): Automatically turns god mode on/off when devcommands are enabled or disabled.
 - Automatic no cost mode (default `false`, key: `auto_nocost`): Automatically turns no cost mode on/off when devcommands are enabled or disabled. Requires automatic debug mode.
 - Disable random events (default `false`, key: `disable_events`): Prevents random events from happening (server side setting).
-- Invisible to players with ghost mode (default `true`, key: `ghost_invibisility`): Invisible to other players with ghost mode.
+- Invisible to players with ghost mode (default `false`, key: `ghost_invibisility`): Invisible to other players with ghost mode.
 - No creature drops (default `false`, key: `no_drops`): Prevents creatures from dropping loot, can be useful if people accidentally spawn very high star creatures. Only works when as the zone owner.
 - No knockback with god mode (default `true`, key: `god_no_knockback`): Removes knockback for an even godlier god mode.
 - No staggering with god mode (default `true`, key: `god_no_stagger`): Removes staggering for an even godlier god mode.
@@ -139,8 +139,9 @@ Recommended to keep all settings on default values, unless there are errors or m
 
 - v1.10:
 	- Adds a new setting `command_delay` to add delay when multiple commands are executed.
-	- Renamed the file from DEV.dll to ServerDevcommands.dll.
-	- Changed the default value of the `ghost_invibisility` to false.
+	- Renames the file from DEV.dll to ServerDevcommands.dll.
+	- Changes the default value of the `ghost_invibisility` to false.
+	- Fixes incompatibility with Mountain Caves public beta test.
 
 - v1.9:
 	- Adds a new command `resolution` to print or set screen properties.
