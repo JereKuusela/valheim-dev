@@ -4,7 +4,7 @@ using HarmonyLib;
 
 namespace ServerDevcommands {
 
-  [HarmonyPatch(typeof(Terminal), "AddString")]
+  [HarmonyPatch(typeof(Terminal), "AddString", new Type[] { typeof(string) })]
   public class RedirectOutput {
     public static ZRpc Target = null;
 
