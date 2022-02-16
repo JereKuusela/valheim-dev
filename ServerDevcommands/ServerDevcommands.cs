@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using UnityEngine;
 
 namespace ServerDevcommands {
   [BepInPlugin("valheim.jerekuusela.server_devcommands", "ServerDevcommands", "1.10.0.0")]
@@ -13,6 +14,10 @@ namespace ServerDevcommands {
       Admin.Instance = new DevCommandsAdmin();
       Settings.Init(Config);
       Console.SetConsoleEnabled(true);
+    }
+
+    public void LateUpdate() {
+      TryRunCommand.TickQueue(Time.deltaTime);
     }
   }
 

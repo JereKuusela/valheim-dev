@@ -54,6 +54,8 @@ namespace ServerDevcommands {
     public static string AutoExecDevOn => configAutoExecDevOn.Value;
     public static ConfigEntry<string> configAutoExecDevOff;
     public static string AutoExecDevOff => configAutoExecDevOff.Value;
+    public static ConfigEntry<string> configCommandDelay;
+    public static float CommandDelay => Parse.TryFloat(configCommandDelay.Value, 0f);
     public static ConfigEntry<bool> configCommandDescriptions;
     public static bool CommandDescriptions => configCommandDescriptions.Value;
     private static Dictionary<string, string> Aliases = new Dictionary<string, string>();
@@ -107,6 +109,7 @@ namespace ServerDevcommands {
       configShowPrivatePlayers = config.Bind(section, "Show private players", false, "The map shows private players.");
       configDisableEvents = config.Bind(section, "Disable random events", false, "Disables random events (server side setting).");
       section = "2. Console";
+      configCommandDelay = config.Bind(section, "Delay between commands", "0", "Adds delay (seconds) when executing multiple commands.");
       configAutoExecBoot = config.Bind(section, "Auto exec boot", "", "Executes the given command when starting the game.");
       configAutoExecDevOn = config.Bind(section, "Auto exec dev on", "", "Executes the given command when enabling devcommands.");
       configAutoExecDevOff = config.Bind(section, "Auto exec dev off", "", "Executes the given command when disabling devcommands.");
@@ -129,7 +132,7 @@ namespace ServerDevcommands {
       "auto_nocost", "auto_ghost", "auto_god","debug_console", "no_drops", "aliasing", "god_no_stamina",
       "substitution", "improved_autocomplete", "disable_events", "disable_warnings", "multiple_commands",
       "god_no_knockback", "ghost_invibisility", "auto_exec_dev_on", "auto_exec_dev_off", "auto_exec_boot", "auto_exec",
-      "command_descriptions"
+      "command_descriptions", "command_delay"
     };
     private static string State(bool value) => value ? "enabled" : "disabled";
     private static void Toggle(Terminal context, ConfigEntry<bool> setting, string name, bool reverse = false) {
@@ -152,6 +155,10 @@ namespace ServerDevcommands {
       }
       if (key == "auto_exec") {
         configAutoExec.Value = value;
+        Helper.AddMessage(context, $"{key} set to {value}.");
+      }
+      if (key == "command_delay") {
+        configCommandDelay.Value = value;
         Helper.AddMessage(context, $"{key} set to {value}.");
       }
       if (key == "command_descriptions") Toggle(context, configCommandDescriptions, "Command descriptions");

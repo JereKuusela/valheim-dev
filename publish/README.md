@@ -129,6 +129,7 @@ Recommended to keep all settings on default values, unless there are errors or m
 - Command aliases: Saved command aliases.
 - Command descriptions (default `true`, key: `command_descriptions`): Shows command descriptions as autocomplete.
 - Debug console (default `false`, key: `debug_console`): Prints debug output to the console related to aliasing and parameter substitution.
+- Delay between commands (key: `command_delay`): Adds delay (seconds) when executing multiple commands.
 - Disable parameter warnings (default `false`, key: `disable_warnings`): Removes warning texts from some command parameter descriptions.
 - Improved auto complete (default `true`, key: `improved_autocomplete`): Enables parameter info or options for every parameter.
 - Multiple commands per line (default `true`, key: `multiple_commands`): Enables multiple commands per line (when separate by `;`).
@@ -137,6 +138,7 @@ Recommended to keep all settings on default values, unless there are errors or m
 # Changelog
 
 - v1.10:
+	- Adds a new setting `command_delay` to add delay when multiple commands are executed.
 	- Renamed the file from DEV.dll to ServerDevcommands.dll.
 	- Changed the default value of the `ghost_invibisility` to false.
 
