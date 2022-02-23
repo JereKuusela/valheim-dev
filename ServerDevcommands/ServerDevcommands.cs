@@ -4,7 +4,7 @@ using HarmonyLib;
 using UnityEngine;
 
 namespace ServerDevcommands {
-  [BepInPlugin("valheim.jerekuusela.server_devcommands", "ServerDevcommands", "1.10.0.0")]
+  [BepInPlugin("valheim.jerekuusela.server_devcommands", "ServerDevcommands", "1.11.0.0")]
   public class ServerDevcommands : BaseUnityPlugin {
     public static ManualLogSource Log;
     public void Awake() {
@@ -17,7 +17,7 @@ namespace ServerDevcommands {
     }
 
     public void LateUpdate() {
-      TryRunCommand.TickQueue(Time.deltaTime);
+      CommandQueue.TickQueue(Time.deltaTime);
     }
   }
 
@@ -33,6 +33,7 @@ namespace ServerDevcommands {
       new UndoRedoCommand();
       new TutorialToggleCommand();
       new ResolutionCommand();
+      new WaitCommand();
       DefaultAutoComplete.Register();
       Settings.RegisterCommands();
     }

@@ -82,31 +82,27 @@ namespace ServerDevcommands {
         return Terminal.commands.Keys.ToList();
       }
     }
-    private static string Format(string value) {
-      if (!value.EndsWith(".") && !value.EndsWith("!"))
-        value += ".";
-      return "?" + value;
-    }
-    public static List<string> None = new List<string>() { Format("Too many parameters") };
+
     public static List<string> Origin = new List<string>() { "player", "object", "world" };
-    public static List<string> Create(string name) => new List<string>() { Format($"{name}") };
+    public static List<string> Create(string name) => new List<string>() { $"?{name}" };
+    public static List<string> None = Create("Too many parameters");
     public static List<string> Create(string name, string type) => Create($"{name} should be {type}");
     public static List<string> InvalidNamed(string name) => Create($"Invalid named parameter {name}");
     public static List<string> Flag(string name) => Create($"{name} is a flag so it doesn't have any arguments");
-    public static List<string> XZY(int index) {
-      if (index == 0) return ParameterInfo.Create("X", "a number");
-      if (index == 1) return ParameterInfo.Create("Z", "a number");
-      if (index == 2) return ParameterInfo.Create("Y", "a number");
+    public static List<string> XZY(string name, string description, int index) {
+      if (index == 0) return ParameterInfo.Create($"{name}=<color=yellow>X</color>,Z,Y | {description}.");
+      if (index == 1) return ParameterInfo.Create($"{name}=X,<color=yellow>Z</color>,Y | {description}.");
+      if (index == 2) return ParameterInfo.Create($"{name}=X,Z,<color=yellow>Y</color> | {description}.");
       return ParameterInfo.None;
     }
-    public static List<string> Scale(int index) {
-      if (index == 0) return ParameterInfo.Create("X", "a number (also sets Z and Y if not given)");
-      return XZY(index);
+    public static List<string> Scale(string name, string description, int index) {
+      if (index == 0) return ParameterInfo.Create($"{name}=<color=yellow>number</color> or {XZY(name, description, index)[0]}");
+      return XZY(name, description, index);
     }
-    public static List<string> YXZ(int index) {
-      if (index == 0) return ParameterInfo.Create("Y", "number");
-      if (index == 1) return ParameterInfo.Create("X", "number");
-      if (index == 2) return ParameterInfo.Create("Z", "number");
+    public static List<string> YXZ(string name, string description, int index) {
+      if (index == 0) return ParameterInfo.Create($"{name}=<color=yellow>Y</color>,X,Z | {description}.");
+      if (index == 1) return ParameterInfo.Create($"{name}=Y,<color=yellow>X</color>,Z | {description}.");
+      if (index == 2) return ParameterInfo.Create($"{name}=Y,X,<color=yellow>Z</color> | {description}.");
       return ParameterInfo.None;
     }
   }

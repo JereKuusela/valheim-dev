@@ -121,20 +121,7 @@ namespace ServerDevcommands {
     private static string RemoveModifierKeys(string command) =>
       string.Join(" ", command.Split(' ').Where(arg => !arg.StartsWith("keys=")));
 
-    private static Queue<string> Commands = new Queue<string>();
-    private static float CommandTimer = 0f;
-    public static void TickQueue(float delta) {
-      CommandTimer -= delta;
-      if (CommandTimer <= 0f) {
-        if (Commands.Count == 0) return;
-        var command = Commands.Dequeue();
-        Console.instance.TryRunCommand(command);
-      }
-    }
-    public static void RunQueued() {
-      var command = Commands.Dequeue();
-      Console.instance.TryRunCommand(command);
-    }
+
     public static bool Prefix(Terminal __instance, ref string text) {
       // Alias and bind can contain any kind of commands so avoid any processing.
       if (TerminalUtils.SkipProcessing(text)) return true;
@@ -154,14 +141,14 @@ namespace ServerDevcommands {
       }
       if (!CheckModifierKeys(text)) return false;
       text = RemoveModifierKeys(text);
-      if (CommandTimer > 0f) {
-        Commands.Enqueue(text);
-        return false;
-      }
-      CommandTimer = Settings.CommandDelay;
-      string[] array = text.Split(' ');
-      if (ZNet.instance && !ZNet.instance.IsServer() && IsServerSide(array[0])) {
-        ServerCommand.Send(text);
+      if (CommandQueue.CanRun()) {
+        string[] array = text.Split(' ');
+        if (ZNet.instance && !ZNet.instance.IsServer() && IsServerSide(array[0])) {
+          ServerCommand.Send(text);
+          return false;
+        }
+      } else {
+        CommandQueue.Add(__instance, text);
         return false;
       }
       return true;
