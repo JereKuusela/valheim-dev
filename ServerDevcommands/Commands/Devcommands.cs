@@ -87,33 +87,4 @@ namespace ServerDevcommands {
       ___m_autoCompleteSecrets = true;
     }
   }
-  [HarmonyPatch(typeof(Player), "HaveStamina")]
-  public class HaveStaminaWithGodMode {
-    public static bool Prefix(Player __instance, ref bool __result) {
-      var noUsage = Settings.GodModeNoStamina && __instance.InGodMode();
-      __result = noUsage;
-      return !noUsage;
-    }
-  }
-  [HarmonyPatch(typeof(Player), "UseStamina")]
-  public class UseStaminaWithGodMode {
-    public static bool Prefix(Player __instance) {
-      var noUsage = Settings.GodModeNoStamina && __instance.InGodMode();
-      return !noUsage;
-    }
-  }
-  [HarmonyPatch(typeof(Character), "AddStaggerDamage")]
-  public class AddStaggerDamage {
-    public static bool Prefix(Character __instance) {
-      var noStaggering = Settings.GodModeNoStagger && __instance.InGodMode() && __instance.IsPlayer();
-      return !noStaggering;
-    }
-  }
-  [HarmonyPatch(typeof(Character), "ApplyPushback")]
-  public class ApplyPushback {
-    public static bool Prefix(Character __instance) {
-      var noKnockback = Settings.GodModeNoKnockback && __instance.InGodMode() && __instance.IsPlayer();
-      return !noKnockback;
-    }
-  }
 }

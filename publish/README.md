@@ -137,6 +137,9 @@ Recommended to keep all settings on default values, unless there are errors or m
 
 # Changelog
 
+- v1.11:
+	- Fixes incompatibility with some stamina related mods.
+
 - v1.10:
 	- Adds a new setting `command_delay` to add delay when multiple commands are executed.
 	- Renames the file from DEV.dll to ServerDevcommands.dll.
