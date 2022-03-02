@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace ServerDevcommands {
   public class CommandQueueItem {
     public string Command;
-    public Terminal terminal;
+    public Terminal Terminal;
   }
   ///<summary>Helper for queueing commands.</summary>
   public class CommandQueue {
@@ -13,15 +13,16 @@ namespace ServerDevcommands {
     public static float QueueTimer = 0f;
     public static void TickQueue(float delta) {
       QueueTimer -= delta;
-      TryRun();
+      if (CanRun()) Run();
     }
     ///<summary>Runs the next command from the queue.</summary>
-    public static void TryRun() {
-      if (Items.Count == 0 || QueueTimer <= 0f) return;
+    public static void Run() {
+      if (Items.Count == 0) return;
       QueueTimer = Settings.CommandDelay;
       var item = Items.Dequeue();
-      item.terminal.TryRunCommand(item.Command);
+      item.Terminal.TryRunCommand(item.Command);
     }
+    public static bool CanRun() => Items.Count > 0 && QueueTimer <= 0f;
     public static void Add(Terminal terminal, string command) {
       Items.Enqueue(new CommandQueueItem { Command = command, Terminal = terminal });
     }

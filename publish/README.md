@@ -81,6 +81,7 @@ Examples:
 - `tutorialtoggle [value]` allows directly setting the value.
   - `dev_config auto_exec tutorialtoggle 0`: Automatically disables tutorials.
 - `undo` reverts an action added to the undo/redo manager.
+- `wait [milliseconds]`: Delays the execution of the next commands.
 
 ## Enhanced map
 
@@ -138,7 +139,9 @@ Recommended to keep all settings on default values, unless there are errors or m
 # Changelog
 
 - v1.11:
+	- Adds a new command `wait` to delay execution of the next command.
 	- Fixes incompatibility with some stamina related mods.
+	- Fixes `resolution` command description.
 
 - v1.10:
 	- Adds a new setting `command_delay` to add delay when multiple commands are executed.

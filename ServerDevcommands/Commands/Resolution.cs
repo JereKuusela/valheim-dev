@@ -31,7 +31,7 @@ namespace ServerDevcommands {
       Helper.AddMessage(terminal, $"Resolution set to {width}x{height} with {refreshStr} hz and {fullscreen} mode.");
     }
     public ResolutionCommand() {
-      new Terminal.ConsoleCommand("resolution", "[width] [height] [fullscreen] [refresh] - Prints or sets the resolution.", delegate (Terminal.ConsoleEventArgs args) {
+      new Terminal.ConsoleCommand("resolution", "[mode] [width] [height] [refresh] - Prints or sets the resolution.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length == 1) PrintResolution(args.Context);
         else SetResolution(args.Context, args.Args);
       });
