@@ -35,6 +35,7 @@ namespace ServerDevcommands {
       new ResolutionCommand();
       new WaitCommand();
       new ServerCommand();
+      new HUDCommand();
       DefaultAutoComplete.Register();
       Settings.RegisterCommands();
     }

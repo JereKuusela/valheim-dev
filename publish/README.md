@@ -59,15 +59,17 @@ Examples:
 
 ## Enhanced commands
 
-- `pos [player name]` allows getting the position of any player.
-	- `pos`: Returns your position.
-	- `pos jay`: Returns the position of a player named Jay,Heyjay or whatever is the closest match.
-- `event [event] [x] [z]` allows setting the event coordinates.
-	- `event army_eikthyr`: Starts an event at your position.
-	- `event army_eikthyr 100 -100`: Starts an event at coordinates 100,-100.
 - `devcommands` includes an admin check to allow using on servers.
 - `dev_config [value]` toggles settings.
 - `dev_server_config [value]` toggles settings on the server.
+- `event [event] [x] [z]` allows setting the event coordinates.
+	- `event army_eikthyr`: Starts an event at your position.
+	- `event army_eikthyr 100 -100`: Starts an event at coordinates 100,-100.
+- `hud` allows toggling the HUD visibility.
+- `hud [value]` allows directly setting the HUD visibility.
+- `pos [player name]` allows getting the position of any player.
+	- `pos`: Returns your position.
+	- `pos jay`: Returns the position of a player named Jay,Heyjay or whatever is the closest match.
 - `redo` restores an action added to the undo/redo manager.
 - `resolution` prints the screen properties.
 - `resolution [mode] [width] [height] [refresh rate]` sets the screen properties.
@@ -143,6 +145,7 @@ Recommended to keep all settings on default values, unless there are errors or m
 - v1.11:
 	- Adds a new command `wait` to delay execution of the next command.
 	- Adds a new command `server` to execute any command on the server.
+	- Adds a new command `hud` to set or toggle the HUD visibility.
 	- Adds a new setting `server_commands` to automatically execute given commands on the server.
 	- Removes `auto_debugmode` requirement from `auto_fly` and `auto_nocost`.
 	- Fixes incompatibility with some stamina related mods.
