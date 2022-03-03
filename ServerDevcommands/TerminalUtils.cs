@@ -93,9 +93,6 @@ namespace ServerDevcommands {
   // Replace devcommands check with a custom one.
   [HarmonyPatch(typeof(Terminal), "TryRunCommand")]
   public class TryRunCommand {
-    private static bool IsServerSide(string command) {
-      return command == "randomevent" || command == "stopevent" || command == "genloc" || command == "sleep" || command == "skiptime";
-    }
     ///<summary>Only executes the command when specified keys are down.</summary>
     private static bool CheckModifierKeys(string command) {
       if (!command.Contains("keys=")) return true;
@@ -143,8 +140,8 @@ namespace ServerDevcommands {
       text = RemoveModifierKeys(text);
       if (CommandQueue.CanRun()) {
         string[] array = text.Split(' ');
-        if (ZNet.instance && !ZNet.instance.IsServer() && IsServerSide(array[0])) {
-          ServerCommand.Send(text);
+        if (ZNet.instance && !ZNet.instance.IsServer() && Settings.IsServerCommand(array[0])) {
+          ServerExecution.Send(text);
           return false;
         }
       } else {

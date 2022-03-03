@@ -78,6 +78,7 @@ Examples:
 - `search [term] [max_lines=5]` allows searching the object ID list.
 	- `search wolf`: Prints all object IDs that contain word "wolf".
 	- `search fx_ 10`: Prints all object IDs that contain word "fx_" on up to 10 lines.
+- `server [command]` executes given command on the server.
 - `tutorialtoggle [value]` allows directly setting the value.
   - `dev_config auto_exec tutorialtoggle 0`: Automatically disables tutorials.
 - `undo` reverts an action added to the undo/redo manager.
@@ -105,10 +106,10 @@ Recommended way is to use the commands since you can configure the server and al
 
 - Automatic debug mode (default `false`, key: `auto_debugmode`): Automatically turns debug mode on/off when devcommands are enabled or disabled.
 - Automatic devcommands (default `true`, key: `auto_devcommands`): Automatically tries to enable devcommands when joining servers.
-- Automatic fly mode (default `false`, key: `auto_fly`): Automatically turns fly mode on/off when devcommands are enabled or disabled. Requires automatic debug mode.
+- Automatic fly mode (default `false`, key: `auto_fly`): Automatically turns fly mode on/off when devcommands are enabled or disabled.
 - Automatic ghost mode (default `false`, key: `auto_ghost`): Automatically turns ghost mode on/off when devcommands are enabled or disabled.
 - Automatic god mode (default `false`, key: `auto_god`): Automatically turns god mode on/off when devcommands are enabled or disabled.
-- Automatic no cost mode (default `false`, key: `auto_nocost`): Automatically turns no cost mode on/off when devcommands are enabled or disabled. Requires automatic debug mode.
+- Automatic no cost mode (default `false`, key: `auto_nocost`): Automatically turns no cost mode on/off when devcommands are enabled or disabled.
 - Disable random events (default `false`, key: `disable_events`): Prevents random events from happening (server side setting).
 - Invisible to players with ghost mode (default `false`, key: `ghost_invibisility`): Invisible to other players with ghost mode.
 - No creature drops (default `false`, key: `no_drops`): Prevents creatures from dropping loot, can be useful if people accidentally spawn very high star creatures. Only works when as the zone owner.
@@ -135,11 +136,15 @@ Recommended to keep all settings on default values, unless there are errors or m
 - Improved auto complete (default `true`, key: `improved_autocomplete`): Enables parameter info or options for every parameter.
 - Multiple commands per line (default `true`, key: `multiple_commands`): Enables multiple commands per line (when separate by `;`).
 - Substitution system (default `true`, key: `substitution`): Enables parameter substitution (with `$`).
+- Server side commands (default `randomevent,stopevent,genloc,sleep,skiptime`, key: `server_commands`): Names of commands that should be automatically executed on the server. `event` command is not included because it has a custom server-side support.
 
 # Changelog
 
 - v1.11:
 	- Adds a new command `wait` to delay execution of the next command.
+	- Adds a new command `server` to execute any command on the server.
+	- Adds a new setting `server_commands` to automatically execute given commands on the server.
+	- Removes `auto_debugmode` requirement from `auto_fly` and `auto_nocost`.
 	- Fixes incompatibility with some stamina related mods.
 	- Fixes `resolution` command description.
 

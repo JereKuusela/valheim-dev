@@ -25,7 +25,7 @@ namespace ServerDevcommands {
             Settings.UpdateValue(args.Context, args[1], "");
           else
             Settings.UpdateValue(args.Context, args[1], args[2]);
-        } else ServerCommand.Send(args.Args);
+        } else ServerExecution.Send(args.Args);
       }, optionsFetcher: () => Settings.Options);
       RegisterAutoComplete("dev_server_config");
     }

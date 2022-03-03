@@ -22,7 +22,7 @@ namespace ServerDevcommands {
         if (args.Length < 2) return;
         var parameters = Helper.AddPlayerPosXZ(args.Args, 2);
         if (ZNet.instance.IsServer()) DoStartEvent(parameters, args.Context);
-        else ServerCommand.Send(parameters);
+        else ServerExecution.Send(parameters);
       }, true, true, optionsFetcher: () => RandEventSystem.instance.m_events.Select(ev => ev.m_name).ToList());
       AutoComplete.Register("event", (int index) => {
         if (index == 0) return Terminal.commands["event"].m_tabOptionsFetcher();

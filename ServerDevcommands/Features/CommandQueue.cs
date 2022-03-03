@@ -22,7 +22,7 @@ namespace ServerDevcommands {
       var item = Items.Dequeue();
       item.Terminal.TryRunCommand(item.Command);
     }
-    public static bool CanRun() => Items.Count > 0 && QueueTimer <= 0f;
+    public static bool CanRun() => QueueTimer <= 0f;
     public static void Add(Terminal terminal, string command) {
       Items.Enqueue(new CommandQueueItem { Command = command, Terminal = terminal });
     }

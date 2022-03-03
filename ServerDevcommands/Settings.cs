@@ -92,13 +92,17 @@ namespace ServerDevcommands {
       SaveAliases();
     }
 
+    private static HashSet<string> ParseList(string value) => value.Split(',').Select(s => s.Trim().ToLower()).ToHashSet();
+    public static ConfigEntry<string> configServerCommands;
+    public static HashSet<string> ServerCommands => ParseList(configServerCommands.Value);
+    public static bool IsServerCommand(string command) => ServerCommands.Contains(command.ToLower());
     public static void Init(ConfigFile config) {
       var section = "1. General";
       configGhostInvisibility = config.Bind(section, "Invisible to other players with ghost mode", false, "");
       configNoDrops = config.Bind(section, "No creature drops", false, "Disables drops from creatures (if you control the zone), intended to fix high star enemies crashing the game.");
       configAutoDebugMode = config.Bind(section, "Automatic debug mode", false, "Automatically enables debug mode when enabling devcommands.");
-      configAutoFly = config.Bind(section, "Automatic fly mode", false, "Automatically enables fly mode when enabling devcommands (if debug mode).");
-      configAutoNoCost = config.Bind(section, "Automatic no cost mode", false, "Automatically enables no cost mode when enabling devcommands (if debug mode).");
+      configAutoFly = config.Bind(section, "Automatic fly mode", false, "Automatically enables fly mode when enabling devcommands.");
+      configAutoNoCost = config.Bind(section, "Automatic no cost mode", false, "Automatically enables no cost mode when enabling devcommands.");
       configAutoGodMode = config.Bind(section, "Automatic god mode", false, "Automatically enables god mode when enabling devcommands.");
       configAutoGhostMode = config.Bind(section, "Automatic ghost mode", false, "Automatically enables ghost mode when enabling devcommands.");
       configAutoDevcommands = config.Bind(section, "Automatic devcommands", true, "Automatically enables devcommands when joining servers.");
@@ -109,6 +113,7 @@ namespace ServerDevcommands {
       configShowPrivatePlayers = config.Bind(section, "Show private players", false, "The map shows private players.");
       configDisableEvents = config.Bind(section, "Disable random events", false, "Disables random events (server side setting).");
       section = "2. Console";
+      configServerCommands = config.Bind(section, "Server side commands", "randomevent,stopevent,genloc,sleep,skiptime", "Command names separated by , that should be executed server side.");
       configCommandDelay = config.Bind(section, "Delay between commands", "0", "Adds delay (seconds) when executing multiple commands.");
       configAutoExecBoot = config.Bind(section, "Auto exec boot", "", "Executes the given command when starting the game.");
       configAutoExecDevOn = config.Bind(section, "Auto exec dev on", "", "Executes the given command when enabling devcommands.");
@@ -132,13 +137,22 @@ namespace ServerDevcommands {
       "auto_nocost", "auto_ghost", "auto_god","debug_console", "no_drops", "aliasing", "god_no_stamina",
       "substitution", "improved_autocomplete", "disable_events", "disable_warnings", "multiple_commands",
       "god_no_knockback", "ghost_invibisility", "auto_exec_dev_on", "auto_exec_dev_off", "auto_exec_boot", "auto_exec",
-      "command_descriptions", "command_delay"
+      "command_descriptions", "command_delay", "server_commands"
     };
     private static string State(bool value) => value ? "enabled" : "disabled";
+    private static string Flag(bool value) => value ? "removed" : "added";
     private static void Toggle(Terminal context, ConfigEntry<bool> setting, string name, bool reverse = false) {
       setting.Value = !setting.Value;
       Helper.AddMessage(context, $"{name} {State(reverse ? !setting.Value : setting.Value)}.");
-
+    }
+    private static void ToggleFlag(Terminal context, ConfigEntry<string> setting, string name, string value) {
+      var list = ParseList(setting.Value);
+      var valueLower = value.ToLower();
+      var remove = list.Contains(valueLower);
+      if (remove) list.Remove(valueLower);
+      else list.Add(valueLower);
+      setting.Value = string.Join(",", list);
+      Helper.AddMessage(context, $"{name} {Flag(remove)} {value}.");
     }
     public static void UpdateValue(Terminal context, string key, string value) {
       if (key == "auto_exec_dev_on") {
@@ -182,6 +196,7 @@ namespace ServerDevcommands {
       if (key == "god_no_stagger") Toggle(context, configGodModeNoStagger, "Staggering with god mode", true);
       if (key == "god_no_knockback") Toggle(context, configGodModeNoKnockback, "Knockback with god mode", true);
       if (key == "ghost_invibisility") Toggle(context, configGhostInvisibility, "Invisibility with ghost mode", true);
+      if (key == "server_commands") ToggleFlag(context, configServerCommands, "Server commands", value);
     }
   }
 }

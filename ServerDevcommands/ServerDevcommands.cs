@@ -34,6 +34,7 @@ namespace ServerDevcommands {
       new TutorialToggleCommand();
       new ResolutionCommand();
       new WaitCommand();
+      new ServerCommand();
       DefaultAutoComplete.Register();
       Settings.RegisterCommands();
     }

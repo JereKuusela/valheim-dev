@@ -19,18 +19,19 @@ namespace ServerDevcommands {
       Terminal.m_cheat = value;
       Console.instance?.updateCommandList();
       Chat.instance?.updateCommandList();
+      var player = Player.m_localPlayer;
       if (Settings.AutoDebugMode)
         Player.m_debugMode = Terminal.m_cheat;
       if (Settings.AutoGodMode)
-        Player.m_localPlayer?.SetGodMode(Terminal.m_cheat);
+        player?.SetGodMode(Terminal.m_cheat);
       if (Settings.AutoGhostMode)
-        Player.m_localPlayer?.SetGhostMode(Terminal.m_cheat);
-      if (Settings.AutoFly && Player.m_localPlayer) {
-        Player.m_localPlayer.m_debugFly = Player.m_debugMode;
-        Player.m_localPlayer.m_nview.GetZDO().Set("DebugFly", Player.m_debugMode);
+        player?.SetGhostMode(Terminal.m_cheat);
+      if (Settings.AutoFly && player) {
+        player.m_debugFly = Terminal.m_cheat;
+        player.m_nview.GetZDO().Set("DebugFly", Terminal.m_cheat);
       }
-      if (Settings.AutoNoCost && Player.m_localPlayer)
-        Player.m_localPlayer.m_noPlacementCost = Player.m_debugMode;
+      if (Settings.AutoNoCost && player)
+        player.m_noPlacementCost = Terminal.m_cheat;
       if (value && Settings.AutoExecDevOn != "") Console.instance.TryRunCommand(Settings.AutoExecDevOn);
       if (!value && Settings.AutoExecDevOff != "") Console.instance.TryRunCommand(Settings.AutoExecDevOff);
     }
