@@ -12,7 +12,7 @@ namespace ServerDevcommands {
     }
     public static GameObject GetPrefab(string name) {
       name = name.ToLower();
-      var realName = ParameterInfo.Ids.Find(id => id.ToLower() == name);
+      var realName = ParameterInfo.ObjectIds.Find(id => id.ToLower() == name);
       if (string.IsNullOrEmpty(realName))
         Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "Missing object " + name, 0, null);
       var prefab = ZNetScene.instance.GetPrefab(realName);

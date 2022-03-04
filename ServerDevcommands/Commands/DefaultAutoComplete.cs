@@ -69,7 +69,7 @@ namespace ServerDevcommands {
       });
       AutoComplete.RegisterEmpty("clearstatus");
       AutoComplete.RegisterEmpty("dpsdebug");
-      AutoComplete.RegisterDefault("env");
+      //AutoComplete.RegisterDefault("env");
       AutoComplete.RegisterEmpty("exploremap");
       // Event added to the replaced command.
       AutoComplete.Register("ffsmooth", (int index) => {
@@ -83,6 +83,10 @@ namespace ServerDevcommands {
       });
       AutoComplete.RegisterEmpty("fly");
       AutoComplete.RegisterEmpty("freefly");
+      AutoComplete.Register("forcedelete", (int index) => {
+        if (index == 0) return ParameterInfo.Create("Radius", "in meters (from 0.0 to 20.0, default is 5.0).");
+        return null;
+      });
       AutoComplete.RegisterEmpty("gc");
       AutoComplete.RegisterEmpty("genloc");
       AutoComplete.RegisterEmpty("ghost");
@@ -105,17 +109,24 @@ namespace ServerDevcommands {
       AutoComplete.RegisterEmpty("killall");
       AutoComplete.RegisterEmpty("listkeys");
       AutoComplete.RegisterDefault("location");
+      AutoComplete.Register("maxfps", (int index) => {
+        if (index == 0) return ParameterInfo.Create("Amount", "a positive integer");
+        return null;
+      });
       AutoComplete.Register("model", (int index) => {
-        if (index == 0) return ParameterInfo.Create("0 = male, 1 = female");
+        if (index == 0) return ParameterInfo.Create("<color=yellow>0</color> = male, <color=yellow>1</color> = female");
         return null;
       });
       AutoComplete.RegisterEmpty("nocost");
+      AutoComplete.RegisterEmpty("nomap");
+      AutoComplete.RegisterEmpty("noportals");
       AutoComplete.Register("players", (int index) => {
         if (index == 0) return ParameterInfo.Create("Amount", "a positive integer (0 disables the override)");
         return null;
       });
       // Pos added to the replaced command.
       AutoComplete.RegisterEmpty("printcreatures");
+      AutoComplete.RegisterEmpty("printseeds");
       AutoComplete.RegisterEmpty("printlocations");
       AutoComplete.RegisterEmpty("puke");
       AutoComplete.Register("raiseskill", (int index) => {
@@ -131,8 +142,12 @@ namespace ServerDevcommands {
       AutoComplete.RegisterEmpty("resetenv");
       AutoComplete.RegisterEmpty("resetkeys");
       AutoComplete.RegisterEmpty("resetwind");
+      AutoComplete.Register("removekey", (int index) => {
+        if (index == 0) return ParameterInfo.GlobalKeys;
+        return null;
+      });
       AutoComplete.Register("setkey", (int index) => {
-        if (index == 0) return ParameterInfo.Create("Name");
+        if (index == 0) return ParameterInfo.GlobalKeys;
         return null;
       });
       AutoComplete.RegisterDefault("setpower");
@@ -147,7 +162,7 @@ namespace ServerDevcommands {
       });
       AutoComplete.RegisterEmpty("sleep");
       AutoComplete.Register("spawn", (int index) => {
-        if (index == 0) return ParameterInfo.Ids;
+        if (index == 0) return ParameterInfo.ObjectIds;
         if (index == 1) {
           if (Settings.DisableParameterWarnings)
             return ParameterInfo.Create("Amount", "a positive integer (default 1)");
@@ -169,8 +184,13 @@ namespace ServerDevcommands {
         return null;
       });
       AutoComplete.RegisterEmpty("time");
+      AutoComplete.Register("timescale", (int index) => {
+        if (index == 0) return ParameterInfo.Create("Multiplier", "sets how fast the time goes (from 0.0 to 3.0). Value 0 can be used to pause the game.");
+        if (index == 1) return ParameterInfo.Create("Transition duration", "causes the change to be applied gradually over time (seconds). Default value 0 applies the change instantly.");
+        return null;
+      });
       AutoComplete.Register("tod", (int index) => {
-        if (index == 0) return ParameterInfo.Create("Amount", "a positive number (from 0.0 to 1.0)");
+        if (index == 0) return ParameterInfo.Create("Time", "overrides the time of the day (from 0.0 to 1.0, with 0.5 being the mid day). Value -1 removes the override.");
         return null;
       });
       AutoComplete.Register("wind", (int index) => {

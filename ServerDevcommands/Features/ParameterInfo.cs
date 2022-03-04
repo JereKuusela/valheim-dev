@@ -6,12 +6,41 @@ using UnityEngine;
 namespace ServerDevcommands {
   ///<summary>Helper class for parameter options/info. The main purpose is to provide some caching to avoid performance issues.</summary>
   public static class ParameterInfo {
+    private static List<string> globalKeys = new List<string>{
+      "defeated_bonemass",
+      "defeated_dragon",
+      "defeated_eikthyr",
+      "defeated_gdking",
+      "defeated_goblinking",
+      "KilledBat",
+      "KilledTroll",
+      "killed_surtling",
+      "nomap",
+      "noportals"
+    };
+    public static List<string> GlobalKeys {
+      get {
+        return globalKeys;
+      }
+    }
     private static List<string> ids = new List<string>();
     public static List<string> Ids {
       get {
-        if (ZNetScene.instance && ZNetScene.instance.m_namedPrefabs.Count != ids.Count)
-          ids = ZNetScene.instance.GetPrefabNames();
+        if (ObjectIds.Count + LocationIds.Count != objectIds.Count) {
+          ids = new List<string>();
+          ids.AddRange(ObjectIds);
+          ids.AddRange(LocationIds);
+          ids.Sort();
+        }
         return ids;
+      }
+    }
+    private static List<string> objectIds = new List<string>();
+    public static List<string> ObjectIds {
+      get {
+        if (ZNetScene.instance && ZNetScene.instance.m_namedPrefabs.Count != objectIds.Count)
+          objectIds = ZNetScene.instance.GetPrefabNames();
+        return objectIds;
       }
     }
     private static List<string> locationIds = new List<string>();
@@ -86,7 +115,7 @@ namespace ServerDevcommands {
     public static List<string> Origin = new List<string>() { "player", "object", "world" };
     public static List<string> Create(string name) => new List<string>() { $"?{name}" };
     public static List<string> None = Create("Too many parameters");
-    public static List<string> Create(string name, string type) => Create($"{name} should be {type}");
+    public static List<string> Create(string name, string type) => Create($"<color=yellow>{name}</color> should be {type}");
     public static List<string> InvalidNamed(string name) => Create($"Invalid named parameter {name}");
     public static List<string> Flag(string name) => Create($"{name} is a flag so it doesn't have any arguments");
     public static List<string> XZY(string name, string description, int index) {

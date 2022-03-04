@@ -10,7 +10,7 @@ namespace ServerDevcommands {
         if (args.Length < 2) return;
         var term = args[1].ToLower();
         var maxLines = Parse.TryInt(args.Args, 2, 5);
-        var objects = ParameterInfo.Ids.Where(id => id.ToLower().Contains(term)).ToArray();
+        var objects = ParameterInfo.ObjectIds.Where(id => id.ToLower().Contains(term)).ToArray();
         var bufferSize = (int)Math.Ceiling((float)objects.Length / maxLines);
         var buffer = new string[bufferSize];
         for (int i = 0; i < objects.Length; i += bufferSize) {

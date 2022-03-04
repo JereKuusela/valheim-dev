@@ -36,6 +36,7 @@ namespace ServerDevcommands {
       new WaitCommand();
       new ServerCommand();
       new HUDCommand();
+      new NoMapCommand();
       DefaultAutoComplete.Register();
       Settings.RegisterCommands();
     }

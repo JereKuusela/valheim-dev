@@ -67,6 +67,8 @@ Examples:
 	- `event army_eikthyr 100 -100`: Starts an event at coordinates 100,-100.
 - `hud` allows toggling the HUD visibility.
 - `hud [value]` allows directly setting the HUD visibility.
+- `nomap [value] [server = 1]` allows directly setting the nomap mode and by default only affects the current server.
+	`nomap [value] 0`: Sets the nomap mode for the current character (for all servers).
 - `pos [player name]` allows getting the position of any player.
 	- `pos`: Returns your position.
 	- `pos jay`: Returns the position of a player named Jay,Heyjay or whatever is the closest match.
@@ -147,6 +149,8 @@ Recommended to keep all settings on default values, unless there are errors or m
 	- Adds a new command `server` to execute any command on the server.
 	- Adds a new command `hud` to set or toggle the HUD visibility.
 	- Adds a new setting `server_commands` to automatically execute given commands on the server.
+	- Adds improved autocomplete for new commands added in the Frost Caves update.
+	- Changes the command `nomap` to only affect the server by default.
 	- Removes `auto_debugmode` requirement from `auto_fly` and `auto_nocost`.
 	- Fixes incompatibility with some stamina related mods.
 	- Fixes `resolution` command description.
