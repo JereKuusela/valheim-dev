@@ -138,7 +138,7 @@ namespace ServerDevcommands {
       }
       if (!CheckModifierKeys(text)) return false;
       // Server side checks this already at the server side execution.
-      if (Player.m_localPlayer && !BlackList.CanRun(text)) return false;
+      if (Player.m_localPlayer && !DisableCommands.CanRun(text)) return false;
       text = RemoveModifierKeys(text);
       if (CommandQueue.CanRun()) {
         string[] array = text.Split(' ');

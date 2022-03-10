@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ServerDevcommands {
   ///<summary>Feature for disabling commands.</summary>
-  public class BlackList {
+  public class DisableCommands {
 
     public static List<string> AllowedCommands = new List<string>();
     public static List<string> DisallowedCommands = new List<string>();

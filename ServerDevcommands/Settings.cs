@@ -75,7 +75,7 @@ namespace ServerDevcommands {
       foreach (var alias in Aliases) {
         AliasCommand.AddCommand(alias.Key, alias.Value);
       }
-      BlackList.UpdateCommands(configRootUsers.Value, configCommandBlackList.Value);
+      DisableCommands.UpdateCommands(configRootUsers.Value, configDisabledCommands.Value);
     }
 
     private static void SaveAliases() {
@@ -101,8 +101,11 @@ namespace ServerDevcommands {
     public static ConfigEntry<string> configServerCommands;
     public static HashSet<string> ServerCommands => ParseList(configServerCommands.Value);
     public static bool IsServerCommand(string command) => ServerCommands.Contains(command.ToLower());
-    public static ConfigEntry<string> configCommandBlackList;
+    public static ConfigEntry<string> configDisabledCommands;
     public static ConfigEntry<string> configRootUsers;
+    public static ConfigEntry<string> configDisabledGlobalKeys;
+    public static HashSet<string> DisabledGlobalKeys => ParseList(configDisabledGlobalKeys.Value);
+    public static bool IsGlobalKeyDisabled(string key) => DisabledGlobalKeys.Contains(key.ToLower());
     public static void Init(ConfigFile config) {
       var section = "1. General";
       configGhostInvisibility = config.Bind(section, "Invisible to other players with ghost mode", false, "");
@@ -121,6 +124,7 @@ namespace ServerDevcommands {
       configMiniMapCoordinates = config.Bind(section, "Show minimap coordinates", false, "The minimap shows player coordinates.");
       configShowPrivatePlayers = config.Bind(section, "Show private players", false, "The map shows private players.");
       configDisableEvents = config.Bind(section, "Disable random events", false, "Disables random events (server side setting).");
+      configDisabledGlobalKeys = config.Bind(section, "Disabled global keys", "", "Global keys separated by , that won't be set (server side setting).");
       section = "2. Console";
       configServerCommands = config.Bind(section, "Server side commands", "randomevent,stopevent,genloc,sleep,skiptime", "Command names separated by , that should be executed server side.");
       configCommandDelay = config.Bind(section, "Delay between commands", "0", "Adds delay (seconds) when executing multiple commands.");
@@ -138,9 +142,9 @@ namespace ServerDevcommands {
       configDisableParameterWarnings = config.Bind(section, "Disable parameter warnings", false, "Removes warning texts from some command parameter descriptions.");
       configCommandAliases.SettingChanged += (s, e) => ParseAliases(configCommandAliases.Value);
       configRootUsers = config.Bind(section, "Root users", "", "Steam IDs separated by , that can execute blacklisted commands. Server side setting.");
-      configRootUsers.SettingChanged += (s, e) => BlackList.UpdateCommands(configRootUsers.Value, configCommandBlackList.Value);
-      configCommandBlackList = config.Bind(section, "Blacklisted commands", "dev_config command_blacklist", "Command names separated by , that can't be executed.");
-      configCommandBlackList.SettingChanged += (s, e) => BlackList.UpdateCommands(configRootUsers.Value, configCommandBlackList.Value);
+      configRootUsers.SettingChanged += (s, e) => DisableCommands.UpdateCommands(configRootUsers.Value, configDisabledCommands.Value);
+      configDisabledCommands = config.Bind(section, "Disabled commands", "dev_config disable_command", "Command names separated by , that can't be executed.");
+      configDisabledCommands.SettingChanged += (s, e) => DisableCommands.UpdateCommands(configRootUsers.Value, configDisabledCommands.Value);
       ParseAliases(configCommandAliases.Value);
     }
 
@@ -150,10 +154,11 @@ namespace ServerDevcommands {
       "auto_nocost", "auto_ghost", "auto_god","debug_console", "no_drops", "aliasing", "god_no_stamina",
       "substitution", "improved_autocomplete", "disable_events", "disable_warnings", "multiple_commands",
       "god_no_knockback", "ghost_invibisility", "auto_exec_dev_on", "auto_exec_dev_off", "auto_exec_boot", "auto_exec",
-      "command_descriptions", "command_delay", "server_commands", "fly_no_clip", "command_blacklist", "minimap_coordinates"
+      "command_descriptions", "command_delay", "server_commands", "fly_no_clip", "disable_command", "minimap_coordinates",
+      "disable_global_key"
     };
     private static string State(bool value) => value ? "enabled" : "disabled";
-    private static string Flag(bool value) => value ? "removed" : "added";
+    private static string Flag(bool value) => value ? "Removed" : "Added";
     private static void Toggle(Terminal context, ConfigEntry<bool> setting, string name, bool reverse = false) {
       setting.Value = !setting.Value;
       Helper.AddMessage(context, $"{name} {State(reverse ? !setting.Value : setting.Value)}.");
@@ -165,7 +170,7 @@ namespace ServerDevcommands {
       if (remove) list.Remove(valueLower);
       else list.Add(valueLower);
       setting.Value = string.Join(",", list);
-      Helper.AddMessage(context, $"{name} {Flag(remove)} {value}.");
+      Helper.AddMessage(context, $"{name}: {Flag(remove)} \"{value}\".");
     }
     public static void UpdateValue(Terminal context, string key, string value) {
       if (key == "auto_exec_dev_on") {
@@ -212,7 +217,8 @@ namespace ServerDevcommands {
       if (key == "fly_no_clip") Toggle(context, configFlyNoClip, "No clip with fly mode");
       if (key == "ghost_invibisility") Toggle(context, configGhostInvisibility, "Invisibility with ghost mode", true);
       if (key == "server_commands") ToggleFlag(context, configServerCommands, "Server commands", value);
-      if (key == "command_blacklist") ToggleFlag(context, configCommandBlackList, "Command blacklist", value);
+      if (key == "disable_command") ToggleFlag(context, configDisabledCommands, "Disabled commands", value);
+      if (key == "disable_global_key") ToggleFlag(context, configDisabledGlobalKeys, "Disabled global keys", value);
     }
   }
 }

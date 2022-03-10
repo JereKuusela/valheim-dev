@@ -125,7 +125,7 @@ namespace ServerDevcommands {
         if (commandName == "server" || commandName == "alias")
           parameters = parameters.Skip(1).ToArray();
       }
-      if (parameters.Length < 2) __result = BlackList.AllowedCommands;
+      if (parameters.Length < 2) __result = DisableCommands.AllowedCommands;
       else __result = GetOptions(parameters);
       return false;
     }
