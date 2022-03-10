@@ -7,6 +7,8 @@ namespace ServerDevcommands {
     public static bool Cheats => (ZNet.instance && ZNet.instance.IsServer()) || (Console.instance.IsCheatsEnabled() && Admin.Enabled);
     public static ConfigEntry<bool> configMapCoordinates;
     public static bool MapCoordinates => Cheats && configMapCoordinates.Value;
+    public static ConfigEntry<bool> configMiniMapCoordinates;
+    public static bool MiniMapCoordinates => Cheats && configMiniMapCoordinates.Value;
     public static ConfigEntry<bool> configShowPrivatePlayers;
     public static bool ShowPrivatePlayers => Cheats && configShowPrivatePlayers.Value;
     public static ConfigEntry<bool> configAutoDevcommands;
@@ -116,6 +118,7 @@ namespace ServerDevcommands {
       configFlyNoClip = config.Bind(section, "No clip with fly mode", false, "");
       configGodModeNoKnockback = config.Bind(section, "No knockback with god mode", true, "");
       configMapCoordinates = config.Bind(section, "Show map coordinates", true, "The map shows coordinates on hover.");
+      configMiniMapCoordinates = config.Bind(section, "Show minimap coordinates", false, "The minimap shows player coordinates.");
       configShowPrivatePlayers = config.Bind(section, "Show private players", false, "The map shows private players.");
       configDisableEvents = config.Bind(section, "Disable random events", false, "Disables random events (server side setting).");
       section = "2. Console";
@@ -147,7 +150,7 @@ namespace ServerDevcommands {
       "auto_nocost", "auto_ghost", "auto_god","debug_console", "no_drops", "aliasing", "god_no_stamina",
       "substitution", "improved_autocomplete", "disable_events", "disable_warnings", "multiple_commands",
       "god_no_knockback", "ghost_invibisility", "auto_exec_dev_on", "auto_exec_dev_off", "auto_exec_boot", "auto_exec",
-      "command_descriptions", "command_delay", "server_commands", "fly_no_clip", "command_blacklist"
+      "command_descriptions", "command_delay", "server_commands", "fly_no_clip", "command_blacklist", "minimap_coordinates"
     };
     private static string State(bool value) => value ? "enabled" : "disabled";
     private static string Flag(bool value) => value ? "removed" : "added";
@@ -187,6 +190,7 @@ namespace ServerDevcommands {
       }
       if (key == "command_descriptions") Toggle(context, configCommandDescriptions, "Command descriptions");
       if (key == "map_coordinates") Toggle(context, configMapCoordinates, "Map coordinates");
+      if (key == "minimap_coordinates") Toggle(context, configMiniMapCoordinates, "Minimap coordinates");
       if (key == "private_players") Toggle(context, configShowPrivatePlayers, "Private players");
       if (key == "auto_devcommands") Toggle(context, configAutoDevcommands, "Automatic devcommands");
       if (key == "auto_debugmode") Toggle(context, configAutoDebugMode, "Automatic debug mode");
