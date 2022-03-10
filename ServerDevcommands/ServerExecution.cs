@@ -48,7 +48,7 @@ namespace ServerDevcommands {
         Console.instance.AddString("Unauthorized to use devcommands.");
         return false;
       }
-      if (!BlackList.CanRun(command)) {
+      if (!BlackList.CanRun(command, rpc)) {
         Console.instance.AddString("Unauthorized to use this command.");
         return false;
       }

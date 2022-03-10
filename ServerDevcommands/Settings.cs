@@ -73,7 +73,7 @@ namespace ServerDevcommands {
       foreach (var alias in Aliases) {
         AliasCommand.AddCommand(alias.Key, alias.Value);
       }
-      BlackList.UpdateCommands(configCommandBlackList.Value);
+      BlackList.UpdateCommands(configRootUsers.Value, configCommandBlackList.Value);
     }
 
     private static void SaveAliases() {
@@ -100,6 +100,7 @@ namespace ServerDevcommands {
     public static HashSet<string> ServerCommands => ParseList(configServerCommands.Value);
     public static bool IsServerCommand(string command) => ServerCommands.Contains(command.ToLower());
     public static ConfigEntry<string> configCommandBlackList;
+    public static ConfigEntry<string> configRootUsers;
     public static void Init(ConfigFile config) {
       var section = "1. General";
       configGhostInvisibility = config.Bind(section, "Invisible to other players with ghost mode", false, "");
@@ -133,8 +134,10 @@ namespace ServerDevcommands {
       configDebugConsole = config.Bind(section, "Debug console", false, "Extra debug information about aliasing.");
       configDisableParameterWarnings = config.Bind(section, "Disable parameter warnings", false, "Removes warning texts from some command parameter descriptions.");
       configCommandAliases.SettingChanged += (s, e) => ParseAliases(configCommandAliases.Value);
-      configCommandBlackList = config.Bind(section, "Blacklisted commands", "", "Command names separated by , that can't be executed.");
-      configCommandBlackList.SettingChanged += (s, e) => BlackList.UpdateCommands(configCommandBlackList.Value);
+      configRootUsers = config.Bind(section, "Root users", "", "Steam IDs separated by , that can execute blacklisted commands. Server side setting.");
+      configRootUsers.SettingChanged += (s, e) => BlackList.UpdateCommands(configRootUsers.Value, configCommandBlackList.Value);
+      configCommandBlackList = config.Bind(section, "Blacklisted commands", "dev_config command_blacklist", "Command names separated by , that can't be executed.");
+      configCommandBlackList.SettingChanged += (s, e) => BlackList.UpdateCommands(configRootUsers.Value, configCommandBlackList.Value);
       ParseAliases(configCommandAliases.Value);
     }
 

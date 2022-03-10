@@ -18,16 +18,6 @@ namespace ServerDevcommands {
           Settings.UpdateValue(args.Context, args[1], string.Join(" ", args.Args.Skip(2)));
       }, optionsFetcher: () => Settings.Options);
       RegisterAutoComplete("dev_config");
-      new Terminal.ConsoleCommand("dev_server_config", "[key] [value] - Toggles or sets config value for server.", delegate (Terminal.ConsoleEventArgs args) {
-        if (args.Length < 2) return;
-        if (ZNet.instance.IsServer()) {
-          if (args.Length == 2)
-            Settings.UpdateValue(args.Context, args[1], "");
-          else
-            Settings.UpdateValue(args.Context, args[1], args[2]);
-        } else ServerExecution.Send(args.Args);
-      }, optionsFetcher: () => Settings.Options);
-      RegisterAutoComplete("dev_server_config");
     }
   }
 }

@@ -120,6 +120,11 @@ namespace ServerDevcommands {
       var input = GetInput();
       var text = input.m_input.text;
       var parameters = text.Split(' ');
+      if (parameters.Length > 1) {
+        var commandName = parameters.First();
+        if (commandName == "server" || commandName == "alias")
+          parameters = parameters.Skip(1).ToArray();
+      }
       if (parameters.Length < 2) __result = BlackList.AllowedCommands;
       else __result = GetOptions(parameters);
       return false;

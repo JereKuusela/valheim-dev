@@ -61,7 +61,6 @@ Examples:
 
 - `devcommands` includes an admin check to allow using on servers.
 - `dev_config [value]` toggles settings.
-- `dev_server_config [value]` toggles settings on the server.
 - `event [event] [x] [z]` allows setting the event coordinates.
 	- `event army_eikthyr`: Starts an event at your position.
 	- `event army_eikthyr 100 -100`: Starts an event at coordinates 100,-100.
@@ -133,7 +132,7 @@ Recommended to keep all settings on default values, unless there are errors or m
 - Auto exec boot (key: `auto_exec_boot`): Executes the given command when starting the game.
 - Auto exec dev off (key: `auto_exec_dev_off`): Executes the given command when disabling devcommands.
 - Auto exec dev on (key: `auto_exec_dev_off`): Executes the given command when enabling devcommands.
-- Blacklisted commands (default ` `, key: `command_blacklist`): Command names separated by , that can't be executed. Mainly useful on the server to prevent some server-side commands.
+- Blacklisted commands (default `dev_config command_blacklist`, key: `command_blacklist`): Command names separated by , that can't be executed. Mainly useful on the server to prevent some server-side commands.
 - Command aliases: Saved command aliases.
 - Command descriptions (default `true`, key: `command_descriptions`): Shows command descriptions as autocomplete.
 - Debug console (default `false`, key: `debug_console`): Prints debug output to the console related to aliasing and parameter substitution.
@@ -141,6 +140,7 @@ Recommended to keep all settings on default values, unless there are errors or m
 - Disable parameter warnings (default `false`, key: `disable_warnings`): Removes warning texts from some command parameter descriptions.
 - Improved auto complete (default `true`, key: `improved_autocomplete`): Enables parameter info or options for every parameter.
 - Multiple commands per line (default `true`, key: `multiple_commands`): Enables multiple commands per line (when separate by `;`).
+- Root users (default ` `): Steam IDs separated by , that can execute blacklisted commands. Can't be set with `dev_config` command.
 - Substitution system (default `true`, key: `substitution`): Enables parameter substitution (with `$`).
 - Server side commands (default `randomevent,stopevent,genloc,sleep,skiptime`, key: `server_commands`): Names of commands that should be automatically executed on the server. `event` command is not included because it has a custom server-side support.
 
@@ -152,10 +152,12 @@ Recommended to keep all settings on default values, unless there are errors or m
 	- Adds a new command `hud` to set or toggle the HUD visibility.
 	- Adds a new setting `server_commands` to automatically execute given commands on the server.
 	- Adds a new setting `command_blacklist` to allow disabling commands.
+	- Adds a new setting to add root users to the server (bypasses the blacklist).
 	- Adds a new setting `fly_no_clip` to disable collision while flying.
 	- Adds improved autocomplete for new commands added in the Frost Caves update.
 	- Changes the command `nomap` to only affect the server by default.
 	- Removes `auto_debugmode` requirement from `auto_fly` and `auto_nocost`.
+	- Removes the command `dev_server_config` as redundant.
 	- Fixes incompatibility with some stamina related mods.
 	- Fixes `resolution` command description.
 

@@ -29,13 +29,6 @@ namespace ServerDevcommands {
           args.Context.updateCommandList();
         }
       });
-      AutoComplete.Register("alias", (int index) => {
-        if (index == 0) return ParameterInfo.Create("Name of the new command");
-        if (index == 1) return ParameterInfo.CommandNames;
-        return ParameterInfo.Create("Command values");
-      });
     }
-
   }
-
 }
