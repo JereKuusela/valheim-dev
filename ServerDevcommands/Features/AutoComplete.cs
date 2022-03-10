@@ -17,7 +17,7 @@ namespace ServerDevcommands {
       if (namedParameter != "") {
         if (OptionsNamedFetchers.TryGetValue(command, out var namedOptions)) {
           if (namedOptions.TryGetValue(namedParameter.ToLower(), out var namedFetcher)) {
-            return namedFetcher(index);
+            return namedFetcher(index) ?? ParameterInfo.None;
           }
         }
         return ParameterInfo.InvalidNamed(namedParameter);
@@ -120,7 +120,7 @@ namespace ServerDevcommands {
       var input = GetInput();
       var text = input.m_input.text;
       var parameters = text.Split(' ');
-      if (parameters.Length < 2) __result = input.m_commandList;
+      if (parameters.Length < 2) __result = BlackList.AllowedCommands;
       else __result = GetOptions(parameters);
       return false;
     }

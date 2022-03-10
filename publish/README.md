@@ -116,6 +116,7 @@ Recommended way is to use the commands since you can configure the server and al
 - Automatic no cost mode (default `false`, key: `auto_nocost`): Automatically turns no cost mode on/off when devcommands are enabled or disabled.
 - Disable random events (default `false`, key: `disable_events`): Prevents random events from happening (server side setting).
 - Invisible to players with ghost mode (default `false`, key: `ghost_invibisility`): Invisible to other players with ghost mode.
+- No clip with fly mode (default `false`, key: `fly_no_clip`): Removes collision check with fly mode.
 - No creature drops (default `false`, key: `no_drops`): Prevents creatures from dropping loot, can be useful if people accidentally spawn very high star creatures. Only works when as the zone owner.
 - No knockback with god mode (default `true`, key: `god_no_knockback`): Removes knockback for an even godlier god mode.
 - No staggering with god mode (default `true`, key: `god_no_stagger`): Removes staggering for an even godlier god mode.
@@ -132,6 +133,7 @@ Recommended to keep all settings on default values, unless there are errors or m
 - Auto exec boot (key: `auto_exec_boot`): Executes the given command when starting the game.
 - Auto exec dev off (key: `auto_exec_dev_off`): Executes the given command when disabling devcommands.
 - Auto exec dev on (key: `auto_exec_dev_off`): Executes the given command when enabling devcommands.
+- Blacklisted commands (default ` `, key: `command_blacklist`): Command names separated by , that can't be executed. Mainly useful on the server to prevent some server-side commands.
 - Command aliases: Saved command aliases.
 - Command descriptions (default `true`, key: `command_descriptions`): Shows command descriptions as autocomplete.
 - Debug console (default `false`, key: `debug_console`): Prints debug output to the console related to aliasing and parameter substitution.
@@ -149,6 +151,8 @@ Recommended to keep all settings on default values, unless there are errors or m
 	- Adds a new command `server` to execute any command on the server.
 	- Adds a new command `hud` to set or toggle the HUD visibility.
 	- Adds a new setting `server_commands` to automatically execute given commands on the server.
+	- Adds a new setting `command_blacklist` to allow disabling commands.
+	- Adds a new setting `fly_no_clip` to disable collision while flying.
 	- Adds improved autocomplete for new commands added in the Frost Caves update.
 	- Changes the command `nomap` to only affect the server by default.
 	- Removes `auto_debugmode` requirement from `auto_fly` and `auto_nocost`.

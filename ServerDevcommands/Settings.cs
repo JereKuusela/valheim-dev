@@ -29,6 +29,8 @@ namespace ServerDevcommands {
     public static bool GodModeNoStamina => Cheats && configGodModeNoStamina.Value;
     public static ConfigEntry<bool> configGodModeNoStagger;
     public static bool GodModeNoStagger => Cheats && configGodModeNoStagger.Value;
+    public static ConfigEntry<bool> configFlyNoClip;
+    public static bool FlyNoClip => Cheats && configFlyNoClip.Value;
     public static ConfigEntry<bool> configGodModeNoKnockback;
     public static bool GodModeNoKnockback => Cheats && configGodModeNoKnockback.Value;
     public static ConfigEntry<bool> configAliasing;
@@ -71,6 +73,7 @@ namespace ServerDevcommands {
       foreach (var alias in Aliases) {
         AliasCommand.AddCommand(alias.Key, alias.Value);
       }
+      BlackList.UpdateCommands(configCommandBlackList.Value);
     }
 
     private static void SaveAliases() {
@@ -96,6 +99,7 @@ namespace ServerDevcommands {
     public static ConfigEntry<string> configServerCommands;
     public static HashSet<string> ServerCommands => ParseList(configServerCommands.Value);
     public static bool IsServerCommand(string command) => ServerCommands.Contains(command.ToLower());
+    public static ConfigEntry<string> configCommandBlackList;
     public static void Init(ConfigFile config) {
       var section = "1. General";
       configGhostInvisibility = config.Bind(section, "Invisible to other players with ghost mode", false, "");
@@ -108,6 +112,7 @@ namespace ServerDevcommands {
       configAutoDevcommands = config.Bind(section, "Automatic devcommands", true, "Automatically enables devcommands when joining servers.");
       configGodModeNoStamina = config.Bind(section, "No stamina usage with god mode", true, "");
       configGodModeNoStagger = config.Bind(section, "No staggering with god mode", true, "");
+      configFlyNoClip = config.Bind(section, "No clip with fly mode", false, "");
       configGodModeNoKnockback = config.Bind(section, "No knockback with god mode", true, "");
       configMapCoordinates = config.Bind(section, "Show map coordinates", true, "The map shows coordinates on hover.");
       configShowPrivatePlayers = config.Bind(section, "Show private players", false, "The map shows private players.");
@@ -128,6 +133,8 @@ namespace ServerDevcommands {
       configDebugConsole = config.Bind(section, "Debug console", false, "Extra debug information about aliasing.");
       configDisableParameterWarnings = config.Bind(section, "Disable parameter warnings", false, "Removes warning texts from some command parameter descriptions.");
       configCommandAliases.SettingChanged += (s, e) => ParseAliases(configCommandAliases.Value);
+      configCommandBlackList = config.Bind(section, "Blacklisted commands", "", "Command names separated by , that can't be executed.");
+      configCommandBlackList.SettingChanged += (s, e) => BlackList.UpdateCommands(configCommandBlackList.Value);
       ParseAliases(configCommandAliases.Value);
     }
 
@@ -137,7 +144,7 @@ namespace ServerDevcommands {
       "auto_nocost", "auto_ghost", "auto_god","debug_console", "no_drops", "aliasing", "god_no_stamina",
       "substitution", "improved_autocomplete", "disable_events", "disable_warnings", "multiple_commands",
       "god_no_knockback", "ghost_invibisility", "auto_exec_dev_on", "auto_exec_dev_off", "auto_exec_boot", "auto_exec",
-      "command_descriptions", "command_delay", "server_commands"
+      "command_descriptions", "command_delay", "server_commands", "fly_no_clip", "command_blacklist"
     };
     private static string State(bool value) => value ? "enabled" : "disabled";
     private static string Flag(bool value) => value ? "removed" : "added";
@@ -195,8 +202,10 @@ namespace ServerDevcommands {
       if (key == "god_no_stamina") Toggle(context, configGodModeNoStamina, "Stamina usage with god mode", true);
       if (key == "god_no_stagger") Toggle(context, configGodModeNoStagger, "Staggering with god mode", true);
       if (key == "god_no_knockback") Toggle(context, configGodModeNoKnockback, "Knockback with god mode", true);
+      if (key == "fly_no_clip") Toggle(context, configFlyNoClip, "No clip with fly mode");
       if (key == "ghost_invibisility") Toggle(context, configGhostInvisibility, "Invisibility with ghost mode", true);
       if (key == "server_commands") ToggleFlag(context, configServerCommands, "Server commands", value);
+      if (key == "command_blacklist") ToggleFlag(context, configCommandBlackList, "Command blacklist", value);
     }
   }
 }

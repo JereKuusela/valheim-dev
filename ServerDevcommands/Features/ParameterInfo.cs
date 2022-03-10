@@ -113,11 +113,14 @@ namespace ServerDevcommands {
     }
 
     public static List<string> Origin = new List<string>() { "player", "object", "world" };
-    public static List<string> Create(string name) => new List<string>() { $"?{name}" };
-    public static List<string> None = Create("Too many parameters");
-    public static List<string> Create(string name, string type) => Create($"<color=yellow>{name}</color> should be {type}");
-    public static List<string> InvalidNamed(string name) => Create($"Invalid named parameter {name}");
-    public static List<string> Flag(string name) => Create($"{name} is a flag so it doesn't have any arguments");
+    public static List<string> Create(string value) => new List<string>() { $"?{value}" };
+    public static List<string> Error(string value) => new List<string>() { $"?<color=red>Error:</color> {value}" };
+    public static List<string> Create(string name, string value, string description) => Create($"{name}=<color=yellow>{value}</color> | {description}");
+    public static List<string> CreateWithMinMax(string name, string value, string description) => Create($"{name}=<color=yellow>{value}</color> or {name}=<color=yellow>min-max</color> | {description}");
+    public static List<string> Create(string values, string description) => Create($"{values} | {description}");
+    public static List<string> None = Error("Too many parameters!");
+    public static List<string> InvalidNamed(string name) => Error($"Invalid named parameter {name}!");
+    public static List<string> Flag(string name) => Error($"{name} is a flag so it doesn't have any arguments!");
     public static List<string> XZY(string name, string description, int index) {
       if (index == 0) return ParameterInfo.Create($"{name}=<color=yellow>X</color>,Z,Y | {description}.");
       if (index == 1) return ParameterInfo.Create($"{name}=X,<color=yellow>Z</color>,Y | {description}.");

@@ -39,7 +39,7 @@ namespace ServerDevcommands {
     public static void Send(Terminal.ConsoleEventArgs args) => Send(args.Args);
 
     public static string RPC_Command = "DEV_Command";
-    private static bool IsAllowed(ZRpc rpc) {
+    private static bool IsAllowed(ZRpc rpc, string command) {
       var zNet = ZNet.instance;
       if (!zNet.enabled) {
         return false;
@@ -48,11 +48,15 @@ namespace ServerDevcommands {
         Console.instance.AddString("Unauthorized to use devcommands.");
         return false;
       }
+      if (!BlackList.CanRun(command)) {
+        Console.instance.AddString("Unauthorized to use this command.");
+        return false;
+      }
       return true;
     }
     private static void RPC_Do_Command(ZRpc rpc, string command) {
       RedirectOutput.Target = rpc;
-      if (IsAllowed(rpc))
+      if (IsAllowed(rpc, command))
         Console.instance.TryRunCommand(command);
       RedirectOutput.Target = null;
     }
