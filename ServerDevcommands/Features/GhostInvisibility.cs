@@ -2,7 +2,7 @@ using HarmonyLib;
 
 namespace ServerDevcommands {
 
-  [HarmonyPatch(typeof(ZDOMan), "SendZDOs")]
+  [HarmonyPatch(typeof(ZDOMan), nameof(ZDOMan.SendZDOs))]
   public class SendZDOsWithGhostMode {
     public static float? Previous = null;
     public static void Prefix() {
@@ -28,7 +28,7 @@ namespace ServerDevcommands {
     }
   }
 
-  [HarmonyPatch(typeof(ZNet), "SendPeriodicData")]
+  [HarmonyPatch(typeof(ZNet), nameof(ZNet.SendPeriodicData))]
   public class SendPeriodicDataWithGhostMode {
     public static bool? Previous = null;
     public static void Prefix(ZNet __instance) {

@@ -4,7 +4,7 @@ using HarmonyLib;
 
 namespace ServerDevcommands {
 
-  [HarmonyPatch(typeof(Terminal), "AddString", new Type[] { typeof(string) })]
+  [HarmonyPatch(typeof(Terminal), nameof(Terminal.AddString), new Type[] { typeof(string) })]
   public class RedirectOutput {
     public static ZRpc Target = null;
 
@@ -16,7 +16,7 @@ namespace ServerDevcommands {
   }
 
   /// <summary>Registers the server to accept resetkeys message (like clients do).</summary>
-  [HarmonyPatch(typeof(ZoneSystem), "Start")]
+  [HarmonyPatch(typeof(ZoneSystem), nameof(ZoneSystem.Start))]
   public class RegisterResetKeys {
     public static void Postfix(ZoneSystem __instance) {
       if (ZNet.instance.IsServer()) {
@@ -24,7 +24,7 @@ namespace ServerDevcommands {
       }
     }
   }
-  [HarmonyPatch(typeof(ZNet), "RPC_PeerInfo")]
+  [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_PeerInfo))]
   public class ServerExecution {
 
     ///<summary>Sends command to the server so that it can be executed there.</summary>

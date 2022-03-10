@@ -21,7 +21,7 @@ namespace ServerDevcommands {
     }
   }
 
-  [HarmonyPatch(typeof(Terminal), "InitTerminal")]
+  [HarmonyPatch(typeof(Terminal), nameof(Terminal.InitTerminal))]
   public class SetCommands {
     public static void Postfix() {
       new DevcommandsCommand();

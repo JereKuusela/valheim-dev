@@ -69,20 +69,20 @@ namespace ServerDevcommands {
     }
   }
 
-  [HarmonyPatch(typeof(Terminal), "IsCheatsEnabled")]
+  [HarmonyPatch(typeof(Terminal), nameof(Terminal.IsCheatsEnabled))]
   public class IsCheatsEnabledWithoutServerCheck {
     public static void Postfix(ref bool __result) {
       __result = Terminal.m_cheat || ZNet.instance?.IsDedicated() == true;
     }
   }
-  [HarmonyPatch(typeof(Terminal.ConsoleCommand), "IsValid")]
+  [HarmonyPatch(typeof(Terminal.ConsoleCommand), nameof(Terminal.ConsoleCommand.IsValid))]
   public class IsValidWithoutServerCheck {
     public static void Postfix(ref bool __result) {
       __result = __result || Terminal.m_cheat || ZNet.instance?.IsDedicated() == true;
     }
   }
   // Probably needed to provide autocomplete for the chat window.
-  [HarmonyPatch(typeof(Terminal), "Awake")]
+  [HarmonyPatch(typeof(Terminal), nameof(Terminal.Awake))]
   public class AutoCompleteSecrets {
     public static void Postfix(ref bool ___m_autoCompleteSecrets) {
       ___m_autoCompleteSecrets = true;

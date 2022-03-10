@@ -6,7 +6,7 @@ using HarmonyLib;
 namespace ServerDevcommands {
 
   ///<summary>Server side code to include private player positions.</summary>
-  [HarmonyPatch(typeof(ZNet), "UpdatePlayerList")]
+  [HarmonyPatch(typeof(ZNet), nameof(ZNet.UpdatePlayerList))]
   public class Server_UpdatePrivatePositions {
     public static void Postfix(ZNet __instance) {
       if (!__instance.IsServer() || !Settings.ShowPrivatePlayers) return;
@@ -25,7 +25,7 @@ namespace ServerDevcommands {
     }
   }
   ///<summary>Server side code to send private players.</summary>
-  [HarmonyPatch(typeof(ZNet), "SendPlayerList")]
+  [HarmonyPatch(typeof(ZNet), nameof(ZNet.SendPlayerList))]
   public class SendPrivatePositionsToAdmins {
     private static void SendToAdmins(ZNet obj) {
       var pkg = new ZPackage();
@@ -51,7 +51,7 @@ namespace ServerDevcommands {
     }
   }
   ///<summary>Client side code to receive private players.</summary>
-  [HarmonyPatch(typeof(ZNet), "RPC_PeerInfo")]
+  [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_PeerInfo))]
   public class RegisterRpcPrivatePositions {
     private static void RPC_PrivatePlayerList(ZRpc rpc, ZPackage pkg) {
       if (!Settings.ShowPrivatePlayers) {
@@ -79,7 +79,7 @@ namespace ServerDevcommands {
     }
   }
   ///<summary>Two RPC calls modifying the player list may lead to glitches (especially with poor network conditions).</summary>
-  [HarmonyPatch(typeof(ZNet), "RPC_PlayerList")]
+  [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_PlayerList))]
   public class IgnoreDefaultList {
     public static bool Active = false;
     public static bool Prefix(ZNet __instance, ZRpc rpc) => !Active;
@@ -99,7 +99,7 @@ namespace ServerDevcommands {
     }
   }
   ///<summary>Simple way to distinguish private players.</summary>
-  [HarmonyPatch(typeof(Minimap), "UpdatePlayerPins")]
+  [HarmonyPatch(typeof(Minimap), nameof(Minimap.UpdatePlayerPins))]
   public class AddCheckedToPrivatePlayers {
     public static void Postfix(Minimap __instance) {
       if (!Settings.ShowPrivatePlayers) return;

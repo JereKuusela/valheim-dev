@@ -91,7 +91,7 @@ namespace ServerDevcommands {
   }
 
   // Replace devcommands check with a custom one.
-  [HarmonyPatch(typeof(Terminal), "TryRunCommand")]
+  [HarmonyPatch(typeof(Terminal), nameof(Terminal.TryRunCommand))]
   public class TryRunCommand {
     ///<summary>Only executes the command when specified keys are down.</summary>
     private static bool CheckModifierKeys(string command) {
@@ -154,7 +154,7 @@ namespace ServerDevcommands {
     }
   }
 
-  [HarmonyPatch(typeof(Terminal), "UpdateInput")]
+  [HarmonyPatch(typeof(Terminal), nameof(Terminal.UpdateInput))]
   public class AliasInput {
     private static string LastActual = "";
     public static bool Prefix(Terminal __instance, ref string __state) {
@@ -184,7 +184,7 @@ namespace ServerDevcommands {
 
 
   ///<summary>Needed to temporarily disable better autocomplete to provide case insensitivity for the first parameter.</summary>
-  [HarmonyPatch(typeof(Terminal.ConsoleCommand), "RunAction")]
+  [HarmonyPatch(typeof(Terminal.ConsoleCommand), nameof(Terminal.ConsoleCommand.RunAction))]
   public class RunAction {
     public static void Prefix() => TerminalUtils.IsExecuting = true;
     public static void Postfix() => TerminalUtils.IsExecuting = false;

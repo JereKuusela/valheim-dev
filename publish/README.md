@@ -154,6 +154,7 @@ Recommended to keep all settings on default values, unless there are errors or m
 	- Adds a new setting `command_blacklist` to allow disabling commands.
 	- Adds a new setting to add root users to the server (bypasses the blacklist).
 	- Adds a new setting `fly_no_clip` to disable collision while flying.
+	- Adds y-coordinate to the minimap coordinates.
 	- Adds improved autocomplete for new commands added in the Frost Caves update.
 	- Changes the command `nomap` to only affect the server by default.
 	- Removes `auto_debugmode` requirement from `auto_fly` and `auto_nocost`.

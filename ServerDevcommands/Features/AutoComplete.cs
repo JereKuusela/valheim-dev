@@ -58,7 +58,7 @@ namespace ServerDevcommands {
   }
 
 
-  [HarmonyPatch(typeof(Terminal.ConsoleCommand), "GetTabOptions")]
+  [HarmonyPatch(typeof(Terminal.ConsoleCommand), nameof(Terminal.ConsoleCommand.GetTabOptions))]
   public class GetTabOptionsWithImprovedAutoComplete {
     private static Terminal GetInput() {
       if (!Console.instance && !Chat.instance) return null;
@@ -131,7 +131,7 @@ namespace ServerDevcommands {
     }
   }
 
-  [HarmonyPatch(typeof(Terminal), "tabCycle")]
+  [HarmonyPatch(typeof(Terminal), nameof(Terminal.tabCycle))]
   public class TabCycleWithImprovedAutoComplete {
     public static void Prefix(Terminal __instance, ref List<string> options, ref string word) {
       if (!Settings.ImprovedAutoComplete) return;
@@ -143,7 +143,7 @@ namespace ServerDevcommands {
     }
   }
 
-  [HarmonyPatch(typeof(Terminal), "updateSearch")]
+  [HarmonyPatch(typeof(Terminal), nameof(Terminal.updateSearch))]
   public class UpdateSearchWithImprovedAutoComplete {
     public static void Prefix(Terminal __instance, ref string word) {
       if (!Settings.ImprovedAutoComplete || !__instance.m_search) return;

@@ -33,7 +33,7 @@ namespace ServerDevcommands {
     }
   }
 
-  [HarmonyPatch(typeof(RandEventSystem), "StartRandomEvent")]
+  [HarmonyPatch(typeof(RandEventSystem), nameof(RandEventSystem.StartRandomEvent))]
   public class DisableRandomEvents {
     public static bool Prefix() => !Settings.DisableEvents;
   }
