@@ -24,7 +24,8 @@ Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available com
 - `devcommands` is used automatically (if the admin check passes).
 - `debugmode`, `fly`, `ghost`, `god`, `nocost` and other commands can be configured to be used automatically.
 - God mode removes stamina usage, knockback and staggering.
-- Ghost mode makes you invisible also to other players.
+- Ghost mode can make you invisible also to the other players.
+- Fly mode can remove collision to pass through everything.
 - Minor tweaks to existing commands, some new commands and other useful admin features.
 
 ## Improved key bindings
@@ -82,14 +83,17 @@ Examples:
 	- `search wolf`: Prints all object IDs that contain word "wolf".
 	- `search fx_ 10`: Prints all object IDs that contain word "fx_" on up to 10 lines.
 - `server [command]` executes given command on the server.
+	- `server dev_config disable_command event`: Disables usage of `event` command for non-root users.
 - `tutorialtoggle [value]` allows directly setting the value.
-  - `dev_config auto_exec tutorialtoggle 0`: Automatically disables tutorials.
+	- `dev_config auto_exec tutorialtoggle 0`: Automatically disables tutorials.
 - `undo` reverts an action added to the undo/redo manager.
-- `wait [milliseconds]`: Delays the execution of the next commands.
+- `wait [milliseconds]`delays the execution of the next commands.
 
 ## Enhanced map
 
 The large map shows coordinates of the cursor when hovered. This can be useful for any commands that require coordinates.
+
+If configured, the minimap can also show the player's coordinates.
 
 If this mod is also installed on the server, admins can also receive position of players who have set their position as private (disabled by default).
 
@@ -99,7 +103,7 @@ These players are shown on the map with a ticked off icon and will also be avail
 
 Three ways to edit the settings:
 
-- Use `dev_config` and `dev_server_config` commands to instantly toggle values.
+- Use `dev_config` and `server dev_config` commands to instantly toggle values.
 - Use the [Configuration manager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases/tag/v16.4) if installed to instantly toggle values for the client.
 - Manually edit the `valheim.jerekuusela.dev.cfg` in the config folder (requires restarting the client / server).
 
@@ -114,7 +118,8 @@ Recommended way is to use the commands since you can configure the server and al
 - Automatic god mode (default `false`, key: `auto_god`): Automatically turns god mode on/off when devcommands are enabled or disabled.
 - Automatic no cost mode (default `false`, key: `auto_nocost`): Automatically turns no cost mode on/off when devcommands are enabled or disabled.
 - Disable random events (default `false`, key: `disable_events`): Prevents random events from happening (server side setting).
-- Invisible to players with ghost mode (default `false`, key: `ghost_invibisility`): Invisible to other players with ghost mode.
+- Disabled global keys (default ` `, key: `disable_global_key`): Global keys separated by , that can't be set (server side).
+- Invisible to players with ghost mode (default `false`, key: `ghost_invisibility`): Invisible to other players with ghost mode.
 - No clip with fly mode (default `false`, key: `fly_no_clip`): Removes collision check with fly mode.
 - No creature drops (default `false`, key: `no_drops`): Prevents creatures from dropping loot, can be useful if people accidentally spawn very high star creatures. Only works when as the zone owner.
 - No knockback with god mode (default `true`, key: `god_no_knockback`): Removes knockback for an even godlier god mode.
@@ -139,7 +144,6 @@ Recommended to keep all settings on default values, unless there are errors or m
 - Delay between commands (key: `command_delay`): Adds delay (seconds) when executing multiple commands.
 - Disable parameter warnings (default `false`, key: `disable_warnings`): Removes warning texts from some command parameter descriptions.
 - Disabled commands (default `dev_config disable_command`, key: `disable_command`): Command names separated by , that can't be executed. Mainly useful on the server to prevent some server-side commands.
-- Disabled global keys (default ` `, key: `disable_global_key`): Global keys separated by , that can't be set (server side).
 - Improved auto complete (default `true`, key: `improved_autocomplete`): Enables parameter info or options for every parameter.
 - Multiple commands per line (default `true`, key: `multiple_commands`): Enables multiple commands per line (when separate by `;`).
 - Root users (default ` `): Steam IDs separated by , that can execute blacklisted commands. Can't be set with `dev_config` command.
