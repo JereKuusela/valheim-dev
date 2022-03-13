@@ -4,7 +4,7 @@ using HarmonyLib;
 using UnityEngine;
 
 namespace ServerDevcommands {
-  [BepInPlugin("valheim.jerekuusela.server_devcommands", "ServerDevcommands", "1.11.0.0")]
+  [BepInPlugin("valheim.jerekuusela.server_devcommands", "ServerDevcommands", "1.12.0.0")]
   public class ServerDevcommands : BaseUnityPlugin {
     public static ManualLogSource Log;
     public void Awake() {

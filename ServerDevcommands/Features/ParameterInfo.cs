@@ -127,15 +127,43 @@ namespace ServerDevcommands {
       if (index == 2) return ParameterInfo.Create($"{name}=X,Z,<color=yellow>Y</color> | {description}.");
       return ParameterInfo.None;
     }
-    public static List<string> Scale(string name, string description, int index) {
-      if (index == 0) return ParameterInfo.Create($"{name}=<color=yellow>number</color> or {XZY(name, description, index)[0]}");
-      return XZY(name, description, index);
+    public static List<string> XZY(string description, int index) {
+      if (index == 0) return ParameterInfo.Create($"<color=yellow>X</color>,Z,Y | {description}.");
+      if (index == 1) return ParameterInfo.Create($"X,<color=yellow>Z</color>,Y | {description}.");
+      if (index == 2) return ParameterInfo.Create($"X,Z,<color=yellow>Y</color> | {description}.");
+      return ParameterInfo.None;
+    }
+    public static List<string> XYZ(string name, string description, int index) {
+      if (index == 0) return ParameterInfo.Create($"{name}=<color=yellow>X</color>,Z,Y | {description}.");
+      if (index == 1) return ParameterInfo.Create($"{name}=X,<color=yellow>Y</color>,Z | {description}.");
+      if (index == 2) return ParameterInfo.Create($"{name}=X,Y,<color=yellow>Z</color> | {description}.");
+      return ParameterInfo.None;
+    }
+    public static List<string> XYZ(string description, int index) {
+      if (index == 0) return ParameterInfo.Create($"<color=yellow>X</color>,Z,Y | {description}.");
+      if (index == 1) return ParameterInfo.Create($"X,<color=yellow>Y</color>,Z | {description}.");
+      if (index == 2) return ParameterInfo.Create($"X,Y,<color=yellow>Z</color> | {description}.");
+      return ParameterInfo.None;
     }
     public static List<string> YXZ(string name, string description, int index) {
       if (index == 0) return ParameterInfo.Create($"{name}=<color=yellow>Y</color>,X,Z | {description}.");
       if (index == 1) return ParameterInfo.Create($"{name}=Y,<color=yellow>X</color>,Z | {description}.");
       if (index == 2) return ParameterInfo.Create($"{name}=Y,X,<color=yellow>Z</color> | {description}.");
       return ParameterInfo.None;
+    }
+    public static List<string> YXZ(string description, int index) {
+      if (index == 0) return ParameterInfo.Create($"<color=yellow>Y</color>,X,Z | {description}.");
+      if (index == 1) return ParameterInfo.Create($"Y,<color=yellow>X</color>,Z | {description}.");
+      if (index == 2) return ParameterInfo.Create($"Y,X,<color=yellow>Z</color> | {description}.");
+      return ParameterInfo.None;
+    }
+    public static List<string> Scale(string name, string description, int index) {
+      if (index == 0) return ParameterInfo.Create($"{name}=<color=yellow>number</color> or {XYZ(name, description, index)[0].Substring(0)}");
+      return XYZ(name, description, index);
+    }
+    public static List<string> Scale(string description, int index) {
+      if (index == 0) return ParameterInfo.Create($"<color=yellow>number</color> or {XYZ(description, index)[0].Substring(0)}");
+      return XYZ(description, index);
     }
   }
 }

@@ -187,8 +187,8 @@ namespace ServerDevcommands {
     public static Range<Vector3> TryScaleRange(string arg) {
       var parts = arg.Split(',');
       var x = TryFloatRange(parts, 0, 0f);
-      var z = TryFloatRange(parts, 1, 0f);
-      var y = TryFloatRange(parts, 2, 0f);
+      var y = TryFloatRange(parts, 1, 0f);
+      var z = TryFloatRange(parts, 2, 0f);
       var range = ToVectorRange(x, y, z);
       range.Min = SanityCheck(range.Min);
       range.Max = SanityCheck(range.Max);

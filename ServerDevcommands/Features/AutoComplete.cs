@@ -6,13 +6,14 @@ using HarmonyLib;
 namespace ServerDevcommands {
   using NamedOptionsFetchers = Dictionary<string, Func<int, List<string>>>;
 
-  using OptionsFetcher = Func<int, List<string>>;
+  using OptionsFetcher = Func<int, int, List<string>>;
+  using SimpleOptionsFetcher = Func<int, List<string>>;
   ///<summary>Provides improved autocomplete (options/some info for each parameter, support for named parameters).</summary>
   public static class AutoComplete {
     private static Dictionary<string, OptionsFetcher> OptionsFetchers = new Dictionary<string, OptionsFetcher>();
     private static Dictionary<string, NamedOptionsFetchers> OptionsNamedFetchers = new Dictionary<string, NamedOptionsFetchers>();
     ///<summary>Returns options, either from the custom or the default options fetcher.</summary>
-    public static List<string> GetOptions(string command, int index, string namedParameter) {
+    public static List<string> GetOptions(string command, int index, int subIndex, string namedParameter) {
       command = command.ToLower();
       if (namedParameter != "") {
         if (OptionsNamedFetchers.TryGetValue(command, out var namedOptions)) {
@@ -22,7 +23,7 @@ namespace ServerDevcommands {
         }
         return ParameterInfo.InvalidNamed(namedParameter);
       }
-      if (OptionsFetchers.ContainsKey(command)) return OptionsFetchers[command](index) ?? ParameterInfo.None;
+      if (OptionsFetchers.ContainsKey(command)) return OptionsFetchers[command](index, subIndex) ?? ParameterInfo.None;
       if (!Terminal.commands.ContainsKey(command)) return ParameterInfo.None;
       var fetcher = Terminal.commands[command].m_tabOptionsFetcher;
       if (fetcher != null) return fetcher();
@@ -33,8 +34,18 @@ namespace ServerDevcommands {
       OptionsFetchers[command.ToLower()] = fetcher;
       OptionsNamedFetchers[command.ToLower()] = namedFetchers.ToDictionary(kvp => kvp.Key.ToLower(), kvp => kvp.Value);
     }
+    ///<summary>Registers a new custom options fetcher.</summary>
+    public static void Register(string command, SimpleOptionsFetcher fetcher, NamedOptionsFetchers namedFetchers) {
+      OptionsFetchers[command.ToLower()] = (int index, int subIndex) => fetcher(index);
+      OptionsNamedFetchers[command.ToLower()] = namedFetchers.ToDictionary(kvp => kvp.Key.ToLower(), kvp => kvp.Value);
+    }
+    ///<summary>Registers a new custom options fetcher.</summary>
     public static void Register(string command, OptionsFetcher fetcher) {
       OptionsFetchers[command] = fetcher;
+    }
+    ///<summary>Registers a new custom options fetcher.</summary>
+    public static void Register(string command, SimpleOptionsFetcher fetcher) {
+      OptionsFetchers[command] = (int index, int subIndex) => fetcher(index);
     }
 
     ///<summary>Registers an options fetcher without parameters.</summary>
@@ -71,7 +82,7 @@ namespace ServerDevcommands {
       if (split.Length < 2) return "";
       return split[0];
     }
-    private static int GetNameIndex(string parameter) => parameter.Split(',').Length - 1;
+    private static int GetSubIndex(string parameter) => parameter.Split(',').Length - 1;
 
     private static List<string> GetOptions(string[] parameters) {
       var commandName = parameters.First();
@@ -79,9 +90,10 @@ namespace ServerDevcommands {
       var parameter = parameters.Last();
       var name = GetName(parameter);
       var index = 0;
+      var subIndex = GetSubIndex(parameter);
       if (name != "") {
         // Named parameter can appear anywhere so makes more sense to return their internal index.
-        index = GetNameIndex(parameter);
+        index = subIndex;
       } else {
         // Ignore named parameters for the index.
         index = TerminalUtils.GetPositionalParameters(parameters).Count() - 1;
@@ -103,7 +115,7 @@ namespace ServerDevcommands {
                 // 2. =$,$ foo ->  substitutions: -1, parameter: 0, par: 1 => 0
                 // 3. =$,$ foo bar -> substitutions: 0, parameter: 0, par: 1 => 1
                 // 4. =foo,$ bar -> substitutions: 0, parameter: 0, par: 1 => 1
-                index = substitutions + GetNameIndex(parameter) + GetNameIndex(par);
+                index = substitutions + GetSubIndex(parameter) + GetSubIndex(par);
               } else {
                 index = i;
               }
@@ -111,7 +123,7 @@ namespace ServerDevcommands {
           }
         }
       }
-      return AutoComplete.GetOptions(commandName, index, name);
+      return AutoComplete.GetOptions(commandName, index, subIndex, name);
     }
     public static bool Prefix(ref List<string> __result) {
       // While executing, options are used to make the first parameter case insensitive. So the default options should be returned.

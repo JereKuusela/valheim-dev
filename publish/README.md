@@ -152,6 +152,10 @@ Recommended to keep all settings on default values, unless there are errors or m
 
 # Changelog
 
+- v1.12:
+	- Improves autocomplete support (for other mods).
+	- Changes default scale format from x,z,y to x,y,z (for other mods).
+
 - v1.11:
 	- Adds a new command `wait` to delay execution of the next command.
 	- Adds a new command `server` to execute any command on the server.
