@@ -4,12 +4,6 @@ namespace ServerDevcommands {
   ///<summary>Adds the improved auto complete to the default commands.</summary>
   public static class DefaultAutoComplete {
     public static void Register() {
-      AutoComplete.Register("bind", (int index) => {
-        if (index == 0) return ParameterInfo.KeyCodesWithNegative;
-        return ParameterInfo.Create("The command to bind.");
-      }, new Dictionary<string, System.Func<int, List<string>>>() {
-        { "keys", (int index) => ParameterInfo.KeyCodes }
-      });
       AutoComplete.RegisterEmpty("challenge");
       AutoComplete.RegisterEmpty("cheers");
       AutoComplete.RegisterEmpty("clear");
@@ -33,7 +27,6 @@ namespace ServerDevcommands {
       AutoComplete.RegisterEmpty("opterrain");
       AutoComplete.RegisterEmpty("point");
       AutoComplete.RegisterEmpty("ping");
-      AutoComplete.RegisterEmpty("printbinds");
       AutoComplete.RegisterEmpty("resetbinds");
       AutoComplete.RegisterEmpty("resetspawn");
       AutoComplete.RegisterEmpty("respawn");
@@ -46,10 +39,6 @@ namespace ServerDevcommands {
       AutoComplete.RegisterEmpty("sit");
       AutoComplete.RegisterEmpty("thumbsup");
       AutoComplete.RegisterEmpty("tutorialreset");
-      AutoComplete.Register("unbind", (int index) => {
-        if (index == 0) return ParameterInfo.KeyCodes;
-        return null;
-      });
       AutoComplete.RegisterEmpty("wave");
       AutoComplete.Register("W", (int index) => {
         if (index == 0) return ParameterInfo.PlayerNames;

@@ -1,4 +1,4 @@
-# Sserver Devcommands
+# Server Devcommands
 
 This client side mod allows devcommands and utilities for server admins.
 
@@ -32,13 +32,18 @@ Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available com
 
 Keybindings now work with modifier keys ([key codes](https://docs.unity3d.com/ScriptReference/KeyCode.html)).
 
-- `bind [keycode] [value] [keys=]`: Adds a new key binding with modifier keys.
+- `bind [keycode,modifier1,modifier2,...] [command] [parameter]`: Adds a new key binding with modifier keys.
 	- `bind j god`: Toggles god mode when pressing J.
-	- `bind j god keys=leftalt`: Toggles god mode when pressing J while left alt is down.
-	- `bind j god keys=-leftalt`: Toggles god mode when pressing J while left alt is not down.
-	- `bind j god keys=leftalt,h`: Toggles god mode when pressing J while both left alt and h are down.	
+	- `bind j,leftalt god`: Toggles god mode when pressing J while left alt is down.
+	- `bind j,-leftalt god`: Toggles god mode when pressing J while left alt is not down.
+	- `bind j,leftalt,h god`: Toggles god mode when pressing J while both left alt and h are down.	
+	- `bind j god keys=leftalt,h`: Same as above but with an alternative way.
 
-After removing this mod, these binds very likely stop working or lead to unexpected behavior. Recommended to clear all binds with the `resetbinds` command.
+Mouse wheel allows binding too with custom keycode `wheel` (internally uses the `none` keycode). It's important to use modifier keys because the binding will block build rotation.
+
+The mouse wheel appends the wheel direction and amount to the command. For example `bind wheel,o say` would say 0.1 or -0.1 in the chat when scrolling the mouse wheel while pressing the O key.
+
+Note: After removing this mod, these binds very likely stop working or lead to unexpected behavior. Recommended to clear all binds with the `resetbinds` command.
 
 ## Command aliasing
 
@@ -60,6 +65,7 @@ Examples:
 
 ## Enhanced commands
 
+- `bind [key,modifier1,modifier2,...] [command]` allows specifying modifier keys (see Improved key bindings section).
 - `devcommands` includes an admin check to allow using on servers.
 - `dev_config [value]` toggles settings.
 - `event [event] [x] [z]` allows setting the event coordinates.
@@ -86,6 +92,11 @@ Examples:
 	- `server dev_config disable_command event`: Disables usage of `event` command for non-root users.
 - `tutorialtoggle [value]` allows directly setting the value.
 	- `dev_config auto_exec tutorialtoggle 0`: Automatically disables tutorials.
+- `unbind [keycode] [amount=0]` allows specifying how many binds are removed. Also prints removed binds.
+	- `unbind wheel`: Removes all binds from the mouse wheel.
+	- `unbind wheel 0`: Removes all binds from the mouse wheel.
+	- `unbind wheel 1`: Removes the last bind from the mouse wheel.
+	- `unbind wheel 3`: Removes the last 3 binds from the mouse wheel.
 - `undo` reverts an action added to the undo/redo manager.
 - `wait [milliseconds]`delays the execution of the next commands.
 
@@ -153,8 +164,17 @@ Recommended to keep all settings on default values, unless there are errors or m
 # Changelog
 
 - v1.12:
-	- Improves autocomplete support (for other mods).
+	- Adds new parameter to the `unbind` command which allows only removing some amount of binds.
+	- Adds support for binding commands to the mouse wheel (with `wheel` key code).
+	- TODO: God auto dodge, God auto parry.
 	- Changes default scale format from x,z,y to x,y,z (for other mods).
+	- Changes the `bind` command to accept modifier keys on the first parameter (keycode,modifier1,modifier2,).
+	- Changes the `unbind` command to print removed binds.
+	- Improves autocomplete for the `alias`, `bind` and `server` commands.
+	- Improves autocomplete support (for other mods relying on this feature).
+	- Fixes command tab cycling breaking when cycling to an alias.
+	- Fixes incorrect autocomplete for aliases.
+	- Fixes modifier keys working incorrectly with multiple commands.
 
 - v1.11:
 	- Adds a new command `wait` to delay execution of the next command.

@@ -1,9 +1,11 @@
 ﻿using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Logging;
 using HarmonyLib;
 using UnityEngine;
 
 namespace ServerDevcommands {
+  [BepInDependency("com.rolopogo.gizmo.comfy", BepInDependency.DependencyFlags.SoftDependency)]
   [BepInPlugin("valheim.jerekuusela.server_devcommands", "ServerDevcommands", "1.12.0.0")]
   public class ServerDevcommands : BaseUnityPlugin {
     public static ManualLogSource Log;
@@ -15,9 +17,14 @@ namespace ServerDevcommands {
       Settings.Init(Config);
       Console.SetConsoleEnabled(true);
     }
+    public void Start() {
+      if (Chainloader.PluginInfos.TryGetValue("com.rolopogo.gizmo.comfy", out var info))
+        ComfyGizmoPatcher.DoPatching(info.Instance.GetType().Assembly);
+    }
 
     public void LateUpdate() {
       CommandQueue.TickQueue(Time.deltaTime);
+      MouseWheelBinding.Execute(Input.GetAxis("Mouse ScrollWheel"));
     }
   }
 
@@ -37,6 +44,7 @@ namespace ServerDevcommands {
       new ServerCommand();
       new HUDCommand();
       new NoMapCommand();
+      new BindCommand();
       DefaultAutoComplete.Register();
       Settings.RegisterCommands();
     }

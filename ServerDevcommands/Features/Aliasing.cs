@@ -5,6 +5,12 @@ namespace ServerDevcommands {
       if (!Settings.Aliasing) return;
       Alias = GetAlias(input.text);
       if (Alias == string.Empty) return;
+      // Inputting only the alias should behave like a command instead
+      // instantly providing autocomplete for the plain text.
+      if (Alias == input.text) {
+        Alias = string.Empty;
+        return;
+      }
       var plain = Plain(Alias);
       input.text = plain + input.text.Substring(Alias.Length);
       input.caretPosition += plain.Length - Alias.Length;

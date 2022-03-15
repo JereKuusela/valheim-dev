@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
@@ -30,7 +29,7 @@ namespace ServerDevcommands {
         input.selectionFocusPosition = Focus;
       }
     }
-    public static string GetLastWord(Terminal obj) => obj.m_input.text.Split(' ').Last().Split('=').Last().Split(',').Last();
+    public static string GetLastWord(Terminal obj) => Parse.Split(obj.m_input.text.Split(' ').Last().Split('=').Last()).Last();
     public static IEnumerable<string> GetPositionalParameters(string[] parameters) {
       return parameters.Where(par => !par.Contains("="));
     }
@@ -65,17 +64,21 @@ namespace ServerDevcommands {
       if (pos < 0) return text;
       return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
     }
+    public static string Substitute(string input, string value) {
+      if (CanSubstitute(input) && !value.Contains("="))
+        return ReplaceFirst(input, "$", value);
+      else
+        return input + " " + value;
+    }
+
+    public static bool CanSubstitute(string input) => input.Contains("$");
     public static string Substitute(string input) {
       if (input.StartsWith("alias ")) return input;
-      if (!input.Contains("$")) return input;
+      if (!CanSubstitute(input)) return input;
       GetSubstitutions(input.Split(' '), out var mainPars, out var substitutions);
       input = string.Join(" ", mainPars);
-      foreach (var parameter in substitutions) {
-        if (parameter.Contains("=") || !input.Contains("$")) {
-          input += " " + parameter;
-        } else
-          input = ReplaceFirst(input, "$", parameter);
-      }
+      foreach (var parameter in substitutions)
+        input = Substitute(input, parameter);
       // Removes any extra substitutions that didn't receive values so "cmd par=$,$" works with "foo 3".
       input = input.Replace(",$", "");
       // Remove any trailing substitution that didn't receive a parameter so "cmd $ $" works with "foo 3".
@@ -93,35 +96,11 @@ namespace ServerDevcommands {
   // Replace devcommands check with a custom one.
   [HarmonyPatch(typeof(Terminal), nameof(Terminal.TryRunCommand))]
   public class TryRunCommand {
-    ///<summary>Only executes the command when specified keys are down.</summary>
-    private static bool CheckModifierKeys(string command) {
-      if (!command.Contains("keys=")) return true;
-      var args = command.Split(' ');
-      var arg = args.First(arg => arg.StartsWith("keys=")).Split('=');
-      if (arg.Length < 2) return true;
-      var keys = arg[1].Split(',');
-      foreach (var key in keys) {
-        if (key.StartsWith("-")) {
-          if (Enum.TryParse<KeyCode>(key.Substring(1), true, out var keyCode)) {
-            if (Input.GetKey(keyCode)) return false;
-          }
-
-        } else {
-          if (Enum.TryParse<KeyCode>(key, true, out var keyCode)) {
-            if (!Input.GetKey(keyCode)) return false;
-          }
-
-        }
-      }
-      return true;
-    }
-    private static string RemoveModifierKeys(string command) =>
-      string.Join(" ", command.Split(' ').Where(arg => !arg.StartsWith("keys=")));
-
 
     public static bool Prefix(Terminal __instance, ref string text) {
       // Alias and bind can contain any kind of commands so avoid any processing.
       if (TerminalUtils.SkipProcessing(text)) return true;
+      if (!ModifierKeys.IsValid(text)) return false;
       // Multiple commands in actual input.
       if (MultiCommands.IsMulti(text)) {
         foreach (var cmd in MultiCommands.Split(text)) __instance.TryRunCommand(cmd);
@@ -136,10 +115,9 @@ namespace ServerDevcommands {
         foreach (var cmd in MultiCommands.Split(text)) __instance.TryRunCommand(cmd);
         return false;
       }
-      if (!CheckModifierKeys(text)) return false;
       // Server side checks this already at the server side execution.
       if (Player.m_localPlayer && !DisableCommands.CanRun(text)) return false;
-      text = RemoveModifierKeys(text);
+      text = ModifierKeys.CleanUp(text);
       if (CommandQueue.CanRun()) {
         string[] array = text.Split(' ');
         if (ZNet.instance && !ZNet.instance.IsServer() && Settings.IsServerCommand(array[0])) {

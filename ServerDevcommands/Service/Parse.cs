@@ -115,7 +115,7 @@ namespace ServerDevcommands {
     }
     public static Range<Quaternion> TryAngleYXZRange(string arg) => TryAngleYXZRange(arg, Quaternion.identity);
     public static Range<Quaternion> TryAngleYXZRange(string arg, Quaternion defaultValue) {
-      var parts = arg.Split(',');
+      var parts = Split(arg);
       var y = Parse.TryFloatRange(parts, 0, defaultValue.y);
       var x = Parse.TryFloatRange(parts, 1, defaultValue.x);
       var z = Parse.TryFloatRange(parts, 2, defaultValue.z);
@@ -146,7 +146,7 @@ namespace ServerDevcommands {
       return new Range<Vector3>(min, max);
     }
     public static Range<Vector3> TryVectorXZYRange(string arg, Vector3 defaultValue) {
-      var parts = arg.Split(',');
+      var parts = Split(arg);
       var x = TryFloatRange(parts, 0, defaultValue.x);
       var z = TryFloatRange(parts, 1, defaultValue.z);
       var y = TryFloatRange(parts, 2, defaultValue.y);
@@ -167,7 +167,7 @@ namespace ServerDevcommands {
       return vector;
     }
     public static Range<Vector3> TryVectorYXZRange(string arg, Vector3 defaultValue) {
-      var parts = arg.Split(',');
+      var parts = Split(arg);
       var y = TryFloatRange(parts, 0, defaultValue.y);
       var x = TryFloatRange(parts, 1, defaultValue.x);
       var z = TryFloatRange(parts, 2, defaultValue.z);
@@ -185,7 +185,7 @@ namespace ServerDevcommands {
       return scale;
     }
     public static Range<Vector3> TryScaleRange(string arg) {
-      var parts = arg.Split(',');
+      var parts = Split(arg);
       var x = TryFloatRange(parts, 0, 0f);
       var y = TryFloatRange(parts, 1, 0f);
       var z = TryFloatRange(parts, 2, 0f);

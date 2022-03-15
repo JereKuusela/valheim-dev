@@ -18,8 +18,8 @@ namespace ServerDevcommands {
     }
 
     public static void UpdateCommands(string rootUsers, string blackList) {
-      RootUsers = rootUsers.Split(',').Select(s => s.Trim()).ToHashSet();
-      DisallowedCommands = blackList.Split(',').Select(s => s.Trim().ToLower()).ToList();
+      RootUsers = Parse.Split(rootUsers).ToHashSet();
+      DisallowedCommands = Parse.Split(blackList).ToList();
       AllowedCommands = Terminal.commands.Keys.Where(s => CanRun(s)).ToList();
     }
   }

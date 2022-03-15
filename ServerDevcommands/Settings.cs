@@ -97,7 +97,7 @@ namespace ServerDevcommands {
       SaveAliases();
     }
 
-    private static HashSet<string> ParseList(string value) => value.Split(',').Select(s => s.Trim().ToLower()).ToHashSet();
+    private static HashSet<string> ParseList(string value) => Parse.Split(value).Select(s => s.ToLower()).ToHashSet();
     public static ConfigEntry<string> configServerCommands;
     public static HashSet<string> ServerCommands => ParseList(configServerCommands.Value);
     public static bool IsServerCommand(string command) => ServerCommands.Contains(command.ToLower());

@@ -91,6 +91,7 @@ namespace ServerDevcommands {
         if (keyCodes.Count == 0) {
           var values = Enum.GetNames(typeof(KeyCode));
           keyCodes = values.Select(value => value.ToLower()).ToList();
+          keyCodes.Add("wheel");
         }
         return keyCodes;
       }

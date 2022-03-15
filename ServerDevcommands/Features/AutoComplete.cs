@@ -82,7 +82,7 @@ namespace ServerDevcommands {
       if (split.Length < 2) return "";
       return split[0];
     }
-    private static int GetSubIndex(string parameter) => parameter.Split(',').Length - 1;
+    private static int GetSubIndex(string parameter) => Parse.Split(parameter).Length - 1;
 
     private static List<string> GetOptions(string[] parameters) {
       var commandName = parameters.First();
@@ -136,6 +136,8 @@ namespace ServerDevcommands {
         var commandName = parameters.First();
         if (commandName == "server" || commandName == "alias")
           parameters = parameters.Skip(1).ToArray();
+        if (parameters.Length > 2 && commandName == "bind")
+          parameters = parameters.Skip(2).ToArray();
       }
       if (parameters.Length < 2) __result = DisableCommands.AllowedCommands;
       else __result = GetOptions(parameters);
