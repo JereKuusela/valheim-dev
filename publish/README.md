@@ -66,6 +66,8 @@ Examples:
 ## Enhanced commands
 
 - `bind [key,modifier1,modifier2,...] [command]` allows specifying modifier keys (see Improved key bindings section).
+- `broadcast [center/side] [message]` allows broadcasting custom messages to all players.
+	- `broadcast center <color=red><size=20><i><b>Hello!</b></i></size></color>`: Broadcasts a small red message with bolding and italics.
 - `devcommands` includes an admin check to allow using on servers.
 - `dev_config [value]` toggles settings.
 - `event [event] [x] [z]` allows setting the event coordinates.
@@ -164,17 +166,18 @@ Recommended to keep all settings on default values, unless there are errors or m
 # Changelog
 
 - v1.12:
-	- Adds new parameter to the `unbind` command which allows only removing some amount of binds.
+	- Adds a new command `broadcast` to broadcast messages.
+	- Adds a new parameter to the `unbind` command which allows only removing some amount of binds.
 	- Adds support for binding commands to the mouse wheel (with `wheel` key code).
-	- TODO: God auto dodge, God auto parry.
 	- Changes default scale format from x,z,y to x,y,z (for other mods).
 	- Changes the `bind` command to accept modifier keys on the first parameter (keycode,modifier1,modifier2,).
 	- Changes the `unbind` command to print removed binds.
-	- Improves autocomplete for the `alias`, `bind` and `server` commands.
-	- Improves autocomplete support (for other mods relying on this feature).
+	- Improves the autocomplete for the `alias`, `bind` and `server` commands.
+	- Improves the autocomplete support (for other mods relying on this feature).
 	- Fixes command tab cycling breaking when cycling to an alias.
 	- Fixes incorrect autocomplete for aliases.
 	- Fixes modifier keys working incorrectly with multiple commands.
+	- TODO: God auto dodge, God auto parry.
 
 - v1.11:
 	- Adds a new command `wait` to delay execution of the next command.

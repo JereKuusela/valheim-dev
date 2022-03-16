@@ -134,9 +134,9 @@ namespace ServerDevcommands {
       var parameters = text.Split(' ');
       if (parameters.Length > 1) {
         var commandName = parameters.First();
-        if (commandName == "server" || commandName == "alias")
+        if (commandName == "server")
           parameters = parameters.Skip(1).ToArray();
-        if (parameters.Length > 2 && commandName == "bind")
+        if (parameters.Length > 2 && (commandName == "bind" || commandName == "alias"))
           parameters = parameters.Skip(2).ToArray();
       }
       if (parameters.Length < 2) __result = DisableCommands.AllowedCommands;

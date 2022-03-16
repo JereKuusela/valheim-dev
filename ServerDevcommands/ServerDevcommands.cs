@@ -45,6 +45,7 @@ namespace ServerDevcommands {
       new HUDCommand();
       new NoMapCommand();
       new BindCommand();
+      new BroadcastCommand();
       DefaultAutoComplete.Register();
       Settings.RegisterCommands();
     }

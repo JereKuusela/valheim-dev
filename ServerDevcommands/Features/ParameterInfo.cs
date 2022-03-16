@@ -35,6 +35,16 @@ namespace ServerDevcommands {
         return ids;
       }
     }
+    private static List<string> colors = new List<string> {
+      "#rrggbbaa", "aqua", "black", "blue", "brown", "cyan", "darkblue", "fuchsia", "green",
+      "grey", "lightblue", "lime", "magenta", "maroon", "navy", "olive", "orange",
+      "purple", "red", "silver", "teal", "white", "yellow"
+    };
+    public static List<string> Colors {
+      get {
+        return colors;
+      }
+    }
     private static List<string> objectIds = new List<string>();
     public static List<string> ObjectIds {
       get {

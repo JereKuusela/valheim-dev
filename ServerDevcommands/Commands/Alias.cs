@@ -29,6 +29,10 @@ namespace ServerDevcommands {
           args.Context.updateCommandList();
         }
       });
+      AutoComplete.Register("alias", (int index, int subIndex) => {
+        if (index == 0) return ParameterInfo.Create("Name of the alias.");
+        return null;
+      });
     }
   }
 }
