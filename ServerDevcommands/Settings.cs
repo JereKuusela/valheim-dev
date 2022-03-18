@@ -65,7 +65,7 @@ namespace ServerDevcommands {
     public static ConfigEntry<string> configAutoExecDevOff;
     public static string AutoExecDevOff => configAutoExecDevOff.Value;
     public static ConfigEntry<string> configCommandDelay;
-    public static float CommandDelay => Parse.TryFloat(configCommandDelay.Value, 0f);
+    public static int CommandDelay => Parse.TryInt(configCommandDelay.Value, 0);
     public static ConfigEntry<bool> configCommandDescriptions;
     public static bool CommandDescriptions => configCommandDescriptions.Value;
     private static Dictionary<string, string> Aliases = new Dictionary<string, string>();
@@ -136,7 +136,7 @@ namespace ServerDevcommands {
       configDisabledGlobalKeys = config.Bind(section, "Disabled global keys", "", "Global keys separated by , that won't be set (server side setting).");
       section = "2. Console";
       configServerCommands = config.Bind(section, "Server side commands", "randomevent,stopevent,genloc,sleep,skiptime", "Command names separated by , that should be executed server side.");
-      configCommandDelay = config.Bind(section, "Delay between commands", "0", "Adds delay (seconds) when executing multiple commands.");
+      configCommandDelay = config.Bind(section, "Delay between commands", "0", "Adds delay (milliseconds) when executing multiple commands.");
       configAutoExecBoot = config.Bind(section, "Auto exec boot", "", "Executes the given command when starting the game.");
       configAutoExecDevOn = config.Bind(section, "Auto exec dev on", "", "Executes the given command when enabling devcommands.");
       configAutoExecDevOff = config.Bind(section, "Auto exec dev off", "", "Executes the given command when disabling devcommands.");
@@ -200,7 +200,7 @@ namespace ServerDevcommands {
       }
       if (key == "command_delay") {
         configCommandDelay.Value = value;
-        Helper.AddMessage(context, $"{key} set to {value}.");
+        Helper.AddMessage(context, $"{key} set to {value} milliseconds.");
       }
       if (key == "command_descriptions") Toggle(context, configCommandDescriptions, "Command descriptions");
       if (key == "map_coordinates") Toggle(context, configMapCoordinates, "Map coordinates");

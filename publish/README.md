@@ -158,7 +158,7 @@ Recommended to keep all settings on default values, unless there are errors or m
 - Command aliases: Saved command aliases.
 - Command descriptions (default `true`, key: `command_descriptions`): Shows command descriptions as autocomplete.
 - Debug console (default `false`, key: `debug_console`): Prints debug output to the console related to aliasing and parameter substitution.
-- Delay between commands (key: `command_delay`): Adds delay (seconds) when executing multiple commands.
+- Delay between commands (key: `command_delay`): Adds delay (milliseconds) when executing multiple commands.
 - Disable debug mode keys (default `false`, key: `disable_debug_mode_keys`): Removes debug mode key bindings for killall, removedrops, fly and no cost.
 - Disable parameter warnings (default `false`, key: `disable_warnings`): Removes warning texts from some command parameter descriptions.
 - Disabled commands (default `dev_config disable_command`, key: `disable_command`): Command names separated by , that can't be executed. Mainly useful on the server to prevent some server-side commands.
@@ -182,11 +182,13 @@ Recommended to keep all settings on default values, unless there are errors or m
 	- Changes default scale format from x,z,y to x,y,z (for other mods).
 	- Changes the `bind` command to accept modifier keys on the first parameter (keycode,modifier1,modifier2,).
 	- Changes the `unbind` command to print removed binds.
+	- Changes the parameter of the `command_delay` setting from seconds to milliseconds (matches better with the `wait` command).
 	- Improves the autocomplete for the `alias`, `bind` and `server` commands.
 	- Improves the autocomplete support (for other mods relying on this feature).
 	- Fixes command tab cycling breaking when cycling to an alias.
 	- Fixes incorrect autocomplete for aliases.
 	- Fixes modifier keys working incorrectly with multiple commands.
+	- Fixes the `wait` command not working (parameter was kiloseconds instead of milliseconds).
 
 - v1.11:
 	- Adds a new command `wait` to delay execution of the next command.

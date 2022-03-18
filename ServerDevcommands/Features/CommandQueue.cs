@@ -18,7 +18,7 @@ namespace ServerDevcommands {
     ///<summary>Runs the next command from the queue.</summary>
     public static void Run() {
       if (Items.Count == 0) return;
-      QueueTimer = Settings.CommandDelay;
+      QueueTimer = Settings.CommandDelay / 1000f;
       var item = Items.Dequeue();
       item.Terminal.TryRunCommand(item.Command);
     }
