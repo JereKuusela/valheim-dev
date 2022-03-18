@@ -23,6 +23,8 @@ namespace ServerDevcommands {
     public static bool AutoNoCost => configAutoNoCost.Value;
     public static ConfigEntry<bool> configDisableEvents;
     public static bool DisableEvents => Cheats && configDisableEvents.Value;
+    public static ConfigEntry<bool> configDisableDebugModeKeys;
+    public static bool DisableDebugModeKeys => Cheats && configDisableDebugModeKeys.Value;
     public static ConfigEntry<bool> configDebugConsole;
     public static bool DebugConsole => configDebugConsole.Value;
     public static ConfigEntry<bool> configAutoFly;
@@ -124,6 +126,7 @@ namespace ServerDevcommands {
       configMiniMapCoordinates = config.Bind(section, "Show minimap coordinates", false, "The minimap shows player coordinates.");
       configShowPrivatePlayers = config.Bind(section, "Show private players", false, "The map shows private players.");
       configDisableEvents = config.Bind(section, "Disable random events", false, "Disables random events (server side setting).");
+      configDisableDebugModeKeys = config.Bind(section, "Disable debug mode keys", false, "Removes debug mode key bindings for killall, removedrops, fly and no cost.");
       configDisabledGlobalKeys = config.Bind(section, "Disabled global keys", "", "Global keys separated by , that won't be set (server side setting).");
       section = "2. Console";
       configServerCommands = config.Bind(section, "Server side commands", "randomevent,stopevent,genloc,sleep,skiptime", "Command names separated by , that should be executed server side.");
@@ -155,7 +158,7 @@ namespace ServerDevcommands {
       "substitution", "improved_autocomplete", "disable_events", "disable_warnings", "multiple_commands",
       "god_no_knockback", "ghost_invibisility", "auto_exec_dev_on", "auto_exec_dev_off", "auto_exec_boot", "auto_exec",
       "command_descriptions", "command_delay", "server_commands", "fly_no_clip", "disable_command", "minimap_coordinates",
-      "disable_global_key"
+      "disable_global_key", "disable_debug_mode_keys"
     };
     private static string State(bool value) => value ? "enabled" : "disabled";
     private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -219,6 +222,7 @@ namespace ServerDevcommands {
       if (key == "server_commands") ToggleFlag(context, configServerCommands, "Server commands", value);
       if (key == "disable_command") ToggleFlag(context, configDisabledCommands, "Disabled commands", value);
       if (key == "disable_global_key") ToggleFlag(context, configDisabledGlobalKeys, "Disabled global keys", value);
+      if (key == "disable_debug_mode_keys") Toggle(context, configDisableDebugModeKeys, "Debug mode key bindings", true);
     }
   }
 }

@@ -155,6 +155,7 @@ Recommended to keep all settings on default values, unless there are errors or m
 - Command descriptions (default `true`, key: `command_descriptions`): Shows command descriptions as autocomplete.
 - Debug console (default `false`, key: `debug_console`): Prints debug output to the console related to aliasing and parameter substitution.
 - Delay between commands (key: `command_delay`): Adds delay (seconds) when executing multiple commands.
+- Disable debug mode keys (default `false`, key: `disable_debug_mode_keys`): Removes debug mode key bindings for killall, removedrops, fly and no cost.
 - Disable parameter warnings (default `false`, key: `disable_warnings`): Removes warning texts from some command parameter descriptions.
 - Disabled commands (default `dev_config disable_command`, key: `disable_command`): Command names separated by , that can't be executed. Mainly useful on the server to prevent some server-side commands.
 - Improved auto complete (default `true`, key: `improved_autocomplete`): Enables parameter info or options for every parameter.
@@ -167,6 +168,7 @@ Recommended to keep all settings on default values, unless there are errors or m
 
 - v1.12:
 	- Adds a new command `broadcast` to broadcast messages.
+	- Adds a new setting `disable_debug_mode_keys` to remove hardcoded debug mode key bindings.
 	- Adds a new parameter to the `unbind` command which allows only removing some amount of binds.
 	- Adds support for binding commands to the mouse wheel (with `wheel` key code).
 	- Changes default scale format from x,z,y to x,y,z (for other mods).
