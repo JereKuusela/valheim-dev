@@ -90,6 +90,7 @@ Examples:
 - `search [term] [max_lines=5]` allows searching the object ID list.
 	- `search wolf`: Prints all object IDs that contain word "wolf".
 	- `search fx_ 10`: Prints all object IDs that contain word "fx_" on up to 10 lines.
+- `seed` prints the world seed.
 - `server [command]` executes given command on the server.
 	- `server dev_config disable_command event`: Disables usage of `event` command for non-root users.
 - `tutorialtoggle [value]` allows directly setting the value.
@@ -170,6 +171,7 @@ Recommended to keep all settings on default values, unless there are errors or m
 
 - v1.12:
 	- Adds a new command `broadcast` to broadcast messages.
+	- Adds a new command `seed` to print the seed.
 	- Adds a new setting `disable_debug_mode_keys` to remove hardcoded debug mode key bindings.
 	- Adds a new setting `god_always_parry` to always parry with the god mode (default `false`).
 	- Adds a new setting `god_always_dodge` to always dodge with the god mode (default `false`).
@@ -183,7 +185,6 @@ Recommended to keep all settings on default values, unless there are errors or m
 	- Fixes command tab cycling breaking when cycling to an alias.
 	- Fixes incorrect autocomplete for aliases.
 	- Fixes modifier keys working incorrectly with multiple commands.
-	- TODO: God auto dodge, God auto parry.
 
 - v1.11:
 	- Adds a new command `wait` to delay execution of the next command.

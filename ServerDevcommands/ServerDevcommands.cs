@@ -46,6 +46,7 @@ namespace ServerDevcommands {
       new NoMapCommand();
       new BindCommand();
       new BroadcastCommand();
+      new SeedCommand();
       DefaultAutoComplete.Register();
       Settings.RegisterCommands();
     }
