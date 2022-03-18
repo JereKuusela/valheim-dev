@@ -24,13 +24,17 @@ namespace ServerDevcommands {
     public static ConfigEntry<bool> configDisableEvents;
     public static bool DisableEvents => Cheats && configDisableEvents.Value;
     public static ConfigEntry<bool> configDisableDebugModeKeys;
-    public static bool DisableDebugModeKeys => Cheats && configDisableDebugModeKeys.Value;
+    public static bool DisableDebugModeKeys => configDisableDebugModeKeys.Value;
     public static ConfigEntry<bool> configDebugConsole;
     public static bool DebugConsole => configDebugConsole.Value;
     public static ConfigEntry<bool> configAutoFly;
     public static bool AutoFly => configAutoFly.Value;
     public static ConfigEntry<bool> configGodModeNoStamina;
     public static bool GodModeNoStamina => Cheats && configGodModeNoStamina.Value;
+    public static ConfigEntry<bool> configGodModeAlwaysDodge;
+    public static bool GodModeAlwaysDodge => Cheats && configGodModeAlwaysDodge.Value;
+    public static ConfigEntry<bool> configGodModeAlwaysParry;
+    public static bool GodModeAlwaysParry => Cheats && configGodModeAlwaysParry.Value;
     public static ConfigEntry<bool> configGodModeNoStagger;
     public static bool GodModeNoStagger => Cheats && configGodModeNoStagger.Value;
     public static ConfigEntry<bool> configFlyNoClip;
@@ -119,6 +123,8 @@ namespace ServerDevcommands {
       configAutoGhostMode = config.Bind(section, "Automatic ghost mode", false, "Automatically enables ghost mode when enabling devcommands.");
       configAutoDevcommands = config.Bind(section, "Automatic devcommands", true, "Automatically enables devcommands when joining servers.");
       configGodModeNoStamina = config.Bind(section, "No stamina usage with god mode", true, "");
+      configGodModeAlwaysDodge = config.Bind(section, "Always dodge with god mode", false, "");
+      configGodModeAlwaysParry = config.Bind(section, "Always parry with god mode (when not blocking)", false, "");
       configGodModeNoStagger = config.Bind(section, "No staggering with god mode", true, "");
       configFlyNoClip = config.Bind(section, "No clip with fly mode", false, "");
       configGodModeNoKnockback = config.Bind(section, "No knockback with god mode", true, "");
@@ -158,7 +164,7 @@ namespace ServerDevcommands {
       "substitution", "improved_autocomplete", "disable_events", "disable_warnings", "multiple_commands",
       "god_no_knockback", "ghost_invibisility", "auto_exec_dev_on", "auto_exec_dev_off", "auto_exec_boot", "auto_exec",
       "command_descriptions", "command_delay", "server_commands", "fly_no_clip", "disable_command", "minimap_coordinates",
-      "disable_global_key", "disable_debug_mode_keys"
+      "disable_global_key", "disable_debug_mode_keys", "god_always_parry", "god_always_dodge"
     };
     private static string State(bool value) => value ? "enabled" : "disabled";
     private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -223,6 +229,8 @@ namespace ServerDevcommands {
       if (key == "disable_command") ToggleFlag(context, configDisabledCommands, "Disabled commands", value);
       if (key == "disable_global_key") ToggleFlag(context, configDisabledGlobalKeys, "Disabled global keys", value);
       if (key == "disable_debug_mode_keys") Toggle(context, configDisableDebugModeKeys, "Debug mode key bindings", true);
+      if (key == "god_always_parry") Toggle(context, configGodModeAlwaysParry, "Always parry with god mode");
+      if (key == "god_always_dodge") Toggle(context, configGodModeAlwaysDodge, "Always dodge with god mode");
     }
   }
 }

@@ -124,6 +124,8 @@ Recommended way is to use the commands since you can configure the server and al
 
 ## General
 
+- Always dodge with god mode (default `false`, key: `god_always_dodge`): Automatically dodges with the god mode.
+- Always parry with god mode (default `false`, key: `god_always_parry`): Automatically parries with the god mode when not blocking.
 - Automatic debug mode (default `false`, key: `auto_debugmode`): Automatically turns debug mode on/off when devcommands are enabled or disabled.
 - Automatic devcommands (default `true`, key: `auto_devcommands`): Automatically tries to enable devcommands when joining servers.
 - Automatic fly mode (default `false`, key: `auto_fly`): Automatically turns fly mode on/off when devcommands are enabled or disabled.
@@ -169,6 +171,8 @@ Recommended to keep all settings on default values, unless there are errors or m
 - v1.12:
 	- Adds a new command `broadcast` to broadcast messages.
 	- Adds a new setting `disable_debug_mode_keys` to remove hardcoded debug mode key bindings.
+	- Adds a new setting `god_always_parry` to always parry with the god mode (default `false`).
+	- Adds a new setting `god_always_dodge` to always dodge with the god mode (default `false`).
 	- Adds a new parameter to the `unbind` command which allows only removing some amount of binds.
 	- Adds support for binding commands to the mouse wheel (with `wheel` key code).
 	- Changes default scale format from x,z,y to x,y,z (for other mods).
