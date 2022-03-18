@@ -75,6 +75,7 @@ Examples:
 	- `event army_eikthyr 100 -100`: Starts an event at coordinates 100,-100.
 - `hud` allows toggling the HUD visibility.
 - `hud [value]` allows directly setting the HUD visibility.
+- `move_spawn [x,z,y = player's coordinates]` allows moving the default spawn point.
 - `nomap [value] [server = 1]` allows directly setting the nomap mode and by default only affects the current server.
 	`nomap [value] 0`: Sets the nomap mode for the current character (for all servers).
 - `pos [player name]` allows getting the position of any player.
@@ -171,6 +172,7 @@ Recommended to keep all settings on default values, unless there are errors or m
 
 - v1.12:
 	- Adds a new command `broadcast` to broadcast messages.
+	- Adds a new command `move_spawn` to change the server's default spawn point.
 	- Adds a new command `seed` to print the seed.
 	- Adds a new setting `disable_debug_mode_keys` to remove hardcoded debug mode key bindings.
 	- Adds a new setting `god_always_parry` to always parry with the god mode (default `false`).

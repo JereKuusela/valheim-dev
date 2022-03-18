@@ -72,6 +72,15 @@ namespace ServerDevcommands {
         parameters.Add(pos.z.ToString(CultureInfo.InvariantCulture));
       return parameters.ToArray();
     }
+    public static string[] AddPlayerPosXZY(string[] args, int count) {
+      if (args.Length < count) return args;
+      if (Player.m_localPlayer == null) return args;
+      var parameters = args.ToList();
+      var pos = Player.m_localPlayer.transform.position;
+      if (parameters.Count < count + 1)
+        parameters.Add(pos.x.ToString(CultureInfo.InvariantCulture) + "," + pos.z.ToString(CultureInfo.InvariantCulture) + "," + pos.y.ToString(CultureInfo.InvariantCulture));
+      return parameters.ToArray();
+    }
     public static ZNet.PlayerInfo FindPlayer(string name) {
       var players = ZNet.instance.m_players;
       var player = players.FirstOrDefault(player => player.m_name == name);

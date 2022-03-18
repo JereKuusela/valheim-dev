@@ -47,6 +47,7 @@ namespace ServerDevcommands {
       new BindCommand();
       new BroadcastCommand();
       new SeedCommand();
+      new MoveSpawn();
       DefaultAutoComplete.Register();
       Settings.RegisterCommands();
     }
