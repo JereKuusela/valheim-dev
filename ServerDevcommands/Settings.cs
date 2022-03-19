@@ -68,8 +68,6 @@ namespace ServerDevcommands {
     public static string AutoExecDevOn => configAutoExecDevOn.Value;
     public static ConfigEntry<string> configAutoExecDevOff;
     public static string AutoExecDevOff => configAutoExecDevOff.Value;
-    public static ConfigEntry<string> configCommandDelay;
-    public static int CommandDelay => Parse.TryInt(configCommandDelay.Value, 0);
     public static ConfigEntry<bool> configCommandDescriptions;
     public static bool CommandDescriptions => configCommandDescriptions.Value;
     private static Dictionary<string, string> Aliases = new Dictionary<string, string>();
@@ -140,7 +138,6 @@ namespace ServerDevcommands {
       configDisabledGlobalKeys = config.Bind(section, "Disabled global keys", "", "Global keys separated by , that won't be set (server side setting).");
       section = "2. Console";
       configServerCommands = config.Bind(section, "Server side commands", "randomevent,stopevent,genloc,sleep,skiptime", "Command names separated by , that should be executed server side.");
-      configCommandDelay = config.Bind(section, "Delay between commands", "0", "Adds delay (milliseconds) when executing multiple commands.");
       configAutoExecBoot = config.Bind(section, "Auto exec boot", "", "Executes the given command when starting the game.");
       configAutoExecDevOn = config.Bind(section, "Auto exec dev on", "", "Executes the given command when enabling devcommands.");
       configAutoExecDevOff = config.Bind(section, "Auto exec dev off", "", "Executes the given command when disabling devcommands.");
@@ -169,7 +166,7 @@ namespace ServerDevcommands {
       "auto_nocost", "auto_ghost", "auto_god","debug_console", "no_drops", "aliasing", "god_no_stamina",
       "substitution", "improved_autocomplete", "disable_events", "disable_warnings", "multiple_commands",
       "god_no_knockback", "ghost_invibisility", "auto_exec_dev_on", "auto_exec_dev_off", "auto_exec_boot", "auto_exec",
-      "command_descriptions", "command_delay", "server_commands", "fly_no_clip", "disable_command", "minimap_coordinates",
+      "command_descriptions", "server_commands", "fly_no_clip", "disable_command", "minimap_coordinates",
       "disable_global_key", "disable_debug_mode_keys", "god_always_parry", "god_always_dodge", "fly_up_key", "fly_down_key"
     };
     private static string State(bool value) => value ? "enabled" : "disabled";
@@ -211,10 +208,6 @@ namespace ServerDevcommands {
       if (key == "auto_exec") {
         configAutoExec.Value = value;
         Helper.AddMessage(context, $"{key} set to {value}.");
-      }
-      if (key == "command_delay") {
-        configCommandDelay.Value = value;
-        Helper.AddMessage(context, $"{key} set to {value} milliseconds.");
       }
       if (key == "command_descriptions") Toggle(context, configCommandDescriptions, "Command descriptions");
       if (key == "map_coordinates") Toggle(context, configMapCoordinates, "Map coordinates");
