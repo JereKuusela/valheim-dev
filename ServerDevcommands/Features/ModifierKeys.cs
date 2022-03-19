@@ -11,6 +11,10 @@ namespace ServerDevcommands {
       var arg = args.First(arg => arg.StartsWith("keys=")).Split('=');
       if (arg.Length < 2) return true;
       var keys = Parse.Split(arg[1]);
+      return IsValid(keys);
+    }
+
+    public static bool IsValid(string[] keys) {
       foreach (var key in keys) {
         if (key.StartsWith("-")) {
           if (Enum.TryParse<KeyCode>(key.Substring(1), true, out var keyCode)) {
@@ -21,7 +25,6 @@ namespace ServerDevcommands {
           if (Enum.TryParse<KeyCode>(key, true, out var keyCode)) {
             if (!Input.GetKey(keyCode)) return false;
           }
-
         }
       }
       return true;

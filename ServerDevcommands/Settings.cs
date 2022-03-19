@@ -53,6 +53,10 @@ namespace ServerDevcommands {
     public static bool MultiCommand => configMultiCommand.Value;
     public static ConfigEntry<bool> configGhostInvisibility;
     public static bool GhostInvisibility => Cheats && configGhostInvisibility.Value;
+    public static ConfigEntry<string> configFlyUpKey;
+    public static bool FlyUpKey => ModifierKeys.IsValid(Parse.Split(configFlyUpKey.Value));
+    public static ConfigEntry<string> configFlyDownKey;
+    public static bool FlyDownKey => ModifierKeys.IsValid(Parse.Split(configFlyDownKey.Value));
     public static ConfigEntry<bool> configNoDrops;
     public static bool NoDrops => Cheats && configNoDrops.Value;
     public static ConfigEntry<string> configCommandAliases;
@@ -154,6 +158,8 @@ namespace ServerDevcommands {
       configRootUsers.SettingChanged += (s, e) => DisableCommands.UpdateCommands(configRootUsers.Value, configDisabledCommands.Value);
       configDisabledCommands = config.Bind(section, "Disabled commands", "dev_config disable_command", "Command names separated by , that can't be executed.");
       configDisabledCommands.SettingChanged += (s, e) => DisableCommands.UpdateCommands(configRootUsers.Value, configDisabledCommands.Value);
+      configFlyUpKey = config.Bind(section, "Key for fly up", "Space", "Key codes separated by ,");
+      configFlyDownKey = config.Bind(section, "Key for fly down", "LeftControl", "Key codes separated by ,");
       ParseAliases(configCommandAliases.Value);
     }
 
@@ -164,7 +170,7 @@ namespace ServerDevcommands {
       "substitution", "improved_autocomplete", "disable_events", "disable_warnings", "multiple_commands",
       "god_no_knockback", "ghost_invibisility", "auto_exec_dev_on", "auto_exec_dev_off", "auto_exec_boot", "auto_exec",
       "command_descriptions", "command_delay", "server_commands", "fly_no_clip", "disable_command", "minimap_coordinates",
-      "disable_global_key", "disable_debug_mode_keys", "god_always_parry", "god_always_dodge"
+      "disable_global_key", "disable_debug_mode_keys", "god_always_parry", "god_always_dodge", "fly_up_key", "fly_down_key"
     };
     private static string State(bool value) => value ? "enabled" : "disabled";
     private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -182,6 +188,14 @@ namespace ServerDevcommands {
       Helper.AddMessage(context, $"{name}: {Flag(remove)} \"{value}\".");
     }
     public static void UpdateValue(Terminal context, string key, string value) {
+      if (key == "fly_up_key") {
+        configFlyUpKey.Value = value;
+        Helper.AddMessage(context, $"{key} set to {value}.");
+      }
+      if (key == "fly_down_key") {
+        configFlyDownKey.Value = value;
+        Helper.AddMessage(context, $"{key} set to {value}.");
+      }
       if (key == "auto_exec_dev_on") {
         configAutoExecDevOn.Value = value;
         Helper.AddMessage(context, $"{key} set to {value}.");

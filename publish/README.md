@@ -45,6 +45,13 @@ The mouse wheel appends the wheel direction and amount to the command. For examp
 
 Note: After removing this mod, these binds very likely stop working or lead to unexpected behavior. Recommended to clear all binds with the `resetbinds` command.
 
+### Debug flying
+
+The same system also works for rebinding the debug flying. For example:
+
+- `devconfig fly_down_key space,leftcontrol`: Changes to fly down when both left control and space are pressed.
+- `devconfig fly_up_key space,-leftcontrol`:  Changes to fly up when space is pressed while left control isn't.
+
 ## Command aliasing
 
 New commands can be created to shorten command names or to set parameter values.
@@ -162,6 +169,8 @@ Recommended to keep all settings on default values, unless there are errors or m
 - Disable debug mode keys (default `false`, key: `disable_debug_mode_keys`): Removes debug mode key bindings for killall, removedrops, fly and no cost.
 - Disable parameter warnings (default `false`, key: `disable_warnings`): Removes warning texts from some command parameter descriptions.
 - Disabled commands (default `dev_config disable_command`, key: `disable_command`): Command names separated by , that can't be executed. Mainly useful on the server to prevent some server-side commands.
+- Fly down key (default `leftcontrol`, key: `fly_down_key`): Changes the key command for flying down. Multiple keys are supported (see Bind section for more info).
+- Fly up key (default `space`, key: `fly_up_key`): Changes the key command for flying up. Multiple keys are supported (see Bind section for more info).
 - Improved auto complete (default `true`, key: `improved_autocomplete`): Enables parameter info or options for every parameter.
 - Multiple commands per line (default `true`, key: `multiple_commands`): Enables multiple commands per line (when separate by `;`).
 - Root users (default ` `): Steam IDs separated by , that can execute blacklisted commands. Can't be set with `dev_config` command.
@@ -177,6 +186,8 @@ Recommended to keep all settings on default values, unless there are errors or m
 	- Adds a new setting `disable_debug_mode_keys` to remove hardcoded debug mode key bindings.
 	- Adds a new setting `god_always_parry` to always parry with the god mode (default `false`).
 	- Adds a new setting `god_always_dodge` to always dodge with the god mode (default `false`).
+	- Adds a new setting `fly_up_key` to allow rebinding it (default `jump`).
+	- Adds a new setting `fly_down_key` to allow rebinding it (default `leftcontrol`).
 	- Adds a new parameter to the `unbind` command which allows only removing some amount of binds.
 	- Adds support for binding commands to the mouse wheel (with `wheel` key code).
 	- Changes default scale format from x,z,y to x,y,z (for other mods).
