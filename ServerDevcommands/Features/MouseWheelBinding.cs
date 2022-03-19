@@ -8,7 +8,7 @@ namespace ServerDevcommands {
   public class MouseWheelBinding {
     ///<summary>Runs any bound commands.</summary>
     public static void Execute(float ticks) {
-      if (ticks == 0f) return;
+      if (ticks == 0f || !Settings.MouseWheelBinding) return;
       if (Terminal.m_binds.TryGetValue(KeyCode.None, out var commands)) {
         foreach (var command in commands) {
           var input = TerminalUtils.Substitute(command, ticks.ToString(CultureInfo.InvariantCulture));
@@ -18,6 +18,7 @@ namespace ServerDevcommands {
     }
     ///<summary>Returns whether any commands could run with the current modifier keys.</summary>
     public static bool CouldExecute() {
+      if (!Settings.MouseWheelBinding) return false;
       if (Terminal.m_binds.TryGetValue(KeyCode.None, out var commands))
         return commands.Any(ModifierKeys.IsValid);
       return false;

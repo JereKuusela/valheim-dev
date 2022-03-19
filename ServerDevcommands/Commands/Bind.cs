@@ -40,7 +40,7 @@ namespace ServerDevcommands {
       new Terminal.ConsoleCommand("unbind", "[keycode] [amount = 0] - Clears binds from a key. Optional parameter can be used to specify amount of removed binds.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) return;
         // Mouse wheel hack.
-        if (args.Args[1] == "wheel") args.Args[1] = "none";
+        if (args[1] == "wheel") args.Args[1] = "none";
         args.Args[1] = args[1].ToLower();
         var amount = Parse.TryInt(args.Args, 2, 0);
         if (amount == 0) amount = int.MaxValue;

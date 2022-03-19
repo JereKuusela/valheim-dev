@@ -37,6 +37,8 @@ namespace ServerDevcommands {
     public static bool GodModeAlwaysParry => Cheats && configGodModeAlwaysParry.Value;
     public static ConfigEntry<bool> configGodModeNoStagger;
     public static bool GodModeNoStagger => Cheats && configGodModeNoStagger.Value;
+    public static ConfigEntry<bool> configDisableStartShout;
+    public static bool DisableStartShout => configDisableStartShout.Value;
     public static ConfigEntry<bool> configFlyNoClip;
     public static bool FlyNoClip => Cheats && configFlyNoClip.Value;
     public static ConfigEntry<bool> configGodModeNoKnockback;
@@ -60,6 +62,8 @@ namespace ServerDevcommands {
     public static ConfigEntry<bool> configNoDrops;
     public static bool NoDrops => Cheats && configNoDrops.Value;
     public static ConfigEntry<string> configCommandAliases;
+    public static ConfigEntry<bool> configMouseWheelBinding;
+    public static bool MouseWheelBinding => configMouseWheelBinding.Value;
     public static ConfigEntry<string> configAutoExecBoot;
     public static string AutoExecBoot => configAutoExecBoot.Value;
     public static ConfigEntry<string> configAutoExec;
@@ -128,6 +132,7 @@ namespace ServerDevcommands {
       configGodModeAlwaysDodge = config.Bind(section, "Always dodge with god mode", false, "");
       configGodModeAlwaysParry = config.Bind(section, "Always parry with god mode (when not blocking)", false, "");
       configGodModeNoStagger = config.Bind(section, "No staggering with god mode", true, "");
+      configDisableStartShout = config.Bind(section, "Disable start shout", false, "Removes the initial shout message when joining the server.");
       configFlyNoClip = config.Bind(section, "No clip with fly mode", false, "");
       configGodModeNoKnockback = config.Bind(section, "No knockback with god mode", true, "");
       configMapCoordinates = config.Bind(section, "Show map coordinates", true, "The map shows coordinates on hover.");
@@ -138,6 +143,7 @@ namespace ServerDevcommands {
       configDisabledGlobalKeys = config.Bind(section, "Disabled global keys", "", "Global keys separated by , that won't be set (server side setting).");
       section = "2. Console";
       configServerCommands = config.Bind(section, "Server side commands", "randomevent,stopevent,genloc,sleep,skiptime", "Command names separated by , that should be executed server side.");
+      configMouseWheelBinding = config.Bind(section, "Mouse wheel binding", true, "Allows binding to the custom wheel keycode.");
       configAutoExecBoot = config.Bind(section, "Auto exec boot", "", "Executes the given command when starting the game.");
       configAutoExecDevOn = config.Bind(section, "Auto exec dev on", "", "Executes the given command when enabling devcommands.");
       configAutoExecDevOff = config.Bind(section, "Auto exec dev off", "", "Executes the given command when disabling devcommands.");
@@ -167,7 +173,8 @@ namespace ServerDevcommands {
       "substitution", "improved_autocomplete", "disable_events", "disable_warnings", "multiple_commands",
       "god_no_knockback", "ghost_invibisility", "auto_exec_dev_on", "auto_exec_dev_off", "auto_exec_boot", "auto_exec",
       "command_descriptions", "server_commands", "fly_no_clip", "disable_command", "minimap_coordinates",
-      "disable_global_key", "disable_debug_mode_keys", "god_always_parry", "god_always_dodge", "fly_up_key", "fly_down_key"
+      "disable_global_key", "disable_debug_mode_keys", "god_always_parry", "god_always_dodge", "fly_up_key", "fly_down_key",
+      "disable_start_shout", "mouse_wheel_binding"
     };
     private static string State(bool value) => value ? "enabled" : "disabled";
     private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -238,6 +245,8 @@ namespace ServerDevcommands {
       if (key == "disable_debug_mode_keys") Toggle(context, configDisableDebugModeKeys, "Debug mode key bindings", true);
       if (key == "god_always_parry") Toggle(context, configGodModeAlwaysParry, "Always parry with god mode");
       if (key == "god_always_dodge") Toggle(context, configGodModeAlwaysDodge, "Always dodge with god mode");
+      if (key == "disable_start_shout") Toggle(context, configDisableStartShout, "Start shout", true);
+      if (key == "mouse_wheel_binding") Toggle(context, configMouseWheelBinding, "Mouse wheel binding");
     }
   }
 }

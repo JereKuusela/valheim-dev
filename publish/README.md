@@ -141,8 +141,9 @@ Recommended way is to use the commands since you can configure the server and al
 - Automatic ghost mode (default `false`, key: `auto_ghost`): Automatically turns ghost mode on/off when devcommands are enabled or disabled.
 - Automatic god mode (default `false`, key: `auto_god`): Automatically turns god mode on/off when devcommands are enabled or disabled.
 - Automatic no cost mode (default `false`, key: `auto_nocost`): Automatically turns no cost mode on/off when devcommands are enabled or disabled.
-- Disable random events (default `false`, key: `disable_events`): Prevents random events from happening (server side setting).
 - Disabled global keys (default ` `, key: `disable_global_key`): Global keys separated by , that can't be set (server side).
+- Disable start shout (default `false`, key: `disable_start_shout`): Removes the initial shout message when joining the server.
+- Disable random events (default `false`, key: `disable_events`): Prevents random events from happening (server side setting).
 - Invisible to players with ghost mode (default `false`, key: `ghost_invisibility`): Invisible to other players with ghost mode.
 - No clip with fly mode (default `false`, key: `fly_no_clip`): Removes collision check with fly mode.
 - No creature drops (default `false`, key: `no_drops`): Prevents creatures from dropping loot, can be useful if people accidentally spawn very high star creatures. Only works when as the zone owner.
@@ -171,6 +172,7 @@ Recommended to keep all settings on default values, unless there are errors or m
 - Fly down key (default `leftcontrol`, key: `fly_down_key`): Changes the key command for flying down. Multiple keys are supported (see Bind section for more info).
 - Fly up key (default `space`, key: `fly_up_key`): Changes the key command for flying up. Multiple keys are supported (see Bind section for more info).
 - Improved auto complete (default `true`, key: `improved_autocomplete`): Enables parameter info or options for every parameter.
+- Mouse wheel binding (default `true`, key: `mouse_wheel_binding`): Enables binding to the mouse wheel with `wheel` keycode.
 - Multiple commands per line (default `true`, key: `multiple_commands`): Enables multiple commands per line (when separate by `;`).
 - Root users (default ` `): Steam IDs separated by , that can execute blacklisted commands. Can't be set with `dev_config` command.
 - Substitution system (default `true`, key: `substitution`): Enables parameter substitution (with `$`).
@@ -182,12 +184,14 @@ Recommended to keep all settings on default values, unless there are errors or m
 	- Adds a new command `broadcast` to broadcast messages.
 	- Adds a new command `move_spawn` to change the server's default spawn point.
 	- Adds a new command `seed` to print the seed.
-	- Adds a new setting `disable_debug_mode_keys` to remove hardcoded debug mode key bindings.
+	- Adds a new setting `disable_start_shout` to remove the initial shout message (default `false`).
+	- Adds a new setting `disable_debug_mode_keys` to remove hardcoded debug mode key bindings (default `false`).
 	- Adds a new setting `god_always_parry` to always parry with the god mode (default `false`).
 	- Adds a new setting `god_always_dodge` to always dodge with the god mode (default `false`).
 	- Adds a new setting `fly_up_key` to allow rebinding it (default `jump`).
 	- Adds a new setting `fly_down_key` to allow rebinding it (default `leftcontrol`).
 	- Adds a new parameter to the `unbind` command which allows only removing some amount of binds.
+	- Adds a new setting `mouse_wheel_binding` for the mouse wheel binding (default `true`).
 	- Adds support for binding commands to the mouse wheel (with `wheel` key code).
 	- Changes default scale format from x,z,y to x,y,z (for other mods).
 	- Changes the `bind` command to accept modifier keys on the first parameter (keycode,modifier1,modifier2,).
