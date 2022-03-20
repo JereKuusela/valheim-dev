@@ -179,18 +179,22 @@ namespace ServerDevcommands {
     };
     private static string State(bool value) => value ? "enabled" : "disabled";
     private static string Flag(bool value) => value ? "Removed" : "Added";
-    private static void Toggle(Terminal context, ConfigEntry<bool> setting, string name, bool reverse = false) {
-      setting.Value = !setting.Value;
+    private static void Toggle(Terminal context, ConfigEntry<bool> setting, string name, string value, bool reverse = false) {
+      if (value == "") setting.Value = !setting.Value;
+      else if (value == "1") setting.Value = true;
+      else if (value == "0") setting.Value = false;
       Helper.AddMessage(context, $"{name} {State(reverse ? !setting.Value : setting.Value)}.");
     }
     private static void ToggleFlag(Terminal context, ConfigEntry<string> setting, string name, string value) {
       var list = ParseList(setting.Value);
-      var valueLower = value.ToLower();
-      var remove = list.Contains(valueLower);
-      if (remove) list.Remove(valueLower);
-      else list.Add(valueLower);
-      setting.Value = string.Join(",", list);
-      Helper.AddMessage(context, $"{name}: {Flag(remove)} \"{value}\".");
+      var newList = ParseList(value);
+      foreach (var flag in newList) {
+        var remove = list.Contains(flag);
+        if (remove) list.Remove(flag);
+        else list.Add(flag);
+        setting.Value = string.Join(",", list);
+        Helper.AddMessage(context, $"{name}: {Flag(remove)} \"{flag}\".");
+      }
     }
     public static void UpdateValue(Terminal context, string key, string value) {
       if (key == "fly_up_key") {
@@ -217,37 +221,37 @@ namespace ServerDevcommands {
         configAutoExec.Value = value;
         Helper.AddMessage(context, $"{key} set to {value}.");
       }
-      if (key == "command_descriptions") Toggle(context, configCommandDescriptions, "Command descriptions");
-      if (key == "map_coordinates") Toggle(context, configMapCoordinates, "Map coordinates");
-      if (key == "minimap_coordinates") Toggle(context, configMiniMapCoordinates, "Minimap coordinates");
-      if (key == "private_players") Toggle(context, configShowPrivatePlayers, "Private players");
-      if (key == "auto_devcommands") Toggle(context, configAutoDevcommands, "Automatic devcommands");
-      if (key == "auto_debugmode") Toggle(context, configAutoDebugMode, "Automatic debug mode");
-      if (key == "auto_fly") Toggle(context, configAutoFly, "Automatic fly");
-      if (key == "auto_nocost") Toggle(context, configAutoNoCost, "Automatic no cost");
-      if (key == "auto_god") Toggle(context, configAutoGodMode, "Automatic god mode");
-      if (key == "auto_ghost") Toggle(context, configAutoGhostMode, "Automatic ghost mode");
-      if (key == "debug_console") Toggle(context, configDebugConsole, "Debug console");
-      if (key == "no_drops") Toggle(context, configNoDrops, "Creature drops", true);
-      if (key == "aliasing") Toggle(context, configAliasing, "Command aliasing");
-      if (key == "substitution") Toggle(context, configSubstitution, "Command parameter substitution");
-      if (key == "improved_autocomplete") Toggle(context, configImprovedAutoComplete, "Improved autocomplete");
-      if (key == "disable_events") Toggle(context, configDisableEvents, "Random events", true);
-      if (key == "disable_warnings") Toggle(context, configDisableParameterWarnings, "Command parameter warnings", true);
-      if (key == "multiple_commands") Toggle(context, configMultiCommand, "Multiple commands per line");
-      if (key == "god_no_stamina") Toggle(context, configGodModeNoStamina, "Stamina usage with god mode", true);
-      if (key == "god_no_stagger") Toggle(context, configGodModeNoStagger, "Staggering with god mode", true);
-      if (key == "god_no_knockback") Toggle(context, configGodModeNoKnockback, "Knockback with god mode", true);
-      if (key == "fly_no_clip") Toggle(context, configFlyNoClip, "No clip with fly mode");
-      if (key == "ghost_invibisility") Toggle(context, configGhostInvisibility, "Invisibility with ghost mode", true);
+      if (key == "command_descriptions") Toggle(context, configCommandDescriptions, "Command descriptions", value);
+      if (key == "map_coordinates") Toggle(context, configMapCoordinates, "Map coordinates", value);
+      if (key == "minimap_coordinates") Toggle(context, configMiniMapCoordinates, "Minimap coordinates", value);
+      if (key == "private_players") Toggle(context, configShowPrivatePlayers, "Private players", value);
+      if (key == "auto_devcommands") Toggle(context, configAutoDevcommands, "Automatic devcommands", value);
+      if (key == "auto_debugmode") Toggle(context, configAutoDebugMode, "Automatic debug mode", value);
+      if (key == "auto_fly") Toggle(context, configAutoFly, "Automatic fly", value);
+      if (key == "auto_nocost") Toggle(context, configAutoNoCost, "Automatic no cost", value);
+      if (key == "auto_god") Toggle(context, configAutoGodMode, "Automatic god mode", value);
+      if (key == "auto_ghost") Toggle(context, configAutoGhostMode, "Automatic ghost mode", value);
+      if (key == "debug_console") Toggle(context, configDebugConsole, "Debug console", value);
+      if (key == "no_drops") Toggle(context, configNoDrops, "Creature drops", value, true);
+      if (key == "aliasing") Toggle(context, configAliasing, "Command aliasing", value);
+      if (key == "substitution") Toggle(context, configSubstitution, "Command parameter substitution", value);
+      if (key == "improved_autocomplete") Toggle(context, configImprovedAutoComplete, "Improved autocomplete", value);
+      if (key == "disable_events") Toggle(context, configDisableEvents, "Random events", value, true);
+      if (key == "disable_warnings") Toggle(context, configDisableParameterWarnings, "Command parameter warnings", value, true);
+      if (key == "multiple_commands") Toggle(context, configMultiCommand, "Multiple commands per line", value);
+      if (key == "god_no_stamina") Toggle(context, configGodModeNoStamina, "Stamina usage with god mode", value, true);
+      if (key == "god_no_stagger") Toggle(context, configGodModeNoStagger, "Staggering with god mode", value, true);
+      if (key == "god_no_knockback") Toggle(context, configGodModeNoKnockback, "Knockback with god mode", value, true);
+      if (key == "fly_no_clip") Toggle(context, configFlyNoClip, "No clip with fly mode", value);
+      if (key == "ghost_invibisility") Toggle(context, configGhostInvisibility, "Invisibility with ghost mode", value, true);
       if (key == "server_commands") ToggleFlag(context, configServerCommands, "Server commands", value);
       if (key == "disable_command") ToggleFlag(context, configDisabledCommands, "Disabled commands", value);
       if (key == "disable_global_key") ToggleFlag(context, configDisabledGlobalKeys, "Disabled global keys", value);
-      if (key == "disable_debug_mode_keys") Toggle(context, configDisableDebugModeKeys, "Debug mode key bindings", true);
-      if (key == "god_always_parry") Toggle(context, configGodModeAlwaysParry, "Always parry with god mode");
-      if (key == "god_always_dodge") Toggle(context, configGodModeAlwaysDodge, "Always dodge with god mode");
-      if (key == "disable_start_shout") Toggle(context, configDisableStartShout, "Start shout", true);
-      if (key == "mouse_wheel_binding") Toggle(context, configMouseWheelBinding, "Mouse wheel binding");
+      if (key == "disable_debug_mode_keys") Toggle(context, configDisableDebugModeKeys, "Debug mode key bindings", value, true);
+      if (key == "god_always_parry") Toggle(context, configGodModeAlwaysParry, "Always parry with god mode", value);
+      if (key == "god_always_dodge") Toggle(context, configGodModeAlwaysDodge, "Always dodge with god mode", value);
+      if (key == "disable_start_shout") Toggle(context, configDisableStartShout, "Start shout", value, true);
+      if (key == "mouse_wheel_binding") Toggle(context, configMouseWheelBinding, "Mouse wheel binding", value);
     }
   }
 }

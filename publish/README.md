@@ -76,7 +76,11 @@ Examples:
 - `broadcast [center/side] [message]` allows broadcasting custom messages to all players.
 	- `broadcast center <color=red><size=20><i><b>Hello!</b></i></size></color>`: Broadcasts a small red message with bolding and italics.
 - `devcommands` includes an admin check to allow using on servers.
-- `dev_config [value]` toggles settings.
+- `dev_config [name] [value]` toggles settings.
+	- `dev_config auto_fly`: Toggles the auto fly setting.
+	- `dev_config auto_fly 0`: Disables the auto_fly setting.
+	- `dev_config auto_fly 1`: Enables the auto fly setting.
+	- `server dev_config disable_debug_mode_keys defeated_eikthyr,defeated_gdking,defeated_bonemass,defeated_dragon,defeated_goblinking`: Prevents boss kill global keys being set on the server.
 - `event [event] [x] [z]` allows setting the event coordinates.
 	- `event army_eikthyr`: Starts an event at your position.
 	- `event army_eikthyr 100 -100`: Starts an event at coordinates 100,-100.
@@ -95,9 +99,9 @@ Examples:
 	- `resolution max`: Sets to maximized window with the maximum supported resolution.
 	- `resolution full`: Sets to full screen window with the maximum supported resolution.
 	- `resolution window 1920 1080`: Sets to windowed with HD resolution.
-- `search [term] [max_lines=5]` allows searching the object ID list.
-	- `search wolf`: Prints all object IDs that contain word "wolf".
-	- `search fx_ 10`: Prints all object IDs that contain word "fx_" on up to 10 lines.
+- `search_id [term] [max_lines=5]` allows searching the object ID list.
+	- `search_id wolf`: Prints all object IDs that contain word "wolf".
+	- `search_id fx_ 10`: Prints all object IDs that contain word "fx_" on up to 10 lines.
 - `seed` prints the world seed.
 - `server [command]` executes given command on the server.
 	- `server dev_config disable_command event`: Disables usage of `event` command for non-root users.
@@ -196,8 +200,11 @@ Recommended to keep all settings on default values, unless there are errors or m
 	- Changes default scale format from x,z,y to x,y,z (for other mods).
 	- Changes the `bind` command to accept modifier keys on the first parameter (keycode,modifier1,modifier2,).
 	- Changes the `unbind` command to print removed binds.
+	- Changes the `search` command to `search_id` command.
 	- Changes the setting `disable_global_key` to also remove disabled keys when edited (server side).
 	- Improves the autocomplete for the `alias`, `bind` and `server` commands.
+	- Improves the `dev_config` command to allow directly setting flags with values 1 and 0.
+	- Improves the `dev_config` command to work better when giving multiple values to some commands.
 	- Improves the autocomplete support (for other mods relying on this feature).
 	- Removes the setting `command_delay` as obsolete since `wait` command works much better.
 	- Fixes command tab cycling breaking when cycling to an alias.

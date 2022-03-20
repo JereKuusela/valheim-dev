@@ -36,7 +36,7 @@ namespace ServerDevcommands {
       new StartEventCommand();
       new PosCommand();
       new AliasCommand();
-      new SearchCommand();
+      new SearchIdCommand();
       new UndoRedoCommand();
       new TutorialToggleCommand();
       new ResolutionCommand();

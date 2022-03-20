@@ -4,9 +4,9 @@ using System.Linq;
 namespace ServerDevcommands {
 
   ///<summary>New command to search to list object or location ids.</summary>
-  public class SearchCommand {
-    public SearchCommand() {
-      new Terminal.ConsoleCommand("search", "[term] [max_lines=5] - Prints object ids matching the search term.", delegate (Terminal.ConsoleEventArgs args) {
+  public class SearchIdCommand {
+    public SearchIdCommand() {
+      new Terminal.ConsoleCommand("search_id", "[term] [max_lines=5] - Prints object ids matching the search term.", delegate (Terminal.ConsoleEventArgs args) {
         if (args.Length < 2) return;
         var term = args[1].ToLower();
         var maxLines = Parse.TryInt(args.Args, 2, 5);
@@ -22,7 +22,7 @@ namespace ServerDevcommands {
           args.Context.AddString(string.Join(", ", buffer));
         }
       }, optionsFetcher: () => ParameterInfo.Create("Search term"));
-      AutoComplete.Register("search", (int index) => {
+      AutoComplete.Register("search_id", (int index) => {
         if (index == 0) return ParameterInfo.Create("Search term");
         if (index == 1) return ParameterInfo.Create("Max lines", "number (default 5)");
         return null;

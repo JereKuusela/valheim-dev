@@ -1,7 +1,7 @@
 using System.Linq;
 
 namespace ServerDevcommands {
-  //<summary>Adds commands for changing the client and server configuration.</summary>
+  //<summary>Adds commands for changing the configuration.</summary>
   public class ConfigCommand {
     private void RegisterAutoComplete(string command) {
       AutoComplete.Register(command, (int index) => {
