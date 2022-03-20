@@ -154,7 +154,7 @@ Recommended way is to use the commands since you can configure the server and al
 - No creature drops (default `false`, key: `no_drops`): Prevents creatures from dropping loot, can be useful if people accidentally spawn very high star creatures. Only works when as the zone owner.
 - No knockback with god mode (default `true`, key: `god_no_knockback`): Removes knockback for an even godlier god mode.
 - No staggering with god mode (default `true`, key: `god_no_stagger`): Removes staggering for an even godlier god mode.
-- No stamina usage with god mode (default `true`, key: `god_no_stamina`): Removes stamina usage for an even godlier god mode.
+- No stamina usage with god mode (default `true`, key: `god_no_stamina`): Removes the stamina usage for an even godlier god mode.
 - No weight limit with god mode (default `false`, key: `god_no_weight_limit`): Removes the weight limit for an even godlier god mode.
 - Show map coordinates (default `true`, key: `map_coordinates`): Shows cursor coordinates when hovering the map.
 - Show minimap coordinates (default `false`, key: `minimap_coordinates`): Shows player coordinates on the minimap.
