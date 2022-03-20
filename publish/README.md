@@ -155,6 +155,7 @@ Recommended way is to use the commands since you can configure the server and al
 - No knockback with god mode (default `true`, key: `god_no_knockback`): Removes knockback for an even godlier god mode.
 - No staggering with god mode (default `true`, key: `god_no_stagger`): Removes staggering for an even godlier god mode.
 - No stamina usage with god mode (default `true`, key: `god_no_stamina`): Removes stamina usage for an even godlier god mode.
+- No weight limit with god mode (default `false`, key: `god_no_weight_limit`): Removes the weight limit for an even godlier god mode.
 - Show map coordinates (default `true`, key: `map_coordinates`): Shows cursor coordinates when hovering the map.
 - Show minimap coordinates (default `false`, key: `minimap_coordinates`): Shows player coordinates on the minimap.
 - Show private players (default `false`, key: `private_players`): Shows players on the map even if they have set their position as private. Must be enabled both client and server side to work (admins can individually keep the feature off even when enabled from the server). 
@@ -194,6 +195,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 	- Adds a new setting `god_always_parry` to always parry with the god mode (default `false`).
 	- Adds a new setting `god_always_dodge` to always dodge with the god mode (default `false`).
 	- Adds a new setting `disable_tutorials` to prevent the raven from appearing (default `false`).
+	- Adds a new setting `god_no_weight_limit` to remove weight limit with the god mode (default `false`).
 	- Adds a new setting `fly_up_key` to allow rebinding it (default `jump`).
 	- Adds a new setting `fly_down_key` to allow rebinding it (default `leftcontrol`).
 	- Adds a new parameter to the `unbind` command which allows only removing some amount of binds.

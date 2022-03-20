@@ -29,6 +29,8 @@ namespace ServerDevcommands {
     public static bool DebugConsole => configDebugConsole.Value;
     public static ConfigEntry<bool> configAutoFly;
     public static bool AutoFly => configAutoFly.Value;
+    public static ConfigEntry<bool> configGodModeNoWeightLimit;
+    public static bool GodModeNoWeightLimit => Cheats && configGodModeNoWeightLimit.Value;
     public static ConfigEntry<bool> configGodModeNoStamina;
     public static bool GodModeNoStamina => Cheats && configGodModeNoStamina.Value;
     public static ConfigEntry<bool> configGodModeAlwaysDodge;
@@ -131,6 +133,7 @@ namespace ServerDevcommands {
       configAutoGhostMode = config.Bind(section, "Automatic ghost mode", false, "Automatically enables ghost mode when enabling devcommands.");
       configAutoDevcommands = config.Bind(section, "Automatic devcommands", true, "Automatically enables devcommands when joining servers.");
       configGodModeNoStamina = config.Bind(section, "No stamina usage with god mode", true, "");
+      configGodModeNoWeightLimit = config.Bind(section, "No weight limit with god mode", false, "");
       configGodModeAlwaysDodge = config.Bind(section, "Always dodge with god mode", false, "");
       configGodModeAlwaysParry = config.Bind(section, "Always parry with god mode (when not blocking)", false, "");
       configGodModeNoStagger = config.Bind(section, "No staggering with god mode", true, "");
@@ -178,7 +181,7 @@ namespace ServerDevcommands {
       "god_no_knockback", "ghost_invibisility", "auto_exec_dev_on", "auto_exec_dev_off", "auto_exec_boot", "auto_exec",
       "command_descriptions", "server_commands", "fly_no_clip", "disable_command", "minimap_coordinates",
       "disable_global_key", "disable_debug_mode_keys", "god_always_parry", "god_always_dodge", "fly_up_key", "fly_down_key",
-      "disable_start_shout", "mouse_wheel_binding", "disable_tutorials"
+      "disable_start_shout", "mouse_wheel_binding", "disable_tutorials", "god_no_weight_limit"
     };
     private static string State(bool value) => value ? "enabled" : "disabled";
     private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -237,6 +240,7 @@ namespace ServerDevcommands {
       if (key == "disable_warnings") Toggle(context, configDisableParameterWarnings, "Command parameter warnings", value, true);
       if (key == "multiple_commands") Toggle(context, configMultiCommand, "Multiple commands per line", value);
       if (key == "god_no_stamina") Toggle(context, configGodModeNoStamina, "Stamina usage with god mode", value, true);
+      if (key == "god_no_weight_limit") Toggle(context, configGodModeNoWeightLimit, "Weight limit with god mode", value, true);
       if (key == "god_no_stagger") Toggle(context, configGodModeNoStagger, "Staggering with god mode", value, true);
       if (key == "god_no_knockback") Toggle(context, configGodModeNoKnockback, "Knockback with god mode", value, true);
       if (key == "fly_no_clip") Toggle(context, configFlyNoClip, "No clip with fly mode", value);
