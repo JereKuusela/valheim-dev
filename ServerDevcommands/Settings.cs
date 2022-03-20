@@ -141,6 +141,7 @@ namespace ServerDevcommands {
       configDisableEvents = config.Bind(section, "Disable random events", false, "Disables random events (server side setting).");
       configDisableDebugModeKeys = config.Bind(section, "Disable debug mode keys", false, "Removes debug mode key bindings for killall, removedrops, fly and no cost.");
       configDisabledGlobalKeys = config.Bind(section, "Disabled global keys", "", "Global keys separated by , that won't be set (server side setting).");
+      configDisabledGlobalKeys.SettingChanged += (s, e) => DisableGlobalKeys.RemoveDisabled();
       section = "2. Console";
       configServerCommands = config.Bind(section, "Server side commands", "randomevent,stopevent,genloc,sleep,skiptime", "Command names separated by , that should be executed server side.");
       configMouseWheelBinding = config.Bind(section, "Mouse wheel binding", true, "Allows binding to the custom wheel keycode.");

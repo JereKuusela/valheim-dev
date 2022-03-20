@@ -196,6 +196,7 @@ Recommended to keep all settings on default values, unless there are errors or m
 	- Changes default scale format from x,z,y to x,y,z (for other mods).
 	- Changes the `bind` command to accept modifier keys on the first parameter (keycode,modifier1,modifier2,).
 	- Changes the `unbind` command to print removed binds.
+	- Changes the setting `disable_global_key` to also remove disabled keys when edited (server side).
 	- Improves the autocomplete for the `alias`, `bind` and `server` commands.
 	- Improves the autocomplete support (for other mods relying on this feature).
 	- Removes the setting `command_delay` as obsolete since `wait` command works much better.
