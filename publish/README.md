@@ -81,6 +81,7 @@ Examples:
 	- `dev_config auto_fly 0`: Disables the auto_fly setting.
 	- `dev_config auto_fly 1`: Enables the auto fly setting.
 	- `server dev_config disable_debug_mode_keys defeated_eikthyr,defeated_gdking,defeated_bonemass,defeated_dragon,defeated_goblinking`: Prevents boss kill global keys being set on the server.
+	- `server dev_config disable_debug_mode_keys`: Prints currently disabled global keys.
 - `event [event] [x] [z]` allows setting the event coordinates.
 	- `event army_eikthyr`: Starts an event at your position.
 	- `event army_eikthyr 100 -100`: Starts an event at coordinates 100,-100.
@@ -88,7 +89,7 @@ Examples:
 - `hud [value]` allows directly setting the HUD visibility.
 - `move_spawn [x,z,y = player's coordinates]` allows moving the default spawn point.
 - `nomap [value] [server = 1]` allows directly setting the nomap mode and by default only affects the current server.
-	`nomap [value] 0`: Sets the nomap mode for the current character (for all servers).
+	- `nomap [value] 0`: Sets the nomap mode for the current character (for all servers).
 - `pos [player name]` allows getting the position of any player.
 	- `pos`: Returns your position.
 	- `pos jay`: Returns the position of a player named Jay,Heyjay or whatever is the closest match.
@@ -105,8 +106,7 @@ Examples:
 - `seed` prints the world seed.
 - `server [command]` executes given command on the server.
 	- `server dev_config disable_command event`: Disables usage of `event` command for non-root users.
-- `tutorialtoggle [value]` allows directly setting the value.
-	- `dev_config auto_exec tutorialtoggle 0`: Automatically disables tutorials.
+	- `server dev_config disable_events 1`: Disables random events.
 - `unbind [keycode] [amount=0]` allows specifying how many binds are removed. Also prints removed binds.
 	- `unbind wheel`: Removes all binds from the mouse wheel.
 	- `unbind wheel 0`: Removes all binds from the mouse wheel.
@@ -146,8 +146,9 @@ Recommended way is to use the commands since you can configure the server and al
 - Automatic god mode (default `false`, key: `auto_god`): Automatically turns god mode on/off when devcommands are enabled or disabled.
 - Automatic no cost mode (default `false`, key: `auto_nocost`): Automatically turns no cost mode on/off when devcommands are enabled or disabled.
 - Disabled global keys (default ` `, key: `disable_global_key`): Global keys separated by , that can't be set (server side).
-- Disable start shout (default `false`, key: `disable_start_shout`): Removes the initial shout message when joining the server.
 - Disable random events (default `false`, key: `disable_events`): Prevents random events from happening (server side setting).
+- Disable start shout (default `false`, key: `disable_start_shout`): Removes the initial shout message when joining the server.
+- Disable tutorials (default `false`, key: `disable_tutorials`): Prevents the raven from appearing.
 - Invisible to players with ghost mode (default `false`, key: `ghost_invisibility`): Invisible to other players with ghost mode.
 - No clip with fly mode (default `false`, key: `fly_no_clip`): Removes collision check with fly mode.
 - No creature drops (default `false`, key: `no_drops`): Prevents creatures from dropping loot, can be useful if people accidentally spawn very high star creatures. Only works when as the zone owner.
@@ -192,6 +193,7 @@ Recommended to keep all settings on default values, unless there are errors or m
 	- Adds a new setting `disable_debug_mode_keys` to remove hardcoded debug mode key bindings (default `false`).
 	- Adds a new setting `god_always_parry` to always parry with the god mode (default `false`).
 	- Adds a new setting `god_always_dodge` to always dodge with the god mode (default `false`).
+	- Adds a new setting `disable_tutorials` to prevent the raven from appearing (default `false`).
 	- Adds a new setting `fly_up_key` to allow rebinding it (default `jump`).
 	- Adds a new setting `fly_down_key` to allow rebinding it (default `leftcontrol`).
 	- Adds a new parameter to the `unbind` command which allows only removing some amount of binds.
@@ -205,8 +207,10 @@ Recommended to keep all settings on default values, unless there are errors or m
 	- Improves the autocomplete for the `alias`, `bind` and `server` commands.
 	- Improves the `dev_config` command to allow directly setting flags with values 1 and 0.
 	- Improves the `dev_config` command to work better when giving multiple values to some commands.
+	- Improves the `dev_config` command to print the current value for non-flags if no parameter is given..
 	- Improves the autocomplete support (for other mods relying on this feature).
 	- Removes the setting `command_delay` as obsolete since `wait` command works much better.
+	- Removes the custom command `tutorialtoggle` as obsolete since `disable_tutorials` setting works much better.
 	- Fixes command tab cycling breaking when cycling to an alias.
 	- Fixes incorrect autocomplete for aliases.
 	- Fixes modifier keys working incorrectly with multiple commands.

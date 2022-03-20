@@ -39,6 +39,7 @@ namespace ServerDevcommands {
       AutoComplete.RegisterEmpty("sit");
       AutoComplete.RegisterEmpty("thumbsup");
       AutoComplete.RegisterEmpty("tutorialreset");
+      AutoComplete.RegisterEmpty("tutorialtoggle");
       AutoComplete.RegisterEmpty("wave");
       AutoComplete.Register("W", (int index) => {
         if (index == 0) return ParameterInfo.PlayerNames;

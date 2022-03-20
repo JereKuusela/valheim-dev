@@ -38,7 +38,6 @@ namespace ServerDevcommands {
       new AliasCommand();
       new SearchIdCommand();
       new UndoRedoCommand();
-      new TutorialToggleCommand();
       new ResolutionCommand();
       new WaitCommand();
       new ServerCommand();

@@ -39,6 +39,8 @@ namespace ServerDevcommands {
     public static bool GodModeNoStagger => Cheats && configGodModeNoStagger.Value;
     public static ConfigEntry<bool> configDisableStartShout;
     public static bool DisableStartShout => configDisableStartShout.Value;
+    public static ConfigEntry<bool> configDisableTutorials;
+    public static bool DisableTutorials => configDisableTutorials.Value;
     public static ConfigEntry<bool> configFlyNoClip;
     public static bool FlyNoClip => Cheats && configFlyNoClip.Value;
     public static ConfigEntry<bool> configGodModeNoKnockback;
@@ -133,6 +135,7 @@ namespace ServerDevcommands {
       configGodModeAlwaysParry = config.Bind(section, "Always parry with god mode (when not blocking)", false, "");
       configGodModeNoStagger = config.Bind(section, "No staggering with god mode", true, "");
       configDisableStartShout = config.Bind(section, "Disable start shout", false, "Removes the initial shout message when joining the server.");
+      configDisableTutorials = config.Bind(section, "Disable tutorials", false, "Prevents the raven from appearing.");
       configFlyNoClip = config.Bind(section, "No clip with fly mode", false, "");
       configGodModeNoKnockback = config.Bind(section, "No knockback with god mode", true, "");
       configMapCoordinates = config.Bind(section, "Show map coordinates", true, "The map shows coordinates on hover.");
@@ -175,7 +178,7 @@ namespace ServerDevcommands {
       "god_no_knockback", "ghost_invibisility", "auto_exec_dev_on", "auto_exec_dev_off", "auto_exec_boot", "auto_exec",
       "command_descriptions", "server_commands", "fly_no_clip", "disable_command", "minimap_coordinates",
       "disable_global_key", "disable_debug_mode_keys", "god_always_parry", "god_always_dodge", "fly_up_key", "fly_down_key",
-      "disable_start_shout", "mouse_wheel_binding"
+      "disable_start_shout", "mouse_wheel_binding", "disable_tutorials"
     };
     private static string State(bool value) => value ? "enabled" : "disabled";
     private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -186,6 +189,10 @@ namespace ServerDevcommands {
       Helper.AddMessage(context, $"{name} {State(reverse ? !setting.Value : setting.Value)}.");
     }
     private static void ToggleFlag(Terminal context, ConfigEntry<string> setting, string name, string value) {
+      if (value == "") {
+        Helper.AddMessage(context, $"{name}: {setting.Value}\".");
+        return;
+      }
       var list = ParseList(setting.Value);
       var newList = ParseList(value);
       foreach (var flag in newList) {
@@ -196,31 +203,21 @@ namespace ServerDevcommands {
         Helper.AddMessage(context, $"{name}: {Flag(remove)} \"{flag}\".");
       }
     }
+    private static void SetValue(Terminal context, ConfigEntry<string> setting, string name, string value) {
+      if (value == "") {
+        Helper.AddMessage(context, $"{name}: {setting.Value}\".");
+        return;
+      }
+      setting.Value = value;
+      Helper.AddMessage(context, $"{name} set to {value}.");
+    }
     public static void UpdateValue(Terminal context, string key, string value) {
-      if (key == "fly_up_key") {
-        configFlyUpKey.Value = value;
-        Helper.AddMessage(context, $"{key} set to {value}.");
-      }
-      if (key == "fly_down_key") {
-        configFlyDownKey.Value = value;
-        Helper.AddMessage(context, $"{key} set to {value}.");
-      }
-      if (key == "auto_exec_dev_on") {
-        configAutoExecDevOn.Value = value;
-        Helper.AddMessage(context, $"{key} set to {value}.");
-      }
-      if (key == "auto_exec_dev_off") {
-        configAutoExecDevOff.Value = value;
-        Helper.AddMessage(context, $"{key} set to {value}.");
-      }
-      if (key == "auto_exec_boot") {
-        configAutoExecBoot.Value = value;
-        Helper.AddMessage(context, $"{key} set to {value}.");
-      }
-      if (key == "auto_exec") {
-        configAutoExec.Value = value;
-        Helper.AddMessage(context, $"{key} set to {value}.");
-      }
+      if (key == "fly_up_key") SetValue(context, configFlyUpKey, key, value);
+      if (key == "fly_down_key") SetValue(context, configFlyDownKey, key, value);
+      if (key == "auto_exec_dev_on") SetValue(context, configAutoExecDevOn, key, value);
+      if (key == "auto_exec_dev_off") SetValue(context, configAutoExecDevOff, key, value);
+      if (key == "auto_exec_boot") SetValue(context, configAutoExecBoot, key, value);
+      if (key == "auto_exec") SetValue(context, configAutoExec, key, value);
       if (key == "command_descriptions") Toggle(context, configCommandDescriptions, "Command descriptions", value);
       if (key == "map_coordinates") Toggle(context, configMapCoordinates, "Map coordinates", value);
       if (key == "minimap_coordinates") Toggle(context, configMiniMapCoordinates, "Minimap coordinates", value);
@@ -251,6 +248,7 @@ namespace ServerDevcommands {
       if (key == "god_always_parry") Toggle(context, configGodModeAlwaysParry, "Always parry with god mode", value);
       if (key == "god_always_dodge") Toggle(context, configGodModeAlwaysDodge, "Always dodge with god mode", value);
       if (key == "disable_start_shout") Toggle(context, configDisableStartShout, "Start shout", value, true);
+      if (key == "disable_tutorials") Toggle(context, configDisableTutorials, "Tutorials", value, true);
       if (key == "mouse_wheel_binding") Toggle(context, configMouseWheelBinding, "Mouse wheel binding", value);
     }
   }
