@@ -6,14 +6,14 @@ namespace ServerDevcommands {
   [HarmonyPatch(typeof(Minimap), nameof(Minimap.UpdateBiome))]
 
   public class Minimap_ShowPos {
-    public static void Prefix(Minimap __instance) {
+    static void Prefix(Minimap __instance) {
       __instance.m_biomeNameSmall.text = Localization.instance.Localize("$biome_" + __instance.m_biome.ToString().ToLower());
     }
     private static void AddText(UnityEngine.UI.Text input, string text) {
       if (input.text.EndsWith(text)) return;
       input.text = $"\n\n{input.text}{text}";
     }
-    public static void Postfix(Minimap __instance, Player player) {
+    static void Postfix(Minimap __instance, Player player) {
       if (!Settings.MiniMapCoordinates && !Settings.MapCoordinates) return;
       var mode = __instance.m_mode;
       var position = player.transform.position;

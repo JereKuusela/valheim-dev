@@ -6,7 +6,7 @@ using UnityEngine;
 namespace ServerDevcommands {
   [HarmonyPatch(typeof(Character), nameof(Character.UpdateDebugFly))]
   public class FlyBindDescend {
-    public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+    static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
       return new CodeMatcher(instructions)
             .MatchForward(
                 useEnd: false,

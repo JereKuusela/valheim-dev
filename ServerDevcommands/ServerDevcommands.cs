@@ -30,7 +30,7 @@ namespace ServerDevcommands {
 
   [HarmonyPatch(typeof(Terminal), nameof(Terminal.InitTerminal))]
   public class SetCommands {
-    public static void Postfix() {
+    static void Postfix() {
       new DevcommandsCommand();
       new ConfigCommand();
       new StartEventCommand();

@@ -79,7 +79,7 @@ namespace ServerDevcommands {
 
   [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_RemotePrint))]
   public class ZNet_RPC_RemotePrint {
-    public static bool Prefix(string text) {
+    static bool Prefix(string text) {
       if (!Admin.Checking) return true;
       Admin.Verify(text);
       return false;
@@ -89,13 +89,13 @@ namespace ServerDevcommands {
   ///<summary>Check admin status on connect to ensure features are enabled/disabled when changing servers.</summary>
   [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_PeerInfo))]
   public class AdminReset {
-    public static void Postfix() {
+    static void Postfix() {
       if (ZNet.m_connectionStatus == ZNet.ConnectionStatus.Connected) Admin.Reset(Console.instance);
     }
   }  ///<summary>Check admin status on connect to ensure features are enabled/disabled when changing servers.</summary>
   [HarmonyPatch(typeof(Player), nameof(Player.OnSpawned))]
   public class AdminCheck {
-    public static void Postfix() {
+    static void Postfix() {
       if (!Admin.Checking) Admin.AutomaticCheck(Console.instance);
     }
   }

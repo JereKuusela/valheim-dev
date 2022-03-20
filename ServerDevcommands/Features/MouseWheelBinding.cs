@@ -27,21 +27,21 @@ namespace ServerDevcommands {
 
   [HarmonyPatch(typeof(Player), nameof(Player.UpdatePlacement))]
   public class PreventRotation {
-    public static void Prefix(Player __instance, ref int __state) {
+    static void Prefix(Player __instance, ref int __state) {
       __state = __instance.m_placeRotation;
     }
-    public static void Postfix(Player __instance, int __state) {
+    static void Postfix(Player __instance, int __state) {
       if (MouseWheelBinding.CouldExecute())
         __instance.m_placeRotation = __state;
     }
   }
   [HarmonyPatch(typeof(Player), nameof(Player.UpdatePlacementGhost))]
   public class PreventGhostRotation {
-    public static void Prefix(Player __instance, ref Quaternion __state) {
+    static void Prefix(Player __instance, ref Quaternion __state) {
       if (__instance.m_placementGhost)
         __state = __instance.m_placementGhost.transform.rotation;
     }
-    public static void Postfix(Player __instance, Quaternion __state) {
+    static void Postfix(Player __instance, Quaternion __state) {
       if (__instance.m_placementGhost && MouseWheelBinding.CouldExecute())
         __instance.m_placementGhost.transform.rotation = __state;
     }
@@ -57,6 +57,6 @@ namespace ServerDevcommands {
       harmony.Patch(mOriginal, new HarmonyMethod(mPrefix));
     }
 
-    public static bool Prefix() => !MouseWheelBinding.CouldExecute();
+    static bool Prefix() => !MouseWheelBinding.CouldExecute();
   }
 }

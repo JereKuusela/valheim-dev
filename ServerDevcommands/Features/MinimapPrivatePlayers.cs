@@ -8,7 +8,7 @@ namespace ServerDevcommands {
   ///<summary>Server side code to include private player positions.</summary>
   [HarmonyPatch(typeof(ZNet), nameof(ZNet.UpdatePlayerList))]
   public class Server_UpdatePrivatePositions {
-    public static void Postfix(ZNet __instance) {
+    static void Postfix(ZNet __instance) {
       if (!__instance.IsServer() || !Settings.ShowPrivatePlayers) return;
       var idToPeer = __instance.m_peers.Where(peer => peer.IsReady() && peer.m_characterID != ZDOID.None).ToDictionary(peer => peer.m_characterID, peer => peer);
       for (var i = 0; i < __instance.m_players.Count; i++) {
@@ -44,7 +44,7 @@ namespace ServerDevcommands {
         rpc.Invoke("DEV_PrivatePlayerList", new object[] { pkg });
       }
     }
-    public static void Postfix(ZNet __instance) {
+    static void Postfix(ZNet __instance) {
       if (!__instance.IsServer() || !Settings.ShowPrivatePlayers) return;
       if (__instance.m_peers.Count == 0) return;
       SendToAdmins(__instance);
@@ -73,7 +73,7 @@ namespace ServerDevcommands {
         obj.m_players.Add(playerInfo);
       }
     }
-    public static void Postfix(ZNet __instance, ZRpc rpc) {
+    static void Postfix(ZNet __instance, ZRpc rpc) {
       if (__instance.IsServer()) return;
       rpc.Register<ZPackage>("DEV_PrivatePlayerList", new Action<ZRpc, ZPackage>(RPC_PrivatePlayerList));
     }
@@ -82,12 +82,12 @@ namespace ServerDevcommands {
   [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_PlayerList))]
   public class IgnoreDefaultList {
     public static bool Active = false;
-    public static bool Prefix(ZNet __instance, ZRpc rpc) => !Active;
+    static bool Prefix(ZNet __instance, ZRpc rpc) => !Active;
   }
   ///<summary>Remove filtering from the map.</summary>
   [HarmonyPatch(typeof(ZNet), "GetOtherPublicPlayers")]
   public class IncludePrivatePlayersInTheMap {
-    public static void Postfix(ZNet __instance, List<ZNet.PlayerInfo> playerList) {
+    static void Postfix(ZNet __instance, List<ZNet.PlayerInfo> playerList) {
       if (!Settings.ShowPrivatePlayers) return;
       foreach (var playerInfo in __instance.m_players) {
         if (playerInfo.m_publicPosition) continue;
@@ -101,7 +101,7 @@ namespace ServerDevcommands {
   ///<summary>Simple way to distinguish private players.</summary>
   [HarmonyPatch(typeof(Minimap), nameof(Minimap.UpdatePlayerPins))]
   public class AddCheckedToPrivatePlayers {
-    public static void Postfix(Minimap __instance) {
+    static void Postfix(Minimap __instance) {
       if (!Settings.ShowPrivatePlayers) return;
       for (int i = 0; i < __instance.m_tempPlayerInfo.Count; i++) {
         var pin = __instance.m_playerPins[i];

@@ -125,7 +125,7 @@ namespace ServerDevcommands {
       }
       return AutoComplete.GetOptions(commandName, index, subIndex, name);
     }
-    public static bool Prefix(ref List<string> __result) {
+    static bool Prefix(ref List<string> __result) {
       // While executing, options are used to make the first parameter case insensitive. So the default options should be returned.
       if (TerminalUtils.IsExecuting) return true;
       if (!Settings.ImprovedAutoComplete) return true;
@@ -147,7 +147,7 @@ namespace ServerDevcommands {
 
   [HarmonyPatch(typeof(Terminal), nameof(Terminal.tabCycle))]
   public class TabCycleWithImprovedAutoComplete {
-    public static void Prefix(Terminal __instance, ref List<string> options, ref string word) {
+    static void Prefix(Terminal __instance, ref List<string> options, ref string word) {
       if (!Settings.ImprovedAutoComplete) return;
       // Auto complete is parameter specific, so need to use the current word instead of always using the first.
       word = TerminalUtils.GetLastWord(__instance);
@@ -159,13 +159,13 @@ namespace ServerDevcommands {
 
   [HarmonyPatch(typeof(Terminal), nameof(Terminal.updateSearch))]
   public class UpdateSearchWithImprovedAutoComplete {
-    public static void Prefix(Terminal __instance, ref string word) {
+    static void Prefix(Terminal __instance, ref string word) {
       if (!Settings.ImprovedAutoComplete || !__instance.m_search) return;
       // Auto complete is parameter specific, so need to use the current word instead of always using the first.
       word = TerminalUtils.GetLastWord(__instance);
 
     }
-    public static void Postfix(Terminal __instance, List<string> options, ref string word) {
+    static void Postfix(Terminal __instance, List<string> options, ref string word) {
       if (!Settings.ImprovedAutoComplete || options == null || !__instance.m_search) return;
       if (Settings.CommandDescriptions && options == __instance.m_commandList) {
         if (Terminal.commands.TryGetValue(word, out var command))

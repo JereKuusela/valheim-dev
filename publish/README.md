@@ -161,7 +161,7 @@ Recommended way is to use the commands since you can configure the server and al
 
 ## Console
 
-Recommended to keep all settings on default values, unless there are errors or mod conflicts.
+Recommended to keep all features on, unless there are errors or mod conflicts.
 
 - Alias system (default `true`, key: `aliasing`): Enables command aliasing.
 - Auto exec (key: `auto_exec`): Executes the given command when joining a server (before admin is checked).
@@ -207,7 +207,7 @@ Recommended to keep all settings on default values, unless there are errors or m
 	- Improves the autocomplete for the `alias`, `bind` and `server` commands.
 	- Improves the `dev_config` command to allow directly setting flags with values 1 and 0.
 	- Improves the `dev_config` command to work better when giving multiple values to some commands.
-	- Improves the `dev_config` command to print the current value for non-flags if no parameter is given..
+	- Improves the `dev_config` command to print the current value for non-flags if no parameter is given.
 	- Improves the autocomplete support (for other mods relying on this feature).
 	- Removes the setting `command_delay` as obsolete since `wait` command works much better.
 	- Removes the custom command `tutorialtoggle` as obsolete since `disable_tutorials` setting works much better.

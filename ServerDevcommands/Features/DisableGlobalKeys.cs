@@ -4,7 +4,7 @@ using HarmonyLib;
 namespace ServerDevcommands {
   [HarmonyPatch(typeof(ZoneSystem), nameof(ZoneSystem.RPC_SetGlobalKey))]
   public class DisableGlobalKeys {
-    public static bool Prefix(string name) => !Settings.IsGlobalKeyDisabled(name);
+    static bool Prefix(string name) => !Settings.IsGlobalKeyDisabled(name);
 
     public static void RemoveDisabled() {
       if (!ZNet.instance || !ZNet.instance.IsServer()) return;

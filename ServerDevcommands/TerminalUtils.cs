@@ -97,7 +97,7 @@ namespace ServerDevcommands {
   [HarmonyPatch(typeof(Terminal), nameof(Terminal.TryRunCommand))]
   public class TryRunCommand {
 
-    public static bool Prefix(Terminal __instance, ref string text) {
+    static bool Prefix(Terminal __instance, ref string text) {
       // Alias and bind can contain any kind of commands so avoid any processing.
       if (TerminalUtils.SkipProcessing(text)) return true;
       if (!ModifierKeys.IsValid(text)) return false;
@@ -135,7 +135,7 @@ namespace ServerDevcommands {
   [HarmonyPatch(typeof(Terminal), nameof(Terminal.UpdateInput))]
   public class AliasInput {
     private static string LastActual = "";
-    public static bool Prefix(Terminal __instance, ref string __state) {
+    static bool Prefix(Terminal __instance, ref string __state) {
       // Safe-guard because actions need different kind of input.
       if (Input.GetKeyDown(KeyCode.Return) && Input.GetKeyDown(KeyCode.Tab)) return false;
       // For execution, keep the actual input so that the history is saved properly.
@@ -153,7 +153,7 @@ namespace ServerDevcommands {
       }
       return true;
     }
-    public static void Postfix(Terminal __instance) {
+    static void Postfix(Terminal __instance) {
       // Same logic as on Prefix.
       if (Input.GetKeyDown(KeyCode.Return) || ZInput.GetButtonDown("ChatUp") || ZInput.GetButtonDown("ChatDown")) return;
       TerminalUtils.ToActualInput(__instance);
@@ -164,8 +164,8 @@ namespace ServerDevcommands {
   ///<summary>Needed to temporarily disable better autocomplete to provide case insensitivity for the first parameter.</summary>
   [HarmonyPatch(typeof(Terminal.ConsoleCommand), nameof(Terminal.ConsoleCommand.RunAction))]
   public class RunAction {
-    public static void Prefix() => TerminalUtils.IsExecuting = true;
-    public static void Postfix() => TerminalUtils.IsExecuting = false;
+    static void Prefix() => TerminalUtils.IsExecuting = true;
+    static void Postfix() => TerminalUtils.IsExecuting = false;
 
   }
 }

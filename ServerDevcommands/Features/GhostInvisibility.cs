@@ -5,7 +5,7 @@ namespace ServerDevcommands {
   [HarmonyPatch(typeof(ZDOMan), nameof(ZDOMan.SendZDOs))]
   public class SendZDOsWithGhostMode {
     public static float? Previous = null;
-    public static void Prefix() {
+    static void Prefix() {
       if (!Player.m_localPlayer || !Player.m_localPlayer.m_nview) return;
       if (Player.m_localPlayer.InGhostMode() && Settings.GhostInvisibility) {
         var zdo = Player.m_localPlayer.m_nview.GetZDO();
@@ -19,7 +19,7 @@ namespace ServerDevcommands {
         }
       }
     }
-    public static void Postfix() {
+    static void Postfix() {
       if (!Player.m_localPlayer || !Player.m_localPlayer.m_nview) return;
       if (Previous.HasValue) {
         Player.m_localPlayer.m_nview.GetZDO().m_position.y = Previous.Value;
@@ -31,14 +31,14 @@ namespace ServerDevcommands {
   [HarmonyPatch(typeof(ZNet), nameof(ZNet.SendPeriodicData))]
   public class SendPeriodicDataWithGhostMode {
     public static bool? Previous = null;
-    public static void Prefix(ZNet __instance) {
+    static void Prefix(ZNet __instance) {
       if (!Player.m_localPlayer || !Player.m_localPlayer.m_nview) return;
       if (Player.m_localPlayer.InGhostMode() && Settings.GhostInvisibility) {
         Previous = __instance.m_publicReferencePosition;
         __instance.m_publicReferencePosition = false;
       }
     }
-    public static void Postfix(ZNet __instance) {
+    static void Postfix(ZNet __instance) {
       if (Previous.HasValue) {
         __instance.m_publicReferencePosition = Previous.Value;
         Previous = null;
