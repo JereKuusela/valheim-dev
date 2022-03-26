@@ -27,7 +27,7 @@ namespace ServerDevcommands {
       if (!Terminal.commands.ContainsKey(command)) return ParameterInfo.None;
       var fetcher = Terminal.commands[command].m_tabOptionsFetcher;
       if (fetcher != null) return fetcher();
-      return ParameterInfo.None;
+      return ParameterInfo.Missing;
     }
     ///<summary>Registers a new custom options fetcher.</summary>
     public static void Register(string command, OptionsFetcher fetcher, NamedOptionsFetchers namedFetchers) {

@@ -137,69 +137,73 @@ Recommended way is to use the commands since you can configure the server and al
 
 ## General
 
-- Always dodge with god mode (default `false`, key: `god_always_dodge`): Automatically dodges with the god mode.
-- Always parry with god mode (default `false`, key: `god_always_parry`): Automatically parries with the god mode when not blocking.
-- Automatic debug mode (default `false`, key: `auto_debugmode`): Automatically turns debug mode on/off when devcommands are enabled or disabled.
-- Automatic devcommands (default `true`, key: `auto_devcommands`): Automatically tries to enable devcommands when joining servers.
-- Automatic fly mode (default `false`, key: `auto_fly`): Automatically turns fly mode on/off when devcommands are enabled or disabled.
-- Automatic ghost mode (default `false`, key: `auto_ghost`): Automatically turns ghost mode on/off when devcommands are enabled or disabled.
-- Automatic god mode (default `false`, key: `auto_god`): Automatically turns god mode on/off when devcommands are enabled or disabled.
-- Automatic no cost mode (default `false`, key: `auto_nocost`): Automatically turns no cost mode on/off when devcommands are enabled or disabled.
-- Disabled global keys (default ` `, key: `disable_global_key`): Global keys separated by , that can't be set (server side).
-- Disable random events (default `false`, key: `disable_events`): Prevents random events from happening (server side setting).
-- Disable start shout (default `false`, key: `disable_start_shout`): Removes the initial shout message when joining the server.
-- Disable tutorials (default `false`, key: `disable_tutorials`): Prevents the raven from appearing.
-- Invisible to players with ghost mode (default `false`, key: `ghost_invisibility`): Invisible to other players with ghost mode.
-- No clip with fly mode (default `false`, key: `fly_no_clip`): Removes collision check with fly mode.
-- No creature drops (default `false`, key: `no_drops`): Prevents creatures from dropping loot, can be useful if people accidentally spawn very high star creatures. Only works when as the zone owner.
-- No knockback with god mode (default `true`, key: `god_no_knockback`): Removes knockback for an even godlier god mode.
-- No staggering with god mode (default `true`, key: `god_no_stagger`): Removes staggering for an even godlier god mode.
-- No stamina usage with god mode (default `true`, key: `god_no_stamina`): Removes the stamina usage for an even godlier god mode.
-- No weight limit with god mode (default `false`, key: `god_no_weight_limit`): Removes the weight limit for an even godlier god mode.
-- Show map coordinates (default `true`, key: `map_coordinates`): Shows cursor coordinates when hovering the map.
-- Show minimap coordinates (default `false`, key: `minimap_coordinates`): Shows player coordinates on the minimap.
-- Show private players (default `false`, key: `private_players`): Shows players on the map even if they have set their position as private. Must be enabled both client and server side to work (admins can individually keep the feature off even when enabled from the server). 
+- Always dodge with god mode (default: `false`, key: `god_always_dodge`): Automatically dodges with the god mode.
+- Always parry with god mode (default: `false`, key: `god_always_parry`): Automatically parries with the god mode when not blocking.
+- Automatic debug mode (default: `false`, key: `auto_debugmode`): Automatically turns debug mode on/off when devcommands are enabled or disabled.
+- Automatic devcommands (default: `true`, key: `auto_devcommands`): Automatically tries to enable devcommands when joining servers.
+- Automatic fly mode (default: `false`, key: `auto_fly`): Automatically turns fly mode on/off when devcommands are enabled or disabled.
+- Automatic ghost mode (default: `false`, key: `auto_ghost`): Automatically turns ghost mode on/off when devcommands are enabled or disabled.
+- Automatic god mode (default: `false`, key: `auto_god`): Automatically turns god mode on/off when devcommands are enabled or disabled.
+- Automatic no cost mode (default: `false`, key: `auto_nocost`): Automatically turns no cost mode on/off when devcommands are enabled or disabled.
+- Disabled global keys (default: ` `, key: `disable_global_key`): Global keys separated by , that can't be set (server side).
+- Disable random events (default: `false`, key: `disable_events`): Prevents random events from happening (server side setting).
+- Disable start shout (default: `false`, key: `disable_start_shout`): Removes the initial shout message when joining the server.
+- Disable tutorials (default: `false`, key: `disable_tutorials`): Prevents the raven from appearing.
+- Invisible to players with ghost mode (default: `false`, key: `ghost_invisibility`): Invisible to other players with ghost mode.
+- No clip with fly mode (default: `false`, key: `fly_no_clip`): Removes collision check with fly mode.
+- No creature drops (default: `false`, key: `no_drops`): Prevents creatures from dropping loot, can be useful if people accidentally spawn very high star creatures. Only works when as the zone owner.
+- No knockback with god mode (default: `true`, key: `god_no_knockback`): Removes knockback for an even godlier god mode.
+- No staggering with god mode (default: `true`, key: `god_no_stagger`): Removes staggering for an even godlier god mode.
+- No stamina usage with god mode (default: `true`, key: `god_no_stamina`): Removes the stamina usage for an even godlier god mode.
+- No weight limit with god mode (default: `false`, key: `god_no_weight_limit`): Removes the weight limit for an even godlier god mode.
+- Show map coordinates (default: `true`, key: `map_coordinates`): Shows cursor coordinates when hovering the map.
+- Show minimap coordinates (default: `false`, key: `minimap_coordinates`): Shows player coordinates on the minimap.
+- Show private players (default: `false`, key: `private_players`): Shows players on the map even if they have set their position as private. Must be enabled both client and server side to work (admins can individually keep the feature off even when enabled from the server). 
 
 ## Console
 
 Recommended to keep all features on, unless there are errors or mod conflicts.
 
-- Alias system (default `true`, key: `aliasing`): Enables command aliasing.
+- Alias system (default: `true`, key: `aliasing`): Enables command aliasing.
 - Auto exec (key: `auto_exec`): Executes the given command when joining a server (before admin is checked).
 - Auto exec boot (key: `auto_exec_boot`): Executes the given command when starting the game.
 - Auto exec dev off (key: `auto_exec_dev_off`): Executes the given command when disabling devcommands.
 - Auto exec dev on (key: `auto_exec_dev_off`): Executes the given command when enabling devcommands.
 - Command aliases: Saved command aliases.
-- Command descriptions (default `true`, key: `command_descriptions`): Shows command descriptions as autocomplete.
-- Debug console (default `false`, key: `debug_console`): Prints debug output to the console related to aliasing and parameter substitution.
-- Disable debug mode keys (default `false`, key: `disable_debug_mode_keys`): Removes debug mode key bindings for killall, removedrops, fly and no cost.
-- Disable parameter warnings (default `false`, key: `disable_warnings`): Removes warning texts from some command parameter descriptions.
-- Disabled commands (default `dev_config disable_command`, key: `disable_command`): Command names separated by , that can't be executed. Mainly useful on the server to prevent some server-side commands.
-- Fly down key (default `leftcontrol`, key: `fly_down_key`): Changes the key command for flying down. Multiple keys are supported (see Bind section for more info).
-- Fly up key (default `space`, key: `fly_up_key`): Changes the key command for flying up. Multiple keys are supported (see Bind section for more info).
-- Improved auto complete (default `true`, key: `improved_autocomplete`): Enables parameter info or options for every parameter.
-- Mouse wheel binding (default `true`, key: `mouse_wheel_binding`): Enables binding to the mouse wheel with `wheel` keycode.
-- Multiple commands per line (default `true`, key: `multiple_commands`): Enables multiple commands per line (when separate by `;`).
-- Root users (default ` `): Steam IDs separated by , that can execute blacklisted commands. Can't be set with `dev_config` command.
-- Substitution system (default `true`, key: `substitution`): Enables parameter substitution (with `$`).
-- Server side commands (default `randomevent,stopevent,genloc,sleep,skiptime`, key: `server_commands`): Names of commands that should be automatically executed on the server. `event` command is not included because it has a custom server-side support.
+- Command descriptions (default: `true`, key: `command_descriptions`): Shows command descriptions as autocomplete.
+- Debug console (default: `false`, key: `debug_console`): Prints debug output to the console related to aliasing and parameter substitution.
+- Disable debug mode keys (default: `false`, key: `disable_debug_mode_keys`): Removes debug mode key bindings for killall, removedrops, fly and no cost.
+- Disable parameter warnings (default: `false`, key: `disable_warnings`): Removes warning texts from some command parameter descriptions.
+- Disabled commands (default: `dev_config disable_command`, key: `disable_command`): Command names separated by , that can't be executed. Mainly useful on the server to prevent some server-side commands.
+- Fly down key (default: `leftcontrol`, key: `fly_down_key`): Changes the key command for flying down. Multiple keys are supported (see Bind section for more info).
+- Fly up key (default: `space`, key: `fly_up_key`): Changes the key command for flying up. Multiple keys are supported (see Bind section for more info).
+- Improved auto complete (default: `true`, key: `improved_autocomplete`): Enables parameter info or options for every parameter.
+- Mouse wheel binding (default: `true`, key: `mouse_wheel_binding`): Enables binding to the mouse wheel with `wheel` keycode.
+- Multiple commands per line (default: `true`, key: `multiple_commands`): Enables multiple commands per line (when separate by `;`).
+- Root users (default: ` `): Steam IDs separated by , that can execute blacklisted commands. Can't be set with `dev_config` command.
+- Substitution system (default: `true`, key: `substitution`): Enables parameter substitution (with `$`).
+- Server side commands (default: `randomevent,stopevent,genloc,sleep,skiptime`, key: `server_commands`): Names of commands that should be automatically executed on the server. `event` command is not included because it has a custom server-side support.
 
 # Changelog
+
+- v1.13:
+	- Fixes the `dev_config` command output having extra " characters.
+	- Fixes the autocomplete showing error when no autocomplete is available.
 
 - v1.12:
 	- Adds a new command `broadcast` to broadcast messages.
 	- Adds a new command `move_spawn` to change the server's default spawn point.
 	- Adds a new command `seed` to print the seed.
-	- Adds a new setting `disable_start_shout` to remove the initial shout message (default `false`).
-	- Adds a new setting `disable_debug_mode_keys` to remove hardcoded debug mode key bindings (default `false`).
-	- Adds a new setting `god_always_parry` to always parry with the god mode (default `false`).
-	- Adds a new setting `god_always_dodge` to always dodge with the god mode (default `false`).
-	- Adds a new setting `disable_tutorials` to prevent the raven from appearing (default `false`).
-	- Adds a new setting `god_no_weight_limit` to remove weight limit with the god mode (default `false`).
-	- Adds a new setting `fly_up_key` to allow rebinding it (default `jump`).
-	- Adds a new setting `fly_down_key` to allow rebinding it (default `leftcontrol`).
+	- Adds a new setting `disable_start_shout` to remove the initial shout message (default: `false`).
+	- Adds a new setting `disable_debug_mode_keys` to remove hardcoded debug mode key bindings (default: `false`).
+	- Adds a new setting `god_always_parry` to always parry with the god mode (default: `false`).
+	- Adds a new setting `god_always_dodge` to always dodge with the god mode (default: `false`).
+	- Adds a new setting `disable_tutorials` to prevent the raven from appearing (default: `false`).
+	- Adds a new setting `god_no_weight_limit` to remove weight limit with the god mode (default: `false`).
+	- Adds a new setting `fly_up_key` to allow rebinding it (default: `jump`).
+	- Adds a new setting `fly_down_key` to allow rebinding it (default: `leftcontrol`).
 	- Adds a new parameter to the `unbind` command which allows only removing some amount of binds.
-	- Adds a new setting `mouse_wheel_binding` for the mouse wheel binding (default `true`).
+	- Adds a new setting `mouse_wheel_binding` for the mouse wheel binding (default: `true`).
 	- Adds support for binding commands to the mouse wheel (with `wheel` key code).
 	- Changes default scale format from x,z,y to x,y,z (for other mods).
 	- Changes the `bind` command to accept modifier keys on the first parameter (keycode,modifier1,modifier2,).

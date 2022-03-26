@@ -193,7 +193,7 @@ namespace ServerDevcommands {
     }
     private static void ToggleFlag(Terminal context, ConfigEntry<string> setting, string name, string value) {
       if (value == "") {
-        Helper.AddMessage(context, $"{name}: {setting.Value}\".");
+        Helper.AddMessage(context, $"{name}: {setting.Value}.");
         return;
       }
       var list = ParseList(setting.Value);
@@ -203,12 +203,12 @@ namespace ServerDevcommands {
         if (remove) list.Remove(flag);
         else list.Add(flag);
         setting.Value = string.Join(",", list);
-        Helper.AddMessage(context, $"{name}: {Flag(remove)} \"{flag}\".");
+        Helper.AddMessage(context, $"{name}: {Flag(remove)} {flag}.");
       }
     }
     private static void SetValue(Terminal context, ConfigEntry<string> setting, string name, string value) {
       if (value == "") {
-        Helper.AddMessage(context, $"{name}: {setting.Value}\".");
+        Helper.AddMessage(context, $"{name}: {setting.Value}.");
         return;
       }
       setting.Value = value;

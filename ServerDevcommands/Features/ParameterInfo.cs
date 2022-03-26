@@ -130,6 +130,7 @@ namespace ServerDevcommands {
     public static List<string> CreateWithMinMax(string name, string value, string description) => Create($"{name}=<color=yellow>{value}</color> or {name}=<color=yellow>min-max</color> | {description}");
     public static List<string> Create(string values, string description) => Create($"{values} | {description}");
     public static List<string> None = Error("Too many parameters!");
+    public static List<string> Missing = Create("No autocomplete available.");
     public static List<string> InvalidNamed(string name) => Error($"Invalid named parameter {name}!");
     public static List<string> Flag(string name) => Error($"{name} is a flag so it doesn't have any arguments!");
     public static List<string> XZY(string name, string description, int index) {
