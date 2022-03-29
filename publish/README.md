@@ -144,6 +144,7 @@ Recommended way is to use the commands since you can configure the server and al
 - Automatic fly mode (default: `false`, key: `auto_fly`): Automatically turns fly mode on/off when devcommands are enabled or disabled.
 - Automatic ghost mode (default: `false`, key: `auto_ghost`): Automatically turns ghost mode on/off when devcommands are enabled or disabled.
 - Automatic god mode (default: `false`, key: `auto_god`): Automatically turns god mode on/off when devcommands are enabled or disabled.
+- Automatic item pick up (default: `true`, key: `automatic_item_pick_up`): Sets the default value for the automatic item pick up feature.
 - Automatic no cost mode (default: `false`, key: `auto_nocost`): Automatically turns no cost mode on/off when devcommands are enabled or disabled.
 - Disabled global keys (default: ` `, key: `disable_global_key`): Global keys separated by , that can't be set (server side).
 - Disable random events (default: `false`, key: `disable_events`): Prevents random events from happening (server side setting).
@@ -187,6 +188,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 # Changelog
 
 - v1.13:
+	- Adds a new setting `automatic_item_pick_up ` to set the default value for the automatic pickup feature.
 	- Fixes the `dev_config` command output having extra " characters.
 	- Fixes the autocomplete showing error when no autocomplete is available.
 

@@ -19,6 +19,8 @@ namespace ServerDevcommands {
     public static bool AutoGodMode => configAutoGodMode.Value;
     public static ConfigEntry<bool> configAutoGhostMode;
     public static bool AutoGhostMode => configAutoGhostMode.Value;
+    public static ConfigEntry<bool> configAutomaticItemPickUp;
+    public static bool AutomaticItemPickUp => configAutomaticItemPickUp.Value;
     public static ConfigEntry<bool> configAutoNoCost;
     public static bool AutoNoCost => configAutoNoCost.Value;
     public static ConfigEntry<bool> configDisableEvents;
@@ -131,6 +133,10 @@ namespace ServerDevcommands {
       configAutoNoCost = config.Bind(section, "Automatic no cost mode", false, "Automatically enables no cost mode when enabling devcommands.");
       configAutoGodMode = config.Bind(section, "Automatic god mode", false, "Automatically enables god mode when enabling devcommands.");
       configAutoGhostMode = config.Bind(section, "Automatic ghost mode", false, "Automatically enables ghost mode when enabling devcommands.");
+      configAutomaticItemPickUp = config.Bind(section, "Automatic item pick up", true, "Sets the default value for the automatic item pick up feature.");
+      configAutomaticItemPickUp.SettingChanged += (s, e) => {
+        if (Player.m_localPlayer) Player.m_localPlayer.m_enableAutoPickup = AutomaticItemPickUp;
+      };
       configAutoDevcommands = config.Bind(section, "Automatic devcommands", true, "Automatically enables devcommands when joining servers.");
       configGodModeNoStamina = config.Bind(section, "No stamina usage with god mode", true, "");
       configGodModeNoWeightLimit = config.Bind(section, "No weight limit with god mode", false, "");
@@ -181,7 +187,7 @@ namespace ServerDevcommands {
       "god_no_knockback", "ghost_invibisility", "auto_exec_dev_on", "auto_exec_dev_off", "auto_exec_boot", "auto_exec",
       "command_descriptions", "server_commands", "fly_no_clip", "disable_command", "minimap_coordinates",
       "disable_global_key", "disable_debug_mode_keys", "god_always_parry", "god_always_dodge", "fly_up_key", "fly_down_key",
-      "disable_start_shout", "mouse_wheel_binding", "disable_tutorials", "god_no_weight_limit"
+      "disable_start_shout", "mouse_wheel_binding", "disable_tutorials", "god_no_weight_limit", "automatic_item_pick_up"
     };
     private static string State(bool value) => value ? "enabled" : "disabled";
     private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -221,6 +227,7 @@ namespace ServerDevcommands {
       if (key == "auto_exec_dev_off") SetValue(context, configAutoExecDevOff, key, value);
       if (key == "auto_exec_boot") SetValue(context, configAutoExecBoot, key, value);
       if (key == "auto_exec") SetValue(context, configAutoExec, key, value);
+      if (key == "automatic_item_pick_up") Toggle(context, configAutomaticItemPickUp, "Automatic item pick up", value);
       if (key == "command_descriptions") Toggle(context, configCommandDescriptions, "Command descriptions", value);
       if (key == "map_coordinates") Toggle(context, configMapCoordinates, "Map coordinates", value);
       if (key == "minimap_coordinates") Toggle(context, configMiniMapCoordinates, "Minimap coordinates", value);

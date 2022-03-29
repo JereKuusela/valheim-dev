@@ -169,6 +169,18 @@ namespace ServerDevcommands {
       if (index == 2) return ParameterInfo.Create($"Y,X,<color=yellow>Z</color> | {description}.");
       return ParameterInfo.None;
     }
+    public static List<string> FRU(string name, string description, int index) {
+      if (index == 0) return ParameterInfo.Create($"{name}=<color=yellow>forward</color>,right,up | {description}.");
+      if (index == 1) return ParameterInfo.Create($"{name}=forward,<color=yellow>right</color>,up | {description}.");
+      if (index == 2) return ParameterInfo.Create($"{name}=forward,right,<color=yellow>up</color> | {description}.");
+      return ParameterInfo.None;
+    }
+    public static List<string> FRU(string description, int index) {
+      if (index == 0) return ParameterInfo.Create($"<color=yellow>forward</color>,right,up | {description}.");
+      if (index == 1) return ParameterInfo.Create($"forward,<color=yellow>right</color>,up | {description}.");
+      if (index == 2) return ParameterInfo.Create($"forward,right,<color=yellow>up</color> | {description}.");
+      return ParameterInfo.None;
+    }
     public static List<string> Scale(string name, string description, int index) {
       if (index == 0) return ParameterInfo.Create($"{name}=<color=yellow>number</color> or {XYZ(name, description, index)[0].Substring(0)}");
       return XYZ(name, description, index);

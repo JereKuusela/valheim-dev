@@ -136,8 +136,22 @@ namespace ServerDevcommands {
     public static Vector3 TryVectorXZY(string[] args, int index, Vector3 defaultValue) {
       var vector = Vector3.zero;
       vector.x = TryFloat(args, index, defaultValue.x);
-      vector.z = TryFloat(args, index + 1, defaultValue.z);
       vector.y = TryFloat(args, index + 2, defaultValue.y);
+      vector.z = TryFloat(args, index + 1, defaultValue.z);
+      return vector;
+    }
+    ///<summary>Parses ZXY vector starting at zero index. Zero is used for missing values.</summary>
+    public static Vector3 TryVectorZXY(string[] args) => TryVectorZXY(args, 0, Vector3.zero);
+    ///<summary>Parses ZXY vector starting at zero index. Default values is used for missing values.</summary>
+    public static Vector3 TryVectorZXY(string[] args, Vector3 defaultValue) => TryVectorZXY(args, 0, defaultValue);
+    ///<summary>Parses ZXY vector starting at given index. Zero is used for missing values.</summary>
+    public static Vector3 TryVectorZXY(string[] args, int index) => TryVectorZXY(args, index, Vector3.zero);
+    ///<summary>Parses ZXY vector starting at given index. Default values is used for missing values.</summary>
+    public static Vector3 TryVectorZXY(string[] args, int index, Vector3 defaultValue) {
+      var vector = Vector3.zero;
+      vector.x = TryFloat(args, index + 1, defaultValue.x);
+      vector.y = TryFloat(args, index + 2, defaultValue.y);
+      vector.z = TryFloat(args, index, defaultValue.z);
       return vector;
     }
     private static Range<Vector3> ToVectorRange(Range<float> x, Range<float> y, Range<float> z) {
