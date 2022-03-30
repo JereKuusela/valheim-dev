@@ -191,6 +191,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 	- Adds a new setting `automatic_item_pick_up ` to set the default value for the automatic pickup feature.
 	- Fixes the `dev_config` command output having extra " characters.
 	- Fixes the autocomplete showing error when no autocomplete is available.
+	- Fixes an error with the automatic parry.
 
 - v1.12:
 	- Adds a new command `broadcast` to broadcast messages.
