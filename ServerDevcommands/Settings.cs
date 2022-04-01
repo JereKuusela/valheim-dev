@@ -30,6 +30,8 @@ public static class Settings {
   public static bool DebugConsole => configDebugConsole.Value;
   public static ConfigEntry<bool> configAutoFly;
   public static bool AutoFly => configAutoFly.Value;
+  public static ConfigEntry<bool> configDisableMessages;
+  public static bool DisableMessages => configDisableMessages.Value;
   public static ConfigEntry<bool> configGodModeNoWeightLimit;
   public static bool GodModeNoWeightLimit => Cheats && configGodModeNoWeightLimit.Value;
   public static ConfigEntry<bool> configGodModeNoStamina;
@@ -154,6 +156,7 @@ public static class Settings {
     configDisabledGlobalKeys = config.Bind(section, "Disabled global keys", "", "Global keys separated by , that won't be set (server side setting).");
     configDisabledGlobalKeys.SettingChanged += (s, e) => DisableGlobalKeys.RemoveDisabled();
     section = "2. Console";
+    configDisableMessages = config.Bind(section, "Disable messages", false, "Prevents messages from commands.");
     configServerCommands = config.Bind(section, "Server side commands", "randomevent,stopevent,genloc,sleep,skiptime", "Command names separated by , that should be executed server side.");
     configMouseWheelBinding = config.Bind(section, "Mouse wheel binding", true, "Allows binding to the custom wheel keycode.");
     configAutoExecBoot = config.Bind(section, "Auto exec boot", "", "Executes the given command when starting the game.");
@@ -219,7 +222,8 @@ public static class Settings {
     "mouse_wheel_binding",
     "disable_tutorials",
     "god_no_weight_limit",
-    "automatic_item_pick_up"
+    "automatic_item_pick_up",
+    "disable_messages"
   };
   private static string State(bool value) => value ? "enabled" : "disabled";
   private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -259,6 +263,7 @@ public static class Settings {
     if (key == "auto_exec_dev_off") SetValue(context, configAutoExecDevOff, key, value);
     if (key == "auto_exec_boot") SetValue(context, configAutoExecBoot, key, value);
     if (key == "auto_exec") SetValue(context, configAutoExec, key, value);
+    if (key == "disable_messages") Toggle(context, configDisableMessages, "Command messages", value, true);
     if (key == "automatic_item_pick_up") Toggle(context, configAutomaticItemPickUp, "Automatic item pick up", value);
     if (key == "command_descriptions") Toggle(context, configCommandDescriptions, "Command descriptions", value);
     if (key == "map_coordinates") Toggle(context, configMapCoordinates, "Map coordinates", value);

@@ -174,6 +174,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - Command descriptions (default: `true`, key: `command_descriptions`): Shows command descriptions as autocomplete.
 - Debug console (default: `false`, key: `debug_console`): Prints debug output to the console related to aliasing and parameter substitution.
 - Disable debug mode keys (default: `false`, key: `disable_debug_mode_keys`): Removes debug mode key bindings for killall, removedrops, fly and no cost.
+- Disable messages (default: `false`, key: `disable_messages`): Prevents messages from commands.
 - Disable parameter warnings (default: `false`, key: `disable_warnings`): Removes warning texts from some command parameter descriptions.
 - Disabled commands (default: `dev_config disable_command`, key: `disable_command`): Command names separated by , that can't be executed. Mainly useful on the server to prevent some server-side commands.
 - Fly down key (default: `leftcontrol`, key: `fly_down_key`): Changes the key command for flying down. Multiple keys are supported (see Bind section for more info).
@@ -181,7 +182,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - Improved auto complete (default: `true`, key: `improved_autocomplete`): Enables parameter info or options for every parameter.
 - Mouse wheel binding (default: `true`, key: `mouse_wheel_binding`): Enables binding to the mouse wheel with `wheel` keycode.
 - Multiple commands per line (default: `true`, key: `multiple_commands`): Enables multiple commands per line (when separate by `;`).
-- Root users (default: ` `): Steam IDs separated by , that can execute blacklisted commands. Can't be set with `dev_config` command.
+- Root users: Steam IDs separated by , that can execute blacklisted commands. Can't be set with `dev_config` command.
 - Substitution system (default: `true`, key: `substitution`): Enables parameter substitution (with `$`).
 - Server side commands (default: `randomevent,stopevent,genloc,sleep,skiptime`, key: `server_commands`): Names of commands that should be automatically executed on the server. `event` command is not included because it has a custom server-side support.
 
@@ -189,9 +190,11 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 - v1.13:
 	- Adds a new setting `automatic_item_pick_up ` to set the default value for the automatic pickup feature.
+	- Adds a new setting `disable_messages ` to prevent messages from commands.
 	- Fixes the `dev_config` command output having extra " characters.
 	- Fixes the autocomplete showing error when no autocomplete is available.
 	- Fixes an error with the automatic parry.
+	- Fixes incompatibility with mods affecting the underwater camera.
 
 - v1.12:
 	- Adds a new command `broadcast` to broadcast messages.
