@@ -54,7 +54,7 @@ public class DefaultAdmin : IAdmin {
   }
 
   public virtual void AutomaticCheck(Terminal terminal = null) {
-    Enabled = false;
+    terminal.AddString("Automatic check.");
     Check(terminal);
   }
   public virtual bool Checking { get; set; }
@@ -67,11 +67,13 @@ public class DefaultAdmin : IAdmin {
     Enabled = false;
   }
 
-  public void ManualCheck(Terminal terminal = null) {
+  public virtual void ManualCheck(Terminal terminal = null) {
     Check(terminal);
   }
-  public void Reset(Terminal terminal = null) {
-    OnFail(terminal);
+  public virtual void Reset(Terminal terminal = null) {
+    terminal.AddString("Resetting.");
+    Checking = false;
+    Enabled = false;
   }
 }
 

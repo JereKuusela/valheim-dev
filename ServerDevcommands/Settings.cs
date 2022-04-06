@@ -173,7 +173,10 @@ public static class Settings {
     configDisableParameterWarnings = config.Bind(section, "Disable parameter warnings", false, "Removes warning texts from some command parameter descriptions.");
     configCommandAliases.SettingChanged += (s, e) => ParseAliases(configCommandAliases.Value);
     configRootUsers = config.Bind(section, "Root users", "", "Steam IDs separated by , that can execute blacklisted commands. Server side setting.");
-    configRootUsers.SettingChanged += (s, e) => DisableCommands.UpdateCommands(configRootUsers.Value, configDisabledCommands.Value);
+    configRootUsers.SettingChanged += (s, e) => {
+      DisableCommands.UpdateCommands(configRootUsers.Value, configDisabledCommands.Value);
+      RootUsers.Update();
+    };
     configDisabledCommands = config.Bind(section, "Disabled commands", "dev_config disable_command", "Command names separated by , that can't be executed.");
     configDisabledCommands.SettingChanged += (s, e) => DisableCommands.UpdateCommands(configRootUsers.Value, configDisabledCommands.Value);
     configFlyUpKey = config.Bind(section, "Key for fly up", "Space", "Key codes separated by ,");

@@ -53,7 +53,8 @@ public class DevcommandsCommand {
 public class DevCommandsAdmin : DefaultAdmin {
   protected override void OnSuccess(Terminal terminal) {
     base.OnSuccess(terminal);
-    DevcommandsCommand.Toggle(terminal);
+    DevcommandsCommand.Set(true);
+    terminal.AddString("Authorized to use devcommands.");
   }
   protected override void OnFail(Terminal terminal) {
     base.OnFail(terminal);
@@ -61,10 +62,12 @@ public class DevCommandsAdmin : DefaultAdmin {
     terminal.AddString("Unauthorized to use devcommands.");
   }
   public override void AutomaticCheck(Terminal terminal) {
-    Enabled = false;
+    if (!Settings.AutoDevcommands) return;
+    base.AutomaticCheck(terminal);
+  }
+  public override void Reset(Terminal terminal) {
+    base.Reset(terminal);
     DevcommandsCommand.Set(false);
-    if (Settings.AutoDevcommands)
-      Check(terminal);
   }
 }
 

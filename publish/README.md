@@ -188,7 +188,11 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 # Changelog
 
-- v1.13:
+- v1.14
+	- Fixes root users not being automatically recognized as admins (server side).
+	- Fixes devcommands getting toggled off and on when dying.
+
+- v1.13
 	- Adds a new setting `automatic_item_pick_up ` to set the default value for the automatic pickup feature.
 	- Adds a new setting `disable_messages ` to prevent messages from commands.
 	- Fixes the `dev_config` command output having extra " characters.
@@ -196,7 +200,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 	- Fixes an error with the automatic parry.
 	- Fixes incompatibility with mods affecting the underwater camera.
 
-- v1.12:
+- v1.12
 	- Adds a new command `broadcast` to broadcast messages.
 	- Adds a new command `move_spawn` to change the server's default spawn point.
 	- Adds a new command `seed` to print the seed.
@@ -228,7 +232,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 	- Fixes modifier keys working incorrectly with multiple commands.
 	- Fixes the `wait` command not working (parameter was kiloseconds instead of milliseconds).
 
-- v1.11:
+- v1.11
 	- Adds a new command `wait` to delay execution of the next command.
 	- Adds a new command `server` to execute any command on the server.
 	- Adds a new command `hud` to set or toggle the HUD visibility.
@@ -246,7 +250,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 	- Fixes incompatibility with some stamina related mods.
 	- Fixes `resolution` command description.
 
-- v1.10:
+- v1.10
 	- Adds a new setting `command_delay` to add delay when multiple commands are executed.
 	- Renames the file from DEV.dll to ServerDevcommands.dll.
 	- Changes the default value of the `ghost_invibisility` to false.
@@ -267,18 +271,18 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 	- Fixes case insensitivity being broken for some commands.
 	- Fixes server side commands not working.
 
-- v1.8:
+- v1.8
 	- Improves undo/redo system to work with Infinity Hammer mod.
 	- Fixes selection not working when multiple commands system is on.
 	- Fixes selection issues when using tab to cycle options.
 
-- v1.7:
+- v1.7
 	- Adds an undo/redo system (currently only for other mods to use).
 	- New icon (thanks Azumatt!).
 	- Improves autocomplete for default commands.
 	- Fixes possible server crash if private players are enabled (another attempt).
 
-- v1.6:
+- v1.6
 	- Adds a better autocomplete that provides options and information for all parameters.
 	- Adds an alias system which allows creating simpler commands out of existing ones.
 	- Adds a parameter substitution system which allows mapping command parameters.
@@ -303,7 +307,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 	- Changes the default value of "show private player positions" to false.
 	- Fixes a server crash (caused by too many players connecting if private position feature was on).
 
-- v1.5:
+- v1.5
 	- Adds a modifier key support to key bindings.
 	- Adds a new parameter to the pos command (allows getting position of any player).
 	- Adds support for showing private player positions (requires also server side).
@@ -312,20 +316,20 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 	- Fixes console commands not working in the character selection.
 	- Attempts to further improve the admin check reliability.
 
-- v1.4:
+- v1.4
 	- Adds server side support for event, randomevent, resetkeys, setkey, skiptime, sleep, stopevent.
 
-- v1.3: 
+- v1.3
 	- Refactores the code to hopefully make it work more reliably.
 	- Adds autocomplete to chat window also for cheat commands.
 
-- v1.2: 
+- v1.2
 	- Adds support for Hearth and Home update.
 
-- v1.1: 
+- v1.1
 	- Improves admin check.
 
-- v1.0: 
+- v1.0
 	- Initial release.
 	
 Thanks for Azumatt for creating the mod icon!

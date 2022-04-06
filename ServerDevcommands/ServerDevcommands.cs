@@ -5,7 +5,7 @@ using HarmonyLib;
 using UnityEngine;
 namespace ServerDevcommands;
 [BepInDependency("com.rolopogo.gizmo.comfy", BepInDependency.DependencyFlags.SoftDependency)]
-[BepInPlugin("valheim.jerekuusela.server_devcommands", "ServerDevcommands", "1.13.0.0")]
+[BepInPlugin("valheim.jerekuusela.server_devcommands", "ServerDevcommands", "1.14.0.0")]
 public class ServerDevcommands : BaseUnityPlugin {
   public static ManualLogSource Log;
   public void Awake() {
