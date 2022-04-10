@@ -85,6 +85,7 @@ Examples:
 - `event [event] [x] [z]` allows setting the event coordinates.
 	- `event army_eikthyr`: Starts an event at your position.
 	- `event army_eikthyr 100 -100`: Starts an event at coordinates 100,-100.
+- `exploremap [x] [z] [radius]` allows revealing only a part of the map.
 - `hud` allows toggling the HUD visibility.
 - `hud [value]` allows directly setting the HUD visibility.
 - `move_spawn [x,z,y = player's coordinates]` allows moving the default spawn point.
@@ -94,6 +95,8 @@ Examples:
 	- `pos`: Returns your position.
 	- `pos jay`: Returns the position of a player named Jay,Heyjay or whatever is the closest match.
 - `redo` restores an action added to the undo/redo manager.
+- `resetmap [x] [z] [radius]` allows hiding only a part of the map.
+- `resetpins [x] [z] [radius]` allows removing pins from the map.
 - `resolution` prints the screen properties.
 - `resolution [mode] [width] [height] [refresh rate]` sets the screen properties.
 	- `resolution exclusive`: Sets to full screen with the maximum supported resolution and refresh rate.
@@ -189,6 +192,8 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 # Changelog
 
 - v1.14
+	- Adds position and radius parameters to commands `exploremap` and `resetmap`.
+	- Adds a new command `resetpins` to remove map pins.
 	- Fixes root users not being automatically recognized as admins (server side).
 	- Fixes devcommands getting toggled off and on when dying.
 

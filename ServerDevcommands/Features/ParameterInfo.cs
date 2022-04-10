@@ -152,60 +152,71 @@ public static class ParameterInfo {
   public static List<string> Missing = Create("No autocomplete available.");
   public static List<string> InvalidNamed(string name) => Error($"Invalid named parameter {name}!");
   public static List<string> Flag(string name) => Error($"{name} is a flag so it doesn't have any arguments!");
+  public static List<string> Flag(string name, string description) => Error($"{name} is a flag so it doesn't have any arguments! | {description}");
   public static List<string> XZY(string name, string description, int index) {
-    if (index == 0) return ParameterInfo.Create($"{name}=<color=yellow>X</color>,Z,Y | {description}.");
-    if (index == 1) return ParameterInfo.Create($"{name}=X,<color=yellow>Z</color>,Y | {description}.");
-    if (index == 2) return ParameterInfo.Create($"{name}=X,Z,<color=yellow>Y</color> | {description}.");
-    return ParameterInfo.None;
+    if (index == 0) return Create($"{name}=<color=yellow>X</color>,Z,Y | {description}.");
+    if (index == 1) return Create($"{name}=X,<color=yellow>Z</color>,Y | {description}.");
+    if (index == 2) return Create($"{name}=X,Z,<color=yellow>Y</color> | {description}.");
+    return None;
   }
   public static List<string> XZY(string description, int index) {
-    if (index == 0) return ParameterInfo.Create($"<color=yellow>X</color>,Z,Y | {description}.");
-    if (index == 1) return ParameterInfo.Create($"X,<color=yellow>Z</color>,Y | {description}.");
-    if (index == 2) return ParameterInfo.Create($"X,Z,<color=yellow>Y</color> | {description}.");
-    return ParameterInfo.None;
+    if (index == 0) return Create($"<color=yellow>X</color>,Z,Y | {description}.");
+    if (index == 1) return Create($"X,<color=yellow>Z</color>,Y | {description}.");
+    if (index == 2) return Create($"X,Z,<color=yellow>Y</color> | {description}.");
+    return None;
   }
   public static List<string> XYZ(string name, string description, int index) {
-    if (index == 0) return ParameterInfo.Create($"{name}=<color=yellow>X</color>,Z,Y | {description}.");
-    if (index == 1) return ParameterInfo.Create($"{name}=X,<color=yellow>Y</color>,Z | {description}.");
-    if (index == 2) return ParameterInfo.Create($"{name}=X,Y,<color=yellow>Z</color> | {description}.");
-    return ParameterInfo.None;
+    if (index == 0) return Create($"{name}=<color=yellow>X</color>,Z,Y | {description}.");
+    if (index == 1) return Create($"{name}=X,<color=yellow>Y</color>,Z | {description}.");
+    if (index == 2) return Create($"{name}=X,Y,<color=yellow>Z</color> | {description}.");
+    return None;
   }
   public static List<string> XYZ(string description, int index) {
-    if (index == 0) return ParameterInfo.Create($"<color=yellow>X</color>,Z,Y | {description}.");
-    if (index == 1) return ParameterInfo.Create($"X,<color=yellow>Y</color>,Z | {description}.");
-    if (index == 2) return ParameterInfo.Create($"X,Y,<color=yellow>Z</color> | {description}.");
-    return ParameterInfo.None;
+    if (index == 0) return Create($"<color=yellow>X</color>,Z,Y | {description}.");
+    if (index == 1) return Create($"X,<color=yellow>Y</color>,Z | {description}.");
+    if (index == 2) return Create($"X,Y,<color=yellow>Z</color> | {description}.");
+    return None;
   }
   public static List<string> YXZ(string name, string description, int index) {
-    if (index == 0) return ParameterInfo.Create($"{name}=<color=yellow>Y</color>,X,Z | {description}.");
-    if (index == 1) return ParameterInfo.Create($"{name}=Y,<color=yellow>X</color>,Z | {description}.");
-    if (index == 2) return ParameterInfo.Create($"{name}=Y,X,<color=yellow>Z</color> | {description}.");
-    return ParameterInfo.None;
+    if (index == 0) return Create($"{name}=<color=yellow>Y</color>,X,Z | {description}.");
+    if (index == 1) return Create($"{name}=Y,<color=yellow>X</color>,Z | {description}.");
+    if (index == 2) return Create($"{name}=Y,X,<color=yellow>Z</color> | {description}.");
+    return None;
   }
   public static List<string> YXZ(string description, int index) {
-    if (index == 0) return ParameterInfo.Create($"<color=yellow>Y</color>,X,Z | {description}.");
-    if (index == 1) return ParameterInfo.Create($"Y,<color=yellow>X</color>,Z | {description}.");
-    if (index == 2) return ParameterInfo.Create($"Y,X,<color=yellow>Z</color> | {description}.");
-    return ParameterInfo.None;
+    if (index == 0) return Create($"<color=yellow>Y</color>,X,Z | {description}.");
+    if (index == 1) return Create($"Y,<color=yellow>X</color>,Z | {description}.");
+    if (index == 2) return Create($"Y,X,<color=yellow>Z</color> | {description}.");
+    return None;
+  }
+  public static List<string> XZ(string name, string description, int index) {
+    if (index == 0) return Create($"{name}=<color=yellow>X</color>,Z | {description}.");
+    if (index == 1) return Create($"{name}=X,<color=yellow>Z</color> | {description}.");
+    return None;
+  }
+  public static List<string> XZ(string description, int index) {
+    if (index == 0) return Create($"<color=yellow>X</color>,Z | {description}.");
+    if (index == 1) return Create($"X,<color=yellow>Z</color> | {description}.");
+    return None;
   }
   public static List<string> FRU(string name, string description, int index) {
-    if (index == 0) return ParameterInfo.Create($"{name}=<color=yellow>forward</color>,right,up | {description}.");
-    if (index == 1) return ParameterInfo.Create($"{name}=forward,<color=yellow>right</color>,up | {description}.");
-    if (index == 2) return ParameterInfo.Create($"{name}=forward,right,<color=yellow>up</color> | {description}.");
-    return ParameterInfo.None;
+    if (index == 0) return Create($"{name}=<color=yellow>forward</color>,right,up | {description}.");
+    if (index == 1) return Create($"{name}=forward,<color=yellow>right</color>,up | {description}.");
+    if (index == 2) return Create($"{name}=forward,right,<color=yellow>up</color> | {description}.");
+    return None;
   }
   public static List<string> FRU(string description, int index) {
-    if (index == 0) return ParameterInfo.Create($"<color=yellow>forward</color>,right,up | {description}.");
-    if (index == 1) return ParameterInfo.Create($"forward,<color=yellow>right</color>,up | {description}.");
-    if (index == 2) return ParameterInfo.Create($"forward,right,<color=yellow>up</color> | {description}.");
-    return ParameterInfo.None;
+    if (index == 0) return Create($"<color=yellow>forward</color>,right,up | {description}.");
+    if (index == 1) return Create($"forward,<color=yellow>right</color>,up | {description}.");
+    if (index == 2) return Create($"forward,right,<color=yellow>up</color> | {description}.");
+    return None;
   }
   public static List<string> Scale(string name, string description, int index) {
-    if (index == 0) return ParameterInfo.Create($"{name}=<color=yellow>number</color> or {XYZ(name, description, index)[0].Substring(0)}");
+    if (index == 0) return Create($"{name}=<color=yellow>number</color> or {XYZ(name, description, index)[0].Substring(0)}");
     return XYZ(name, description, index);
   }
   public static List<string> Scale(string description, int index) {
-    if (index == 0) return ParameterInfo.Create($"<color=yellow>number</color> or {XYZ(description, index)[0].Substring(0)}");
+    if (index == 0) return Create($"<color=yellow>number</color> or {XYZ(description, index)[0].Substring(0)}");
     return XYZ(description, index);
   }
 }

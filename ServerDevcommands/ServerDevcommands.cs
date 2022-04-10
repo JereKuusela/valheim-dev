@@ -46,6 +46,7 @@ public class SetCommands {
     new BroadcastCommand();
     new SeedCommand();
     new MoveSpawn();
+    new MappingCommand();
     DefaultAutoComplete.Register();
     Settings.RegisterCommands();
   }
