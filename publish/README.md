@@ -196,6 +196,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 	- Adds a new command `resetpins` to remove map pins.
 	- Fixes root users not being automatically recognized as admins (server side).
 	- Fixes devcommands getting toggled off and on when dying.
+	- Fixes map and minimap coordinates conflicting with other mods.
 
 - v1.13
 	- Adds a new setting `automatic_item_pick_up ` to set the default value for the automatic pickup feature.
