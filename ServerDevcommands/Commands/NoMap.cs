@@ -19,7 +19,7 @@ public class NoMapCommand {
         else
           ZoneSystem.instance.RemoveGlobalKey("nomap");
       }
-      Helper.AddMessage(args.Context, "Map " + (set ? "enabled" : "disabled"));
+      Helper.AddMessage(args.Context, "Map " + (set ? "disabled" : "enabled"));
     }, true, true);
   }
 }

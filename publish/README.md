@@ -193,6 +193,9 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 # Changelog
 
+- v1.16
+	- Fixes `nomap` command showing a wrong output.
+
 - v1.15
 	- Adds position and radius parameters to commands `exploremap` and `resetmap`.
 	- Adds a new command `resetpins` to remove map pins.
