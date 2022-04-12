@@ -82,6 +82,7 @@ Examples:
 	- `dev_config auto_fly 1`: Enables the auto fly setting.
 	- `server dev_config disable_debug_mode_keys defeated_eikthyr,defeated_gdking,defeated_bonemass,defeated_dragon,defeated_goblinking`: Prevents boss kill global keys being set on the server.
 	- `server dev_config disable_debug_mode_keys`: Prints currently disabled global keys.
+- `env` prints the current environment.
 - `event [event] [x] [z]` allows setting the event coordinates.
 	- `event army_eikthyr`: Starts an event at your position.
 	- `event army_eikthyr 100 -100`: Starts an event at coordinates 100,-100.
@@ -117,6 +118,7 @@ Examples:
 	- `unbind wheel 3`: Removes the last 3 binds from the mouse wheel.
 - `undo` reverts an action added to the undo/redo manager.
 - `wait [milliseconds]`delays the execution of the next commands.
+- `wind` prints the current wind strength.
 
 ## Enhanced map
 
@@ -194,6 +196,9 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - v1.14
 	- Adds position and radius parameters to commands `exploremap` and `resetmap`.
 	- Adds a new command `resetpins` to remove map pins.
+	- Changes the `env` command to print the current environment if used without the parameter.
+	- Changes the `wind` command to print the wind strength if used without the parameters.
+	- Improves autocomplete for `forcedelete`, `spawn` and `resetsharedmap` commands.
 	- Fixes root users not being automatically recognized as admins (server side).
 	- Fixes devcommands getting toggled off and on when dying.
 	- Fixes map and minimap coordinates conflicting with other mods.

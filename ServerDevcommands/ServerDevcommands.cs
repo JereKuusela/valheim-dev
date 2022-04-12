@@ -47,6 +47,8 @@ public class SetCommands {
     new SeedCommand();
     new MoveSpawn();
     new MappingCommand();
+    new WindCommand();
+    new EnvCommand();
     DefaultAutoComplete.Register();
     Settings.RegisterCommands();
   }

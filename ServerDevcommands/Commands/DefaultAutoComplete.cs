@@ -26,6 +26,7 @@ public static class DefaultAutoComplete {
     AutoComplete.RegisterEmpty("point");
     AutoComplete.RegisterEmpty("ping");
     AutoComplete.RegisterEmpty("resetbinds");
+    AutoComplete.RegisterEmpty("resetsharedmap");
     AutoComplete.RegisterEmpty("resetspawn");
     AutoComplete.RegisterEmpty("respawn");
     AutoComplete.Register("s", (int index) => {
@@ -57,7 +58,6 @@ public static class DefaultAutoComplete {
     });
     AutoComplete.RegisterEmpty("clearstatus");
     AutoComplete.RegisterEmpty("dpsdebug");
-    //AutoComplete.RegisterDefault("env");
     AutoComplete.RegisterEmpty("exploremap");
     // Event added to the replaced command.
     AutoComplete.Register("ffsmooth", (int index) => {
@@ -72,7 +72,8 @@ public static class DefaultAutoComplete {
     AutoComplete.RegisterEmpty("fly");
     AutoComplete.RegisterEmpty("freefly");
     AutoComplete.Register("forcedelete", (int index) => {
-      if (index == 0) return ParameterInfo.Create("Radius", "in meters (from 0.0 to 20.0, default is 5.0).");
+      if (index == 0) return ParameterInfo.Create("Radius", "in meters (from 0.0 to 50.0, default is 5.0).");
+      if (index == 1) return ParameterInfo.ObjectIds;
       return null;
     });
     AutoComplete.RegisterEmpty("gc");
@@ -163,6 +164,7 @@ public static class DefaultAutoComplete {
         else
           return ParameterInfo.Create("Level", "a positive integer (default 1), <color=yellow>WARNING</color>: High values (5+) may crash the server when the creature is killed!, <color=yellow>WARNING</color>: Some objects can't be removed after spawning!");
       }
+      if (index == 2) return ParameterInfo.Create("<color=yellow>p</color> to automatically pick up items. <color=yellow>e</color> to automatically equip items.");
       return null;
     });
     AutoComplete.RegisterEmpty("stopevent");
@@ -179,11 +181,6 @@ public static class DefaultAutoComplete {
     });
     AutoComplete.Register("tod", (int index) => {
       if (index == 0) return ParameterInfo.Create("Time", "overrides the time of the day (from 0.0 to 1.0, with 0.5 being the mid day). Value -1 removes the override.");
-      return null;
-    });
-    AutoComplete.Register("wind", (int index) => {
-      if (index == 0) return ParameterInfo.Create("Angle", "a number (from -360.0 to 360.0)");
-      if (index == 1) return ParameterInfo.Create("Intensity", "a positive number (from 0.0 to 1.0)");
       return null;
     });
   }
