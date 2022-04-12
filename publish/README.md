@@ -196,6 +196,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - v1.14
 	- Adds position and radius parameters to commands `exploremap` and `resetmap`.
 	- Adds a new command `resetpins` to remove map pins.
+	- Adds distance to the map coordinates.
 	- Changes the `env` command to print the current environment if used without the parameter.
 	- Changes the `wind` command to print the wind strength if used without the parameters.
 	- Improves autocomplete for `forcedelete`, `spawn` and `resetsharedmap` commands.
