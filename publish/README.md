@@ -193,20 +193,22 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 # Changelog
 
-- v1.14
+- v1.15
 	- Adds position and radius parameters to commands `exploremap` and `resetmap`.
 	- Adds a new command `resetpins` to remove map pins.
 	- Adds distance to the map coordinates.
 	- Changes the `env` command to print the current environment if used without the parameter.
 	- Changes the `wind` command to print the wind strength if used without the parameters.
 	- Improves autocomplete for `forcedelete`, `spawn` and `resetsharedmap` commands.
-	- Fixes root users not being automatically recognized as admins (server side).
 	- Fixes devcommands getting toggled off and on when dying.
 	- Fixes map and minimap coordinates conflicting with other mods.
 
+- v1.14
+	- Fixes root users not being automatically recognized as admins (server side).
+
 - v1.13
-	- Adds a new setting `automatic_item_pick_up ` to set the default value for the automatic pickup feature.
-	- Adds a new setting `disable_messages ` to prevent messages from commands.
+	- Adds a new setting `automatic_item_pick_up` to set the default value for the automatic pickup feature.
+	- Adds a new setting `disable_messages` to prevent messages from commands.
 	- Fixes the `dev_config` command output having extra " characters.
 	- Fixes the autocomplete showing error when no autocomplete is available.
 	- Fixes an error with the automatic parry.
