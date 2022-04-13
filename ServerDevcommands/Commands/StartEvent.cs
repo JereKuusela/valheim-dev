@@ -25,7 +25,7 @@ public class StartEventCommand {
       if (index == 0) return Terminal.commands["event"].m_tabOptionsFetcher();
       if (index == 1) return ParameterInfo.Create("X coordinate", "number (default is the current position)");
       if (index == 2) return ParameterInfo.Create("Z coordinate", "number (default is the current position)");
-      return null;
+      return ParameterInfo.None;
     });
   }
 }

@@ -48,20 +48,20 @@ public static class AutoComplete {
 
   ///<summary>Registers an options fetcher without parameters.</summary>
   public static void RegisterEmpty(string command) {
-    Register(command, (int index) => null);
+    Register(command, (int index) => ParameterInfo.None);
   }
   ///<summary>Registers an options fetcher for an admion action.</summary>
   public static void RegisterAdmin(string command) {
     Register(command, (int index) => {
       if (index == 0) return ParameterInfo.Create("Name / IP / UserId");
-      return null;
+      return ParameterInfo.None;
     });
   }
   ///<summary>Registers an options fetcher with only the default fetcher.</summary>
   public static void RegisterDefault(string command) {
     Register(command, (int index) => {
       if (index == 0) return Terminal.commands[command].m_tabOptionsFetcher();
-      return null;
+      return ParameterInfo.None;
     });
   }
 }
@@ -69,7 +69,7 @@ public static class AutoComplete {
 
 [HarmonyPatch(typeof(Terminal.ConsoleCommand), nameof(Terminal.ConsoleCommand.GetTabOptions))]
 public class GetTabOptionsWithImprovedAutoComplete {
-  private static Terminal GetInput() {
+  private static Terminal? GetInput() {
     if (!Console.instance && !Chat.instance) return null;
     Terminal input = Console.instance == null ? Chat.instance as Terminal : Console.instance as Terminal;
     if (input.m_input.text == "" && Chat.instance) input = Chat.instance;
@@ -128,6 +128,7 @@ public class GetTabOptionsWithImprovedAutoComplete {
     if (TerminalUtils.IsExecuting) return true;
     if (!Settings.ImprovedAutoComplete) return true;
     var input = GetInput();
+    if (input == null) return true;
     var text = input.m_input.text;
     var parameters = text.Split(' ');
     if (parameters.Length > 1) {

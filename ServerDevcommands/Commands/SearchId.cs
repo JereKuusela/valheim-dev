@@ -23,7 +23,7 @@ public class SearchIdCommand {
     AutoComplete.Register("search_id", (int index) => {
       if (index == 0) return ParameterInfo.Create("Search term");
       if (index == 1) return ParameterInfo.Create("Max lines", "number (default 5)");
-      return null;
+      return ParameterInfo.None;
     });
   }
 }

@@ -1,7 +1,11 @@
 using System.Collections.Generic;
 namespace ServerDevcommands;
 public class CommandQueueItem {
-  public string Command;
+  public CommandQueueItem(Terminal terminal, string command) {
+    Command = command;
+    Terminal = terminal;
+  }
+  public string Command = "";
   public Terminal Terminal;
 }
 ///<summary>Helper for queueing commands.</summary>
@@ -21,6 +25,6 @@ public class CommandQueue {
   }
   public static bool CanRun() => QueueTimer <= 0f;
   public static void Add(Terminal terminal, string command) {
-    Items.Enqueue(new() { Command = command, Terminal = terminal });
+    Items.Enqueue(new(terminal, command));
   }
 }

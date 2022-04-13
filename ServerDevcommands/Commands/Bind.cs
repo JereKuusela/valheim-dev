@@ -52,7 +52,7 @@ public class BindCommand {
     AutoComplete.Register("unbind", (int index) => {
       if (index == 0) return ParameterInfo.KeyCodes;
       if (index == 1) return ParameterInfo.Create("Amount of binds to remove from the key.");
-      return null;
+      return ParameterInfo.None;
     });
     new Terminal.ConsoleCommand("printbinds", "Prints all key binds.", (Terminal.ConsoleEventArgs args) => {
       foreach (var text in Terminal.m_bindList) Print(args.Context, text);

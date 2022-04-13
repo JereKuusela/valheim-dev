@@ -19,7 +19,7 @@ public class MoveSpawn {
     }, true, true);
     AutoComplete.Register("move_spawn", (int index, int subIndex) => {
       if (index == 0) return ParameterInfo.XZY("Coordinates (player's current coordinates if not given).", subIndex);
-      return null;
+      return ParameterInfo.None;
     });
   }
 }

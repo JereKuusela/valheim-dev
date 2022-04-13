@@ -4,7 +4,7 @@ namespace ServerDevcommands;
 
 [HarmonyPatch(typeof(Terminal), nameof(Terminal.AddString), new[] { typeof(string) })]
 public class RedirectOutput {
-  public static ZRpc Target = null;
+  public static ZRpc? Target = null;
 
   static void Postfix(string text) {
     if (ZNet.m_isServer && Target != null) {

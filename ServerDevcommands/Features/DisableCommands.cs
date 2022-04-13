@@ -9,7 +9,7 @@ public class DisableCommands {
   public static List<string> DisallowedCommands = new();
   public static HashSet<string> RootUsers = new();
 
-  public static bool CanRun(string command, ZRpc rpc = null) {
+  public static bool CanRun(string command, ZRpc? rpc = null) {
     if (rpc != null && rpc.m_socket != null && RootUsers.Contains(rpc.m_socket.GetHostName())) return true;
     if (DisallowedCommands.Contains(command.ToLower())) return false;
     if (DisallowedCommands.Any(black => command.StartsWith((black + " "), StringComparison.OrdinalIgnoreCase))) return false;

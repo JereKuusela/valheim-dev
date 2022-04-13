@@ -16,16 +16,16 @@ public class DevcommandsCommand {
   public static void Set(bool value) {
     if (Terminal.m_cheat == value) return;
     Terminal.m_cheat = value;
-    Console.instance?.updateCommandList();
-    Chat.instance?.updateCommandList();
+    Console.instance.updateCommandList();
+    Chat.instance.updateCommandList();
     var player = Player.m_localPlayer;
     if (Settings.AutoDebugMode)
       Player.m_debugMode = Terminal.m_cheat;
-    if (Settings.AutoGodMode)
-      player?.SetGodMode(Terminal.m_cheat);
-    if (Settings.AutoGhostMode)
-      player?.SetGhostMode(Terminal.m_cheat);
-    if (Settings.AutoFly && player) {
+    if (player && Settings.AutoGodMode)
+      player.SetGodMode(Terminal.m_cheat);
+    if (player && Settings.AutoGhostMode)
+      player.SetGhostMode(Terminal.m_cheat);
+    if (player && Settings.AutoFly) {
       player.m_debugFly = Terminal.m_cheat;
       player.m_nview.GetZDO().Set("DebugFly", Terminal.m_cheat);
     }
@@ -51,22 +51,22 @@ public class DevcommandsCommand {
 }
 ///<summary>Custom admin check to update devcommands.</summary>
 public class DevCommandsAdmin : DefaultAdmin {
-  protected override void OnSuccess(Terminal terminal) {
-    base.OnSuccess(terminal);
+  protected override void OnSuccess() {
+    base.OnSuccess();
     DevcommandsCommand.Set(true);
-    terminal.AddString("Authorized to use devcommands.");
+    Console.instance.AddString("Authorized to use devcommands.");
   }
-  protected override void OnFail(Terminal terminal) {
-    base.OnFail(terminal);
+  protected override void OnFail() {
+    base.OnFail();
     DevcommandsCommand.Set(false);
-    terminal.AddString("Unauthorized to use devcommands.");
+    Console.instance.AddString("Unauthorized to use devcommands.");
   }
-  public override void AutomaticCheck(Terminal terminal) {
+  public override void AutomaticCheck() {
     if (!Settings.AutoDevcommands) return;
-    base.AutomaticCheck(terminal);
+    base.AutomaticCheck();
   }
-  public override void Reset(Terminal terminal) {
-    base.Reset(terminal);
+  public override void Reset() {
+    base.Reset();
     DevcommandsCommand.Set(false);
   }
 }

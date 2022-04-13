@@ -26,7 +26,7 @@ public abstract class Helper {
   }
 
   ///<summary>Returns the hovered object within 50 meters.</summary>
-  public static ZNetView GetHovered(Terminal.ConsoleEventArgs args) {
+  public static ZNetView? GetHovered(Terminal.ConsoleEventArgs args) {
     if (Player.m_localPlayer == null) return null;
     var interact = Player.m_localPlayer.m_maxInteractDistance;
     Player.m_localPlayer.m_maxInteractDistance = 50f;

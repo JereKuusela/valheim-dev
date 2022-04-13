@@ -30,7 +30,7 @@ public class AliasCommand {
     });
     AutoComplete.Register("alias", (int index, int subIndex) => {
       if (index == 0) return ParameterInfo.Create("Name of the alias.");
-      return null;
+      return ParameterInfo.None;
     });
   }
 }

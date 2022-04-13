@@ -14,7 +14,7 @@ public class HUDCommand {
     });
     AutoComplete.Register("hud", (int index) => {
       if (index == 0) return ParameterInfo.Create("1 = enable, 0 = disable, no value = toggle");
-      return null;
+      return ParameterInfo.None;
     });
   }
 }

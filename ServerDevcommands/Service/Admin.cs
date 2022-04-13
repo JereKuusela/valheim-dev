@@ -14,64 +14,62 @@ public static class Admin {
     set => Instance.Checking = value;
   }
   ///<summary>Checks for admin status. Terminal is used for the output.</summary>
-  public static void ManualCheck(Terminal terminal = null) => Instance.ManualCheck(terminal);
+  public static void ManualCheck() => Instance.ManualCheck();
   ///<summary>Verifies the admin status with a given text. Shouldn't be called directly.</summary>
   public static void Verify(string text) => Instance.Verify(text);
   ///<summary>Automatic check at the start of joining servers. Shouldn't be called directly.</summary>
-  public static void AutomaticCheck(Terminal terminal = null) => Instance.AutomaticCheck(terminal);
+  public static void AutomaticCheck() => Instance.AutomaticCheck();
   ///<summary>Resets the admin status when joining servers. Shouldn't be called directly.</summary>
-  public static void Reset(Terminal terminal = null) => Instance.Reset(terminal);
+  public static void Reset() => Instance.Reset();
 }
 
 public interface IAdmin {
   bool Enabled { get; set; }
   bool Checking { get; set; }
-  void ManualCheck(Terminal terminal = null);
+  void ManualCheck();
   void Verify(string text);
-  void AutomaticCheck(Terminal terminal = null);
-  void Reset(Terminal terminal = null);
+  void AutomaticCheck();
+  void Reset();
 }
 
 ///<summary>Admin checker. Can be extended by overloading OnSuccess and OnFail.</summary>
 public class DefaultAdmin : IAdmin {
   public virtual bool Enabled { get; set; }
-  protected Terminal Context;
   ///<summary>Admin status is checked by issuing a dummy unban command.</summary>
-  protected void Check(Terminal terminal = null) {
+  protected void Check() {
     if (!ZNet.instance) return;
-    Context = terminal ?? Console.instance;
     Checking = true;
     if (ZNet.instance.IsServer())
-      OnSuccess(Context);
+      OnSuccess();
     else
       ZNet.instance.Unban("admintest");
   }
   public void Verify(string text) {
     if (text == "Unbanning user admintest")
-      OnSuccess(Context);
+      OnSuccess();
     else
-      OnFail(Context);
+      OnFail();
   }
 
-  public virtual void AutomaticCheck(Terminal terminal = null) {
-    terminal.AddString("Automatic check.");
-    Check(terminal);
+  public virtual void AutomaticCheck() {
+    Console.instance.AddString("Automatic check.");
+    Check();
   }
   public virtual bool Checking { get; set; }
-  protected virtual void OnSuccess(Terminal terminal) {
+  protected virtual void OnSuccess() {
     Checking = false;
     Enabled = true;
   }
-  protected virtual void OnFail(Terminal terminal) {
+  protected virtual void OnFail() {
     Checking = false;
     Enabled = false;
   }
 
-  public virtual void ManualCheck(Terminal terminal = null) {
-    Check(terminal);
+  public virtual void ManualCheck() {
+    Check();
   }
-  public virtual void Reset(Terminal terminal = null) {
-    terminal.AddString("Resetting.");
+  public virtual void Reset() {
+    Console.instance.AddString("Resetting.");
     Checking = false;
     Enabled = false;
   }
@@ -90,12 +88,12 @@ public class ZNet_RPC_RemotePrint {
 [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_PeerInfo))]
 public class AdminReset {
   static void Postfix() {
-    if (ZNet.m_connectionStatus == ZNet.ConnectionStatus.Connected) Admin.Reset(Console.instance);
+    if (ZNet.m_connectionStatus == ZNet.ConnectionStatus.Connected) Admin.Reset();
   }
 }  ///<summary>Check admin status on connect to ensure features are enabled/disabled when changing servers.</summary>
 [HarmonyPatch(typeof(Player), nameof(Player.OnSpawned))]
 public class AdminCheck {
   static void Postfix() {
-    if (!Admin.Checking) Admin.AutomaticCheck(Console.instance);
+    if (!Admin.Checking) Admin.AutomaticCheck();
   }
 }

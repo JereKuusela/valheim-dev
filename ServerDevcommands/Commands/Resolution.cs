@@ -37,7 +37,7 @@ public class ResolutionCommand {
       if (index == 1) return ParameterInfo.Create("Width", "a positive integer (max supported if not given)");
       if (index == 2) return ParameterInfo.Create("Height", "a positive integer (max supported if not given)");
       if (index == 3) return ParameterInfo.Create("Refresh rate", "a positive integer (max supported if not given)");
-      return null;
+      return ParameterInfo.None;
     });
   }
 }

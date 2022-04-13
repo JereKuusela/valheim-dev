@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BepInEx.Configuration;
 namespace ServerDevcommands;
+#nullable disable
 public static class Settings {
   public static bool Cheats => (ZNet.instance && ZNet.instance.IsServer()) || (Console.instance.IsCheatsEnabled() && Admin.Enabled);
   public static ConfigEntry<bool> configMapCoordinates;

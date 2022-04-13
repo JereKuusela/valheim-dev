@@ -37,7 +37,7 @@ public class MappingCommand {
       if (index == 0) return ParameterInfo.Create("X coordinate.");
       if (index == 1) return ParameterInfo.Create("Z coordinate.");
       if (index == 2) return ParameterInfo.Create("Radius (default 0).");
-      return null;
+      return ParameterInfo.None;
     });
   }
   ///<summary>Explores/unexplores a circle. Copypaste from the base game code</summary>

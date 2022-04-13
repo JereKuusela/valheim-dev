@@ -1,7 +1,7 @@
 namespace ServerDevcommands;
 ///<summary>Code related to handling multiple commands per line.</summary>
 public static class MultiCommands {
-  private static string[] PreviousCommands = null;
+  private static string[]? PreviousCommands = null;
   private static int CurrentCommand = -1;
   private static int DiscardCaretDelta = 0;
   ///<summary>Discarding previous commands makes handling much simpler.</summary>
@@ -21,8 +21,8 @@ public static class MultiCommands {
     if (CurrentCommand >= PreviousCommands.Length) {
       PreviousCommands = null;
       CurrentCommand = -1;
-    }
-    input.text = PreviousCommands[CurrentCommand];
+    } else
+      input.text = PreviousCommands[CurrentCommand];
   }
   public static void RestorePreviousCommands(UnityEngine.UI.InputField input) {
     if (PreviousCommands == null) return;

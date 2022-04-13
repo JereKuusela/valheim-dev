@@ -16,7 +16,7 @@ public class WindCommand {
     AutoComplete.Register("wind", (int index) => {
       if (index == 0) return ParameterInfo.Create("Angle", "a number (from -360.0 to 360.0)");
       if (index == 1) return ParameterInfo.Create("Intensity", "a positive number (from 0.0 to 1.0)");
-      return null;
+      return ParameterInfo.None;
     });
   }
 }
