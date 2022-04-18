@@ -193,6 +193,9 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 # Changelog
 
+- v1.17
+	- Internal changes for World Edit Commands mod.
+
 - v1.16
 	- Adds a new setting `god_no_edge` to disable the edge of world pull with god mode.
 	- Referts the `nomap change` in v1.11. Now only affects the client when used on dedicated servers. 

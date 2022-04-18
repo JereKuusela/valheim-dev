@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 namespace ServerDevcommands;
 ///<summary>Helper class for parameter options/info. The main purpose is to provide some caching to avoid performance issues.</summary>
-public static class ParameterInfo {
+public partial class ParameterInfo {
   private static List<string> globalKeys = new() {
     "defeated_bonemass",
     "defeated_dragon",

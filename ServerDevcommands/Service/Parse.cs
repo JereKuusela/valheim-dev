@@ -139,6 +139,13 @@ public static class Parse {
     vector.z = TryFloat(args, index + 1, defaultValue.z);
     return vector;
   }
+  public static Range<Vector3> TryVectorXZYRange(string arg, Vector3 defaultValue) {
+    var parts = Split(arg);
+    var x = TryFloatRange(parts, 0, defaultValue.x);
+    var y = TryFloatRange(parts, 2, defaultValue.y);
+    var z = TryFloatRange(parts, 1, defaultValue.z);
+    return ToVectorRange(x, y, z);
+  }
   ///<summary>Parses ZXY vector starting at zero index. Zero is used for missing values.</summary>
   public static Vector3 TryVectorZXY(string[] args) => TryVectorZXY(args, 0, Vector3.zero);
   ///<summary>Parses ZXY vector starting at zero index. Default values is used for missing values.</summary>
@@ -153,17 +160,17 @@ public static class Parse {
     vector.z = TryFloat(args, index, defaultValue.z);
     return vector;
   }
+  public static Range<Vector3> TryVectorZXYRange(string arg, Vector3 defaultValue) {
+    var parts = Split(arg);
+    var x = TryFloatRange(parts, 1, defaultValue.x);
+    var y = TryFloatRange(parts, 2, defaultValue.y);
+    var z = TryFloatRange(parts, 0, defaultValue.z);
+    return ToVectorRange(x, y, z);
+  }
   private static Range<Vector3> ToVectorRange(Range<float> x, Range<float> y, Range<float> z) {
     Vector3 min = new(x.Min, y.Min, z.Min);
     Vector3 max = new(x.Max, y.Max, z.Max);
     return new(min, max);
-  }
-  public static Range<Vector3> TryVectorXZYRange(string arg, Vector3 defaultValue) {
-    var parts = Split(arg);
-    var x = TryFloatRange(parts, 0, defaultValue.x);
-    var z = TryFloatRange(parts, 1, defaultValue.z);
-    var y = TryFloatRange(parts, 2, defaultValue.y);
-    return ToVectorRange(x, y, z);
   }
   ///<summary>Parses YXZ vector starting at zero index. Zero is used for missing values.</summary>
   public static Vector3 TryVectorYXZ(string[] args) => TryVectorYXZ(args, 0, Vector3.zero);
@@ -181,8 +188,8 @@ public static class Parse {
   }
   public static Range<Vector3> TryVectorYXZRange(string arg, Vector3 defaultValue) {
     var parts = Split(arg);
-    var y = TryFloatRange(parts, 0, defaultValue.y);
     var x = TryFloatRange(parts, 1, defaultValue.x);
+    var y = TryFloatRange(parts, 0, defaultValue.y);
     var z = TryFloatRange(parts, 2, defaultValue.z);
     return ToVectorRange(x, y, z);
   }
