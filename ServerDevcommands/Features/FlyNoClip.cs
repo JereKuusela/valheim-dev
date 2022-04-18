@@ -6,14 +6,22 @@ namespace ServerDevcommands;
 
 public class NoClip {
   public static bool Enabled() => Player.m_localPlayer && Player.m_localPlayer.IsDebugFlying() && Settings.FlyNoClip;
+  // Tracks when the noclip was turned on by this mod (better compatibility with other noclip mods).
+  public static bool TurnedOn = false;
 }
 
 [HarmonyPatch(typeof(Player), nameof(Player.LateUpdate))]
 public class NoObjectCollision {
   static void Postfix(Player __instance) {
     if (__instance != Player.m_localPlayer) return;
-    __instance.m_collider.enabled = !NoClip.Enabled();
-
+    var noClip = NoClip.Enabled();
+    if (noClip) {
+      NoClip.TurnedOn = true;
+      __instance.m_collider.enabled = false;
+    } else if (NoClip.TurnedOn) {
+      NoClip.TurnedOn = false;
+      __instance.m_collider.enabled = true;
+    }
   }
 }
 [HarmonyPatch(typeof(Character), nameof(Character.UnderWorldCheck))]

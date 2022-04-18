@@ -195,6 +195,8 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 - v1.17
 	- Internal changes for World Edit Commands mod.
+	- Improves `fly_no_clip` compatibility with noclip mods.
+	- Improves `disable_debug_mode_keys` compatibility with mods having debug mode specific keys.
 
 - v1.16
 	- Adds a new setting `god_no_edge` to disable the edge of world pull with god mode.
