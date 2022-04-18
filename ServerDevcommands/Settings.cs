@@ -43,6 +43,8 @@ public static class Settings {
   public static bool GodModeAlwaysParry => Cheats && configGodModeAlwaysParry.Value;
   public static ConfigEntry<bool> configGodModeNoStagger;
   public static bool GodModeNoStagger => Cheats && configGodModeNoStagger.Value;
+  public static ConfigEntry<bool> configGodModeNoEdgeOfWorld;
+  public static bool GodModeNoEdgeOfWorld => Cheats && configGodModeNoEdgeOfWorld.Value;
   public static ConfigEntry<bool> configDisableStartShout;
   public static bool DisableStartShout => configDisableStartShout.Value;
   public static ConfigEntry<bool> configDisableTutorials;
@@ -145,6 +147,7 @@ public static class Settings {
     configGodModeAlwaysDodge = config.Bind(section, "Always dodge with god mode", false, "");
     configGodModeAlwaysParry = config.Bind(section, "Always parry with god mode (when not blocking)", false, "");
     configGodModeNoStagger = config.Bind(section, "No staggering with god mode", true, "");
+    configGodModeNoEdgeOfWorld = config.Bind(section, "No edge of world pull with god mode", true, "");
     configDisableStartShout = config.Bind(section, "Disable start shout", false, "Removes the initial shout message when joining the server.");
     configDisableTutorials = config.Bind(section, "Disable tutorials", false, "Prevents the raven from appearing.");
     configFlyNoClip = config.Bind(section, "No clip with fly mode", false, "");
@@ -227,7 +230,8 @@ public static class Settings {
     "disable_tutorials",
     "god_no_weight_limit",
     "automatic_item_pick_up",
-    "disable_messages"
+    "disable_messages",
+    "god_no_edge"
   };
   private static string State(bool value) => value ? "enabled" : "disabled";
   private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -290,6 +294,7 @@ public static class Settings {
     if (key == "god_no_stamina") Toggle(context, configGodModeNoStamina, "Stamina usage with god mode", value, true);
     if (key == "god_no_weight_limit") Toggle(context, configGodModeNoWeightLimit, "Weight limit with god mode", value, true);
     if (key == "god_no_stagger") Toggle(context, configGodModeNoStagger, "Staggering with god mode", value, true);
+    if (key == "god_no_edge") Toggle(context, configGodModeNoEdgeOfWorld, "Edge of world pull with god mode", value, true);
     if (key == "god_no_knockback") Toggle(context, configGodModeNoKnockback, "Knockback with god mode", value, true);
     if (key == "fly_no_clip") Toggle(context, configFlyNoClip, "No clip with fly mode", value);
     if (key == "ghost_invibisility") Toggle(context, configGhostInvisibility, "Invisibility with ghost mode", value, true);

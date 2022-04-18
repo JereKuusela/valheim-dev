@@ -85,10 +85,10 @@ public class ZNet_RPC_RemotePrint {
 }
 
 ///<summary>Check admin status on connect to ensure features are enabled/disabled when changing servers.</summary>
-[HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_PeerInfo))]
+[HarmonyPatch(typeof(Game), nameof(Game.Awake))]
 public class AdminReset {
   static void Postfix() {
-    if (ZNet.m_connectionStatus == ZNet.ConnectionStatus.Connected) Admin.Reset();
+    Admin.Reset();
   }
 }  ///<summary>Check admin status on connect to ensure features are enabled/disabled when changing servers.</summary>
 [HarmonyPatch(typeof(Player), nameof(Player.OnSpawned))]

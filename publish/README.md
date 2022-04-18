@@ -90,8 +90,7 @@ Examples:
 - `hud` allows toggling the HUD visibility.
 - `hud [value]` allows directly setting the HUD visibility.
 - `move_spawn [x,z,y = player's coordinates]` allows moving the default spawn point.
-- `nomap [value] [server = 1]` allows directly setting the nomap mode and by default only affects the current server.
-	- `nomap [value] 0`: Sets the nomap mode for the current character (for all servers).
+- `nomap [value]` allows directly setting the nomap mode and works with `server` command.
 - `pos [player name]` allows getting the position of any player.
 	- `pos`: Returns your position.
 	- `pos jay`: Returns the position of a player named Jay,Heyjay or whatever is the closest match.
@@ -158,6 +157,7 @@ Recommended way is to use the commands since you can configure the server and al
 - Invisible to players with ghost mode (default: `false`, key: `ghost_invisibility`): Invisible to other players with ghost mode.
 - No clip with fly mode (default: `false`, key: `fly_no_clip`): Removes collision check with fly mode.
 - No creature drops (default: `false`, key: `no_drops`): Prevents creatures from dropping loot, can be useful if people accidentally spawn very high star creatures. Only works when as the zone owner.
+- No edge of world pull with god mode (default: `true`, key: `gpd_no_edge`): Removes the pull for an even godlier god mode.
 - No knockback with god mode (default: `true`, key: `god_no_knockback`): Removes knockback for an even godlier god mode.
 - No staggering with god mode (default: `true`, key: `god_no_stagger`): Removes staggering for an even godlier god mode.
 - No stamina usage with god mode (default: `true`, key: `god_no_stamina`): Removes the stamina usage for an even godlier god mode.
@@ -194,7 +194,10 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 # Changelog
 
 - v1.16
-	- Fixes `nomap` command showing a wrong output.
+	- Adds a new setting `god_no_edge` to disable the edge of world pull with god mode.
+	- Referts the `nomap change` in v1.11. Now only affects the client when used on dedicated servers. 
+	- Fixes `nomap` command showing inversed output.
+	- Fixes automatic debug mode, etc. not working when joining worlds multiple times.
 
 - v1.15
 	- Adds position and radius parameters to commands `exploremap` and `resetmap`.

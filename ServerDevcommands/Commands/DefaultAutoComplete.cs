@@ -20,7 +20,6 @@ public static class DefaultAutoComplete {
       if (index == 0) return ParameterInfo.Create("Amount", "a positive integer (from 1 to 5)");
       return ParameterInfo.None;
     });
-    AutoComplete.RegisterEmpty("nomap");
     AutoComplete.RegisterEmpty("nonono");
     AutoComplete.RegisterEmpty("opterrain");
     AutoComplete.RegisterEmpty("point");
@@ -107,7 +106,6 @@ public static class DefaultAutoComplete {
       return ParameterInfo.None;
     });
     AutoComplete.RegisterEmpty("nocost");
-    AutoComplete.RegisterEmpty("nomap");
     AutoComplete.RegisterEmpty("noportals");
     AutoComplete.Register("players", (int index) => {
       if (index == 0) return ParameterInfo.Create("Amount", "a positive integer (0 disables the override)");
