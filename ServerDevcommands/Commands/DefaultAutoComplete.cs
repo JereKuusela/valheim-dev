@@ -17,7 +17,7 @@ public static class DefaultAutoComplete {
     });
     AutoComplete.RegisterEmpty("info");
     AutoComplete.Register("lodbias", (int index) => {
-      if (index == 0) return ParameterInfo.Create("Amount", "a positive integer (from 1 to 5)");
+      if (index == 0) return ParameterInfo.Create("Amount", "a positive number");
       return ParameterInfo.None;
     });
     AutoComplete.RegisterEmpty("nonono");

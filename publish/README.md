@@ -193,6 +193,9 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 # Changelog
 
+- v1.18
+	- Changes the `fly_no_clip` to automatically removed forced environments (like in Frost Caves).
+
 - v1.17
 	- Internal changes for World Edit Commands mod.
 	- Improves `fly_no_clip` compatibility with noclip mods.
