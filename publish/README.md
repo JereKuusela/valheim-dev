@@ -91,8 +91,8 @@ Examples:
 - `hud [value]` allows directly setting the HUD visibility.
 - `move_spawn [x,z,y = player's coordinates]` allows moving the default spawn point.
 - `nomap [value]` allows directly setting the nomap mode and works with `server` command.
-- `pos [player name]` allows getting the position of any player.
-	- `pos`: Returns your position.
+- `pos [player name / precision] [precision]` allows getting the position of any player.
+	- `pos 1`: Returns your position with 1 decimal precision.
 	- `pos jay`: Returns the position of a player named Jay,Heyjay or whatever is the closest match.
 - `redo` restores an action added to the undo/redo manager.
 - `resetmap [x] [z] [radius]` allows hiding only a part of the map.
@@ -194,6 +194,8 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 # Changelog
 
 - v1.18
+	- Adds a new parameter to the `pos` command that allows specifying the precision.
+	- Changes the format of the `pos` command from x,y,z to x,z,y (matches better World Edit Commands mod).
 	- Changes the `fly_no_clip` to automatically removed forced environments (like in Frost Caves).
 
 - v1.17
