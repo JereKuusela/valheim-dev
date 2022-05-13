@@ -195,6 +195,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 - v1.19
 	- Improves the noclip compatibilityu with environment mods.
+	- Fixes private players appearing at the map center if the feature is only enabled on the client.
 
 - v1.18
 	- Adds a new parameter to the `pos` command that allows specifying the precision.

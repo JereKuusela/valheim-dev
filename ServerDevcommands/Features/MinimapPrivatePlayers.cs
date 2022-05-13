@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
+using UnityEngine;
 namespace ServerDevcommands;
 ///<summary>Server side code to include private player positions.</summary>
 [HarmonyPatch(typeof(ZNet), nameof(ZNet.UpdatePlayerList))]
@@ -89,7 +90,7 @@ public class IncludePrivatePlayersInTheMap {
     foreach (var playerInfo in __instance.m_players) {
       if (playerInfo.m_publicPosition) continue;
       var characterID = playerInfo.m_characterID;
-      if (!characterID.IsNone() && !(playerInfo.m_characterID == __instance.m_characterID)) {
+      if (!characterID.IsNone() && !(playerInfo.m_characterID == __instance.m_characterID) && playerInfo.m_position != Vector3.zero) {
         playerList.Add(playerInfo);
       }
     }
