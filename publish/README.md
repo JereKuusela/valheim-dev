@@ -193,6 +193,9 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 # Changelog
 
+- v1.19
+	- Improves the noclip compatibilityu with environment mods.
+
 - v1.18
 	- Adds a new parameter to the `pos` command that allows specifying the precision.
 	- Changes the format of the `pos` command from x,y,z to x,z,y (matches better World Edit Commands mod).

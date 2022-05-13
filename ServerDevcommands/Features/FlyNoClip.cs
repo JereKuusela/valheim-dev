@@ -16,11 +16,13 @@ public class NoObjectCollision {
     if (__instance != Player.m_localPlayer) return;
     var noClip = NoClip.Enabled();
     if (noClip) {
+      if (!NoClip.TurnedOn) {
+        // Forced environemnts rely on collider check so they won't get deactivated with noclip.
+        // Easiest way around this is to just get rid of them.
+        EnvMan.instance.SetForceEnvironment("");
+      }
       NoClip.TurnedOn = true;
       __instance.m_collider.enabled = false;
-      // Forced environemnts rely on collider check so they won't get deactivated with noclip.
-      // Easiest way around this is to just get rid of them.
-      EnvMan.instance.SetForceEnvironment("");
     } else if (NoClip.TurnedOn) {
       NoClip.TurnedOn = false;
       __instance.m_collider.enabled = true;
