@@ -194,7 +194,8 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 # Changelog
 
 - v1.19
-	- Improves the noclip compatibilityu with environment mods.
+	- Adds a new setting `no_clip_clear_environment` to control whether the noclip automatically clears the forced environment.
+	- Improves the noclip environment clear compatibility with other environment mods.
 	- Fixes private players appearing at the map center if the feature is only enabled on the client.
 
 - v1.18

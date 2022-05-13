@@ -51,6 +51,8 @@ public static class Settings {
   public static bool DisableTutorials => configDisableTutorials.Value;
   public static ConfigEntry<bool> configFlyNoClip;
   public static bool FlyNoClip => Cheats && configFlyNoClip.Value;
+  public static ConfigEntry<bool> configNoClipClearEnvironment;
+  public static bool NoClipClearEnvironment => configNoClipClearEnvironment.Value;
   public static ConfigEntry<bool> configGodModeNoKnockback;
   public static bool GodModeNoKnockback => Cheats && configGodModeNoKnockback.Value;
   public static ConfigEntry<bool> configAliasing;
@@ -150,7 +152,8 @@ public static class Settings {
     configGodModeNoEdgeOfWorld = config.Bind(section, "No edge of world pull with god mode", true, "");
     configDisableStartShout = config.Bind(section, "Disable start shout", false, "Removes the initial shout message when joining the server.");
     configDisableTutorials = config.Bind(section, "Disable tutorials", false, "Prevents the raven from appearing.");
-    configFlyNoClip = config.Bind(section, "No clip with fly mode", false, "");
+    configFlyNoClip = config.Bind(section, "No clip clears forced environments", false, "");
+    configNoClipClearEnvironment = config.Bind(section, "No clip with fly mode", true, "Intended to disable the dark dungeon environments.");
     configGodModeNoKnockback = config.Bind(section, "No knockback with god mode", true, "");
     configMapCoordinates = config.Bind(section, "Show map coordinates", true, "The map shows coordinates on hover.");
     configMiniMapCoordinates = config.Bind(section, "Show minimap coordinates", false, "The minimap shows player coordinates.");
@@ -231,7 +234,8 @@ public static class Settings {
     "god_no_weight_limit",
     "automatic_item_pick_up",
     "disable_messages",
-    "god_no_edge"
+    "god_no_edge",
+    "no_clip_clear_environment"
   };
   private static string State(bool value) => value ? "enabled" : "disabled";
   private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -271,6 +275,7 @@ public static class Settings {
     if (key == "auto_exec_dev_off") SetValue(context, configAutoExecDevOff, key, value);
     if (key == "auto_exec_boot") SetValue(context, configAutoExecBoot, key, value);
     if (key == "auto_exec") SetValue(context, configAutoExec, key, value);
+    if (key == "no_clip_clear_environment") Toggle(context, configNoClipClearEnvironment, key, value);
     if (key == "disable_messages") Toggle(context, configDisableMessages, "Command messages", value, true);
     if (key == "automatic_item_pick_up") Toggle(context, configAutomaticItemPickUp, "Automatic item pick up", value);
     if (key == "command_descriptions") Toggle(context, configCommandDescriptions, "Command descriptions", value);
