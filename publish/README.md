@@ -155,6 +155,7 @@ Recommended way is to use the commands since you can configure the server and al
 - Disable start shout (default: `false`, key: `disable_start_shout`): Removes the initial shout message when joining the server.
 - Disable tutorials (default: `false`, key: `disable_tutorials`): Prevents the raven from appearing.
 - Invisible to players with ghost mode (default: `false`, key: `ghost_invisibility`): Invisible to other players with ghost mode.
+- No clip clear environment (default: `true`, key: `no_clip_clear_environment`): Removes any forced environments when the noclip is enabled. This disables any dark dungeon environments and prevents them from staying on when exiting the dungeon.
 - No clip with fly mode (default: `false`, key: `fly_no_clip`): Removes collision check with fly mode.
 - No creature drops (default: `false`, key: `no_drops`): Prevents creatures from dropping loot, can be useful if people accidentally spawn very high star creatures. Only works when as the zone owner.
 - No edge of world pull with god mode (default: `true`, key: `gpd_no_edge`): Removes the pull for an even godlier god mode.

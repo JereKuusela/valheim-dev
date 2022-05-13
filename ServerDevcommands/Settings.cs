@@ -152,8 +152,8 @@ public static class Settings {
     configGodModeNoEdgeOfWorld = config.Bind(section, "No edge of world pull with god mode", true, "");
     configDisableStartShout = config.Bind(section, "Disable start shout", false, "Removes the initial shout message when joining the server.");
     configDisableTutorials = config.Bind(section, "Disable tutorials", false, "Prevents the raven from appearing.");
-    configFlyNoClip = config.Bind(section, "No clip clears forced environments", false, "");
-    configNoClipClearEnvironment = config.Bind(section, "No clip with fly mode", true, "Intended to disable the dark dungeon environments.");
+    configFlyNoClip = config.Bind(section, "No clip with fly mode", false, "");
+    configNoClipClearEnvironment = config.Bind(section, "No clip clears forced environments", true, "Removes any forced environments when the noclip is enabled. This disables any dark dungeon environments and prevents them from staying on when exiting the dungeon.");
     configGodModeNoKnockback = config.Bind(section, "No knockback with god mode", true, "");
     configMapCoordinates = config.Bind(section, "Show map coordinates", true, "The map shows coordinates on hover.");
     configMiniMapCoordinates = config.Bind(section, "Show minimap coordinates", false, "The minimap shows player coordinates.");
