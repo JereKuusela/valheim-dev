@@ -87,6 +87,7 @@ Examples:
 	- `event army_eikthyr`: Starts an event at your position.
 	- `event army_eikthyr 100 -100`: Starts an event at coordinates 100,-100.
 - `exploremap [x] [z] [radius]` allows revealing only a part of the map.
+- `goto [x,z,y]` or ``goto x z y` teleports to the coordinates. If y is not given, teleports to the ground level.
 - `hud` allows toggling the HUD visibility.
 - `hud [value]` allows directly setting the HUD visibility.
 - `move_spawn [x,z,y = player's coordinates]` allows moving the default spawn point.
@@ -197,6 +198,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - v1.19
 	- Adds a new setting `no_clip_clear_environment` to control whether the noclip automatically clears the forced environment.
 	- Adds more supported truthy/falsy values for the `dev_config` command.
+	- Adds the y coordinate to the `goto` command.
 	- Changes the map coordinates to be x,z,y instead of x,y,z (like in many commands).
 	- Changes the map coordinates to show free fly position.
 	- Improves the noclip environment clear compatibility with other environment mods.

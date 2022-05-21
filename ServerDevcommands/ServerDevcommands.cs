@@ -50,6 +50,7 @@ public class SetCommands {
     new MappingCommand();
     new WindCommand();
     new EnvCommand();
+    new GotoCommand();
     DefaultAutoComplete.Register();
     Settings.RegisterCommands();
   }

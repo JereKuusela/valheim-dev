@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using System.Linq;
 using UnityEngine;
@@ -91,5 +92,27 @@ public abstract class Helper {
   public static string PrintVectorXZY(Vector3 vector) => vector.x.ToString(CultureInfo.InvariantCulture) + "," + vector.z.ToString(CultureInfo.InvariantCulture) + "," + vector.y.ToString(CultureInfo.InvariantCulture);
   public static string PrintVectorYXZ(Vector3 vector) => vector.y.ToString(CultureInfo.InvariantCulture) + "," + vector.x.ToString(CultureInfo.InvariantCulture) + "," + vector.z.ToString(CultureInfo.InvariantCulture);
   public static string PrintAngleYXZ(Quaternion quaternion) => PrintVectorYXZ(quaternion.eulerAngles);
-
+  public static void AddError(Terminal context, string message) {
+    AddMessage(context, $"Error: {message}");
+  }
+  public static Player GetPlayer() {
+    var player = Player.m_localPlayer;
+    if (!player) throw new InvalidOperationException("No player.");
+    return player;
+  }
+  public static void ArgsCheck(Terminal.ConsoleEventArgs args, int amount, string message) {
+    if (args.Length < amount) throw new InvalidOperationException(message);
+  }
+  public static void Command(string name, string description, Terminal.ConsoleEvent action, Terminal.ConsoleOptionsFetcher? fetcher = null) {
+    new Terminal.ConsoleCommand(name, description, Helper.Catch(action), isCheat: true, isNetwork: true, optionsFetcher: fetcher);
+  }
+  public static Terminal.ConsoleEvent Catch(Terminal.ConsoleEvent action) =>
+    (args) => {
+      try {
+        if (!Player.m_localPlayer) throw new InvalidOperationException("Player not found.");
+        action(args);
+      } catch (InvalidOperationException e) {
+        Helper.AddError(args.Context, e.Message);
+      }
+    };
 }
