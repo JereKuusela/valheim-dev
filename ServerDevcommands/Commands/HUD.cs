@@ -2,7 +2,7 @@ namespace ServerDevcommands;
 ///<summary>New command for toggling HUD.</summary>
 public class HUDCommand {
   public HUDCommand() {
-    new Terminal.ConsoleCommand("hud", "[value] -  Toggles or sets the HUD visibility.", (Terminal.ConsoleEventArgs args) => {
+    new Terminal.ConsoleCommand("hud", "[value] -  Toggles or sets the HUD visibility.", (args) => {
       if (!Hud.m_instance) {
         Helper.AddMessage(args.Context, "Error: No HUD instance.");
         return;

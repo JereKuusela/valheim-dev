@@ -10,11 +10,11 @@ public class AliasCommand {
     if (Terminal.commands.TryGetValue(baseCommand, out var command))
       new Terminal.ConsoleCommand(key, plain, command.action, command.IsCheat, command.IsNetwork, command.OnlyServer, command.IsSecret, command.AllowInDevBuild, command.m_tabOptionsFetcher);
     else
-      new Terminal.ConsoleCommand(key, plain, (Terminal.ConsoleEventArgs args) => { });
+      new Terminal.ConsoleCommand(key, plain, (args) => { });
   }
 
   public AliasCommand() {
-    new Terminal.ConsoleCommand("alias", "[name] [command] - Sets a command alias.", (Terminal.ConsoleEventArgs args) => {
+    new Terminal.ConsoleCommand("alias", "[name] [command] - Sets a command alias.", (args) => {
       if (args.Length < 2) {
         args.Context.AddString(string.Join("\n", Settings.AliasKeys.Select(key => key + " -> " + Settings.GetAlias(key))));
       } else if (args.Length < 3) {

@@ -3,7 +3,7 @@ namespace ServerDevcommands;
 ///<summary>Adds support for other player's position. </summary>
 public class PosCommand {
   public PosCommand() {
-    new Terminal.ConsoleCommand("pos", "[name/precision] [precision] - Prints the position of a player. If name is not given, prints the current position.", (Terminal.ConsoleEventArgs args) => {
+    new Terminal.ConsoleCommand("pos", "[name/precision] [precision] - Prints the position of a player. If name is not given, prints the current position.", (args) => {
       var position = Player.m_localPlayer?.transform.position;
       var precision = 0;
       if (args.Length >= 2) {

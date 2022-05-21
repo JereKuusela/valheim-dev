@@ -36,7 +36,7 @@ public class DevcommandsCommand {
   }
 
   public DevcommandsCommand() {
-    new Terminal.ConsoleCommand("devcommands", "Toggles cheats", (Terminal.ConsoleEventArgs args) => {
+    new Terminal.ConsoleCommand("devcommands", "Toggles cheats", (args) => {
       if (Terminal.m_cheat) {
         Set(args.Context, false);
       } else if (ZNet.instance && ZNet.instance.IsServer()) {

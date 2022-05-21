@@ -7,7 +7,7 @@ public class NoMapCommand {
       if (index == 0) return ParameterInfo.Create("1 = disable map, 0 = enable map, no value = toggle");
       return ParameterInfo.None;
     });
-    new Terminal.ConsoleCommand("nomap", "[set] - Toggles or sets the nomap mode. Can be executed on the server.", (Terminal.ConsoleEventArgs args) => {
+    new Terminal.ConsoleCommand("nomap", "[set] - Toggles or sets the nomap mode. Can be executed on the server.", (args) => {
       var disableMap = false;
       var isServer = ZNet.instance && ZNet.instance.IsServer();
       var player = Player.m_localPlayer;

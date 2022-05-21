@@ -2,7 +2,7 @@ namespace ServerDevcommands;
 ///<summary>Adds a delay to command execution.</summary>
 public class WaitCommand {
   public WaitCommand() {
-    new Terminal.ConsoleCommand("wait", "[duration] - Milliseconds to wait before executing the next command.", (Terminal.ConsoleEventArgs args) => {
+    new Terminal.ConsoleCommand("wait", "[duration] - Milliseconds to wait before executing the next command.", (args) => {
       if (args.Length < 2) return;
       CommandQueue.QueueTimer = Parse.TryInt(args.Args, 1, 0) / 1000f;
     });

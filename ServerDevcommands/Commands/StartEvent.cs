@@ -15,7 +15,7 @@ public class StartEventCommand {
     RandEventSystem.instance.SetRandomEventByName(name, new(x, 0, z));
   }
   public StartEventCommand() {
-    new Terminal.ConsoleCommand("event", "[name] [x] [z] - start event.", (Terminal.ConsoleEventArgs args) => {
+    new Terminal.ConsoleCommand("event", "[name] [x] [z] - start event.", (args) => {
       if (args.Length < 2) return;
       var parameters = Helper.AddPlayerPosXZ(args.Args, 2);
       if (ZNet.instance.IsServer()) DoStartEvent(parameters, args.Context);

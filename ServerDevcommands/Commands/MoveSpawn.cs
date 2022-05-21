@@ -3,7 +3,7 @@ namespace ServerDevcommands;
 ///<summary>Commnand to print the seed.</summary>
 public class MoveSpawn {
   public MoveSpawn() {
-    new Terminal.ConsoleCommand("move_spawn", "[x,z,y] Moves the default spawn point to the given coordinates (player's current coordinates if not given).", (Terminal.ConsoleEventArgs args) => {
+    new Terminal.ConsoleCommand("move_spawn", "[x,z,y] Moves the default spawn point to the given coordinates (player's current coordinates if not given).", (args) => {
       var parameters = Helper.AddPlayerPosXZY(args.Args, 1);
       if (ZNet.instance.IsServer()) {
         var zs = ZoneSystem.instance;

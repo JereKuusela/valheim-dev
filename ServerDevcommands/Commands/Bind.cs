@@ -10,7 +10,7 @@ public class BindCommand {
     terminal.AddString(command);
   }
   public BindCommand() {
-    new Terminal.ConsoleCommand("bind", "[keycode,modifier1,modifier2,...] [command] [parameters] - Binds a key (with modifier keys) to a command.", (Terminal.ConsoleEventArgs args) => {
+    new Terminal.ConsoleCommand("bind", "[keycode,modifier1,modifier2,...] [command] [parameters] - Binds a key (with modifier keys) to a command.", (args) => {
       if (args.Length < 2) return;
       var keys = Parse.Split(args[1]).Select(key => key.ToLower()).ToArray();
       // Mouse wheel hack.
@@ -34,7 +34,7 @@ public class BindCommand {
     }, new() {
       { "keys", (int index) => ParameterInfo.KeyCodesWithNegative }
     });
-    new Terminal.ConsoleCommand("unbind", "[keycode] [amount = 0] - Clears binds from a key. Optional parameter can be used to specify amount of removed binds.", (Terminal.ConsoleEventArgs args) => {
+    new Terminal.ConsoleCommand("unbind", "[keycode] [amount = 0] - Clears binds from a key. Optional parameter can be used to specify amount of removed binds.", (args) => {
       if (args.Length < 2) return;
       // Mouse wheel hack.
       if (args[1] == "wheel") args.Args[1] = "none";
@@ -54,7 +54,7 @@ public class BindCommand {
       if (index == 1) return ParameterInfo.Create("Amount of binds to remove from the key.");
       return ParameterInfo.None;
     });
-    new Terminal.ConsoleCommand("printbinds", "Prints all key binds.", (Terminal.ConsoleEventArgs args) => {
+    new Terminal.ConsoleCommand("printbinds", "Prints all key binds.", (args) => {
       foreach (var text in Terminal.m_bindList) Print(args.Context, text);
     });
     AutoComplete.RegisterEmpty("printbinds");

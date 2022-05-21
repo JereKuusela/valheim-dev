@@ -2,7 +2,7 @@ namespace ServerDevcommands;
 ///<summary>Adds output when used without the parameter.</summary>
 public class WindCommand {
   public WindCommand() {
-    new Terminal.ConsoleCommand("wind", "[angle] [intensity] - Prints or overrides the wind.", (Terminal.ConsoleEventArgs args) => {
+    new Terminal.ConsoleCommand("wind", "[angle] [intensity] - Prints or overrides the wind.", (args) => {
       var em = EnvMan.instance;
       if (!em) return;
       if (args.Length < 3) {

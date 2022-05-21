@@ -9,7 +9,7 @@ public class ConfigCommand {
     });
   }
   public ConfigCommand() {
-    new Terminal.ConsoleCommand("dev_config", "[key] [value] - Toggles or sets config value.", (Terminal.ConsoleEventArgs args) => {
+    new Terminal.ConsoleCommand("dev_config", "[key] [value] - Toggles or sets config value.", (args) => {
       if (args.Length < 2) return;
       if (args.Length == 2)
         Settings.UpdateValue(args.Context, args[1], "");

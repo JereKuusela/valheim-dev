@@ -4,7 +4,7 @@ namespace ServerDevcommands;
 ///<summary>New command to search to list object or location ids.</summary>
 public class SearchIdCommand {
   public SearchIdCommand() {
-    new Terminal.ConsoleCommand("search_id", "[term] [max_lines=5] - Prints object ids matching the search term.", (Terminal.ConsoleEventArgs args) => {
+    new Terminal.ConsoleCommand("search_id", "[term] [max_lines=5] - Prints object ids matching the search term.", (args) => {
       if (args.Length < 2) return;
       var term = args[1].ToLower();
       var maxLines = Parse.TryInt(args.Args, 2, 5);

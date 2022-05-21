@@ -197,6 +197,8 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - v1.19
 	- Adds a new setting `no_clip_clear_environment` to control whether the noclip automatically clears the forced environment.
 	- Adds more supported truthy/falsy values for the `dev_config` command.
+	- Changes the map coordinates to be x,z,y instead of x,y,z (like in many commands).
+	- Changes the map coordinates to show free fly position.
 	- Improves the noclip environment clear compatibility with other environment mods.
 	- Fixes private players appearing at the map center if the feature is only enabled on the client.
 
