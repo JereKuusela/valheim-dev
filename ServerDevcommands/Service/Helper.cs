@@ -87,7 +87,9 @@ public abstract class Helper {
     if (!player.m_characterID.IsNone()) return player;
     player = players.FirstOrDefault(player => player.m_name.ToLower().StartsWith(name.ToLower()));
     if (!player.m_characterID.IsNone()) return player;
-    return players.FirstOrDefault(player => player.m_name.ToLower().Contains(name.ToLower()));
+    player = players.FirstOrDefault(player => player.m_name.ToLower().Contains(name.ToLower()));
+    if (!player.m_characterID.IsNone()) return player;
+    throw new InvalidOperationException("Unable to find the player.");
   }
   public static string PrintVectorXZY(Vector3 vector) => vector.x.ToString(CultureInfo.InvariantCulture) + "," + vector.z.ToString(CultureInfo.InvariantCulture) + "," + vector.y.ToString(CultureInfo.InvariantCulture);
   public static string PrintVectorYXZ(Vector3 vector) => vector.y.ToString(CultureInfo.InvariantCulture) + "," + vector.x.ToString(CultureInfo.InvariantCulture) + "," + vector.z.ToString(CultureInfo.InvariantCulture);

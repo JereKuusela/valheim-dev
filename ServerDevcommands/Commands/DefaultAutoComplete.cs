@@ -79,11 +79,6 @@ public static class DefaultAutoComplete {
     AutoComplete.RegisterEmpty("genloc");
     AutoComplete.RegisterEmpty("ghost");
     AutoComplete.RegisterEmpty("god");
-    AutoComplete.Register("goto", (int index) => {
-      if (index == 0) return ParameterInfo.Create("X coordinate", "a number");
-      if (index == 1) return ParameterInfo.Create("Z coordinate", "a number");
-      return ParameterInfo.None;
-    });
     AutoComplete.Register("hair", (int index) => {
       if (index == 0) return ParameterInfo.Hairs;
       return ParameterInfo.None;
