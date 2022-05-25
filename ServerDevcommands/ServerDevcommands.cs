@@ -51,6 +51,8 @@ public class SetCommands {
     new WindCommand();
     new EnvCommand();
     new GotoCommand();
+    new ResetSkillCommand();
+    new RaiseSkillCommand();
     DefaultAutoComplete.Register();
     Settings.RegisterCommands();
   }

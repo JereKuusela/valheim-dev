@@ -95,6 +95,8 @@ Examples:
 - `pos [player name / precision] [precision]` allows getting the position of any player.
 	- `pos 1`: Returns your position with 1 decimal precision.
 	- `pos jay`: Returns the position of a player named Jay,Heyjay or whatever is the closest match.
+- `raiseskill * [amount]` allows raising all skills. 
+- `resetskill [skill]` allows reseting skills.
 - `redo` restores an action added to the undo/redo manager.
 - `resetmap [x] [z] [radius]` allows hiding only a part of the map.
 - `resetpins [x] [z] [radius]` allows removing pins from the map.
@@ -200,6 +202,8 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - v1.20
 	- Adds a new setting `access_private_chests` which allows opening all private chests (default `true`).
 	- Adds a new setting `access_warded_areas` which allows ignoring wards (default `true`).
+	- Adds a new command `resetskill` to reset skills more easily.
+	- Adds a new parameter `*` to the `raiseskill` command to raise (or lower) all skills.
 
 - v1.19
 	- Adds a new setting `no_clip_clear_environment` to control whether the noclip automatically clears the forced environment.

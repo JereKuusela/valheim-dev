@@ -44,6 +44,20 @@ public partial class ParameterInfo {
       return environments;
     }
   }
+  private static List<string> skillsWithWilcard = new();
+  public static List<string> SkillsWithWildcard {
+    get {
+      if (skillsWithWilcard.Count == 0) {
+        skillsWithWilcard = Enum.GetNames(typeof(Skills.SkillType)).ToList<string>();
+        skillsWithWilcard.Remove(Skills.SkillType.All.ToString());
+        skillsWithWilcard.Remove(Skills.SkillType.None.ToString());
+        skillsWithWilcard.Remove(Skills.SkillType.FireMagic.ToString());
+        skillsWithWilcard.Remove(Skills.SkillType.FrostMagic.ToString());
+        skillsWithWilcard.Add("*");
+      }
+      return skillsWithWilcard;
+    }
+  }
   private static List<string> colors = new() {
     "#rrggbbaa",
     "aqua",

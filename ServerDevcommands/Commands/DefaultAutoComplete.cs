@@ -111,11 +111,6 @@ public static class DefaultAutoComplete {
     AutoComplete.RegisterEmpty("printseeds");
     AutoComplete.RegisterEmpty("printlocations");
     AutoComplete.RegisterEmpty("puke");
-    AutoComplete.Register("raiseskill", (int index) => {
-      if (index == 0) return Terminal.commands["raiseskill"].m_tabOptionsFetcher();
-      if (index == 1) return ParameterInfo.Create("Amount", "an integer (from -100 to 100)");
-      return ParameterInfo.None;
-    });
     AutoComplete.RegisterEmpty("randomevent");
     AutoComplete.RegisterEmpty("removebirds");
     AutoComplete.RegisterEmpty("removedrops");
