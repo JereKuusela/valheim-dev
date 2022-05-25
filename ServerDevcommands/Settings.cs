@@ -49,6 +49,10 @@ public static class Settings {
   public static bool DisableStartShout => configDisableStartShout.Value;
   public static ConfigEntry<bool> configDisableTutorials;
   public static bool DisableTutorials => configDisableTutorials.Value;
+  public static ConfigEntry<bool> configAccessPrivateChests;
+  public static bool AccessPrivateChests => Cheats && configAccessPrivateChests.Value;
+  public static ConfigEntry<bool> configAccessWardedAreas;
+  public static bool AccessWardedAreas => Cheats && configAccessWardedAreas.Value;
   public static ConfigEntry<bool> configFlyNoClip;
   public static bool FlyNoClip => Cheats && configFlyNoClip.Value;
   public static ConfigEntry<bool> configNoClipClearEnvironment;
@@ -152,6 +156,8 @@ public static class Settings {
     configGodModeNoEdgeOfWorld = config.Bind(section, "No edge of world pull with god mode", true, "");
     configDisableStartShout = config.Bind(section, "Disable start shout", false, "Removes the initial shout message when joining the server.");
     configDisableTutorials = config.Bind(section, "Disable tutorials", false, "Prevents the raven from appearing.");
+    configAccessPrivateChests = config.Bind(section, "Access private chests", true, "Allows opening private chests.");
+    configAccessWardedAreas = config.Bind(section, "Access warded areas", true, "Allows accessing warded areas.");
     configFlyNoClip = config.Bind(section, "No clip with fly mode", false, "");
     configNoClipClearEnvironment = config.Bind(section, "No clip clears forced environments", true, "Removes any forced environments when the noclip is enabled. This disables any dark dungeon environments and prevents them from staying on when exiting the dungeon.");
     configGodModeNoKnockback = config.Bind(section, "No knockback with god mode", true, "");
@@ -193,6 +199,8 @@ public static class Settings {
 
 
   public static List<string> Options = new() {
+    "access_private_chests",
+    "access_warded_areas",
     "map_coordinates",
     "private_players",
     "auto_devcommands",
@@ -290,6 +298,8 @@ public static class Settings {
     if (key == "auto_exec_dev_off") SetValue(context, configAutoExecDevOff, key, value);
     if (key == "auto_exec_boot") SetValue(context, configAutoExecBoot, key, value);
     if (key == "auto_exec") SetValue(context, configAutoExec, key, value);
+    if (key == "access_private_chests") Toggle(context, configAccessPrivateChests, key, value);
+    if (key == "access_warded_areas") Toggle(context, configAccessWardedAreas, key, value);
     if (key == "no_clip_clear_environment") Toggle(context, configNoClipClearEnvironment, key, value);
     if (key == "disable_messages") Toggle(context, configDisableMessages, "Command messages", value, true);
     if (key == "automatic_item_pick_up") Toggle(context, configAutomaticItemPickUp, "Automatic item pick up", value);

@@ -4,7 +4,7 @@ namespace ServerDevcommands;
 public class HaveStaminaWithGodMode {
   static void Postfix(Player __instance, ref bool __result) {
     var noUsage = Settings.GodModeNoStamina && __instance.InGodMode();
-    if (noUsage) __result = true;
+    __result |= noUsage;
   }
 }
 [HarmonyPatch(typeof(Player), nameof(Player.UseStamina))]

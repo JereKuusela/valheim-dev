@@ -142,6 +142,8 @@ Recommended way is to use the commands since you can configure the server and al
 
 ## General
 
+- Access private chests (default: `true`, key: `access_private_chests`): Allows opening private chests.
+- Access warded areas (default: `true`, key: `access_warded_areas`): Allows accessing warded areas.
 - Always dodge with god mode (default: `false`, key: `god_always_dodge`): Automatically dodges with the god mode.
 - Always parry with god mode (default: `false`, key: `god_always_parry`): Automatically parries with the god mode when not blocking.
 - Automatic debug mode (default: `false`, key: `auto_debugmode`): Automatically turns debug mode on/off when devcommands are enabled or disabled.
@@ -194,6 +196,10 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - Server side commands (default: `randomevent,stopevent,genloc,sleep,skiptime`, key: `server_commands`): Names of commands that should be automatically executed on the server. `event` command is not included because it has a custom server-side support.
 
 # Changelog
+
+- v1.20
+	- Adds a new setting `access_private_chests` which allows opening all private chests (default `true`).
+	- Adds a new setting `access_warded_areas` which allows ignoring wards (default `true`).
 
 - v1.19
 	- Adds a new setting `no_clip_clear_environment` to control whether the noclip automatically clears the forced environment.
