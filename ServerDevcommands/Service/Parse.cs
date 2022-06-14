@@ -31,71 +31,71 @@ public static class Parse {
     else return new(range[0], range[1]);
 
   }
-  public static int TryInt(string arg, int defaultValue = 1) {
+  public static int TryInt(string arg, int defaultValue = 0) {
     if (!int.TryParse(arg, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
       return defaultValue;
     return result;
   }
-  public static int TryInt(string[] args, int index, int defaultValue = 1) {
+  public static int TryInt(string[] args, int index, int defaultValue = 0) {
     if (args.Length <= index) return defaultValue;
     return TryInt(args[index], defaultValue);
   }
-  public static Range<int> TryIntRange(string arg, int defaultValue = 1) {
+  public static Range<int> TryIntRange(string arg, int defaultValue = 0) {
     var range = TryRange(arg);
     return new(TryInt(range.Min, defaultValue), TryInt(range.Max, defaultValue));
   }
-  public static Range<int> TryIntRange(string[] args, int index, int defaultValue = 1) {
+  public static Range<int> TryIntRange(string[] args, int index, int defaultValue = 0) {
     if (args.Length <= index) return new(defaultValue);
     return TryIntRange(args[index], defaultValue);
   }
-  public static uint TryUInt(string arg, uint defaultValue = 1) {
+  public static uint TryUInt(string arg, uint defaultValue = 0) {
     if (!uint.TryParse(arg, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
       return defaultValue;
     return result;
   }
-  public static uint TryUInt(string[] args, int index, uint defaultValue = 1) {
+  public static uint TryUInt(string[] args, int index, uint defaultValue = 0) {
     if (args.Length <= index) return defaultValue;
     return TryUInt(args[index], defaultValue);
   }
-  public static Range<uint> TryUIntRange(string arg, uint defaultValue = 1) {
+  public static Range<uint> TryUIntRange(string arg, uint defaultValue = 0) {
     var range = TryRange(arg);
     return new(TryUInt(range.Min, defaultValue), TryUInt(range.Max, defaultValue));
   }
-  public static Range<uint> TryUIntRange(string[] args, int index, uint defaultValue = 1) {
+  public static Range<uint> TryUIntRange(string[] args, int index, uint defaultValue = 0) {
     if (args.Length <= index) return new(defaultValue);
     return TryUIntRange(args[index], defaultValue);
   }
-  public static long TryLong(string arg, long defaultValue = 1) {
+  public static long TryLong(string arg, long defaultValue = 0) {
     if (!long.TryParse(arg, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
       return defaultValue;
     return result;
   }
-  public static long TryLong(string[] args, int index, long defaultValue = 1) {
+  public static long TryLong(string[] args, int index, long defaultValue = 0) {
     if (args.Length <= index) return defaultValue;
     return TryLong(args[index], defaultValue);
   }
-  public static Range<long> TryLongRange(string arg, long defaultValue = 1) {
+  public static Range<long> TryLongRange(string arg, long defaultValue = 0) {
     var range = TryRange(arg);
     return new(TryLong(range.Min, defaultValue), TryLong(range.Max, defaultValue));
   }
-  public static Range<long> TryLongRange(string[] args, int index, long defaultValue = 1) {
+  public static Range<long> TryLongRange(string[] args, int index, long defaultValue = 0) {
     if (args.Length <= index) return new(defaultValue);
     return TryLongRange(args[index], defaultValue);
   }
-  public static float TryFloat(string arg, float defaultValue = 1) {
+  public static float TryFloat(string arg, float defaultValue = 0f) {
     if (!float.TryParse(arg, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
       return defaultValue;
     return result;
   }
-  public static float TryFloat(string[] args, int index, float defaultValue = 1f) {
+  public static float TryFloat(string[] args, int index, float defaultValue = 0f) {
     if (args.Length <= index) return defaultValue;
     return TryFloat(args[index], defaultValue);
   }
-  public static Range<float> TryFloatRange(string arg, float defaultValue = 1) {
+  public static Range<float> TryFloatRange(string arg, float defaultValue = 0f) {
     var range = TryRange(arg);
     return new(TryFloat(range.Min, defaultValue), TryFloat(range.Max, defaultValue));
   }
-  public static Range<float> TryFloatRange(string[] args, int index, float defaultValue = 1) {
+  public static Range<float> TryFloatRange(string[] args, int index, float defaultValue = 0f) {
     if (args.Length <= index) return new(defaultValue);
     return TryFloatRange(args[index], defaultValue);
   }

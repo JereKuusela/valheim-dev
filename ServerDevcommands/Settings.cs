@@ -132,6 +132,8 @@ public static class Settings {
   public static ConfigEntry<string> configDisabledCommands;
   public static ConfigEntry<string> configRootUsers;
   public static ConfigEntry<string> configDisabledGlobalKeys;
+  public static ConfigEntry<string> configUndoLimit;
+  public static int UndoLimit => Parse.TryInt(configUndoLimit.Value, 50);
   public static HashSet<string> DisabledGlobalKeys => ParseList(configDisabledGlobalKeys.Value);
   public static bool IsGlobalKeyDisabled(string key) => DisabledGlobalKeys.Contains(key.ToLower());
   public static void Init(ConfigFile config) {
@@ -168,6 +170,9 @@ public static class Settings {
     configDisableDebugModeKeys = config.Bind(section, "Disable debug mode keys", false, "Removes debug mode key bindings for killall, removedrops, fly and no cost.");
     configDisabledGlobalKeys = config.Bind(section, "Disabled global keys", "", "Global keys separated by , that won't be set (server side setting).");
     configDisabledGlobalKeys.SettingChanged += (s, e) => DisableGlobalKeys.RemoveDisabled();
+    configUndoLimit = config.Bind(section, "Max undo steps", "50", "How many undo actions are stored.");
+    configUndoLimit.SettingChanged += (s, e) => UndoManager.MaxSteps = UndoLimit;
+    UndoManager.MaxSteps = UndoLimit;
     section = "2. Console";
     configDisableMessages = config.Bind(section, "Disable messages", false, "Prevents messages from commands.");
     configServerCommands = config.Bind(section, "Server side commands", "randomevent,stopevent,genloc,sleep,skiptime", "Command names separated by , that should be executed server side.");
@@ -243,7 +248,8 @@ public static class Settings {
     "automatic_item_pick_up",
     "disable_messages",
     "god_no_edge",
-    "no_clip_clear_environment"
+    "no_clip_clear_environment",
+    "max_undo_steps"
   };
   private static string State(bool value) => value ? "enabled" : "disabled";
   private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -294,6 +300,7 @@ public static class Settings {
   public static void UpdateValue(Terminal context, string key, string value) {
     if (key == "fly_up_key") SetValue(context, configFlyUpKey, key, value);
     if (key == "fly_down_key") SetValue(context, configFlyDownKey, key, value);
+    if (key == "max_undo_steps") SetValue(context, configUndoLimit, key, value);
     if (key == "auto_exec_dev_on") SetValue(context, configAutoExecDevOn, key, value);
     if (key == "auto_exec_dev_off") SetValue(context, configAutoExecDevOff, key, value);
     if (key == "auto_exec_boot") SetValue(context, configAutoExecBoot, key, value);
