@@ -200,6 +200,9 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 # Changelog
 
+- v1.21
+	- Fixes some commands printing "Error: Player not found.".
+
 - v1.20
 	- Adds a new setting `access_private_chests` which allows opening all private chests (default `true`).
 	- Adds a new setting `access_warded_areas` which allows ignoring wards (default `true`).

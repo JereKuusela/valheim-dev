@@ -111,7 +111,6 @@ public abstract class Helper {
   public static Terminal.ConsoleEvent Catch(Terminal.ConsoleEvent action) =>
     (args) => {
       try {
-        if (!Player.m_localPlayer) throw new InvalidOperationException("Player not found.");
         action(args);
       } catch (InvalidOperationException e) {
         Helper.AddError(args.Context, e.Message);
