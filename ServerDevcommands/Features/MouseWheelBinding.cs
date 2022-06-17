@@ -58,3 +58,16 @@ public class ComfyGizmoPatcher {
 
   static bool Prefix() => !MouseWheelBinding.CouldExecute();
 }
+
+public class GizmoReloadedPatcher {
+  public static void DoPatching(Assembly assembly) {
+    if (assembly == null) return;
+    ServerDevcommands.Log.LogInfo("\"GizmoReloaded\" detected. Patching \"HandleAxisInput\" for mouse wheel binding.");
+    Harmony harmony = new("valheim.jerekuusela.server_devcommand.m3to.mods.GizmoReloaded");
+    var mOriginal = AccessTools.Method(assembly.GetType("GizmoReloaded.Plugin"), "HandleAxisInput");
+    var mPrefix = SymbolExtensions.GetMethodInfo(() => Prefix());
+    harmony.Patch(mOriginal, new(mPrefix));
+  }
+
+  static bool Prefix() => !MouseWheelBinding.CouldExecute();
+}

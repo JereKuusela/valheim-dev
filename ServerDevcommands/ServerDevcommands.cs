@@ -5,6 +5,7 @@ using HarmonyLib;
 using UnityEngine;
 namespace ServerDevcommands;
 [BepInDependency("com.rolopogo.gizmo.comfy", BepInDependency.DependencyFlags.SoftDependency)]
+[BepInDependency("m3to.mods.GizmoReloaded", BepInDependency.DependencyFlags.SoftDependency)]
 [BepInPlugin("valheim.jerekuusela.server_devcommands", "ServerDevcommands", "1.21.0.0")]
 public class ServerDevcommands : BaseUnityPlugin {
   public static ManualLogSource? Logs;
@@ -20,6 +21,8 @@ public class ServerDevcommands : BaseUnityPlugin {
   public void Start() {
     if (Chainloader.PluginInfos.TryGetValue("com.rolopogo.gizmo.comfy", out var info))
       ComfyGizmoPatcher.DoPatching(info.Instance.GetType().Assembly);
+    if (Chainloader.PluginInfos.TryGetValue("m3to.mods.GizmoReloaded", out info))
+      GizmoReloadedPatcher.DoPatching(info.Instance.GetType().Assembly);
   }
 
   public void LateUpdate() {

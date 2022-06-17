@@ -135,6 +135,8 @@ public class GetTabOptionsWithImprovedAutoComplete {
       var commandName = parameters.First();
       if (commandName == "server")
         parameters = parameters.Skip(1).ToArray();
+      if (parameters.Length > 1 && (commandName == "hammer_command"))
+        parameters = parameters.Skip(1).ToArray();
       if (parameters.Length > 2 && (commandName == "bind" || commandName == "alias"))
         parameters = parameters.Skip(2).ToArray();
     }
