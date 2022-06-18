@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BepInEx.Configuration;
+using UnityEngine;
 namespace ServerDevcommands;
 #nullable disable
 public static class Settings {
@@ -78,8 +80,8 @@ public static class Settings {
   public static ConfigEntry<bool> configNoDrops;
   public static bool NoDrops => Cheats && configNoDrops.Value;
   public static ConfigEntry<string> configCommandAliases;
-  public static ConfigEntry<bool> configMouseWheelBinding;
-  public static bool MouseWheelBinding => configMouseWheelBinding.Value;
+  public static ConfigEntry<KeyboardShortcut> configMouseWheelBindKey;
+  public static KeyCode MouseWheelBindKey => configMouseWheelBindKey.Value.MainKey;
   public static ConfigEntry<string> configAutoExecBoot;
   public static string AutoExecBoot => configAutoExecBoot.Value;
   public static ConfigEntry<string> configAutoExec;
@@ -179,7 +181,7 @@ public static class Settings {
     configBestCommandMatch = config.Bind(section, "Best command match", true, "Executes only the commands with the most modifiers keys pressed.");
     configDisableMessages = config.Bind(section, "Disable messages", false, "Prevents messages from commands.");
     configServerCommands = config.Bind(section, "Server side commands", "randomevent,stopevent,genloc,sleep,skiptime", "Command names separated by , that should be executed server side.");
-    configMouseWheelBinding = config.Bind(section, "Mouse wheel binding", true, "Allows binding to the custom wheel keycode.");
+    configMouseWheelBindKey = config.Bind(section, "Mouse wheel bind key", new KeyboardShortcut(KeyCode.None), "The simulated key code when scrolling the wheel.");
     configAutoExecBoot = config.Bind(section, "Auto exec boot", "", "Executes the given command when starting the game.");
     configAutoExecDevOn = config.Bind(section, "Auto exec dev on", "", "Executes the given command when enabling devcommands.");
     configAutoExecDevOff = config.Bind(section, "Auto exec dev off", "", "Executes the given command when disabling devcommands.");
@@ -249,7 +251,7 @@ public static class Settings {
     "fly_up_key",
     "fly_down_key",
     "disable_start_shout",
-    "mouse_wheel_binding",
+    "mouse_wheel_bind_key",
     "disable_tutorials",
     "god_no_weight_limit",
     "automatic_item_pick_up",
@@ -305,6 +307,16 @@ public static class Settings {
     setting.Value = value;
     Helper.AddMessage(context, $"{name} set to {value}.");
   }
+  private static void SetKey(Terminal context, ConfigEntry<KeyboardShortcut> setting, string name, string value) {
+    if (value == "") {
+      Helper.AddMessage(context, $"{name}: {setting.Value}.");
+      return;
+    }
+    if (!Enum.TryParse<KeyCode>(value, true, out var keyCode))
+      throw new InvalidOperationException("'" + value + "' is not a valid UnityEngine.KeyCode.");
+    setting.Value = new(keyCode);
+    Helper.AddMessage(context, $"{name} set to {value}.");
+  }
   public static void UpdateValue(Terminal context, string key, string value) {
     if (key == "fly_up_key") SetValue(context, configFlyUpKeys, key, value);
     if (key == "fly_down_key") SetValue(context, configFlyDownKeys, key, value);
@@ -313,6 +325,7 @@ public static class Settings {
     if (key == "auto_exec_dev_off") SetValue(context, configAutoExecDevOff, key, value);
     if (key == "auto_exec_boot") SetValue(context, configAutoExecBoot, key, value);
     if (key == "auto_exec") SetValue(context, configAutoExec, key, value);
+    if (key == "mouse_wheel_bind_key") SetKey(context, configMouseWheelBindKey, "Mouse wheel bind key", value);
     if (key == "best_command_match") Toggle(context, configBestCommandMatch, key, value);
     if (key == "access_private_chests") Toggle(context, configAccessPrivateChests, key, value);
     if (key == "access_warded_areas") Toggle(context, configAccessWardedAreas, key, value);
@@ -352,6 +365,5 @@ public static class Settings {
     if (key == "god_always_dodge") Toggle(context, configGodModeAlwaysDodge, "Always dodge with god mode", value);
     if (key == "disable_start_shout") Toggle(context, configDisableStartShout, "Start shout", value, true);
     if (key == "disable_tutorials") Toggle(context, configDisableTutorials, "Tutorials", value, true);
-    if (key == "mouse_wheel_binding") Toggle(context, configMouseWheelBinding, "Mouse wheel binding", value);
   }
 }

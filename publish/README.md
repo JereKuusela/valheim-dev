@@ -42,7 +42,7 @@ It's also possible to use negative modifiers. For example `bind j,-leftalt god` 
 
 ### Mouse wheel
 
-Mouse wheel allows binding too with custom keycode `wheel` (internally uses the `none` keycode). It's important to use modifier keys because the binding will block build rotation.
+Mouse wheel allows binding too with custom keycode `wheel` (by default simulates the keycode `none`). It's important to use modifier keys because the binding will block build rotation.
 
 The mouse wheel appends the wheel direction and amount to the command. For example `bind wheel,o say` would say 0.1 or -0.1 in the chat when scrolling the mouse wheel while pressing the O key.
 
@@ -195,7 +195,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - Fly down key (default: `leftcontrol`, key: `fly_down_key`): Changes the key command for flying down. Multiple keys are supported (see Bind section for more info).
 - Fly up key (default: `space`, key: `fly_up_key`): Changes the key command for flying up. Multiple keys are supported (see Bind section for more info).
 - Improved auto complete (default: `true`, key: `improved_autocomplete`): Enables parameter info or options for every parameter.
-- Mouse wheel binding (default: `true`, key: `mouse_wheel_binding`): Enables binding to the mouse wheel with `wheel` keycode.
+- Mouse wheel bind key (default: `none`, key: `mouse_wheel_bind_key`): The simulated keycode when using the mouse wheel.
 - Multiple commands per line (default: `true`, key: `multiple_commands`): Enables multiple commands per line (when separate by `;`).
 - Root users: Steam IDs separated by , that can execute blacklisted commands. Can't be set with `dev_config` command.
 - Substitution system (default: `true`, key: `substitution`): Enables parameter substitution (with `$`).
@@ -206,6 +206,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - v1.21
 	- Adds a new setting `best_command_match` to only execute the commands with the most modifier keys pressed (default `true`).
 	- Fixes some commands printing "Error: Player not found.".
+	- Replaces the setting `mouse_wheel_binding` with a new setting `mouse_wheel_bind_key` that instead allows settting the simulated key.
 
 - v1.20
 	- Adds a new setting `access_private_chests` which allows opening all private chests (default `true`).

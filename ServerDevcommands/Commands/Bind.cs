@@ -10,7 +10,9 @@ namespace ServerDevcommands;
 public class BindCommand {
   private void Print(Terminal terminal, string command) {
     // Mouse wheel hack.
-    if (command.StartsWith("none")) command = "wheel" + command.Substring(4);
+    var key = Settings.MouseWheelBindKey.ToString();
+    if (command.StartsWith(key, StringComparison.OrdinalIgnoreCase))
+      command = "wheel" + command.Substring(key.Length);
     terminal.AddString(command);
   }
   public BindCommand() {
@@ -18,7 +20,7 @@ public class BindCommand {
       if (args.Length < 2) return;
       var keys = Parse.Split(args[1]).Select(key => key.ToLower()).ToArray();
       // Mouse wheel hack.
-      if (keys[0] == "wheel") keys[0] = "none";
+      if (keys[0] == "wheel") keys[0] = Settings.MouseWheelBindKey.ToString().ToLower();
       if (!Enum.TryParse<KeyCode>(keys[0], true, out var keyCode)) {
         args.Context.AddString("'" + keys[0] + "' is not a valid UnityEngine.KeyCode.");
         return;
@@ -41,7 +43,7 @@ public class BindCommand {
     new Terminal.ConsoleCommand("unbind", "[keycode] [amount = 0] - Clears binds from a key. Optional parameter can be used to specify amount of removed binds.", (args) => {
       if (args.Length < 2) return;
       // Mouse wheel hack.
-      if (args[1] == "wheel") args.Args[1] = "none";
+      if (args[1] == "wheel") args.Args[1] = Settings.MouseWheelBindKey.ToString().ToLower();
       args.Args[1] = args[1].ToLower();
       var amount = Parse.TryInt(args.Args, 2, 0);
       if (amount == 0) amount = int.MaxValue;
