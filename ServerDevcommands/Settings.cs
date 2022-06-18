@@ -71,10 +71,10 @@ public static class Settings {
   public static bool MultiCommand => configMultiCommand.Value;
   public static ConfigEntry<bool> configGhostInvisibility;
   public static bool GhostInvisibility => Cheats && configGhostInvisibility.Value;
-  public static ConfigEntry<string> configFlyUpKey;
-  public static bool FlyUpKey => ModifierKeys.IsValid(Parse.Split(configFlyUpKey.Value));
-  public static ConfigEntry<string> configFlyDownKey;
-  public static bool FlyDownKey => ModifierKeys.IsValid(Parse.Split(configFlyDownKey.Value));
+  public static ConfigEntry<string> configFlyUpKeys;
+  public static string[] FlyUpKeys = new string[0];
+  public static ConfigEntry<string> configFlyDownKeys;
+  public static string[] FlyDownKeys = new string[0];
   public static ConfigEntry<bool> configNoDrops;
   public static bool NoDrops => Cheats && configNoDrops.Value;
   public static ConfigEntry<string> configCommandAliases;
@@ -90,6 +90,8 @@ public static class Settings {
   public static string AutoExecDevOff => configAutoExecDevOff.Value;
   public static ConfigEntry<bool> configCommandDescriptions;
   public static bool CommandDescriptions => configCommandDescriptions.Value;
+  public static ConfigEntry<bool> configBestCommandMatch;
+  public static bool BestCommandMatch => configBestCommandMatch.Value;
   private static Dictionary<string, string> Aliases = new();
   public static string[] AliasKeys = new string[0];
 
@@ -174,6 +176,7 @@ public static class Settings {
     configUndoLimit.SettingChanged += (s, e) => UndoManager.MaxSteps = UndoLimit;
     UndoManager.MaxSteps = UndoLimit;
     section = "2. Console";
+    configBestCommandMatch = config.Bind(section, "Best command match", true, "Executes only the commands with the most modifiers keys pressed.");
     configDisableMessages = config.Bind(section, "Disable messages", false, "Prevents messages from commands.");
     configServerCommands = config.Bind(section, "Server side commands", "randomevent,stopevent,genloc,sleep,skiptime", "Command names separated by , that should be executed server side.");
     configMouseWheelBinding = config.Bind(section, "Mouse wheel binding", true, "Allows binding to the custom wheel keycode.");
@@ -197,8 +200,12 @@ public static class Settings {
     };
     configDisabledCommands = config.Bind(section, "Disabled commands", "dev_config disable_command", "Command names separated by , that can't be executed.");
     configDisabledCommands.SettingChanged += (s, e) => DisableCommands.UpdateCommands(configRootUsers.Value, configDisabledCommands.Value);
-    configFlyUpKey = config.Bind(section, "Key for fly up", "Space", "Key codes separated by ,");
-    configFlyDownKey = config.Bind(section, "Key for fly down", "LeftControl", "Key codes separated by ,");
+    configFlyUpKeys = config.Bind(section, "Key for fly up", "Space", "Key codes separated by ,");
+    configFlyUpKeys.SettingChanged += (s, e) => FlyUpKeys = Parse.Split(configFlyUpKeys.Value);
+    FlyUpKeys = Parse.Split(configFlyUpKeys.Value);
+    configFlyDownKeys = config.Bind(section, "Key for fly down", "LeftControl", "Key codes separated by ,");
+    configFlyDownKeys.SettingChanged += (s, e) => FlyDownKeys = Parse.Split(configFlyDownKeys.Value);
+    FlyDownKeys = Parse.Split(configFlyDownKeys.Value);
     ParseAliases(configCommandAliases.Value);
   }
 
@@ -249,7 +256,8 @@ public static class Settings {
     "disable_messages",
     "god_no_edge",
     "no_clip_clear_environment",
-    "max_undo_steps"
+    "max_undo_steps",
+    "best_command_match"
   };
   private static string State(bool value) => value ? "enabled" : "disabled";
   private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -298,13 +306,14 @@ public static class Settings {
     Helper.AddMessage(context, $"{name} set to {value}.");
   }
   public static void UpdateValue(Terminal context, string key, string value) {
-    if (key == "fly_up_key") SetValue(context, configFlyUpKey, key, value);
-    if (key == "fly_down_key") SetValue(context, configFlyDownKey, key, value);
+    if (key == "fly_up_key") SetValue(context, configFlyUpKeys, key, value);
+    if (key == "fly_down_key") SetValue(context, configFlyDownKeys, key, value);
     if (key == "max_undo_steps") SetValue(context, configUndoLimit, key, value);
     if (key == "auto_exec_dev_on") SetValue(context, configAutoExecDevOn, key, value);
     if (key == "auto_exec_dev_off") SetValue(context, configAutoExecDevOff, key, value);
     if (key == "auto_exec_boot") SetValue(context, configAutoExecBoot, key, value);
     if (key == "auto_exec") SetValue(context, configAutoExec, key, value);
+    if (key == "best_command_match") Toggle(context, configBestCommandMatch, key, value);
     if (key == "access_private_chests") Toggle(context, configAccessPrivateChests, key, value);
     if (key == "access_warded_areas") Toggle(context, configAccessWardedAreas, key, value);
     if (key == "no_clip_clear_environment") Toggle(context, configNoClipClearEnvironment, key, value);

@@ -19,7 +19,7 @@ public class MouseWheelBinding {
   public static bool CouldExecute() {
     if (!Settings.MouseWheelBinding) return false;
     if (Terminal.m_binds.TryGetValue(KeyCode.None, out var commands))
-      return commands.Any(ModifierKeys.IsValid);
+      return commands.Any(BindCommand.Valid);
     return false;
   }
 }

@@ -34,10 +34,13 @@ Keybindings now work with modifier keys ([key codes](https://docs.unity3d.com/Sc
 
 - `bind [keycode,modifier1,modifier2,...] [command] [parameter]`: Adds a new key binding with modifier keys.
 	- `bind j god`: Toggles god mode when pressing J.
-	- `bind j,leftalt god`: Toggles god mode when pressing J while left alt is down.
-	- `bind j,-leftalt god`: Toggles god mode when pressing J while left alt is not down.
-	- `bind j,leftalt,h god`: Toggles god mode when pressing J while both left alt and h are down.	
-	- `bind j god keys=leftalt,h`: Same as above but with an alternative way.
+	- `bind j,leftalt,h debugmode`: Toggles debug mode when pressing J while both left alt and h are down.
+
+By default the best match is used. Which means that with above binds, toggling debugmode won't also toggle the god mode.
+
+It's also possible to use negative modifiers. For example `bind j,-leftalt god` won't toggle god mode while left alt is pressed. However using these is not usually needed. 
+
+### Mouse wheel
 
 Mouse wheel allows binding too with custom keycode `wheel` (internally uses the `none` keycode). It's important to use modifier keys because the binding will block build rotation.
 
@@ -50,7 +53,6 @@ Note: After removing this mod, these binds very likely stop working or lead to u
 The same system also works for rebinding the debug flying. For example:
 
 - `devconfig fly_down_key space,leftcontrol`: Changes to fly down when both left control and space are pressed.
-- `devconfig fly_up_key space,-leftcontrol`:  Changes to fly up when space is pressed while left control isn't.
 
 ## Command aliasing
 
@@ -182,6 +184,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - Auto exec boot (key: `auto_exec_boot`): Executes the given command when starting the game.
 - Auto exec dev off (key: `auto_exec_dev_off`): Executes the given command when disabling devcommands.
 - Auto exec dev on (key: `auto_exec_dev_off`): Executes the given command when enabling devcommands.
+- Best command match (default: `true`, key: `best_command_match`): Executes only the commands with the most modifiers keys pressed. Simplifies key binding because negative modifier keys don't have to be used.
 - Command aliases: Saved command aliases.
 - Command descriptions (default: `true`, key: `command_descriptions`): Shows command descriptions as autocomplete.
 - Debug console (default: `false`, key: `debug_console`): Prints debug output to the console related to aliasing and parameter substitution.
@@ -201,6 +204,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 # Changelog
 
 - v1.21
+	- Adds a new setting `best_command_match` to only execute the commands with the most modifier keys pressed (default `true`).
 	- Fixes some commands printing "Error: Player not found.".
 
 - v1.20

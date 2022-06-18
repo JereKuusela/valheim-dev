@@ -99,7 +99,6 @@ public class TryRunCommand {
   static bool Prefix(Terminal __instance, ref string text) {
     // Alias and bind can contain any kind of commands so avoid any processing.
     if (TerminalUtils.SkipProcessing(text)) return true;
-    if (!ModifierKeys.IsValid(text)) return false;
     // Multiple commands in actual input.
     if (MultiCommands.IsMulti(text)) {
       foreach (var cmd in MultiCommands.Split(text)) __instance.TryRunCommand(cmd);
@@ -116,7 +115,6 @@ public class TryRunCommand {
     }
     // Server side checks this already at the server side execution.
     if (Player.m_localPlayer && !DisableCommands.CanRun(text)) return false;
-    text = ModifierKeys.CleanUp(text);
     if (CommandQueue.CanRun()) {
       string[] array = text.Split(' ');
       if (ZNet.instance && !ZNet.instance.IsServer() && Settings.IsServerCommand(array[0])) {

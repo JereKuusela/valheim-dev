@@ -1,8 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
+using HarmonyLib;
 using UnityEngine;
 namespace ServerDevcommands;
 ///<summary>Adds support for mouse wheel binding and other features.</summary>
+[HarmonyPatch]
 public class BindCommand {
   private void Print(Terminal terminal, string command) {
     // Mouse wheel hack.
@@ -59,4 +63,63 @@ public class BindCommand {
     });
     AutoComplete.RegisterEmpty("printbinds");
   }
+
+  [HarmonyPatch(typeof(Chat), nameof(Chat.Update)), HarmonyTranspiler]
+  static IEnumerable<CodeInstruction> DisableDefaultBindExecution(IEnumerable<CodeInstruction> instructions) {
+    return new CodeMatcher(instructions)
+         .MatchForward(
+             useEnd: false,
+             new CodeMatch(OpCodes.Stfld, AccessTools.Field(typeof(Chat), nameof(Chat.m_wasFocused))))
+        .Advance(4)
+        .Insert(new CodeInstruction(OpCodes.Pop), new CodeInstruction(OpCodes.Ldc_I4_1))
+        .InstructionEnumeration();
+  }
+  [HarmonyPatch(typeof(Chat), nameof(Chat.Update)), HarmonyPostfix]
+  static void ExecuteBestBinds(Chat __instance) {
+    if (__instance.m_input.isFocused) return;
+    if (Console.instance && Console.instance.m_chatWindow.gameObject.activeInHierarchy) return;
+    var commands = Terminal.m_binds.Where(kvp => Input.GetKeyDown(kvp.Key)).SelectMany(kvp => kvp.Value).Where(Valid).ToArray();
+    if (commands.Length == 0) return;
+    if (Settings.BestCommandMatch) {
+      var max = commands.Max(CountKeys);
+      commands = commands.Where(cmd => CountKeys(cmd) == max).ToArray();
+    }
+    foreach (var cmd in commands) __instance.TryRunCommand(CleanUp(cmd), true, true);
+  }
+  public static int CountKeys(string command) {
+    if (!command.Contains("keys=")) return 0;
+    var args = command.Split(' ');
+    var arg = args.First(arg => arg.StartsWith("keys=")).Split('=');
+    if (arg.Length < 2) return 0;
+    var keys = Parse.Split(arg[1]);
+    return CoundKeys(keys);
+  }
+  public static int CoundKeys(string[] keys) => keys.Count(key => !key.StartsWith("-", StringComparison.Ordinal));
+
+  public static bool Valid(string command) {
+    if (!command.Contains("keys=")) return true;
+    var args = command.Split(' ');
+    var arg = args.First(arg => arg.StartsWith("keys=")).Split('=');
+    if (arg.Length < 2) return true;
+    var keys = Parse.Split(arg[1]);
+    return Valid(keys);
+  }
+
+  public static bool Valid(string[] keys) {
+    foreach (var key in keys) {
+      if (key.StartsWith("-")) {
+        if (Enum.TryParse<KeyCode>(key.Substring(1), true, out var keyCode)) {
+          if (Input.GetKey(keyCode)) return false;
+        }
+
+      } else {
+        if (Enum.TryParse<KeyCode>(key, true, out var keyCode)) {
+          if (!Input.GetKey(keyCode)) return false;
+        }
+      }
+    }
+    return true;
+  }
+  public static string CleanUp(string command) =>
+    string.Join(" ", command.Split(' ').Where(arg => !arg.StartsWith("keys=")));
 }

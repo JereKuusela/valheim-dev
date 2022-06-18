@@ -8,7 +8,7 @@ namespace ServerDevcommands;
 [BepInDependency("m3to.mods.GizmoReloaded", BepInDependency.DependencyFlags.SoftDependency)]
 [BepInPlugin("valheim.jerekuusela.server_devcommands", "ServerDevcommands", "1.21.0.0")]
 public class ServerDevcommands : BaseUnityPlugin {
-  public static ManualLogSource? Logs;
+  private static ManualLogSource? Logs;
   public static ManualLogSource Log => Logs!;
   public void Awake() {
     Logs = Logger;
