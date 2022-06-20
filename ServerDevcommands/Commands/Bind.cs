@@ -86,7 +86,8 @@ public class BindCommand {
       var max = commands.Max(CountKeys);
       commands = commands.Where(cmd => CountKeys(cmd) == max).ToArray();
     }
-    foreach (var cmd in commands) __instance.TryRunCommand(CleanUp(cmd), true, true);
+    commands = commands.Select(CleanUp).ToArray();
+    foreach (var cmd in commands) __instance.TryRunCommand(cmd, true, true);
   }
   public static int CountKeys(string command) {
     if (!command.Contains("keys=")) return 0;

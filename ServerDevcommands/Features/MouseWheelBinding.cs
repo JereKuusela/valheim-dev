@@ -8,12 +8,17 @@ public class MouseWheelBinding {
   ///<summary>Runs any bound commands.</summary>
   public static void Execute(float ticks) {
     if (ticks == 0f) return;
-    if (Terminal.m_binds.TryGetValue(Settings.MouseWheelBindKey, out var commands)) {
-      foreach (var command in commands) {
-        var input = TerminalUtils.Substitute(command, ticks.ToString(CultureInfo.InvariantCulture));
-        Chat.instance.TryRunCommand(input);
-      }
+    if (!Chat.instance) return;
+    if (!Terminal.m_binds.TryGetValue(Settings.MouseWheelBindKey, out var commands)) return;
+    commands = commands.Where(BindCommand.Valid).ToList();
+    if (commands.Count == 0) return;
+    if (Settings.BestCommandMatch) {
+      var max = commands.Max(BindCommand.CountKeys);
+      commands = commands.Where(cmd => BindCommand.CountKeys(cmd) == max).ToList();
     }
+    var ticksStr = ticks.ToString(CultureInfo.InvariantCulture);
+    commands = commands.Select(BindCommand.CleanUp).Select(cmd => TerminalUtils.Substitute(cmd, ticksStr)).ToList();
+    foreach (var cmd in commands) Chat.instance.TryRunCommand(cmd, true, true);
   }
   ///<summary>Returns whether any commands could run with the current modifier keys.</summary>
   public static bool CouldExecute() {

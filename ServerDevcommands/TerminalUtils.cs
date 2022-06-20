@@ -28,7 +28,7 @@ public static class TerminalUtils {
       input.selectionFocusPosition = Focus;
     }
   }
-  public static string GetLastWord(Terminal obj) => Parse.Split(obj.m_input.text.Split(' ').Last().Split('=').Last()).Last();
+  public static string GetLastWord(Terminal obj) => obj.m_input.text.Split(' ').Last().Split('=').Last().Split(',').Last();
   public static IEnumerable<string> GetPositionalParameters(string[] parameters) {
     return parameters.Where(par => !par.Contains("="));
   }
@@ -87,7 +87,7 @@ public static class TerminalUtils {
     input = string.Join(" ", parameters);
     return input;
   }
-  public static bool SkipProcessing(string command) => command.StartsWith("bind ") || command.StartsWith("alias ");
+  public static bool SkipProcessing(string command) => command.StartsWith("bind ") || command.StartsWith("alias ") || command.StartsWith("hammer_command ");
 
   public static bool IsExecuting = false;
 }
@@ -99,6 +99,8 @@ public class TryRunCommand {
   static bool Prefix(Terminal __instance, ref string text) {
     // Alias and bind can contain any kind of commands so avoid any processing.
     if (TerminalUtils.SkipProcessing(text)) return true;
+    // Alias and bind can contain any kind of commands so avoid any processing.
+    if (!BindCommand.Valid(text)) return false;
     // Multiple commands in actual input.
     if (MultiCommands.IsMulti(text)) {
       foreach (var cmd in MultiCommands.Split(text)) __instance.TryRunCommand(cmd);
@@ -108,6 +110,7 @@ public class TryRunCommand {
       text = Aliasing.Plain(text);
     if (Settings.Substitution)
       text = TerminalUtils.Substitute(text);
+    text = BindCommand.CleanUp(text);
     // Multiple commands in an alias.
     if (MultiCommands.IsMulti(text)) {
       foreach (var cmd in MultiCommands.Split(text)) __instance.TryRunCommand(cmd);

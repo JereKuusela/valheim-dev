@@ -140,7 +140,7 @@ Three ways to edit the settings:
 
 - Use `dev_config` and `server dev_config` commands to instantly toggle values.
 - Use the [Configuration manager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases/tag/v16.4) if installed to instantly toggle values for the client.
-- Manually edit the `valheim.jerekuusela.dev.cfg` in the config folder (requires restarting the client / server).
+- Manually edit the `serrver_devcommands.cfg` in the config folder (requires restarting the client / server).
 
 Recommended way is to use the commands since you can configure the server and also `bind` them to keys.
 
@@ -207,6 +207,8 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 	- Adds a new setting `best_command_match` to only execute the commands with the most modifier keys pressed (default `true`).
 	- Fixes some commands printing "Error: Player not found.".
 	- Replaces the setting `mouse_wheel_binding` with a new setting `mouse_wheel_bind_key` that instead allows settting the simulated key.
+	- Fixes root users not working with the new save system.
+	- Changes the guid which resets the config.
 
 - v1.20
 	- Adds a new setting `access_private_chests` which allows opening all private chests (default `true`).

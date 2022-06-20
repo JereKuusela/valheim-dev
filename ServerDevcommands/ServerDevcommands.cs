@@ -4,24 +4,29 @@ using BepInEx.Logging;
 using HarmonyLib;
 using UnityEngine;
 namespace ServerDevcommands;
-[BepInDependency("com.rolopogo.gizmo.comfy", BepInDependency.DependencyFlags.SoftDependency)]
-[BepInDependency("m3to.mods.GizmoReloaded", BepInDependency.DependencyFlags.SoftDependency)]
-[BepInPlugin("valheim.jerekuusela.server_devcommands", "ServerDevcommands", "1.21.0.0")]
+[BepInDependency(COMFY_GIZMO_GUID, BepInDependency.DependencyFlags.SoftDependency)]
+[BepInDependency(RELOADED_GIZMO_GUID, BepInDependency.DependencyFlags.SoftDependency)]
+[BepInPlugin(GUID, NAME, VERSION)]
 public class ServerDevcommands : BaseUnityPlugin {
+  public const string GUID = "server_devcommands";
+  public const string NAME = "Server Devcommands";
+  public const string VERSION = "1.21";
+  public const string COMFY_GIZMO_GUID = "com.rolopogo.gizmo.comfy";
+  public const string RELOADED_GIZMO_GUID = "m3to.mods.GizmoReloaded";
   private static ManualLogSource? Logs;
   public static ManualLogSource Log => Logs!;
   public void Awake() {
     Logs = Logger;
-    Harmony harmony = new("valheim.jerekuusela.server_devcommands");
+    Harmony harmony = new(GUID);
     harmony.PatchAll();
     Admin.Instance = new DevCommandsAdmin();
     Settings.Init(Config);
     Console.SetConsoleEnabled(true);
   }
   public void Start() {
-    if (Chainloader.PluginInfos.TryGetValue("com.rolopogo.gizmo.comfy", out var info))
+    if (Chainloader.PluginInfos.TryGetValue(COMFY_GIZMO_GUID, out var info))
       ComfyGizmoPatcher.DoPatching(info.Instance.GetType().Assembly);
-    if (Chainloader.PluginInfos.TryGetValue("m3to.mods.GizmoReloaded", out info))
+    if (Chainloader.PluginInfos.TryGetValue(RELOADED_GIZMO_GUID, out info))
       GizmoReloadedPatcher.DoPatching(info.Instance.GetType().Assembly);
   }
 

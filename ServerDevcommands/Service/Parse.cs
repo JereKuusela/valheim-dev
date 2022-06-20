@@ -215,7 +215,7 @@ public static class Parse {
     return range;
   }
 
-  public static string[] Split(string arg, char separator = ',') => arg.Split(separator).Select(s => s.Trim()).ToArray();
+  public static string[] Split(string arg, char separator = ',') => arg.Split(separator).Select(s => s.Trim()).Where(s => s != "").ToArray();
   public static string[] TrySplit(string[] args, int index, char separator) {
     if (args.Length <= index) return new string[0];
     return Split(args[index], separator);
