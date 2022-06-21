@@ -203,6 +203,9 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 # Changelog
 
+- v1.22
+	- Fixes no clip never triggering ship exit (so the ship just keeps going).
+
 - v1.21
 	- Adds a new setting `best_command_match` to only execute the commands with the most modifier keys pressed (default `true`).
 	- Fixes some commands printing "Error: Player not found.".
