@@ -205,6 +205,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 - v1.22
 	- Fixes no clip never triggering ship exit (so the ship just keeps going).
+	- Fixes mouse wheel binds not overriding fly ascend/descend.
 
 - v1.21
 	- Adds a new setting `best_command_match` to only execute the commands with the most modifier keys pressed (default `true`).
