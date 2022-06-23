@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
@@ -87,7 +88,7 @@ public static class TerminalUtils {
     input = string.Join(" ", parameters);
     return input;
   }
-  public static bool SkipProcessing(string command) => command.StartsWith("bind ") || command.StartsWith("alias ") || command.StartsWith("hammer_command ");
+  public static bool SkipProcessing(string command) => ParameterInfo.SpecialCommands.Any(cmd => command.StartsWith($"{cmd} ", StringComparison.OrdinalIgnoreCase));
 
   public static bool IsExecuting = false;
 }

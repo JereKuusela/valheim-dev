@@ -5,6 +5,22 @@ using UnityEngine;
 namespace ServerDevcommands;
 ///<summary>Helper class for parameter options/info. The main purpose is to provide some caching to avoid performance issues.</summary>
 public partial class ParameterInfo {
+  public static HashSet<string> SpecialCommands = new() {
+    "bind",
+    "alias"
+  };
+  public static HashSet<string> SpecialCommands1 = new() {
+  };
+  public static HashSet<string> SpecialCommands2 = new() {
+    "bind",
+    "alias"
+  };
+  public static void AddSpecialCommand1(string command) {
+    SpecialCommands1.Add(command);
+  }
+  public static void AddSpecialCommand2(string command) {
+    SpecialCommands2.Add(command);
+  }
   private static List<string> globalKeys = new() {
     "defeated_bonemass",
     "defeated_dragon",

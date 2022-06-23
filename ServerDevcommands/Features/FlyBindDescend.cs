@@ -8,11 +8,13 @@ namespace ServerDevcommands;
 public class FlyBindDescend {
 
   static bool IsFlyUp() {
+    if (MouseWheelBinding.CouldExecute()) return false;
     if (!BindCommand.Valid(Settings.FlyUpKeys)) return false;
     if (!BindCommand.Valid(Settings.FlyDownKeys)) return true;
     return BindCommand.CoundKeys(Settings.FlyUpKeys) >= BindCommand.CoundKeys(Settings.FlyDownKeys);
   }
   static bool IsFlyDown() {
+    if (MouseWheelBinding.CouldExecute()) return false;
     if (!BindCommand.Valid(Settings.FlyDownKeys)) return false;
     if (!BindCommand.Valid(Settings.FlyUpKeys)) return true;
     return BindCommand.CoundKeys(Settings.FlyDownKeys) >= BindCommand.CoundKeys(Settings.FlyUpKeys);
