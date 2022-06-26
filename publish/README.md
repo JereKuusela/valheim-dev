@@ -204,6 +204,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 # Changelog
 
 - v1.22
+	- Removes the console input character limit (too small for some commands).
 	- Fixes no clip never triggering ship exit (so the ship just keeps going).
 	- Fixes mouse wheel binds not overriding fly ascend/descend.
 

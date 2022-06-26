@@ -167,5 +167,11 @@ public class AliasInput {
 public class RunAction {
   static void Prefix() => TerminalUtils.IsExecuting = true;
   static void Postfix() => TerminalUtils.IsExecuting = false;
+}
 
+[HarmonyPatch(typeof(Terminal), nameof(Terminal.Awake))]
+public class UnlockCharacterLimit {
+  static void Postfix(Terminal __instance) {
+    if (__instance.m_input) __instance.m_input.characterLimit = 0;
+  }
 }
