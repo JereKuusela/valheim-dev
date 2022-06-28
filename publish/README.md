@@ -35,6 +35,7 @@ Keybindings now work with modifier keys ([key codes](https://docs.unity3d.com/Sc
 - `bind [keycode,modifier1,modifier2,...] [command] [parameter]`: Adds a new key binding with modifier keys.
 	- `bind j god`: Toggles god mode when pressing J.
 	- `bind j,leftalt,h debugmode`: Toggles debug mode when pressing J while both left alt and h are down.
+	- `bind j keys=leftalt,h`: Alternative way.
 
 By default the best match is used. Which means that with above binds, toggling debugmode won't also toggle the god mode.
 
@@ -53,6 +54,10 @@ Note: After removing this mod, these binds very likely stop working or lead to u
 The same system also works for rebinding the debug flying. For example:
 
 - `devconfig fly_down_key space,leftcontrol`: Changes to fly down when both left control and space are pressed.
+
+### Bind tagging
+
+Binds can be tagged with `tag=[name]` parameter. The tag can be used to directly `unbind` these commands.
 
 ## Command aliasing
 
@@ -117,11 +122,12 @@ Examples:
 - `server [command]` executes given command on the server.
 	- `server dev_config disable_command event`: Disables usage of `event` command for non-root users.
 	- `server dev_config disable_events 1`: Disables random events.
-- `unbind [keycode] [amount=0]` allows specifying how many binds are removed. Also prints removed binds.
+- `unbind [keycode] [amount=0] [silent]` allows specifying how many binds are removed. Also prints removed binds, unless the third parameter is given.
 	- `unbind wheel`: Removes all binds from the mouse wheel.
 	- `unbind wheel 0`: Removes all binds from the mouse wheel.
 	- `unbind wheel 1`: Removes the last bind from the mouse wheel.
 	- `unbind wheel 3`: Removes the last 3 binds from the mouse wheel.
+- `unbind [tag] [silent]` removes all binds with a given tag. Also prints removed binds, unless the third parameter is given.
 - `undo` reverts an action added to the undo/redo manager.
 - `wait [milliseconds]`delays the execution of the next commands.
 - `wind` prints the current wind strength.
@@ -209,6 +215,8 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - v1.22
 	- Adds a new setting `debug_fast_teleport` to make all teleporting faster with the debug mode.
 	- Improves the `goto` command to allow easier teleporting to the ground or high in the sky. 
+	- Adds tag support for `bind` (needed by some mods).
+	- Improves the `unbind` command to directly remove binds with a tag.
 	- Removes the console input character limit (too small for some commands).
 	- Fixes no clip never triggering ship exit (so the ship just keeps going).
 	- Fixes mouse wheel binds not overriding fly ascend/descend.

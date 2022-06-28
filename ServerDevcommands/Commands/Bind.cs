@@ -40,18 +40,29 @@ public class BindCommand {
     }, new() {
       { "keys", (int index) => ParameterInfo.KeyCodesWithNegative }
     });
-    new Terminal.ConsoleCommand("unbind", "[keycode/command] [amount = 0] - Clears binds from a key. Optional parameter can be used to specify amount of removed binds.", (args) => {
+    new Terminal.ConsoleCommand("unbind", "[keycode/tag] [amount = 0] [silent] - Clears binds from a key. Optional parameter can be used to specify amount of removed binds.", (args) => {
       if (args.Length < 2) return;
       // Mouse wheel hack.
       if (args[1] == "wheel") args.Args[1] = Settings.MouseWheelBindKey.ToString().ToLower();
-      args.Args[1] = args[1].ToLower();
-      var amount = Parse.TryInt(args.Args, 2, 0);
-      if (amount == 0) amount = int.MaxValue;
-      for (var i = Terminal.m_bindList.Count - 1; i >= 0 && amount > 0; i--) {
-        if (Terminal.m_bindList[i].Split(' ')[0].ToLower() != args[1]) continue;
-        Print(args.Context, Terminal.m_bindList[i]);
-        Terminal.m_bindList.RemoveAt(i);
-        amount--;
+      var key = args.Args[1].ToLower();
+      if (Enum.TryParse<KeyCode>(args.Args[1], true, out var _)) {
+        var silent = args.Length > 3;
+        var amount = Parse.TryInt(args.Args, 2, 0);
+        if (amount == 0) amount = int.MaxValue;
+        for (var i = Terminal.m_bindList.Count - 1; i >= 0 && amount > 0; i--) {
+          if (Terminal.m_bindList[i].Split(' ')[0].ToLower() != key) continue;
+          if (!silent) Print(args.Context, Terminal.m_bindList[i]);
+          Terminal.m_bindList.RemoveAt(i);
+          amount--;
+        }
+      } else {
+        var silent = args.Length > 2;
+        key = $"tag={key}";
+        for (var i = Terminal.m_bindList.Count - 1; i >= 0; i--) {
+          if (!Terminal.m_bindList[i].Contains(key)) continue;
+          if (!silent) Print(args.Context, Terminal.m_bindList[i]);
+          Terminal.m_bindList.RemoveAt(i);
+        }
       }
       Terminal.updateBinds();
     });
@@ -132,5 +143,5 @@ public class BindCommand {
     return true;
   }
   public static string CleanUp(string command) =>
-    string.Join(" ", command.Split(' ').Where(arg => !arg.StartsWith("keys=")));
+    string.Join(" ", command.Split(' ').Where(arg => !arg.StartsWith("keys=", StringComparison.OrdinalIgnoreCase) && !arg.StartsWith("tag=", StringComparison.OrdinalIgnoreCase)));
 }

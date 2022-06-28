@@ -100,8 +100,6 @@ public class TryRunCommand {
   static bool Prefix(Terminal __instance, ref string text) {
     // Alias and bind can contain any kind of commands so avoid any processing.
     if (TerminalUtils.SkipProcessing(text)) return true;
-    // Alias and bind can contain any kind of commands so avoid any processing.
-    if (!BindCommand.Valid(text)) return false;
     // Multiple commands in actual input.
     if (MultiCommands.IsMulti(text)) {
       foreach (var cmd in MultiCommands.Split(text)) __instance.TryRunCommand(cmd);
@@ -117,6 +115,7 @@ public class TryRunCommand {
       foreach (var cmd in MultiCommands.Split(text)) __instance.TryRunCommand(cmd);
       return false;
     }
+    if (!BindCommand.Valid(text)) return false;
     // Server side checks this already at the server side execution.
     if (Player.m_localPlayer && !DisableCommands.CanRun(text)) return false;
     if (CommandQueue.CanRun()) {

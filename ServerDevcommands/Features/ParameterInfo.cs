@@ -16,6 +16,7 @@ public partial class ParameterInfo {
     "alias"
   };
   public static void AddSpecialCommand1(string command) {
+    SpecialCommands.Add(command);
     SpecialCommands1.Add(command);
   }
   public static void AddSpecialCommand2(string command) {
