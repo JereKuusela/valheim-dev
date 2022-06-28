@@ -26,6 +26,15 @@ public class MouseWheelBinding {
       return commands.Any(BindCommand.Valid);
     return false;
   }
+  ///<summary>Returns the highest key count.</summary>
+  public static int ExecuteCount() {
+    if (Terminal.m_binds.TryGetValue(Settings.MouseWheelBindKey, out var commands)) {
+      var valid = commands.Where(BindCommand.Valid).ToArray();
+      if (valid.Length == 0) return 0;
+      return valid.Max(BindCommand.CountKeys);
+    }
+    return 0;
+  }
 }
 
 [HarmonyPatch(typeof(Player), nameof(Player.UpdatePlacement))]

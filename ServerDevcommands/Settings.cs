@@ -15,6 +15,8 @@ public static class Settings {
   public static bool ShowPrivatePlayers => Cheats && configShowPrivatePlayers.Value;
   public static ConfigEntry<bool> configAutoDevcommands;
   public static bool AutoDevcommands => configAutoDevcommands.Value;
+  public static ConfigEntry<bool> configDebugModeFastTeleport;
+  public static bool DebugModeFastTeleport => configDebugModeFastTeleport.Value;
   public static ConfigEntry<bool> configAutoDebugMode;
   public static bool AutoDebugMode => configAutoDebugMode.Value;
   public static ConfigEntry<bool> configAutoGodMode;
@@ -154,6 +156,7 @@ public static class Settings {
       if (Player.m_localPlayer) Player.m_localPlayer.m_enableAutoPickup = AutomaticItemPickUp;
     };
     configAutoDevcommands = config.Bind(section, "Automatic devcommands", true, "Automatically enables devcommands when joining servers.");
+    configDebugModeFastTeleport = config.Bind(section, "Debug mode fast teleport", true, "All teleporting is much faster with the debug mode.");
     configGodModeNoStamina = config.Bind(section, "No stamina usage with god mode", true, "");
     configGodModeNoWeightLimit = config.Bind(section, "No weight limit with god mode", false, "");
     configGodModeAlwaysDodge = config.Bind(section, "Always dodge with god mode", false, "");
@@ -259,7 +262,8 @@ public static class Settings {
     "god_no_edge",
     "no_clip_clear_environment",
     "max_undo_steps",
-    "best_command_match"
+    "best_command_match",
+    "debug_fast_teleport"
   };
   private static string State(bool value) => value ? "enabled" : "disabled";
   private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -326,6 +330,7 @@ public static class Settings {
     if (key == "auto_exec_boot") SetValue(context, configAutoExecBoot, key, value);
     if (key == "auto_exec") SetValue(context, configAutoExec, key, value);
     if (key == "mouse_wheel_bind_key") SetKey(context, configMouseWheelBindKey, "Mouse wheel bind key", value);
+    if (key == "debug_fast_teleport") Toggle(context, configDebugModeFastTeleport, key, value);
     if (key == "best_command_match") Toggle(context, configBestCommandMatch, key, value);
     if (key == "access_private_chests") Toggle(context, configAccessPrivateChests, key, value);
     if (key == "access_warded_areas") Toggle(context, configAccessWardedAreas, key, value);

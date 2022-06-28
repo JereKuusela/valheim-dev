@@ -8,16 +8,16 @@ namespace ServerDevcommands;
 public class FlyBindDescend {
 
   static bool IsFlyUp() {
-    if (MouseWheelBinding.CouldExecute()) return false;
+    if (MouseWheelBinding.ExecuteCount() > BindCommand.CountKeys(Settings.FlyUpKeys)) return false;
     if (!BindCommand.Valid(Settings.FlyUpKeys)) return false;
     if (!BindCommand.Valid(Settings.FlyDownKeys)) return true;
-    return BindCommand.CoundKeys(Settings.FlyUpKeys) >= BindCommand.CoundKeys(Settings.FlyDownKeys);
+    return BindCommand.CountKeys(Settings.FlyUpKeys) >= BindCommand.CountKeys(Settings.FlyDownKeys);
   }
   static bool IsFlyDown() {
-    if (MouseWheelBinding.CouldExecute()) return false;
+    if (MouseWheelBinding.ExecuteCount() > BindCommand.CountKeys(Settings.FlyDownKeys)) return false;
     if (!BindCommand.Valid(Settings.FlyDownKeys)) return false;
     if (!BindCommand.Valid(Settings.FlyUpKeys)) return true;
-    return BindCommand.CoundKeys(Settings.FlyDownKeys) >= BindCommand.CoundKeys(Settings.FlyUpKeys);
+    return BindCommand.CountKeys(Settings.FlyDownKeys) >= BindCommand.CountKeys(Settings.FlyUpKeys);
   }
   static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
     return new CodeMatcher(instructions)

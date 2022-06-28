@@ -40,7 +40,7 @@ public class BindCommand {
     }, new() {
       { "keys", (int index) => ParameterInfo.KeyCodesWithNegative }
     });
-    new Terminal.ConsoleCommand("unbind", "[keycode] [amount = 0] - Clears binds from a key. Optional parameter can be used to specify amount of removed binds.", (args) => {
+    new Terminal.ConsoleCommand("unbind", "[keycode/command] [amount = 0] - Clears binds from a key. Optional parameter can be used to specify amount of removed binds.", (args) => {
       if (args.Length < 2) return;
       // Mouse wheel hack.
       if (args[1] == "wheel") args.Args[1] = Settings.MouseWheelBindKey.ToString().ToLower();
@@ -95,9 +95,9 @@ public class BindCommand {
     var arg = args.First(arg => arg.StartsWith("keys=")).Split('=');
     if (arg.Length < 2) return 0;
     var keys = Parse.Split(arg[1]);
-    return CoundKeys(keys);
+    return CountKeys(keys);
   }
-  public static int CoundKeys(string[] keys) => keys.Count(key => !key.StartsWith("-", StringComparison.Ordinal));
+  public static int CountKeys(string[] keys) => keys.Count(key => !key.StartsWith("-", StringComparison.Ordinal) && Enum.TryParse<KeyCode>(key, true, out var _));
 
   public static bool Valid(string command) {
     if (!command.Contains("keys=")) return true;
@@ -109,18 +109,26 @@ public class BindCommand {
   }
 
   public static bool Valid(string[] keys) {
+    var tool = Player.m_localPlayer?.GetRightItem()?.m_dropPrefab;
+    var toolName = tool ? Utils.GetPrefabName(tool).ToLower() : "";
+    var toolRequired = false;
+    var hasTool = false;
     foreach (var key in keys) {
       if (key.StartsWith("-")) {
         if (Enum.TryParse<KeyCode>(key.Substring(1), true, out var keyCode)) {
           if (Input.GetKey(keyCode)) return false;
-        }
+        } else if (key.Substring(1) == toolName) return false;
 
       } else {
         if (Enum.TryParse<KeyCode>(key, true, out var keyCode)) {
           if (!Input.GetKey(keyCode)) return false;
+        } else {
+          toolRequired = true;
+          if (key == toolName) hasTool = true;
         }
       }
     }
+    if (toolRequired && !hasTool) return false;
     return true;
   }
   public static string CleanUp(string command) =>

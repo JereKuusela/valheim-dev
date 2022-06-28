@@ -90,6 +90,8 @@ Examples:
 	- `event army_eikthyr 100 -100`: Starts an event at coordinates 100,-100.
 - `exploremap [x] [z] [radius]` allows revealing only a part of the map.
 - `goto [x,z,y]` or ``goto x z y` teleports to the coordinates. If y is not given, teleports to the ground level.
+- `goto` teleports to the ground level.
+- `goto [y]` teleports to the altitude (dungeons are at 5000 altitude).
 - `hud` allows toggling the HUD visibility.
 - `hud [value]` allows directly setting the HUD visibility.
 - `move_spawn [x,z,y = player's coordinates]` allows moving the default spawn point.
@@ -157,6 +159,7 @@ Recommended way is to use the commands since you can configure the server and al
 - Automatic god mode (default: `false`, key: `auto_god`): Automatically turns god mode on/off when devcommands are enabled or disabled.
 - Automatic item pick up (default: `true`, key: `automatic_item_pick_up`): Sets the default value for the automatic item pick up feature.
 - Automatic no cost mode (default: `false`, key: `auto_nocost`): Automatically turns no cost mode on/off when devcommands are enabled or disabled.
+- Debug mode fast teleport (default: `true`, key: `debug_fast_teleport`): Makes teleporting much faster.
 - Disabled global keys (default: ` `, key: `disable_global_key`): Global keys separated by , that can't be set (server side).
 - Disable random events (default: `false`, key: `disable_events`): Prevents random events from happening (server side setting).
 - Disable start shout (default: `false`, key: `disable_start_shout`): Removes the initial shout message when joining the server.
@@ -204,6 +207,8 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 # Changelog
 
 - v1.22
+	- Adds a new setting `debug_fast_teleport` to make all teleporting faster with the debug mode.
+	- Improves the `goto` command to allow easier teleporting to the ground or high in the sky. 
 	- Removes the console input character limit (too small for some commands).
 	- Fixes no clip never triggering ship exit (so the ship just keeps going).
 	- Fixes mouse wheel binds not overriding fly ascend/descend.
