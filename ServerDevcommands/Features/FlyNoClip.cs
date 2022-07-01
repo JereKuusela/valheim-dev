@@ -10,10 +10,29 @@ public class NoClip {
   public static bool TurnedOn = false;
 }
 
+[HarmonyPatch(typeof(Player), nameof(Player.SetControls))]
+public class SetControls {
+
+  static void Prefix(Player __instance, ref bool jump, ref bool crouch) {
+    if (__instance != Player.m_localPlayer) return;
+    jump = jump && !__instance.IsDebugFlying();
+    crouch = crouch && !__instance.IsDebugFlying();
+
+  }
+}
 [HarmonyPatch(typeof(Player), nameof(Player.LateUpdate))]
 public class NoObjectCollision {
   static void Postfix(Player __instance) {
     if (__instance != Player.m_localPlayer) return;
+    if (__instance.IsDebugFlying()) {
+      __instance.m_crouchToggled = false;
+      __instance.m_zanim.SetBool(Character.onGround, true);
+      __instance.m_zanim.SetBool(Character.inWater, false);
+      __instance.m_zanim.SetBool(Character.encumbered, false);
+      __instance.m_zanim.SetFloat(Character.sideway_speed, 0f);
+      __instance.m_zanim.SetFloat(Character.forward_speed, 0f);
+      __instance.m_zanim.SetFloat(Character.turn_speed, 0f);
+    }
     var noClip = NoClip.Enabled();
     if (noClip) {
       if (!NoClip.TurnedOn && Settings.NoClipClearEnvironment) {

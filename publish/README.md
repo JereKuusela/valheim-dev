@@ -216,6 +216,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 	- Adds a new setting `debug_fast_teleport` to make all teleporting faster with the debug mode.
 	- Improves the `goto` command to allow easier teleporting to the ground or high in the sky. 
 	- Adds tag support for `bind` (needed by some mods).
+	- Changes the fly mode to stop animations and prevent crouching and jumping.
 	- Improves the `unbind` command to directly remove binds with a tag.
 	- Removes the console input character limit (too small for some commands).
 	- Fixes no clip never triggering ship exit (so the ship just keeps going).
