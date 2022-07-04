@@ -4,14 +4,9 @@ This client side mod allows devcommands and utilities for server admins.
 
 Some features and commands require also installing the mod on the server (event, randomevent, resetkeys, skiptime, sleep, stopevent).
 
-# Manual Installation:
+Check any modding [guide](https://youtu.be/WfvA5a5tNHo) for installation instructions.
 
-1. Install the [BepInExPack Valheim](https://valheim.thunderstore.io/package/denikson/BepInExPack_Valheim)
-2. Download the latest zip.
-3. Extract it in the \<GameDirectory\>\BepInEx\plugins\ folder.
-4. Add your steamID64 to adminlist.txt (if not already).
-
-Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available commands and how to use them.
+Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available commands and how to use them. Remember to add your steamID64 to the adminlist.txt.
 
 # Features
 
@@ -58,6 +53,8 @@ The same system also works for rebinding the debug flying. For example:
 ### Bind tagging
 
 Binds can be tagged with `tag=[name]` parameter. The tag can be used to directly `unbind` these commands.
+
+This is mostly indended to be used by other mods.
 
 ## Command aliasing
 
@@ -146,11 +143,9 @@ These players are shown on the map with a ticked off icon and will also be avail
 
 Three ways to edit the settings:
 
-- Use `dev_config` and `server dev_config` commands to instantly toggle values.
-- Use the [Configuration manager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases/tag/v16.4) if installed to instantly toggle values for the client.
-- Manually edit the `serrver_devcommands.cfg` in the config folder (requires restarting the client / server).
-
-Recommended way is to use the commands since you can configure the server and also `bind` them to keys.
+- Use `dev_config` and `server dev_config` commands.
+- Use the [Configuration manager](https://valheim.thunderstore.io/package/Azumatt/Official_BepInEx_ConfigurationManager/) if installed.
+- Manually edit the `server_devcommands.cfg` in the config folder.
 
 ## General
 
