@@ -21,6 +21,8 @@ public static class Settings {
   public static bool AutoDebugMode => configAutoDebugMode.Value;
   public static ConfigEntry<bool> configAutoGodMode;
   public static bool AutoGodMode => configAutoGodMode.Value;
+  public static ConfigEntry<bool> configDisableNoMap;
+  public static bool DisableNoMap => Cheats &&  configDisableNoMap.Value;
   public static ConfigEntry<bool> configAutoGhostMode;
   public static bool AutoGhostMode => configAutoGhostMode.Value;
   public static ConfigEntry<bool> configAutomaticItemPickUp;
@@ -157,6 +159,7 @@ public static class Settings {
     };
     configAutoDevcommands = config.Bind(section, "Automatic devcommands", true, "Automatically enables devcommands when joining servers.");
     configDebugModeFastTeleport = config.Bind(section, "Debug mode fast teleport", true, "All teleporting is much faster with the debug mode.");
+    configDisableNoMap = config.Bind(section, "Disable no map", false, "Disables no map having effect.");
     configGodModeNoStamina = config.Bind(section, "No stamina usage with god mode", true, "");
     configGodModeNoWeightLimit = config.Bind(section, "No weight limit with god mode", false, "");
     configGodModeAlwaysDodge = config.Bind(section, "Always dodge with god mode", false, "");
@@ -263,7 +266,8 @@ public static class Settings {
     "no_clip_clear_environment",
     "max_undo_steps",
     "best_command_match",
-    "debug_fast_teleport"
+    "debug_fast_teleport",
+    "disable_no_map"
   };
   private static string State(bool value) => value ? "enabled" : "disabled";
   private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -370,5 +374,6 @@ public static class Settings {
     if (key == "god_always_dodge") Toggle(context, configGodModeAlwaysDodge, "Always dodge with god mode", value);
     if (key == "disable_start_shout") Toggle(context, configDisableStartShout, "Start shout", value, true);
     if (key == "disable_tutorials") Toggle(context, configDisableTutorials, "Tutorials", value, true);
+    if (key == "disable_no_map") Toggle(context, configDisableNoMap, "Disable no map", value);
   }
 }
