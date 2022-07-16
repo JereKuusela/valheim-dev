@@ -162,7 +162,8 @@ Three ways to edit the settings:
 - Automatic no cost mode (default: `false`, key: `auto_nocost`): Automatically turns no cost mode on/off when devcommands are enabled or disabled.
 - Debug mode fast teleport (default: `true`, key: `debug_fast_teleport`): Makes teleporting much faster.
 - Disabled global keys (default: ` `, key: `disable_global_key`): Global keys separated by , that can't be set (server side).
-- Disable random events (default: `false`, key: `disable_events`): Prevents random events from happening (server side setting).
+- Disable no map (default: `false`, key: `disable_start_shout`): Disables no map having effect.
+- Disable random events (default: `false`, key: `disable_no_map`): Prevents random events from happening (server side setting).
 - Disable start shout (default: `false`, key: `disable_start_shout`): Removes the initial shout message when joining the server.
 - Disable tutorials (default: `false`, key: `disable_tutorials`): Prevents the raven from appearing.
 - Invisible to players with ghost mode (default: `false`, key: `ghost_invisibility`): Invisible to other players with ghost mode.
@@ -206,6 +207,9 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - Server side commands (default: `randomevent,stopevent,genloc,sleep,skiptime`, key: `server_commands`): Names of commands that should be automatically executed on the server. `event` command is not included because it has a custom server-side support.
 
 # Changelog
+
+- v1.23
+	- Adds a new setting `disable_no_map` to override the nomap rule.
 
 - v1.22
 	- Adds a new setting `debug_fast_teleport` to make all teleporting faster with the debug mode.

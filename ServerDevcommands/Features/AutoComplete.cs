@@ -133,11 +133,9 @@ public class GetTabOptionsWithImprovedAutoComplete {
     var parameters = text.Split(' ');
     if (parameters.Length > 1) {
       var commandName = parameters.First();
-      if (commandName == "server")
+      while (parameters.Length > 1 && ParameterInfo.SpecialCommands1.Contains(commandName))
         parameters = parameters.Skip(1).ToArray();
-      if (parameters.Length > 1 && ParameterInfo.SpecialCommands1.Contains(commandName))
-        parameters = parameters.Skip(1).ToArray();
-      if (parameters.Length > 2 && ParameterInfo.SpecialCommands2.Contains(commandName))
+      while (parameters.Length > 2 && ParameterInfo.SpecialCommands2.Contains(commandName))
         parameters = parameters.Skip(2).ToArray();
     }
     if (parameters.Length < 2) __result = DisableCommands.AllowedCommands;

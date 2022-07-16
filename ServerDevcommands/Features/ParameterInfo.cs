@@ -10,6 +10,7 @@ public partial class ParameterInfo {
     "alias"
   };
   public static HashSet<string> SpecialCommands1 = new() {
+    "server"
   };
   public static HashSet<string> SpecialCommands2 = new() {
     "bind",

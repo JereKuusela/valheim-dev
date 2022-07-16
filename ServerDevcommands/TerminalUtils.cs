@@ -109,13 +109,13 @@ public class TryRunCommand {
       text = Aliasing.Plain(text);
     if (Settings.Substitution)
       text = TerminalUtils.Substitute(text);
-    text = BindCommand.CleanUp(text);
     // Multiple commands in an alias.
     if (MultiCommands.IsMulti(text)) {
       foreach (var cmd in MultiCommands.Split(text)) __instance.TryRunCommand(cmd);
       return false;
     }
     if (!BindCommand.Valid(text)) return false;
+    text = BindCommand.CleanUp(text);
     // Server side checks this already at the server side execution.
     if (Player.m_localPlayer && !DisableCommands.CanRun(text)) return false;
     if (CommandQueue.CanRun()) {
