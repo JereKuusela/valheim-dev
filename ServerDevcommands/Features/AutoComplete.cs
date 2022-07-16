@@ -80,7 +80,7 @@ public class GetTabOptionsWithImprovedAutoComplete {
     if (split.Length < 2) return "";
     return split[0];
   }
-  private static int GetSubIndex(string parameter) => Parse.Split(parameter).Length - 1;
+  private static int GetSubIndex(string parameter) => parameter.Split(',').Length - 1;
 
   private static List<string> GetOptions(string[] parameters) {
     var commandName = parameters.First();
@@ -132,11 +132,11 @@ public class GetTabOptionsWithImprovedAutoComplete {
     var text = input.m_input.text;
     var parameters = text.Split(' ');
     if (parameters.Length > 1) {
-      var commandName = parameters.First();
-      while (parameters.Length > 1 && ParameterInfo.SpecialCommands1.Contains(commandName))
+      while (parameters.Length > 1 && ParameterInfo.SpecialCommands1.Contains(parameters.First()))
         parameters = parameters.Skip(1).ToArray();
-      while (parameters.Length > 2 && ParameterInfo.SpecialCommands2.Contains(commandName))
+      while (parameters.Length > 2 && ParameterInfo.SpecialCommands2.Contains(parameters.First()))
         parameters = parameters.Skip(2).ToArray();
+      var commandName = parameters.First();
     }
     if (parameters.Length < 2) __result = DisableCommands.AllowedCommands;
     else __result = GetOptions(parameters);

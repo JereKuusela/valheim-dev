@@ -210,6 +210,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 - v1.23
 	- Adds a new setting `disable_no_map` to override the nomap rule.
+	- Fixes some issues with the autocomplete.
 
 - v1.22
 	- Adds a new setting `debug_fast_teleport` to make all teleporting faster with the debug mode.
