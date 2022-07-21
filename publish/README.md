@@ -166,6 +166,7 @@ Three ways to edit the settings:
 - Disable random events (default: `false`, key: `disable_no_map`): Prevents random events from happening (server side setting).
 - Disable start shout (default: `false`, key: `disable_start_shout`): Removes the initial shout message when joining the server.
 - Disable tutorials (default: `false`, key: `disable_tutorials`): Prevents the raven from appearing.
+- Hide shout pings (default: `false`, key: `hide_shout_pings`): Forces shout pings at the world center.
 - Invisible to players with ghost mode (default: `false`, key: `ghost_invisibility`): Invisible to other players with ghost mode.
 - Max undo steps (default: `50`, key: `max_undo_steps`): How many undo actions are stored.
 - No clip clear environment (default: `true`, key: `no_clip_clear_environment`): Removes any forced environments when the noclip is enabled. This disables any dark dungeon environments and prevents them from staying on when exiting the dungeon.
@@ -210,6 +211,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 - v1.23
 	- Adds a new setting `disable_no_map` to override the nomap rule.
+	- Adds a new setting `hide_shout_pings` to force the ping at the world center.
 	- Fixes some issues with the autocomplete.
 
 - v1.22

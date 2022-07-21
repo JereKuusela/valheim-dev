@@ -22,7 +22,7 @@ public static class Settings {
   public static ConfigEntry<bool> configAutoGodMode;
   public static bool AutoGodMode => configAutoGodMode.Value;
   public static ConfigEntry<bool> configDisableNoMap;
-  public static bool DisableNoMap => Cheats &&  configDisableNoMap.Value;
+  public static bool DisableNoMap => Cheats && configDisableNoMap.Value;
   public static ConfigEntry<bool> configAutoGhostMode;
   public static bool AutoGhostMode => configAutoGhostMode.Value;
   public static ConfigEntry<bool> configAutomaticItemPickUp;
@@ -49,6 +49,8 @@ public static class Settings {
   public static bool GodModeAlwaysParry => Cheats && configGodModeAlwaysParry.Value;
   public static ConfigEntry<bool> configGodModeNoStagger;
   public static bool GodModeNoStagger => Cheats && configGodModeNoStagger.Value;
+  public static ConfigEntry<bool> configHideShoutPings;
+  public static bool HideShoutPings => Cheats && configHideShoutPings.Value;
   public static ConfigEntry<bool> configGodModeNoEdgeOfWorld;
   public static bool GodModeNoEdgeOfWorld => Cheats && configGodModeNoEdgeOfWorld.Value;
   public static ConfigEntry<bool> configDisableStartShout;
@@ -165,6 +167,7 @@ public static class Settings {
     configGodModeAlwaysDodge = config.Bind(section, "Always dodge with god mode", false, "");
     configGodModeAlwaysParry = config.Bind(section, "Always parry with god mode (when not blocking)", false, "");
     configGodModeNoStagger = config.Bind(section, "No staggering with god mode", true, "");
+    configHideShoutPings = config.Bind(section, "Hide shout pings", false, "Forces shout pings at the world center.");
     configGodModeNoEdgeOfWorld = config.Bind(section, "No edge of world pull with god mode", true, "");
     configDisableStartShout = config.Bind(section, "Disable start shout", false, "Removes the initial shout message when joining the server.");
     configDisableTutorials = config.Bind(section, "Disable tutorials", false, "Prevents the raven from appearing.");
@@ -267,7 +270,8 @@ public static class Settings {
     "max_undo_steps",
     "best_command_match",
     "debug_fast_teleport",
-    "disable_no_map"
+    "disable_no_map",
+    "hide_shout_pings"
   };
   private static string State(bool value) => value ? "enabled" : "disabled";
   private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -362,6 +366,7 @@ public static class Settings {
     if (key == "god_no_stamina") Toggle(context, configGodModeNoStamina, "Stamina usage with god mode", value, true);
     if (key == "god_no_weight_limit") Toggle(context, configGodModeNoWeightLimit, "Weight limit with god mode", value, true);
     if (key == "god_no_stagger") Toggle(context, configGodModeNoStagger, "Staggering with god mode", value, true);
+    if (key == "hide_shout_pings") Toggle(context, configHideShoutPings, "Shout pings", value, true);
     if (key == "god_no_edge") Toggle(context, configGodModeNoEdgeOfWorld, "Edge of world pull with god mode", value, true);
     if (key == "god_no_knockback") Toggle(context, configGodModeNoKnockback, "Knockback with god mode", value, true);
     if (key == "fly_no_clip") Toggle(context, configFlyNoClip, "No clip with fly mode", value);
