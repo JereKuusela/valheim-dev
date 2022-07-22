@@ -1,10 +1,10 @@
 # Server Devcommands
 
-This client side mod allows devcommands and utilities for server admins.
+Allows devcommands and utilities for server admins.
 
 Some features and commands require also installing the mod on the server (event, randomevent, resetkeys, skiptime, sleep, stopevent).
 
-Check any modding [guide](https://youtu.be/WfvA5a5tNHo) for installation instructions.
+Install on the admin client and optionally on the server (modding [guide](https://youtu.be/WfvA5a5tNHo)).
 
 Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available commands and how to use them. Remember to add your steamID64 to the adminlist.txt.
 
