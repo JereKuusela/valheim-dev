@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using UnityEngine;
@@ -219,5 +220,24 @@ public static class Parse {
   public static string[] TrySplit(string[] args, int index, char separator) {
     if (args.Length <= index) return new string[0];
     return Split(args[index], separator);
+  }
+  private static HashSet<string> Truthies = new() {
+    "1",
+    "true",
+    "yes",
+    "on"
+  };
+  private static bool IsTruthy(string value) => Truthies.Contains(value);
+  private static HashSet<string> Falsies = new() {
+    "0",
+    "false",
+    "no",
+    "off"
+  };
+  private static bool IsFalsy(string value) => Falsies.Contains(value);
+  public static bool? Boolean(string arg) {
+    if (IsTruthy(arg)) return true;
+    if (IsFalsy(arg)) return false;
+    return null;
   }
 }
