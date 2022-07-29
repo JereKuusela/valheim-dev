@@ -124,15 +124,21 @@ public class BindCommand {
     var toolName = tool ? Utils.GetPrefabName(tool).ToLower() : "";
     var toolRequired = false;
     var hasTool = false;
+    var inBuildMode = Player.m_localPlayer?.InPlaceMode() ?? false;
     foreach (var key in keys) {
       if (key.StartsWith("-")) {
-        if (Enum.TryParse<KeyCode>(key.Substring(1), true, out var keyCode)) {
+        var sub = key.Substring(1);
+        if (Enum.TryParse<KeyCode>(sub, true, out var keyCode)) {
           if (Input.GetKey(keyCode)) return false;
+        } else if (sub == "build") {
+          if (inBuildMode) return false;
         } else if (key.Substring(1) == toolName) return false;
 
       } else {
         if (Enum.TryParse<KeyCode>(key, true, out var keyCode)) {
           if (!Input.GetKey(keyCode)) return false;
+        } else if (key == "build") {
+          if (!inBuildMode) return false;
         } else {
           toolRequired = true;
           if (key == toolName) hasTool = true;

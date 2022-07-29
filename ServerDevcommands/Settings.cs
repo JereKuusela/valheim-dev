@@ -108,7 +108,7 @@ public static class Settings {
     Aliases = Aliases.Where(kvp => kvp.Key != "").ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
     AliasKeys = Aliases.Keys.OrderBy(key => key).ToArray();
   }
-  public static string GetAlias(string key) => Aliases.ContainsKey(key) ? Aliases[key] : "_";
+  public static string GetAliasValue(string key) => Aliases.ContainsKey(key) ? Aliases[key] : "_";
   public static void RegisterCommands() {
     foreach (var alias in Aliases) {
       AliasCommand.AddCommand(alias.Key, alias.Value);

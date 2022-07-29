@@ -16,7 +16,7 @@ public class AliasCommand {
   public AliasCommand() {
     new Terminal.ConsoleCommand("alias", "[name] [command] - Sets a command alias.", (args) => {
       if (args.Length < 2) {
-        args.Context.AddString(string.Join("\n", Settings.AliasKeys.Select(key => key + " -> " + Settings.GetAlias(key))));
+        args.Context.AddString(string.Join("\n", Settings.AliasKeys.Select(key => key + " -> " + Settings.GetAliasValue(key))));
       } else if (args.Length < 3) {
         Settings.RemoveAlias(args[1]);
         if (Terminal.commands.ContainsKey(args[1])) Terminal.commands.Remove(args[1]);

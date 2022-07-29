@@ -36,6 +36,15 @@ By default the best match is used. Which means that with above binds, toggling d
 
 It's also possible to use negative modifiers. For example `bind j,-leftalt god` won't toggle god mode while left alt is pressed. However using these is not usually needed. 
 
+### Bind modes
+
+The list of keys can also contain item names to enable/disable commands when a certain item is equipped.
+
+For example `bind j,hammer god` would only toggle god mode when the hammer is equipped.
+
+List of other special modes:
+- `build`: True when in build mode.
+
 ### Mouse wheel
 
 Mouse wheel allows binding too with custom keycode `wheel` (by default simulates the keycode `none`). It's important to use modifier keys because the binding will block build rotation.
@@ -209,6 +218,11 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 # Changelog
 
+- v1.24
+	- Adds equipped tool support to key bindings.
+	- Adds build mode support to key bindings.
+	- Internal change to support Infinity Hammer mod.
+
 - v1.23
 	- Adds a new setting `disable_no_map` to override the nomap rule.
 	- Adds a new setting `hide_shout_pings` to force the ping at the world center.
@@ -238,182 +252,4 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 	- Adds a new command `resetskill` to reset skills more easily.
 	- Adds a new parameter `*` to the `raiseskill` command to raise (or lower) all skills.
 
-- v1.19
-	- Adds a new setting `no_clip_clear_environment` to control whether the noclip automatically clears the forced environment.
-	- Adds more supported truthy/falsy values for the `dev_config` command.
-	- Adds the y coordinate to the `goto` command.
-	- Changes the map coordinates to be x,z,y instead of x,y,z (like in many commands).
-	- Changes the map coordinates to show free fly position.
-	- Improves the noclip environment clear compatibility with other environment mods.
-	- Fixes private players appearing at the map center if the feature is only enabled on the client.
-
-- v1.18
-	- Adds a new parameter to the `pos` command that allows specifying the precision.
-	- Changes the format of the `pos` command from x,y,z to x,z,y (matches better World Edit Commands mod).
-	- Changes the `fly_no_clip` to automatically removed forced environments (like in Frost Caves).
-
-- v1.17
-	- Internal changes for World Edit Commands mod.
-	- Improves `fly_no_clip` compatibility with noclip mods.
-	- Improves `disable_debug_mode_keys` compatibility with mods having debug mode specific keys.
-
-- v1.16
-	- Adds a new setting `god_no_edge` to disable the edge of world pull with god mode.
-	- Referts the `nomap change` in v1.11. Now only affects the client when used on dedicated servers. 
-	- Fixes `nomap` command showing inversed output.
-	- Fixes automatic debug mode, etc. not working when joining worlds multiple times.
-
-- v1.15
-	- Adds position and radius parameters to commands `exploremap` and `resetmap`.
-	- Adds a new command `resetpins` to remove map pins.
-	- Adds distance to the map coordinates.
-	- Changes the `env` command to print the current environment if used without the parameter.
-	- Changes the `wind` command to print the wind strength if used without the parameters.
-	- Improves autocomplete for `forcedelete`, `spawn` and `resetsharedmap` commands.
-	- Fixes devcommands getting toggled off and on when dying.
-	- Fixes map and minimap coordinates conflicting with other mods.
-
-- v1.14
-	- Fixes root users not being automatically recognized as admins (server side).
-
-- v1.13
-	- Adds a new setting `automatic_item_pick_up` to set the default value for the automatic pickup feature.
-	- Adds a new setting `disable_messages` to prevent messages from commands.
-	- Fixes the `dev_config` command output having extra " characters.
-	- Fixes the autocomplete showing error when no autocomplete is available.
-	- Fixes an error with the automatic parry.
-	- Fixes incompatibility with mods affecting the underwater camera.
-
-- v1.12
-	- Adds a new command `broadcast` to broadcast messages.
-	- Adds a new command `move_spawn` to change the server's default spawn point.
-	- Adds a new command `seed` to print the seed.
-	- Adds a new setting `disable_start_shout` to remove the initial shout message (default: `false`).
-	- Adds a new setting `disable_debug_mode_keys` to remove hardcoded debug mode key bindings (default: `false`).
-	- Adds a new setting `god_always_parry` to always parry with the god mode (default: `false`).
-	- Adds a new setting `god_always_dodge` to always dodge with the god mode (default: `false`).
-	- Adds a new setting `disable_tutorials` to prevent the raven from appearing (default: `false`).
-	- Adds a new setting `god_no_weight_limit` to remove weight limit with the god mode (default: `false`).
-	- Adds a new setting `fly_up_key` to allow rebinding it (default: `jump`).
-	- Adds a new setting `fly_down_key` to allow rebinding it (default: `leftcontrol`).
-	- Adds a new parameter to the `unbind` command which allows only removing some amount of binds.
-	- Adds a new setting `mouse_wheel_binding` for the mouse wheel binding (default: `true`).
-	- Adds support for binding commands to the mouse wheel (with `wheel` key code).
-	- Changes default scale format from x,z,y to x,y,z (for other mods).
-	- Changes the `bind` command to accept modifier keys on the first parameter (keycode,modifier1,modifier2,).
-	- Changes the `unbind` command to print removed binds.
-	- Changes the `search` command to `search_id` command.
-	- Changes the setting `disable_global_key` to also remove disabled keys when edited (server side).
-	- Improves the autocomplete for the `alias`, `bind` and `server` commands.
-	- Improves the `dev_config` command to allow directly setting flags with values 1 and 0.
-	- Improves the `dev_config` command to work better when giving multiple values to some commands.
-	- Improves the `dev_config` command to print the current value for non-flags if no parameter is given.
-	- Improves the autocomplete support (for other mods relying on this feature).
-	- Removes the setting `command_delay` as obsolete since `wait` command works much better.
-	- Removes the custom command `tutorialtoggle` as obsolete since `disable_tutorials` setting works much better.
-	- Fixes command tab cycling breaking when cycling to an alias.
-	- Fixes incorrect autocomplete for aliases.
-	- Fixes modifier keys working incorrectly with multiple commands.
-	- Fixes the `wait` command not working (parameter was kiloseconds instead of milliseconds).
-
-- v1.11
-	- Adds a new command `wait` to delay execution of the next command.
-	- Adds a new command `server` to execute any command on the server.
-	- Adds a new command `hud` to set or toggle the HUD visibility.
-	- Adds a new setting `server_commands` to automatically execute given commands on the server.
-	- Adds a new setting `disable_command` to allow disabling commands (server side).
-	- Adds a new setting `disable_global_key` to prevent global keys from being set (server side).
-	- Adds a new setting to add root users to the server (bypasses the blacklist).
-	- Adds a new setting `fly_no_clip` to disable collision while flying.
-	- Adds a new setting `minimap_coordinates` to show player coordinates on the minimap.
-	- Adds y-coordinate to the map coordinates.
-	- Adds improved autocomplete for new commands added in the Frost Caves update.
-	- Changes the command `nomap` to only affect the server by default.
-	- Removes `auto_debugmode` requirement from `auto_fly` and `auto_nocost`.
-	- Removes the command `dev_server_config` as redundant.
-	- Fixes incompatibility with some stamina related mods.
-	- Fixes `resolution` command description.
-
-- v1.10
-	- Adds a new setting `command_delay` to add delay when multiple commands are executed.
-	- Renames the file from DEV.dll to ServerDevcommands.dll.
-	- Changes the default value of the `ghost_invibisility` to false.
-	- Fixes incompatibility with Mountain Caves public beta test.
-
-- v1.9:
-	- Adds a new command `resolution` to print or set screen properties.
-	- Adds a new setting `command_descriptions` to show command descriptions instead of the autocomplete.
-	- Adds a new setting `ghost_invibisility` to turn invisible to other players with the ghost mode.
-	- Adds a new setting `god_no_knockback` to disable knockback with the god mode.
-	- Adds a new setting `auto_exec_boot` that automatically executes the given command when starting the game.
-	- Adds a new setting `auto_exec` that automatically executes the given command when joining a server.
-	- Adds a new setting `auto_exec_dev_on` that automatically executes the given command when enabling `devcommands`.
-	- Adds a new setting `auto_exec_dev_off` that automatically executes the given command when disabling `devcommands`.
-	- Adds a parameter to command `tutorialtoggle` which directly sets the value (instead of toggling).
-	- Changes the command `tutorialtoggle` to work without needing Hugin to appear first.
-	- Changes the command `alias` to add the plain text as the description instead of the original command description.
-	- Fixes case insensitivity being broken for some commands.
-	- Fixes server side commands not working.
-
-- v1.8
-	- Improves undo/redo system to work with Infinity Hammer mod.
-	- Fixes selection not working when multiple commands system is on.
-	- Fixes selection issues when using tab to cycle options.
-
-- v1.7
-	- Adds an undo/redo system (currently only for other mods to use).
-	- New icon (thanks Azumatt!).
-	- Improves autocomplete for default commands.
-	- Fixes possible server crash if private players are enabled (another attempt).
-
-- v1.6
-	- Adds a better autocomplete that provides options and information for all parameters.
-	- Adds an alias system which allows creating simpler commands out of existing ones.
-	- Adds a parameter substitution system which allows mapping command parameters.
-	- Adds support for multiple commands per line.
-	- Adds a new command for setting server config values.
-	- Adds a new command to search object ids.
-	- Improves the admin check to support more features.
-	- Adds a setting for automatic admin check (enabled by default).
-	- Adds a setting for automatic debugmode.
-	- Adds a setting for automatic god mode.
-	- Adds a setting for automatic fly mode.
-	- Adds a setting for automatic ghost mode.
-	- Adds a setting for automatic no cost mode.
-	- Adds a setting for improved autocomplete (enabled by default).
-	- Adds a setting for command aliasing (enabled by default).
-	- Adds a setting for command parameter substitution (enabled by default).
-	- Adds a setting for multiple commands per line (enabled by default).
-	- Adds a setting to remove stamina usage with god mode (enabled by default).
-	- Adds a setting to remove staggering with god mode (enabled by default).
-	- Adds a setting to disable creature drops.
-	- Adds a setting to disable random events.
-	- Changes the default value of "show private player positions" to false.
-	- Fixes a server crash (caused by too many players connecting if private position feature was on).
-
-- v1.5
-	- Adds a modifier key support to key bindings.
-	- Adds a new parameter to the pos command (allows getting position of any player).
-	- Adds support for showing private player positions (requires also server side).
-	- Changes the setkey command to work client side.
-	- Fixes console spam.
-	- Fixes console commands not working in the character selection.
-	- Attempts to further improve the admin check reliability.
-
-- v1.4
-	- Adds server side support for event, randomevent, resetkeys, setkey, skiptime, sleep, stopevent.
-
-- v1.3
-	- Refactores the code to hopefully make it work more reliably.
-	- Adds autocomplete to chat window also for cheat commands.
-
-- v1.2
-	- Adds support for Hearth and Home update.
-
-- v1.1
-	- Improves admin check.
-
-- v1.0
-	- Initial release.
-	
 Thanks for Azumatt for creating the mod icon!

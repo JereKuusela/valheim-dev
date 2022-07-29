@@ -9,6 +9,8 @@ public partial class ParameterInfo {
     "bind",
     "alias"
   };
+  public static HashSet<string> CompositeCommands = new() {
+  };
   public static HashSet<string> SpecialCommands1 = new() {
     "server"
   };
@@ -21,7 +23,11 @@ public partial class ParameterInfo {
     SpecialCommands1.Add(command);
   }
   public static void AddSpecialCommand2(string command) {
+    SpecialCommands.Add(command);
     SpecialCommands2.Add(command);
+  }
+  public static void AddCompositeCommand(string command) {
+    CompositeCommands.Add(command);
   }
   private static List<string> globalKeys = new() {
     "defeated_bonemass",

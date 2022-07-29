@@ -26,11 +26,11 @@ public static class Aliasing {
   }
 
   ///<summary>Converts a given command to plain text (without aliases).</summary>
-  public static string Plain(string command, int round = 0) {
+  public static string Plain(string command, int rounds = 10) {
     // This functions gets constantly called so this can help with the performance.
     if (command == "") return "";
     if (TerminalUtils.SkipProcessing(command)) return command;
-    if (round == 10) return command;
+    if (rounds == 0) return command;
     foreach (var key in Settings.AliasKeys) {
       if (command.Length < key.Length) continue;
       if (command != key) {
@@ -38,8 +38,8 @@ public static class Aliasing {
         var nextChar = command[key.Length];
         if (nextChar != ' ' && nextChar != ',' && nextChar != '=') continue;
       }
-      command = Settings.GetAlias(key) + command.Substring(key.Length);
-      return Plain(command, round + 1);
+      command = Settings.GetAliasValue(key) + command.Substring(key.Length);
+      return Plain(command, rounds - 1);
 
     }
     return command;

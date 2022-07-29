@@ -132,6 +132,8 @@ public class GetTabOptionsWithImprovedAutoComplete {
     var text = input.m_input.text;
     var parameters = text.Split(' ');
     if (parameters.Length > 1) {
+      while (parameters.Length > 1 && ParameterInfo.CompositeCommands.Contains(parameters.First()))
+        parameters = parameters.Skip(1).ToArray();
       while (parameters.Length > 1 && ParameterInfo.SpecialCommands1.Contains(parameters.First()))
         parameters = parameters.Skip(1).ToArray();
       while (parameters.Length > 2 && ParameterInfo.SpecialCommands2.Contains(parameters.First()))

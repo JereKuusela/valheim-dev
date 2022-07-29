@@ -89,6 +89,11 @@ public static class TerminalUtils {
     return input;
   }
   public static bool SkipProcessing(string command) => ParameterInfo.SpecialCommands.Any(cmd => command.StartsWith($"{cmd} ", StringComparison.OrdinalIgnoreCase));
+  public static bool IsComposite(string command) {
+    if (Settings.Aliasing)
+      command = Aliasing.Plain(command);
+    return ParameterInfo.CompositeCommands.Any(cmd => command.StartsWith($"{cmd} ", StringComparison.OrdinalIgnoreCase));
+  }
 
   public static bool IsExecuting = false;
 }
@@ -98,24 +103,27 @@ public static class TerminalUtils {
 public class TryRunCommand {
 
   static bool Prefix(Terminal __instance, ref string text) {
-    // Alias and bind can contain any kind of commands so avoid any processing.
+    var isComposite = TerminalUtils.IsComposite(text);
+    // Some commands (like alias or bind) are expected to be executed as they are.
     if (TerminalUtils.SkipProcessing(text)) return true;
     // Multiple commands in actual input.
-    if (MultiCommands.IsMulti(text)) {
+    if (!isComposite && MultiCommands.IsMulti(text)) {
       foreach (var cmd in MultiCommands.Split(text)) __instance.TryRunCommand(cmd);
       return false;
     }
+    // Composites need aliasing for each part.
     if (Settings.Aliasing)
-      text = Aliasing.Plain(text);
+      text = string.Join(";", MultiCommands.Split(text).Select(cmd => Aliasing.Plain(cmd)));
     if (Settings.Substitution)
       text = TerminalUtils.Substitute(text);
     // Multiple commands in an alias.
-    if (MultiCommands.IsMulti(text)) {
+    if (!isComposite && MultiCommands.IsMulti(text)) {
       foreach (var cmd in MultiCommands.Split(text)) __instance.TryRunCommand(cmd);
       return false;
     }
-    if (!BindCommand.Valid(text)) return false;
-    text = BindCommand.CleanUp(text);
+    if (!isComposite && !BindCommand.Valid(text)) return false;
+    if (!isComposite)
+      text = BindCommand.CleanUp(text);
     // Server side checks this already at the server side execution.
     if (Player.m_localPlayer && !DisableCommands.CanRun(text)) return false;
     if (CommandQueue.CanRun()) {
