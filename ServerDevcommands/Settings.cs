@@ -31,6 +31,8 @@ public static class Settings {
   public static bool AutoNoCost => configAutoNoCost.Value;
   public static ConfigEntry<bool> configDisableEvents;
   public static bool DisableEvents => Cheats && configDisableEvents.Value;
+  public static ConfigEntry<bool> configDisableUnlockMessages;
+  public static bool DisableUnlockMessages => configDisableUnlockMessages.Value;
   public static ConfigEntry<bool> configDisableDebugModeKeys;
   public static bool DisableDebugModeKeys => configDisableDebugModeKeys.Value;
   public static ConfigEntry<bool> configDebugConsole;
@@ -180,6 +182,7 @@ public static class Settings {
     configMiniMapCoordinates = config.Bind(section, "Show minimap coordinates", false, "The minimap shows player coordinates.");
     configShowPrivatePlayers = config.Bind(section, "Show private players", false, "The map shows private players.");
     configDisableEvents = config.Bind(section, "Disable random events", false, "Disables random events (server side setting).");
+    configDisableUnlockMessages = config.Bind(section, "Disable unlock messages", false, "Disables messages about new pieces and items.");
     configDisableDebugModeKeys = config.Bind(section, "Disable debug mode keys", false, "Removes debug mode key bindings for killall, removedrops, fly and no cost.");
     configDisabledGlobalKeys = config.Bind(section, "Disabled global keys", "", "Global keys separated by , that won't be set (server side setting).");
     configDisabledGlobalKeys.SettingChanged += (s, e) => DisableGlobalKeys.RemoveDisabled();
@@ -271,7 +274,8 @@ public static class Settings {
     "best_command_match",
     "debug_fast_teleport",
     "disable_no_map",
-    "hide_shout_pings"
+    "hide_shout_pings",
+    "disable_unlock_messages"
   };
   private static string State(bool value) => value ? "enabled" : "disabled";
   private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -360,6 +364,7 @@ public static class Settings {
     if (key == "aliasing") Toggle(context, configAliasing, "Command aliasing", value);
     if (key == "substitution") Toggle(context, configSubstitution, "Command parameter substitution", value);
     if (key == "improved_autocomplete") Toggle(context, configImprovedAutoComplete, "Improved autocomplete", value);
+    if (key == "disable_unlock_messages") Toggle(context, configDisableUnlockMessages, "Unlock messages", value, true);
     if (key == "disable_events") Toggle(context, configDisableEvents, "Random events", value, true);
     if (key == "disable_warnings") Toggle(context, configDisableParameterWarnings, "Command parameter warnings", value, true);
     if (key == "multiple_commands") Toggle(context, configMultiCommand, "Multiple commands per line", value);

@@ -4,7 +4,7 @@ Allows devcommands and utilities for server admins.
 
 Some features and commands require also installing the mod on the server (event, randomevent, resetkeys, skiptime, sleep, stopevent).
 
-Install on the admin client and optionally on the server (modding [guide](https://youtu.be/WfvA5a5tNHo)).
+Install on the admin client and optionally on the server (modding [guide](https://youtu.be/L9ljm2eKLrk)).
 
 Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available commands and how to use them. Remember to add your steamID64 to the adminlist.txt.
 
@@ -175,6 +175,7 @@ Three ways to edit the settings:
 - Disable random events (default: `false`, key: `disable_events`): Prevents random events from happening (server side setting).
 - Disable start shout (default: `false`, key: `disable_start_shout`): Removes the initial shout message when joining the server.
 - Disable tutorials (default: `false`, key: `disable_tutorials`): Prevents the raven from appearing.
+- Disable unlock messages (default: `false`, key: `disable_unlock_messges`): Disables messages about new pieces and items.
 - Hide shout pings (default: `false`, key: `hide_shout_pings`): Forces shout pings at the world center.
 - Invisible to players with ghost mode (default: `false`, key: `ghost_invisibility`): Invisible to other players with ghost mode.
 - Max undo steps (default: `50`, key: `max_undo_steps`): How many undo actions are stored.
@@ -221,6 +222,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - v1.24
 	- Adds equipped tool support to key bindings.
 	- Adds build mode support to key bindings.
+	- Adds a new setting `disable_unlock_messages`.
 	- Internal change to support Infinity Hammer mod.
 
 - v1.23
