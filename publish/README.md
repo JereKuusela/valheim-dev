@@ -182,7 +182,7 @@ Three ways to edit the settings:
 - No clip clear environment (default: `true`, key: `no_clip_clear_environment`): Removes any forced environments when the noclip is enabled. This disables any dark dungeon environments and prevents them from staying on when exiting the dungeon.
 - No clip with fly mode (default: `false`, key: `fly_no_clip`): Removes collision check with fly mode.
 - No creature drops (default: `false`, key: `no_drops`): Prevents creatures from dropping loot, can be useful if people accidentally spawn very high star creatures. Only works when as the zone owner.
-- No edge of world pull with god mode (default: `true`, key: `gpd_no_edge`): Removes the pull for an even godlier god mode.
+- No edge of world pull with god mode (default: `true`, key: `god_no_edge`): Removes the pull for an even godlier god mode.
 - No knockback with god mode (default: `true`, key: `god_no_knockback`): Removes knockback for an even godlier god mode.
 - No staggering with god mode (default: `true`, key: `god_no_stagger`): Removes staggering for an even godlier god mode.
 - No stamina usage with god mode (default: `true`, key: `god_no_stamina`): Removes the stamina usage for an even godlier god mode.
@@ -219,6 +219,10 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 # Changelog
 
+- v1.25
+	- Lowers teleport cooldown from 2 seconds to 0.5 seconds when `debug_fast_teleport` is enabled.
+	- Internal change to support World Edit Commands mod.
+
 - v1.24
 	- Adds equipped tool support to key bindings.
 	- Adds build mode support to key bindings.
@@ -246,12 +250,5 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 	- Replaces the setting `mouse_wheel_binding` with a new setting `mouse_wheel_bind_key` that instead allows settting the simulated key.
 	- Fixes root users not working with the new save system.
 	- Changes the guid which resets the config.
-
-- v1.20
-	- Adds a new setting `access_private_chests` which allows opening all private chests (default `true`).
-	- Adds a new setting `access_warded_areas` which allows ignoring wards (default `true`).
-	- Adds a new setting `max_undo_steps`(default `50`).
-	- Adds a new command `resetskill` to reset skills more easily.
-	- Adds a new parameter `*` to the `raiseskill` command to raise (or lower) all skills.
 
 Thanks for Azumatt for creating the mod icon!

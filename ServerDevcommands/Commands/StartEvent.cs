@@ -10,8 +10,8 @@ public class StartEventCommand {
       context.AddString("Random event not found:" + name);
       return;
     }
-    var x = Parse.TryFloat(args, 2, 0);
-    var z = Parse.TryFloat(args, 3, 0);
+    var x = Parse.Float(args, 2, 0);
+    var z = Parse.Float(args, 3, 0);
     RandEventSystem.instance.SetRandomEventByName(name, new(x, 0, z));
   }
   public StartEventCommand() {

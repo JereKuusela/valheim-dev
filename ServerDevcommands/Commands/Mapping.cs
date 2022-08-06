@@ -13,18 +13,18 @@ public class MappingCommand {
       args.Context.AddString("Error: Missing coordinate Z");
       return false;
     }
-    x = Parse.TryFloat(args[1], float.MinValue);
+    x = Parse.Float(args[1], float.MinValue);
     if (x == float.MinValue) {
       args.Context.AddString("Error: Invalid format for X coordinate.");
       return false;
     }
-    z = Parse.TryFloat(args[2], float.MinValue);
+    z = Parse.Float(args[2], float.MinValue);
     if (z == float.MinValue) {
       args.Context.AddString("Error: Invalid format for Z coordinate.");
       return false;
     }
     if (args.Length > 3) {
-      radius = Parse.TryFloat(args[3], float.MinValue);
+      radius = Parse.Float(args[3], float.MinValue);
       if (radius == float.MinValue) {
         args.Context.AddString("Error: Invalid format for radius.");
         return false;

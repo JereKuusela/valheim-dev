@@ -8,7 +8,7 @@ public class MoveSpawn {
       if (ZNet.instance.IsServer()) {
         var zs = ZoneSystem.instance;
         if (!zs) return;
-        var coords = Parse.TryVectorXZY(Parse.Split(parameters[1]));
+        var coords = Parse.VectorXZY(Parse.Split(parameters[1]));
         var location = zs.m_locationInstances.First(location => location.Value.m_location.m_prefabName == "StartTemple");
         var newLocation = location.Value;
         newLocation.m_position = coords;

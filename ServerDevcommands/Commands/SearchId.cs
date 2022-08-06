@@ -7,7 +7,7 @@ public class SearchIdCommand {
     new Terminal.ConsoleCommand("search_id", "[term] [max_lines=5] - Prints object ids matching the search term.", (args) => {
       if (args.Length < 2) return;
       var term = args[1].ToLower();
-      var maxLines = Parse.TryInt(args.Args, 2, 5);
+      var maxLines = Parse.Int(args.Args, 2, 5);
       var objects = ParameterInfo.ObjectIds.Where(id => id.ToLower().Contains(term)).ToArray();
       var bufferSize = (int)Math.Ceiling((float)objects.Length / maxLines);
       var buffer = new string[bufferSize];

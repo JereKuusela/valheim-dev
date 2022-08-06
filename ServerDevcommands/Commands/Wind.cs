@@ -9,8 +9,8 @@ public class WindCommand {
         Helper.AddMessage(args.Context, $"Wind: {em.GetWindIntensity()}.");
         return;
       }
-      var angle = Parse.TryFloat(args[1], 0f);
-      var intensity = Parse.TryFloat(args[2], 0f);
+      var angle = Parse.Float(args[1], 0f);
+      var intensity = Parse.Float(args[2], 0f);
       EnvMan.instance.SetDebugWind(angle, intensity);
     }, true, true);
     AutoComplete.Register("wind", (int index) => {

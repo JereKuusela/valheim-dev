@@ -20,11 +20,11 @@ public class GotoCommand {
           split = args.Args.Skip(1).ToArray();
 
         if (split.Length < 2)
-          pos.y = Parse.TryFloat(split, 0, WorldGenerator.instance.GetHeight(pos.x, pos.z));
+          pos.y = Parse.Float(split, 0, WorldGenerator.instance.GetHeight(pos.x, pos.z));
         else {
-          var posXZ = Parse.TryVectorXZY(split);
+          var posXZ = Parse.VectorXZY(split);
           var y = player.IsDebugFlying() ? player.transform.position.y : WorldGenerator.instance.GetHeight(posXZ.x, posXZ.z);
-          pos = Parse.TryVectorXZY(split, new Vector3(pos.x, y, pos.z));
+          pos = Parse.VectorXZY(split, new Vector3(pos.x, y, pos.z));
         }
       }
       player.TeleportTo(pos, player.transform.rotation, true);
@@ -35,12 +35,19 @@ public class GotoCommand {
 
 
 [HarmonyPatch(typeof(Player), nameof(Player.TeleportTo))]
-public class FasterTeleport {
+public class FasterTeleport1 {
   static void Postfix(Player __instance, bool __result) {
     if (Settings.DebugModeFastTeleport && __result && Player.m_debugMode)
       __instance.m_teleportTimer = 15f;
   }
 }
 
+[HarmonyPatch(typeof(Player), nameof(Player.UpdateTeleport))]
+public class FasterTeleport2 {
+  static void Postfix(Player __instance) {
+    if (Settings.DebugModeFastTeleport && Player.m_debugMode)
+      __instance.m_teleportCooldown = 1.5f;
+  }
+}
 
 

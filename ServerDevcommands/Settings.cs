@@ -145,7 +145,7 @@ public static class Settings {
   public static ConfigEntry<string> configRootUsers;
   public static ConfigEntry<string> configDisabledGlobalKeys;
   public static ConfigEntry<string> configUndoLimit;
-  public static int UndoLimit => Parse.TryInt(configUndoLimit.Value, 50);
+  public static int UndoLimit => Parse.Int(configUndoLimit.Value, 50);
   public static HashSet<string> DisabledGlobalKeys => ParseList(configDisabledGlobalKeys.Value);
   public static bool IsGlobalKeyDisabled(string key) => DisabledGlobalKeys.Contains(key.ToLower());
   public static void Init(ConfigFile config) {

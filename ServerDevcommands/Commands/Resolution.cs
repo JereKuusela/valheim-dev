@@ -15,10 +15,10 @@ public class ResolutionCommand {
   }
   private void SetResolution(Terminal terminal, string[] args) {
     var resolution = Screen.currentResolution;
-    var fullscreen = Parse.TryString(args, 1, GetMode());
-    var width = Parse.TryInt(args, 2, resolution.width);
-    var height = Parse.TryInt(args, 3, resolution.height);
-    var refresh = Parse.TryInt(args, 4, resolution.refreshRate);
+    var fullscreen = Parse.String(args, 1, GetMode());
+    var width = Parse.Int(args, 2, resolution.width);
+    var height = Parse.Int(args, 3, resolution.height);
+    var refresh = Parse.Int(args, 4, resolution.refreshRate);
     var mode = FullScreenMode.Windowed;
     if (fullscreen == "exclusive") mode = FullScreenMode.ExclusiveFullScreen;
     if (fullscreen == "max") mode = FullScreenMode.MaximizedWindow;

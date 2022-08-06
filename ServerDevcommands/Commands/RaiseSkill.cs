@@ -11,7 +11,7 @@ public class RaiseSkillCommand {
       var player = Helper.GetPlayer();
       Helper.ArgsCheck(args, 2, "Missing the skill.");
       Helper.ArgsCheck(args, 3, "Missing the amount.");
-      var amount = Parse.TryFloat(args[2], 0f);
+      var amount = Parse.Float(args[2], 0f);
       if (args[1] == "*") {
         foreach (var skill in ParameterInfo.SkillsWithWildcard) {
           if (skill == "*") continue;
