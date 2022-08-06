@@ -73,6 +73,7 @@ public static class TerminalUtils {
 
   public static bool CanSubstitute(string input) => input.Contains("$");
   public static string Substitute(string input) {
+    if (!Settings.Substitution) return input;
     if (input.StartsWith("alias ")) return input;
     if (!CanSubstitute(input)) return input;
     GetSubstitutions(input.Split(' '), out var mainPars, out var substitutions);
@@ -90,8 +91,7 @@ public static class TerminalUtils {
   }
   public static bool SkipProcessing(string command) => ParameterInfo.SpecialCommands.Any(cmd => command.StartsWith($"{cmd} ", StringComparison.OrdinalIgnoreCase));
   public static bool IsComposite(string command) {
-    if (Settings.Aliasing)
-      command = Aliasing.Plain(command);
+    command = Aliasing.Plain(command);
     return ParameterInfo.CompositeCommands.Any(cmd => command.StartsWith($"{cmd} ", StringComparison.OrdinalIgnoreCase));
   }
 
@@ -101,24 +101,23 @@ public static class TerminalUtils {
 // Replace devcommands check with a custom one.
 [HarmonyPatch(typeof(Terminal), nameof(Terminal.TryRunCommand))]
 public class TryRunCommand {
-
+  static void SplitOff(Terminal __instance, string text) {
+    // Must be split off one by one because later commands can be composite (and shouldn't be split).
+    var split = MultiCommands.Split(text);
+    var first = split.Take(1).First();
+    var second = string.Join(";", split.Skip(1));
+    __instance.TryRunCommand(first);
+    __instance.TryRunCommand(second);
+  }
   static bool Prefix(Terminal __instance, ref string text) {
     var isComposite = TerminalUtils.IsComposite(text);
     // Some commands (like alias or bind) are expected to be executed as they are.
     if (TerminalUtils.SkipProcessing(text)) return true;
-    // Multiple commands in actual input.
-    if (!isComposite && MultiCommands.IsMulti(text)) {
-      foreach (var cmd in MultiCommands.Split(text)) __instance.TryRunCommand(cmd);
-      return false;
-    }
     // Composites need aliasing for each part.
-    if (Settings.Aliasing)
-      text = string.Join(";", MultiCommands.Split(text).Select(cmd => Aliasing.Plain(cmd)));
-    if (Settings.Substitution)
-      text = TerminalUtils.Substitute(text);
+    text = string.Join(";", MultiCommands.Split(text).Select(s => TerminalUtils.Substitute(Aliasing.Plain(s))));
     // Multiple commands in an alias.
     if (!isComposite && MultiCommands.IsMulti(text)) {
-      foreach (var cmd in MultiCommands.Split(text)) __instance.TryRunCommand(cmd);
+      SplitOff(__instance, text);
       return false;
     }
     if (!isComposite && !BindCommand.Valid(text)) return false;
@@ -153,8 +152,7 @@ public class AliasInput {
     TerminalUtils.ToCurrentInput(__instance);
     if (Settings.DebugConsole) {
       var actual = __instance.m_input.text;
-      if (Settings.Substitution)
-        actual = TerminalUtils.Substitute(actual);
+      actual = TerminalUtils.Substitute(actual);
       if (actual != LastActual)
         ServerDevcommands.Log.LogInfo("Command: " + actual);
       LastActual = actual;

@@ -130,7 +130,7 @@ public class GetTabOptionsWithImprovedAutoComplete {
     var input = GetInput();
     if (input == null) return true;
     var text = input.m_input.text;
-    var parameters = text.Split(' ');
+    var parameters = text.Split(';').Last().Split(' ');
     if (parameters.Length > 1) {
       while (parameters.Length > 1 && ParameterInfo.CompositeCommands.Contains(parameters.First()))
         parameters = parameters.Skip(1).ToArray();
