@@ -98,7 +98,6 @@ public static class TerminalUtils {
   public static bool IsExecuting = false;
 }
 
-// Replace devcommands check with a custom one.
 [HarmonyPatch(typeof(Terminal), nameof(Terminal.TryRunCommand))]
 public class TryRunCommand {
   static void SplitOff(Terminal __instance, string text) {
