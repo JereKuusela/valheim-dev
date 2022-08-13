@@ -103,6 +103,7 @@ Examples:
 - `goto [x,z,y]` or ``goto x z y` teleports to the coordinates. If y is not given, teleports to the ground level.
 - `goto` teleports to the ground level.
 - `goto [y]` teleports to the altitude (dungeons are at 5000 altitude).
+- `goto last` teleports to the position before the previous teleport.
 - `hud` allows toggling the HUD visibility.
 - `hud [value]` allows directly setting the HUD visibility.
 - `move_spawn [x,z,y = player's coordinates]` allows moving the default spawn point.
@@ -219,6 +220,9 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 # Changelog
 
+- v1.26
+	- Adds parameter `last` to the `goto` command to allow easily returning to the previous position.
+
 - v1.25
 	- Lowers teleport cooldown from 2 seconds to 0.5 seconds when `debug_fast_teleport` is enabled.
 	- Internal change to support World Edit Commands mod.
@@ -243,12 +247,5 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 	- Removes the console input character limit (too small for some commands).
 	- Fixes no clip never triggering ship exit (so the ship just keeps going).
 	- Fixes mouse wheel binds not overriding fly ascend/descend.
-
-- v1.21
-	- Adds a new setting `best_command_match` to only execute the commands with the most modifier keys pressed (default `true`).
-	- Fixes some commands printing "Error: Player not found.".
-	- Replaces the setting `mouse_wheel_binding` with a new setting `mouse_wheel_bind_key` that instead allows settting the simulated key.
-	- Fixes root users not working with the new save system.
-	- Changes the guid which resets the config.
 
 Thanks for Azumatt for creating the mod icon!

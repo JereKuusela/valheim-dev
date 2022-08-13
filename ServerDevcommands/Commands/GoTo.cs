@@ -1,25 +1,36 @@
+using System;
 using System.Linq;
 using HarmonyLib;
 using UnityEngine;
+using UnityEngine.Playables;
+
 namespace ServerDevcommands;
 ///<summary>Adds support for the y coordinate.</summary>
 public class GotoCommand {
+  private Vector3? LastPosition = null;
+  private Quaternion? LastRotation = null;
   public GotoCommand() {
     AutoComplete.Register("goto", (int index, int subIndex) => {
       if (index == 0) return ParameterInfo.XZY("Coordinates", subIndex);
       return ParameterInfo.XZY("Coordinates", index);
     });
-    Helper.Command("goto", "[x,z,y or altitude or no parameter] - Teleports to the coordinates. If y is not given, teleports to the ground level.", (args) => {
+    Helper.Command("goto", "[x,z,y or altitude or last or no parameter] - Teleports to the coordinates. If y is not given, teleports to the ground level.", (args) => {
       var player = Helper.GetPlayer();
-      Vector3 pos = player.transform.position;
+      var pos = player.transform.position;
+      var rot = player.transform.rotation;
       if (args.Length < 2) {
         pos.y = WorldGenerator.instance.GetHeight(pos.x, pos.z);
       } else {
         var split = Parse.Split(args[1]);
         if (args.Length > 2)
           split = args.Args.Skip(1).ToArray();
-
-        if (split.Length < 2)
+        if (args[1] == "last") {
+          if (LastPosition == null)
+            throw new InvalidOperationException("No last position");
+          pos = LastPosition ?? pos;
+          rot = LastRotation ?? rot;
+        }
+        else if (split.Length < 2)
           pos.y = Parse.Float(split, 0, WorldGenerator.instance.GetHeight(pos.x, pos.z));
         else {
           var posXZ = Parse.VectorXZY(split);
@@ -27,7 +38,9 @@ public class GotoCommand {
           pos = Parse.VectorXZY(split, new Vector3(pos.x, y, pos.z));
         }
       }
-      player.TeleportTo(pos, player.transform.rotation, true);
+      LastPosition = player.transform.position;
+      LastRotation = player.transform.rotation;
+      player.TeleportTo(pos, rot, true);
       Helper.AddMessage(args.Context, $"Teleported to (X,Z,Y): {pos.x}, {pos.z}, {pos.y}.");
     });
   }
