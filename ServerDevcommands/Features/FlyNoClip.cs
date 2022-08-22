@@ -5,7 +5,8 @@ using HarmonyLib;
 namespace ServerDevcommands;
 
 public class NoClip {
-  public static bool Enabled() => Player.m_localPlayer && Player.m_localPlayer.IsDebugFlying() && Settings.FlyNoClip;
+  public static bool PlayerEnabled() => Player.m_localPlayer && Player.m_localPlayer.IsDebugFlying() && Settings.FlyNoClip;
+  public static bool CameraEnabled() => Settings.NoClipView || PlayerEnabled();
   // Tracks when the noclip was turned on by this mod (better compatibility with other noclip mods).
   public static bool TurnedOn = false;
 }
@@ -33,7 +34,7 @@ public class NoObjectCollision {
       __instance.m_zanim.SetFloat(Character.forward_speed, 0f);
       __instance.m_zanim.SetFloat(Character.turn_speed, 0f);
     }
-    var noClip = NoClip.Enabled();
+    var noClip = NoClip.PlayerEnabled();
     if (noClip) {
       if (!NoClip.TurnedOn && Settings.NoClipClearEnvironment) {
         // Forced environemnts rely on collider check so they won't get deactivated with noclip.
@@ -51,7 +52,7 @@ public class NoObjectCollision {
 }
 [HarmonyPatch(typeof(Character), nameof(Character.UnderWorldCheck))]
 public class NoGroundCollision {
-  static bool Prefix(Character __instance) => !NoClip.Enabled();
+  static bool Prefix(Character __instance) => !NoClip.PlayerEnabled();
 }
 
 [HarmonyPatch(typeof(GameCamera), nameof(GameCamera.GetCameraPosition))]
@@ -65,7 +66,7 @@ public class NoCameraCapping {
            .SetAndAdvance( // Replace the m_offset3 value with a custom function.
              OpCodes.Call,
              Transpilers.EmitDelegate<Func<GameCamera, float>>(
-                 (GameCamera instance) => NoClip.Enabled() ? float.MinValue : instance.m_minWaterDistance).operand)
+                 (GameCamera instance) => NoClip.CameraEnabled() ? float.MinValue : instance.m_minWaterDistance).operand)
          )
          .InstructionEnumeration();
   }
@@ -73,5 +74,5 @@ public class NoCameraCapping {
 
 [HarmonyPatch(typeof(GameCamera), nameof(GameCamera.CollideRay2))]
 public class NoCameraClipping {
-  static bool Prefix(GameCamera __instance) => !NoClip.Enabled();
+  static bool Prefix(GameCamera __instance) => !NoClip.CameraEnabled();
 }

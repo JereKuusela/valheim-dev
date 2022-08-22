@@ -87,6 +87,8 @@ public static class Settings {
   public static string[] FlyDownKeys = new string[0];
   public static ConfigEntry<bool> configNoDrops;
   public static bool NoDrops => Cheats && configNoDrops.Value;
+  public static ConfigEntry<bool> configNoClipView;
+  public static bool NoClipView => Cheats && configNoClipView.Value;
   public static ConfigEntry<string> configCommandAliases;
   public static ConfigEntry<KeyboardShortcut> configMouseWheelBindKey;
   public static KeyCode MouseWheelBindKey => configMouseWheelBindKey.Value.MainKey;
@@ -152,6 +154,7 @@ public static class Settings {
     var section = "1. General";
     configGhostInvisibility = config.Bind(section, "Invisible to other players with ghost mode", false, "");
     configNoDrops = config.Bind(section, "No creature drops", false, "Disables drops from creatures (if you control the zone), intended to fix high star enemies crashing the game.");
+    configNoClipView = config.Bind(section, "No clip view", false, "Game view always no clips.");
     configAutoDebugMode = config.Bind(section, "Automatic debug mode", false, "Automatically enables debug mode when enabling devcommands.");
     configAutoFly = config.Bind(section, "Automatic fly mode", false, "Automatically enables fly mode when enabling devcommands.");
     configAutoNoCost = config.Bind(section, "Automatic no cost mode", false, "Automatically enables no cost mode when enabling devcommands.");
@@ -275,7 +278,8 @@ public static class Settings {
     "debug_fast_teleport",
     "disable_no_map",
     "hide_shout_pings",
-    "disable_unlock_messages"
+    "disable_unlock_messages",
+    "no_clip_view"
   };
   private static string State(bool value) => value ? "enabled" : "disabled";
   private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -334,6 +338,7 @@ public static class Settings {
     Helper.AddMessage(context, $"{name} set to {value}.");
   }
   public static void UpdateValue(Terminal context, string key, string value) {
+    if (key == "no_clip_view") Toggle(context, configNoClipView, key, value);
     if (key == "fly_up_key") SetValue(context, configFlyUpKeys, key, value);
     if (key == "fly_down_key") SetValue(context, configFlyDownKeys, key, value);
     if (key == "max_undo_steps") SetValue(context, configUndoLimit, key, value);
@@ -375,7 +380,7 @@ public static class Settings {
     if (key == "god_no_edge") Toggle(context, configGodModeNoEdgeOfWorld, "Edge of world pull with god mode", value, true);
     if (key == "god_no_knockback") Toggle(context, configGodModeNoKnockback, "Knockback with god mode", value, true);
     if (key == "fly_no_clip") Toggle(context, configFlyNoClip, "No clip with fly mode", value);
-    if (key == "ghost_invibisility") Toggle(context, configGhostInvisibility, "Invisibility with ghost mode", value, true);
+    if (key == "ghost_invibisility") Toggle(context, configGhostInvisibility, "Invisibility with ghost mode", value);
     if (key == "server_commands") ToggleFlag(context, configServerCommands, "Server commands", value);
     if (key == "disable_command") ToggleFlag(context, configDisabledCommands, "Disabled commands", value);
     if (key == "disable_global_key") ToggleFlag(context, configDisabledGlobalKeys, "Disabled global keys", value);

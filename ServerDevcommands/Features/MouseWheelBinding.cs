@@ -2,7 +2,6 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
-using UnityEngine;
 namespace ServerDevcommands;
 public class MouseWheelBinding {
   ///<summary>Runs any bound commands.</summary>
@@ -45,17 +44,6 @@ public class PreventRotation {
   static void Postfix(Player __instance, int __state) {
     if (MouseWheelBinding.CouldExecute())
       __instance.m_placeRotation = __state;
-  }
-}
-[HarmonyPatch(typeof(Player), nameof(Player.UpdatePlacementGhost))]
-public class PreventGhostRotation {
-  static void Prefix(Player __instance, ref Quaternion __state) {
-    if (__instance.m_placementGhost)
-      __state = __instance.m_placementGhost.transform.rotation;
-  }
-  static void Postfix(Player __instance, Quaternion __state) {
-    if (__instance.m_placementGhost && MouseWheelBinding.CouldExecute())
-      __instance.m_placementGhost.transform.rotation = __state;
   }
 }
 

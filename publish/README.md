@@ -222,6 +222,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 - v1.26
 	- Adds parameter `last` to the `goto` command to allow easily returning to the previous position.
+	- Fixes mouse wheel binds resetting placement rotation.
 
 - v1.25
 	- Lowers teleport cooldown from 2 seconds to 0.5 seconds when `debug_fast_teleport` is enabled.
