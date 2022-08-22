@@ -154,7 +154,7 @@ public static class Settings {
     var section = "1. General";
     configGhostInvisibility = config.Bind(section, "Invisible to other players with ghost mode", false, "");
     configNoDrops = config.Bind(section, "No creature drops", false, "Disables drops from creatures (if you control the zone), intended to fix high star enemies crashing the game.");
-    configNoClipView = config.Bind(section, "No clip view", false, "Game view always no clips.");
+    configNoClipView = config.Bind(section, "No clip view", false, "Removes collision check for the camera.");
     configAutoDebugMode = config.Bind(section, "Automatic debug mode", false, "Automatically enables debug mode when enabling devcommands.");
     configAutoFly = config.Bind(section, "Automatic fly mode", false, "Automatically enables fly mode when enabling devcommands.");
     configAutoNoCost = config.Bind(section, "Automatic no cost mode", false, "Automatically enables no cost mode when enabling devcommands.");

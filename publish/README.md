@@ -182,6 +182,7 @@ Three ways to edit the settings:
 - Max undo steps (default: `50`, key: `max_undo_steps`): How many undo actions are stored.
 - No clip clear environment (default: `true`, key: `no_clip_clear_environment`): Removes any forced environments when the noclip is enabled. This disables any dark dungeon environments and prevents them from staying on when exiting the dungeon.
 - No clip with fly mode (default: `false`, key: `fly_no_clip`): Removes collision check with fly mode.
+- No clip view (default: `false`, key: `no_clip_view`): Removes collision check for the camera.
 - No creature drops (default: `false`, key: `no_drops`): Prevents creatures from dropping loot, can be useful if people accidentally spawn very high star creatures. Only works when as the zone owner.
 - No edge of world pull with god mode (default: `true`, key: `god_no_edge`): Removes the pull for an even godlier god mode.
 - No knockback with god mode (default: `true`, key: `god_no_knockback`): Removes knockback for an even godlier god mode.
@@ -222,6 +223,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 - v1.26
 	- Adds parameter `last` to the `goto` command to allow easily returning to the previous position.
+	- Adds a new setting `no_clip_view` to always no clip the camera.
 	- Fixes mouse wheel binds resetting placement rotation.
 
 - v1.25
