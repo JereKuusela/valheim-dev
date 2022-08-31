@@ -128,6 +128,27 @@ public partial class ParameterInfo {
       return locationIds;
     }
   }
+  private static List<string> events = new();
+  public static List<string> Events {
+    get {
+      if (RandEventSystem.instance && RandEventSystem.instance.m_events.Count != events.Count)
+        events = RandEventSystem.instance.m_events.Select(ev => ev.m_name).ToList();
+      return events;
+    }
+  }
+  private static List<string> statusEffects = new();
+  public static List<string> StatusEffects {
+    get {
+      if (ObjectDB.instance && ObjectDB.instance.m_StatusEffects.Count != statusEffects.Count)
+        statusEffects = ObjectDB.instance.m_StatusEffects.Select(se => se.name).ToList();
+      return statusEffects;
+    }
+  }
+  public static List<string> EffectAreas {
+    get {
+      return Enum.GetNames(typeof(EffectArea.Type)).ToList();
+    }
+  }
   private static List<string> itemIds = new();
   public static List<string> ItemIds {
     get {

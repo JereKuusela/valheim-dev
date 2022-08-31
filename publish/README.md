@@ -221,6 +221,9 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 # Changelog
 
+- v1.27
+	- Internal change to support World Edit Commands mod.
+
 - v1.26
 	- Adds parameter `last` to the `goto` command to allow easily returning to the previous position.
 	- Adds a new setting `no_clip_view` to always no clip the camera.
