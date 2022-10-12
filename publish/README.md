@@ -223,6 +223,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 - v1.28
 	- Adds support for multiple `keys=` parameters in bindings.
+	- Changes the `wait` command to update at start of the frame.
 	- Fixes aliasing not sometimes working for aliases without parameters.
 
 - v1.27
