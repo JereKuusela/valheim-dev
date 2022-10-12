@@ -37,7 +37,7 @@ public static class Aliasing {
       if (command != key) {
         if (!command.StartsWith(key)) continue;
         var nextChar = command[key.Length];
-        if (nextChar != ' ' && nextChar != ',' && nextChar != '=') continue;
+        if (nextChar != ' ' && nextChar != ',' && nextChar != '=' && nextChar != ';') continue;
       }
       command = Settings.GetAliasValue(key) + command.Substring(key.Length);
       return Plain(command, rounds - 1);
