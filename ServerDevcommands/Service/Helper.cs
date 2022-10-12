@@ -26,43 +26,6 @@ public abstract class Helper {
     return Utils.GetPrefabName(prefab);
   }
 
-  ///<summary>Returns the hovered object within 50 meters.</summary>
-  public static ZNetView? GetHovered(Terminal.ConsoleEventArgs args) {
-    var player = Player.m_localPlayer;
-    if (!player) return null;
-    var interact = player.m_maxInteractDistance;
-    player.m_maxInteractDistance = 50f;
-    var previousMask = player.m_interactMask;
-    var mask = LayerMask.GetMask(new string[]
-    {
-      "item",
-      "piece",
-      "piece_nonsolid",
-      "Default",
-      "static_solid",
-      "Default_small",
-      "character",
-      "character_net",
-      "terrain",
-      "vehicle",
-      "character_trigger" // Added to target spawners with ESP mod.
-    });
-    player.m_interactMask = mask;
-    player.FindHoverObject(out var obj, out var creature);
-    player.m_interactMask = previousMask;
-    player.m_maxInteractDistance = interact;
-    if (obj == null) {
-      AddMessage(args.Context, "Nothing is being hovered.");
-      return null;
-    }
-    var view = obj.GetComponentInParent<ZNetView>();
-    if (view == null) {
-      AddMessage(args.Context, "Nothing is being hovered.");
-      return null;
-    }
-    return view;
-  }
-
   public static float RandomValue(Range<float> range) => UnityEngine.Random.Range(range.Min, range.Max);
   public static int RandomValue(Range<int> range) => UnityEngine.Random.Range(range.Min, range.Max + 1);
   public static Vector3 RandomValue(Range<Vector3> range) {

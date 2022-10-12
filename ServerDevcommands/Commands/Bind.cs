@@ -148,6 +148,12 @@ public class BindCommand {
     if (toolRequired && !hasTool) return false;
     return true;
   }
-  public static string CleanUp(string command) =>
-    string.Join(" ", command.Split(' ').Where(arg => !arg.StartsWith("keys=", StringComparison.OrdinalIgnoreCase) && !arg.StartsWith("tag=", StringComparison.OrdinalIgnoreCase)));
+  public static string CleanUp(string command) {
+    command = string.Join(" ", command.Split(' ').Where(arg => !arg.StartsWith("tag=", StringComparison.OrdinalIgnoreCase)));
+    // The command itself may contain multiple commands with key checks.
+    // This is not really intended usage but this should give some basic support for it.
+    if (command.Split(' ').Count(arg => arg.StartsWith("keys=", StringComparison.OrdinalIgnoreCase)) < 2)
+      command = string.Join(" ", command.Split(' ').Where(arg => !arg.StartsWith("keys=", StringComparison.OrdinalIgnoreCase)));
+    return command;
+  }
 }

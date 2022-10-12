@@ -221,6 +221,9 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 # Changelog
 
+- v1.28
+	- Adds support for multiple `keys=` parameters in bindings.
+
 - v1.27
 	- Internal change to support World Edit Commands mod.
 

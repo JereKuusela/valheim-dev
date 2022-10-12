@@ -11,7 +11,7 @@ namespace ServerDevcommands;
 public class ServerDevcommands : BaseUnityPlugin {
   public const string GUID = "server_devcommands";
   public const string NAME = "Server Devcommands";
-  public const string VERSION = "1.27";
+  public const string VERSION = "1.28";
   public const string COMFY_GIZMO_GUID = "com.rolopogo.gizmo.comfy";
   public const string RELOADED_GIZMO_GUID = "m3to.mods.GizmoReloaded";
   private static ManualLogSource? Logs;
@@ -23,7 +23,11 @@ public class ServerDevcommands : BaseUnityPlugin {
     Admin.Instance = new DevCommandsAdmin();
     Settings.Init(Config);
     Console.SetConsoleEnabled(true);
-    SetupWatcher();
+    try {
+      SetupWatcher();
+    } catch {
+      //
+    }
   }
   public void Start() {
     if (Chainloader.PluginInfos.TryGetValue(COMFY_GIZMO_GUID, out var info))
