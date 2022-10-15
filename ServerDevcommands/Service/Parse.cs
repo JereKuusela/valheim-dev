@@ -235,9 +235,17 @@ public static class Parse {
     "off"
   };
   private static bool IsFalsy(string value) => Falsies.Contains(value);
-  public static bool? Boolean(string arg) {
-    if (IsTruthy(arg)) return true;
-    if (IsFalsy(arg)) return false;
-    return null;
+  public static bool? Boolean(string value) {
+    if (IsTruthy(value)) return true;
+    if (IsFalsy(value)) return false;
+    return Helper.IsDown(value);
+  }
+  public static string Logic(string value) {
+    if (!value.Contains("?") || !value.Contains(":")) return value;
+    var split = value.Split('?');
+    var condition = split[0];
+    split = split[1].Split(':');
+    var truth = Boolean(condition) ?? false;
+    return truth ? split[0] : split[1];
   }
 }

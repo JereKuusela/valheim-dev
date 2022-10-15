@@ -100,6 +100,15 @@ public static class TerminalUtils {
 
 [HarmonyPatch(typeof(Terminal), nameof(Terminal.TryRunCommand))]
 public class TryRunCommand {
+  static string CheckLogic(string text) {
+    var args = text.Split(' ').Select(arg => {
+      var split = arg.Split('=');
+      if (split.Length == 1) return Parse.Logic(arg);
+      if (split.Length > 2) return arg;
+      return $"{split[0]}={Parse.Logic(split[1])}";
+    });
+    return string.Join(" ", args);
+  }
   static void SplitOff(Terminal __instance, string text) {
     // Must be split off one by one because later commands can be composite (and shouldn't be split).
     var split = MultiCommands.Split(text);
@@ -120,8 +129,10 @@ public class TryRunCommand {
       return false;
     }
     if (!isComposite && !BindCommand.Valid(text)) return false;
-    if (!isComposite)
+    if (!isComposite) {
       text = BindCommand.CleanUp(text);
+      text = CheckLogic(text);
+    }
     // Server side checks this already at the server side execution.
     if (Player.m_localPlayer && !DisableCommands.CanRun(text)) return false;
     if (CommandQueue.CanRun()) {

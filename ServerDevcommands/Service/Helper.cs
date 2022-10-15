@@ -78,6 +78,12 @@ public abstract class Helper {
   public static void AddError(Terminal context, string message) {
     AddMessage(context, $"Error: {message}");
   }
+  public static bool? IsDown(string key) {
+    if (key.StartsWith("-", StringComparison.OrdinalIgnoreCase))
+      return Enum.TryParse<KeyCode>(key.Substring(1), true, out var code) ? !Input.GetKey(code) : null;
+    else
+      return Enum.TryParse<KeyCode>(key, true, out var code) ? Input.GetKey(code) : null;
+  }
   public static Player GetPlayer() {
     var player = Player.m_localPlayer;
     if (!player) throw new InvalidOperationException("No player.");
