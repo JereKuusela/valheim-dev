@@ -73,8 +73,8 @@ public static class Settings {
   public static bool Aliasing => configAliasing.Value;
   public static ConfigEntry<bool> configDisableParameterWarnings;
   public static bool DisableParameterWarnings => configDisableParameterWarnings.Value;
-  public static ConfigEntry<bool> configSubstitution;
-  public static bool Substitution => configSubstitution.Value;
+  public static ConfigEntry<string> configSubstitution;
+  public static string Substitution => configSubstitution.Value;
   public static ConfigEntry<bool> configImprovedAutoComplete;
   public static bool ImprovedAutoComplete => configImprovedAutoComplete.Value;
   public static ConfigEntry<bool> configMultiCommand;
@@ -132,6 +132,11 @@ public static class Settings {
       Aliases[alias] = value;
       SaveAliases();
     }
+  }
+
+  public static void AddAlias(Dictionary<string, string> dict) {
+    Aliases = dict;
+    SaveAliases();
   }
   public static void RemoveAlias(string alias) {
     if (!Aliases.ContainsKey(alias)) return;
@@ -206,7 +211,7 @@ public static class Settings {
     configImprovedAutoComplete = config.Bind(section, "Improved autocomplete", true, "Enables parameter info or options for every parameter.");
     configCommandAliases = config.Bind(section, "Command aliases", "", "Internal data for aliases.");
     configMultiCommand = config.Bind(section, "Multiple commands per line", true, "Enables multiple commands when separated with ;.");
-    configSubstitution = config.Bind(section, "Substitution system", true, "Enables the command parameter substitution system ($ gets replaced with the next free parameter).");
+    configSubstitution = config.Bind(section, "Substitution", "$$", "Enables the command parameter substitution system (substitution gets replaced with the next free parameter).");
     configDebugConsole = config.Bind(section, "Debug console", false, "Extra debug information about aliasing.");
     configDisableParameterWarnings = config.Bind(section, "Disable parameter warnings", false, "Removes warning texts from some command parameter descriptions.");
     configCommandAliases.SettingChanged += (s, e) => ParseAliases(configCommandAliases.Value);
@@ -346,6 +351,7 @@ public static class Settings {
     if (key == "auto_exec_dev_off") SetValue(context, configAutoExecDevOff, key, value);
     if (key == "auto_exec_boot") SetValue(context, configAutoExecBoot, key, value);
     if (key == "auto_exec") SetValue(context, configAutoExec, key, value);
+    if (key == "substitution") SetValue(context, configSubstitution, key, value);
     if (key == "mouse_wheel_bind_key") SetKey(context, configMouseWheelBindKey, "Mouse wheel bind key", value);
     if (key == "debug_fast_teleport") Toggle(context, configDebugModeFastTeleport, key, value);
     if (key == "best_command_match") Toggle(context, configBestCommandMatch, key, value);
@@ -367,7 +373,6 @@ public static class Settings {
     if (key == "debug_console") Toggle(context, configDebugConsole, "Debug console", value);
     if (key == "no_drops") Toggle(context, configNoDrops, "Creature drops", value, true);
     if (key == "aliasing") Toggle(context, configAliasing, "Command aliasing", value);
-    if (key == "substitution") Toggle(context, configSubstitution, "Command parameter substitution", value);
     if (key == "improved_autocomplete") Toggle(context, configImprovedAutoComplete, "Improved autocomplete", value);
     if (key == "disable_unlock_messages") Toggle(context, configDisableUnlockMessages, "Unlock messages", value, true);
     if (key == "disable_events") Toggle(context, configDisableEvents, "Random events", value, true);

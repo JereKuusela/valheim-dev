@@ -82,6 +82,15 @@ public class GetTabOptionsWithImprovedAutoComplete {
   }
   private static int GetSubIndex(string parameter) => parameter.Split(',').Length - 1;
 
+  private static int CountSubstitution(string parameter) {
+    var count = 0;
+    var len = Settings.Substitution.Length;
+    var index = -len;
+    while ((index = parameter.IndexOf(Settings.Substitution, index + len)) > -1) {
+      count += 1;
+    }
+    return count;
+  }
   private static List<string> GetOptions(string[] parameters) {
     var commandName = parameters.First();
     parameters = parameters.Skip(1).ToArray();
@@ -95,12 +104,12 @@ public class GetTabOptionsWithImprovedAutoComplete {
     } else {
       // Ignore named parameters for the index.
       index = TerminalUtils.GetPositionalParameters(parameters).Count() - 1;
-      if (Settings.Substitution) {
+      if (Settings.Substitution != "") {
         var substitutions = TerminalUtils.GetAmountOfSubstitutions(parameters);
         for (var i = 0; i < parameters.Length; i++) {
           if (substitutions <= 0) break; // Early break if there are no substitutions.
           var par = parameters[i];
-          var count = par.Count(character => character == '$');
+          var count = CountSubstitution(par);
           // Ignore substituded parameters for the index.
           index -= count;
           substitutions -= count;
@@ -109,10 +118,10 @@ public class GetTabOptionsWithImprovedAutoComplete {
             name = GetName(par);
             if (name != "") {
               // Cases to handle:
-              // 1. =$ foo,bar -> substitutions: 0, parameter: 1, par: 0 => 1
-              // 2. =$,$ foo ->  substitutions: -1, parameter: 0, par: 1 => 0
-              // 3. =$,$ foo bar -> substitutions: 0, parameter: 0, par: 1 => 1
-              // 4. =foo,$ bar -> substitutions: 0, parameter: 0, par: 1 => 1
+              // 1. =$$ foo,bar -> substitutions: 0, parameter: 1, par: 0 => 1
+              // 2. =$$,$$ foo ->  substitutions: -1, parameter: 0, par: 1 => 0
+              // 3. =$$,$$ foo bar -> substitutions: 0, parameter: 0, par: 1 => 1
+              // 4. =foo,$$ bar -> substitutions: 0, parameter: 0, par: 1 => 1
               index = substitutions + GetSubIndex(parameter) + GetSubIndex(par);
             } else {
               index = i;

@@ -39,7 +39,7 @@ public static class TerminalUtils {
     // However still "target id=$ remove" won't work.
     var start = -1;
     for (var i = 0; i < parameters.Length; i++) {
-      if (parameters[i].Contains("$")) start = i + 1;
+      if (parameters[i].Contains(Settings.Substitution)) start = i + 1;
     }
     if (start == -1) {
       mainPars = parameters;
@@ -53,7 +53,7 @@ public static class TerminalUtils {
   public static int GetAmountOfSubstitutions(string[] parameters) {
     var start = -1;
     for (var i = 0; i < parameters.Length; i++) {
-      if (parameters[i].Contains("$")) start = i + 1;
+      if (parameters[i].Contains(Settings.Substitution)) start = i + 1;
     }
     if (start == -1) return 0;
     return parameters.Skip(start).Where(par => !par.Contains("=")).Count();
@@ -66,25 +66,25 @@ public static class TerminalUtils {
   }
   public static string Substitute(string input, string value) {
     if (CanSubstitute(input) && !value.Contains("="))
-      return ReplaceFirst(input, "$", value);
+      return ReplaceFirst(input, Settings.Substitution, value);
     else
       return input + " " + value;
   }
 
-  public static bool CanSubstitute(string input) => input.Contains("$");
+  public static bool CanSubstitute(string input) => input.Contains(Settings.Substitution);
   public static string Substitute(string input) {
-    if (!Settings.Substitution) return input;
+    if (Settings.Substitution == "") return input;
     if (input.StartsWith("alias ")) return input;
     if (!CanSubstitute(input)) return input;
     GetSubstitutions(input.Split(' '), out var mainPars, out var substitutions);
     input = string.Join(" ", mainPars);
     foreach (var parameter in substitutions)
       input = Substitute(input, parameter);
-    // Removes any extra substitutions that didn't receive values so "cmd par=$,$" works with "foo 3".
-    input = input.Replace(",$", "");
-    // Remove any trailing substitution that didn't receive a parameter so "cmd $ $" works with "foo 3".
+    // Removes any extra substitutions that didn't receive values so "cmd par=$$,$$" works with "foo 3".
+    input = input.Replace($",{Settings.Substitution}", "");
+    // Remove any trailing substitution that didn't receive a parameter so "cmd $$ $$" works with "foo 3".
     var parameters = input.Split(' ');
-    while (parameters.Length > 0 && parameters.Last().Contains("$"))
+    while (parameters.Length > 0 && parameters.Last().Contains(Settings.Substitution))
       parameters = parameters.Take(parameters.Length - 1).ToArray();
     input = string.Join(" ", parameters);
     return input;

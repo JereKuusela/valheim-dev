@@ -11,7 +11,7 @@ namespace ServerDevcommands;
 public class ServerDevcommands : BaseUnityPlugin {
   public const string GUID = "server_devcommands";
   public const string NAME = "Server Devcommands";
-  public const string VERSION = "1.28";
+  public const string VERSION = "1.29";
   public const string COMFY_GIZMO_GUID = "com.rolopogo.gizmo.comfy";
   public const string RELOADED_GIZMO_GUID = "m3to.mods.GizmoReloaded";
   private static ManualLogSource? Logs;
@@ -25,6 +25,8 @@ public class ServerDevcommands : BaseUnityPlugin {
     Console.SetConsoleEnabled(true);
     try {
       SetupWatcher();
+      AliasManager.SetupWatcher();
+      BindManager.SetupWatcher();
     } catch {
       //
     }
@@ -39,6 +41,8 @@ public class ServerDevcommands : BaseUnityPlugin {
   public void LateUpdate() {
     CommandQueue.TickQueue(Time.deltaTime);
     MouseWheelBinding.Execute(Input.GetAxis("Mouse ScrollWheel"));
+    if (AliasManager.ToBeSaved) AliasManager.ToFile();
+    if (BindManager.ToBeSaved) BindManager.ToFile();
   }
 
   private void OnDestroy() {

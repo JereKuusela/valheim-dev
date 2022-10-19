@@ -21,11 +21,13 @@ public class AliasCommand {
         Settings.RemoveAlias(args[1]);
         if (Terminal.commands.ContainsKey(args[1])) Terminal.commands.Remove(args[1]);
         args.Context.updateCommandList();
+        AliasManager.ToBeSaved = true;
       } else {
         var value = string.Join(" ", args.Args.Skip(2));
         Settings.AddAlias(args[1], value);
         AddCommand(args[1], value);
         args.Context.updateCommandList();
+        AliasManager.ToBeSaved = true;
       }
     });
     AutoComplete.Register("alias", (int index, int subIndex) => {

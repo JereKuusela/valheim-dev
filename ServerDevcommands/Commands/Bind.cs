@@ -32,6 +32,7 @@ public class BindCommand {
       var item = $"{keysStr} {string.Join(" ", args.Args.Skip(2))}";
       Terminal.m_bindList.Add(item);
       Terminal.updateBinds();
+      BindManager.ToBeSaved = true;
     }, optionsFetcher: () => ParameterInfo.KeyCodes);
     AutoComplete.Register("bind", (int index, int subIndex) => {
       if (index == 0 && subIndex == 0) return ParameterInfo.KeyCodes;
@@ -65,6 +66,7 @@ public class BindCommand {
         }
       }
       Terminal.updateBinds();
+      BindManager.ToBeSaved = true;
     });
     AutoComplete.Register("unbind", (int index) => {
       if (index == 0) return ParameterInfo.KeyCodes;

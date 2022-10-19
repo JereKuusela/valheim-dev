@@ -25,7 +25,11 @@ Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available com
 
 ## Improved key bindings
 
-Keybindings now work with modifier keys ([key codes](https://docs.unity3d.com/ScriptReference/KeyCode.html)).
+Key binds are stored to `binds.yaml` file in the config folder. It will be generated with the current key binds and can be directly modified.
+
+### Modifier keys
+
+Keybindings work with modifier keys ([key codes](https://docs.unity3d.com/ScriptReference/KeyCode.html)).
 
 - `bind [keycode,modifier1,modifier2,...] [command] [parameter]`: Adds a new key binding with modifier keys.
 	- `bind j god`: Toggles god mode when pressing J.
@@ -75,12 +79,14 @@ This is intended to be used with other mods that add more complex commands than 
 - `alias`: Prints all aliases.
 - `alias [name]`: Removes the given alias.
 
+Aliases are stored to `alias.yaml` file in the config folder. It will be generated with the current aliases and can be directly modified.
+
 Examples:
 
 - `alias dm debugmode`: Adds a new command `dm` as a shorter version of `debugmode`.
-- `alias spawn5 spawn $ 5 $`: Adds a new command `spawn5` with the spawn amount fixed at 5.
-- `alias maxskill raiseskill $ 100`: Adds a new command `skill_max` that raises the given skill to max level.
-- `alias resetskill raiseskill $ -100`: Adds a new command `skill_reset` that resets the given skill.
+- `alias spawn5 spawn $$ 5 $$`: Adds a new command `spawn5` with the spawn amount fixed at 5.
+- `alias maxskill raiseskill $$ 100`: Adds a new command `skill_max` that raises the given skill to max level.
+- `alias resetskill raiseskill $$ -100`: Adds a new command `skill_reset` that resets the given skill.
 - `alias cheat debugmode;nocost;fly`: Adds a new command `cheat` to quickly toggle cheats (if you don't want to use the config).
 
 ## Enhanced commands
@@ -216,10 +222,15 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - Mouse wheel bind key (default: `none`, key: `mouse_wheel_bind_key`): The simulated keycode when using the mouse wheel.
 - Multiple commands per line (default: `true`, key: `multiple_commands`): Enables multiple commands per line (when separate by `;`).
 - Root users: Steam IDs separated by , that can execute blacklisted commands. Can't be set with `dev_config` command.
-- Substitution system (default: `true`, key: `substitution`): Enables parameter substitution (with `$`).
+- Substitution system (default: `$$`, key: `substitution`): Enables parameter substitution (with `$$`).
 - Server side commands (default: `randomevent,stopevent,genloc,sleep,skiptime`, key: `server_commands`): Names of commands that should be automatically executed on the server. `event` command is not included because it has a custom server-side support.
 
 # Changelog
+
+- v1.29
+	- Adds an `alias.yaml` file to store aliases.
+	- Adds a `binds.yaml` file to store key binds.
+	- Changes the `substitution`setting to allow setting the subtitution value instead of only enabling.
 
 - v1.28
 	- Adds support for multiple `keys=` parameters in bindings.
@@ -237,11 +248,5 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - v1.25
 	- Lowers teleport cooldown from 2 seconds to 0.5 seconds when `debug_fast_teleport` is enabled.
 	- Internal change to support World Edit Commands mod.
-
-- v1.24
-	- Adds equipped tool support to key bindings.
-	- Adds build mode support to key bindings.
-	- Adds a new setting `disable_unlock_messages`.
-	- Internal change to support Infinity Hammer mod.
 
 Thanks for Azumatt for creating the mod icon!
