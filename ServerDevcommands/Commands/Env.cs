@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace ServerDevcommands;
 ///<summary>Adds output when used without the parameter.</summary>
 public class EnvCommand {
@@ -10,7 +12,9 @@ public class EnvCommand {
         return;
       }
       var text = string.Join(" ", args.Args, 1, args.Args.Length - 1);
-      Helper.AddMessage(args.Context, $"Setting debug enviornment: {text}");
+      if (!EnvMan.instance.m_environments.Any(env => env.m_name == text))
+        text = text.Replace("_", " ");
+      Helper.AddMessage(args.Context, $"Setting debug environment: {text}");
       em.m_debugEnv = text;
     }, () => ParameterInfo.Environments);
     AutoComplete.RegisterDefault("env");

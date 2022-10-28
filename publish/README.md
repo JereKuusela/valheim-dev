@@ -22,6 +22,10 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 # Changelog
 
+- v1.31
+	- Fixes the autocomplete of `env` command.
+	- Fixes the black screen.
+
 - v1.30
 	- Improves compatibility with mods that add new skills.
 

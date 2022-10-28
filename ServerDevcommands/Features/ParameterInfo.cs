@@ -62,7 +62,7 @@ public partial class ParameterInfo {
   public static List<string> Environments {
     get {
       if (EnvMan.instance && EnvMan.instance.m_environments.Count != environments.Count) {
-        environments = EnvMan.instance.m_environments.Select(env => env.m_name).ToList();
+        environments = EnvMan.instance.m_environments.Select(env => env.m_name.Replace(" ", "_")).ToList();
         environments.Sort();
       }
       return environments;

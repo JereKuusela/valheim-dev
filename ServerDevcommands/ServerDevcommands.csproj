@@ -10,11 +10,10 @@
       <ItemGroup>
           <InputAssemblies Include="$(TargetPath)" />
           <InputAssemblies Include="$(TargetDir)YamlDotNet.dll" />
-          <InputAssemblies Include="$(ProjectDir)..\..\Libs\ServerSync.dll" />
       </ItemGroup>
       <ILRepack Parallel="true" Internalize="true" InputAssemblies="@(InputAssemblies)" TargetKind="Dll" OutputFile="$(TargetPath)" />
   </Target>
-  <Target Name="CopyDLL" AfterTargets="ILRepacker">
+  <Target Name="CopyDLL" AfterTargets="Build">
     <Copy
       SourceFiles="$(TargetDir)$(ProjectName).dll"
       DestinationFolder="$(ProjectDir)\..\..\Libs" />
