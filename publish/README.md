@@ -22,6 +22,9 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 # Changelog
 
+- v1.32
+	- Fixes compatibility issue with Comfy Gizmo.
+
 - v1.31
 	- Fixes the autocomplete of `env` command.
 	- Fixes the black screen.

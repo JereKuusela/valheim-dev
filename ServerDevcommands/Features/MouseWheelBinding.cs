@@ -50,10 +50,13 @@ public class PreventRotation {
 public class ComfyGizmoPatcher {
   public static void DoPatching(Assembly assembly) {
     if (assembly == null) return;
-    ServerDevcommands.Log.LogInfo("\"ComfyGizmo\" detected. Patching \"HandleAxisInput\" for mouse wheel binding.");
+    ServerDevcommands.Log.LogInfo("\"ComfyGizmo\" detected. Patching \"Rotate\" and \"RotateLocalFrame\" for mouse wheel binding.");
     Harmony harmony = new("valheim.jerekuusela.server_devcommand.comfygizmo");
-    var mOriginal = AccessTools.Method(assembly.GetType("Gizmo.ComfyGizmo"), "HandleAxisInput");
+    var mOriginal = AccessTools.Method(assembly.GetType("Gizmo.ComfyGizmo"), "Rotate");
     var mPrefix = SymbolExtensions.GetMethodInfo(() => Prefix());
+    harmony.Patch(mOriginal, new(mPrefix));
+    mOriginal = AccessTools.Method(assembly.GetType("Gizmo.ComfyGizmo"), "RotateLocalFrame");
+    mPrefix = SymbolExtensions.GetMethodInfo(() => Prefix());
     harmony.Patch(mOriginal, new(mPrefix));
   }
 
