@@ -112,6 +112,9 @@ Examples:
 - `goto last` teleports to the position before the previous teleport.
 - `hud` allows toggling the HUD visibility.
 - `hud [value]` allows directly setting the HUD visibility.
+- `inventory repair` repairs all items.
+- `inventory upgrade` upgrades all items to the max level.
+- `inventory upgrade [amount]` upgrades all items by given amount.
 - `move_spawn [x,z,y = player's coordinates]` allows moving the default spawn point.
 - `nomap [value]` allows directly setting the nomap mode and works with `server` command.
 - `pos [player name / precision] [precision]` allows getting the position of any player.

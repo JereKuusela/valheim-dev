@@ -2,10 +2,12 @@ using System.Linq;
 using HarmonyLib;
 namespace ServerDevcommands;
 [HarmonyPatch(typeof(ZoneSystem), nameof(ZoneSystem.RPC_SetGlobalKey))]
-public class DisableGlobalKeys {
+public class DisableGlobalKeys
+{
   static bool Prefix(string name) => !Settings.IsGlobalKeyDisabled(name);
 
-  public static void RemoveDisabled() {
+  public static void RemoveDisabled()
+  {
     if (!ZNet.instance || !ZNet.instance.IsServer()) return;
     var zs = ZoneSystem.instance;
     if (!zs) return;

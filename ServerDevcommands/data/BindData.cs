@@ -2,7 +2,8 @@ using System.ComponentModel;
 
 namespace ServerDevcommands;
 
-public class BindData {
+public class BindData
+{
   public string key = "";
   [DefaultValue("")]
   public string modifiers = "";

@@ -22,6 +22,10 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 # Changelog
 
+- v1.33
+	- Adds a new command `inventory` to quickly repair or upgrade items.
+	- Removes the ping when map teleporting.
+
 - v1.32
 	- Fixes compatibility issue with Comfy Gizmo.
 

@@ -1,15 +1,18 @@
 namespace ServerDevcommands;
 ///<summary>Code related to handling multiple commands per line.</summary>
-public static class MultiCommands {
+public static class MultiCommands
+{
   private static string[]? PreviousCommands = null;
   private static int CurrentCommand = -1;
   private static int DiscardCaretDelta = 0;
   ///<summary>Discarding previous commands makes handling much simpler.</summary>
-  public static void DiscardPreviousCommands(UnityEngine.UI.InputField input) {
+  public static void DiscardPreviousCommands(UnityEngine.UI.InputField input)
+  {
     if (!Settings.MultiCommand) return;
     PreviousCommands = input.text.Split(';');
     DiscardCaretDelta = input.caretPosition;
-    for (CurrentCommand = 0; CurrentCommand < PreviousCommands.Length; CurrentCommand++) {
+    for (CurrentCommand = 0; CurrentCommand < PreviousCommands.Length; CurrentCommand++)
+    {
       var command = PreviousCommands[CurrentCommand];
       if (input.caretPosition > command.Length)
         input.caretPosition -= command.Length;
@@ -18,13 +21,16 @@ public static class MultiCommands {
       input.caretPosition--;
     }
     DiscardCaretDelta -= input.caretPosition;
-    if (CurrentCommand >= PreviousCommands.Length) {
+    if (CurrentCommand >= PreviousCommands.Length)
+    {
       PreviousCommands = null;
       CurrentCommand = -1;
-    } else
+    }
+    else
       input.text = PreviousCommands[CurrentCommand];
   }
-  public static void RestorePreviousCommands(UnityEngine.UI.InputField input) {
+  public static void RestorePreviousCommands(UnityEngine.UI.InputField input)
+  {
     if (PreviousCommands == null) return;
     PreviousCommands[CurrentCommand] = input.text;
     input.text = string.Join(";", PreviousCommands);

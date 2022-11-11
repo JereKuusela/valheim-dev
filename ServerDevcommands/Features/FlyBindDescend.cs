@@ -5,21 +5,25 @@ using HarmonyLib;
 using UnityEngine;
 namespace ServerDevcommands;
 [HarmonyPatch(typeof(Character), nameof(Character.UpdateDebugFly))]
-public class FlyBindDescend {
+public class FlyBindDescend
+{
 
-  static bool IsFlyUp() {
+  static bool IsFlyUp()
+  {
     if (MouseWheelBinding.ExecuteCount() > BindCommand.CountKeys(Settings.FlyUpKeys)) return false;
     if (!BindCommand.Valid(Settings.FlyUpKeys)) return false;
     if (!BindCommand.Valid(Settings.FlyDownKeys)) return true;
     return BindCommand.CountKeys(Settings.FlyUpKeys) >= BindCommand.CountKeys(Settings.FlyDownKeys);
   }
-  static bool IsFlyDown() {
+  static bool IsFlyDown()
+  {
     if (MouseWheelBinding.ExecuteCount() > BindCommand.CountKeys(Settings.FlyDownKeys)) return false;
     if (!BindCommand.Valid(Settings.FlyDownKeys)) return false;
     if (!BindCommand.Valid(Settings.FlyUpKeys)) return true;
     return BindCommand.CountKeys(Settings.FlyDownKeys) >= BindCommand.CountKeys(Settings.FlyUpKeys);
   }
-  static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+  static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+  {
     return new CodeMatcher(instructions)
           .MatchForward(
               useEnd: false,
