@@ -30,6 +30,20 @@ public abstract class Helper
     return Utils.GetPrefabName(prefab);
   }
 
+
+  public static bool Within(Range<float> range, float value)
+  {
+    if (range.Min == range.Max) return value <= range.Max;
+    return range.Min <= value && value <= range.Max;
+  }
+  public static bool Within(Range<float> range1, Range<float> range2, float value1, float value2)
+  {
+    if (value1 > range1.Max) return false;
+    if (value2 > range2.Max) return false;
+    if (range1.Min == range1.Max || value1 >= range1.Min) return true;
+    if (range2.Min == range2.Max || value2 >= range2.Min) return true;
+    return false;
+  }
   public static float RandomValue(Range<float> range) => UnityEngine.Random.Range(range.Min, range.Max);
   public static int RandomValue(Range<int> range) => UnityEngine.Random.Range(range.Min, range.Max + 1);
   public static Vector3 RandomValue(Range<Vector3> range)

@@ -50,6 +50,17 @@ public static class Parse
     if (args.Length <= index) return defaultValue;
     return Int(args[index], defaultValue);
   }
+  public static int? IntNull(string arg)
+  {
+    if (!int.TryParse(arg, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
+      return null;
+    return result;
+  }
+  public static int? IntNull(string[] args, int index)
+  {
+    if (args.Length <= index) return null;
+    return IntNull(args[index]);
+  }
   public static Range<int> IntRange(string arg, int defaultValue = 0)
   {
     var range = Range(arg);
