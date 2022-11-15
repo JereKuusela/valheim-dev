@@ -22,6 +22,9 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 # Changelog
 
+- v1.34
+	- Fixes rectangle shape not working on World Edit Commands and Infinity Hammer mods.
+
 - v1.33
 	- Adds a new command `inventory` for inventory management.
 	- Removes the ping when map teleporting.

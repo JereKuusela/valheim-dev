@@ -255,8 +255,8 @@ public static class Parse
   {
     var parts = Split(arg);
     var x = FloatRange(parts, 0, 0f);
-    var y = FloatRange(parts, 1, 0f);
-    var z = FloatRange(parts, 2, 0f);
+    var y = FloatRange(parts, 2, 0f);
+    var z = FloatRange(parts, 1, 0f);
     var range = ToVectorRange(x, y, z);
     range.Min = SanityCheck(range.Min);
     range.Max = SanityCheck(range.Max);
