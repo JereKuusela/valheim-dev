@@ -1,9 +1,12 @@
+using System.Collections.Generic;
+
 namespace ServerDevcommands;
 ///<summary>Adds the improved auto complete to the default commands.</summary>
 public static class DefaultAutoComplete
 {
   public static void Register()
   {
+    AutoComplete.RegisterEmpty("aggravate");
     AutoComplete.RegisterEmpty("challenge");
     AutoComplete.RegisterEmpty("cheers");
     AutoComplete.RegisterEmpty("clear");
@@ -41,6 +44,7 @@ public static class DefaultAutoComplete
     {
       return ParameterInfo.Create("Message");
     });
+    AutoComplete.RegisterEmpty("restartparty");
     AutoComplete.RegisterEmpty("sit");
     AutoComplete.RegisterEmpty("thumbsup");
     AutoComplete.RegisterEmpty("tutorialreset");
@@ -104,8 +108,15 @@ public static class DefaultAutoComplete
       return ParameterInfo.None;
     });
     AutoComplete.RegisterEmpty("killall");
+    AutoComplete.RegisterEmpty("killenemies");
+    AutoComplete.RegisterEmpty("killtame");
     AutoComplete.RegisterEmpty("listkeys");
-    AutoComplete.RegisterDefault("location");
+    AutoComplete.Register("location", (int index) =>
+    {
+      if (index == 0) return ParameterInfo.LocationIds;
+      if (index == 1) return new List<string>() { "SAVE" };
+      return ParameterInfo.None;
+    });
     AutoComplete.Register("maxfps", (int index) =>
     {
       if (index == 0) return ParameterInfo.Create("Amount", "a positive integer");
@@ -132,6 +143,11 @@ public static class DefaultAutoComplete
     AutoComplete.RegisterEmpty("removebirds");
     AutoComplete.RegisterEmpty("removedrops");
     AutoComplete.RegisterEmpty("removefish");
+    AutoComplete.Register("recall ", (int index) =>
+    {
+      if (index == 0) return ParameterInfo.PlayerNames;
+      return ParameterInfo.None;
+    });
     AutoComplete.RegisterEmpty("resetcharacter");
     AutoComplete.RegisterEmpty("resetenv");
     AutoComplete.RegisterEmpty("resetkeys");

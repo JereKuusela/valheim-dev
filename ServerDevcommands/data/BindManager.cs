@@ -40,7 +40,7 @@ public class BindManager
     return data;
   }
 
-  [HarmonyPatch(typeof(Chat), nameof(Chat.Awake))]
+  [HarmonyPatch(typeof(Chat), nameof(Chat.Awake)), HarmonyPostfix]
   public static void ChatAwake()
   {
     if (File.Exists(FilePath))

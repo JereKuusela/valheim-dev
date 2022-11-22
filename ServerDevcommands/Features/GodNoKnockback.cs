@@ -1,6 +1,7 @@
 using HarmonyLib;
+using UnityEngine;
 namespace ServerDevcommands;
-[HarmonyPatch(typeof(Character), nameof(Character.ApplyPushback))]
+[HarmonyPatch(typeof(Character), nameof(Character.ApplyPushback), typeof(Vector3), typeof(float))]
 public class ApplyPushback
 {
   static bool Prefix(Character __instance)

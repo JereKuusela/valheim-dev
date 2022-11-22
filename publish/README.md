@@ -22,6 +22,9 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 # Changelog
 
+- v1.35
+	- Update for Mistlands PTB.
+
 - v1.34
 	- Fixes rectangle shape not working on World Edit Commands and Infinity Hammer mods.
 
