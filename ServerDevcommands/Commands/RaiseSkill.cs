@@ -15,7 +15,8 @@ public class RaiseSkillCommand
     var newFetcher = () =>
     {
       var options = originalFetcher();
-      options.Add("*");
+      if (!options.Contains("*"))
+        options.Add("*");
       return options;
     };
     Helper.Command("raiseskill", "[skill] [amount] - Raises or lowers a skill level.", (args) =>

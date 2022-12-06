@@ -14,7 +14,8 @@ public class ResetSkillCommand
     var newFetcher = () =>
     {
       var options = originalFetcher();
-      options.Add("*");
+      if (!options.Contains("*"))
+        options.Add("*");
       return options;
     };
     Helper.Command("resetskill", "[skill] - Resets a skill level.", (args) =>

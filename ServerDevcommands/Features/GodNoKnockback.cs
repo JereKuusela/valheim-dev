@@ -1,4 +1,4 @@
-/*using HarmonyLib;
+using HarmonyLib;
 using UnityEngine;
 namespace ServerDevcommands;
 [HarmonyPatch(typeof(Character), nameof(Character.ApplyPushback), typeof(Vector3), typeof(float))]
@@ -10,4 +10,3 @@ public class ApplyPushback
     return !noKnockback;
   }
 }
-Disabled since broken in PBT. */

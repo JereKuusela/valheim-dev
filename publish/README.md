@@ -22,6 +22,10 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 # Changelog
 
+- v1.37
+  - Adds a new setting `No Mistlands mist with god mode` (default false).
+  - Restores "no pushback with god mode".
+
 - v1.36
 	- Disabled "no pushback with god mode" until PTB is released.
 

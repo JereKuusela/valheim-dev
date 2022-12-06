@@ -70,6 +70,8 @@ public static class Settings
   public static bool NoClipClearEnvironment => configNoClipClearEnvironment.Value;
   public static ConfigEntry<bool> configGodModeNoKnockback;
   public static bool GodModeNoKnockback => Cheats && configGodModeNoKnockback.Value;
+  public static ConfigEntry<bool> configGodModeNoMist;
+  public static bool GodModeNoMist => Cheats && configGodModeNoMist.Value;
   public static ConfigEntry<bool> configAliasing;
   public static bool Aliasing => configAliasing.Value;
   public static ConfigEntry<bool> configDisableParameterWarnings;
@@ -199,6 +201,7 @@ public static class Settings
     configFlyNoClip = config.Bind(section, "No clip with fly mode", false, "");
     configNoClipClearEnvironment = config.Bind(section, "No clip clears forced environments", true, "Removes any forced environments when the noclip is enabled. This disables any dark dungeon environments and prevents them from staying on when exiting the dungeon.");
     configGodModeNoKnockback = config.Bind(section, "No knockback with god mode", true, "");
+    configGodModeNoMist = config.Bind(section, "No Mistlands mist with god mode", false, "");
     configMapCoordinates = config.Bind(section, "Show map coordinates", true, "The map shows coordinates on hover.");
     configMiniMapCoordinates = config.Bind(section, "Show minimap coordinates", false, "The minimap shows player coordinates.");
     configShowPrivatePlayers = config.Bind(section, "Show private players", false, "The map shows private players.");
@@ -407,6 +410,7 @@ public static class Settings
     if (key == "hide_shout_pings") Toggle(context, configHideShoutPings, "Shout pings", value, true);
     if (key == "god_no_edge") Toggle(context, configGodModeNoEdgeOfWorld, "Edge of world pull with god mode", value, true);
     if (key == "god_no_knockback") Toggle(context, configGodModeNoKnockback, "Knockback with god mode", value, true);
+    if (key == "god_no_mist") Toggle(context, configGodModeNoMist, "Mist with god mode", value, true);
     if (key == "fly_no_clip") Toggle(context, configFlyNoClip, "No clip with fly mode", value);
     if (key == "ghost_invibisility") Toggle(context, configGhostInvisibility, "Invisibility with ghost mode", value);
     if (key == "server_commands") ToggleFlag(context, configServerCommands, "Server commands", value);
