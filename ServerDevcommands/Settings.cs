@@ -46,6 +46,8 @@ public static class Settings
   public static bool GodModeNoWeightLimit => Cheats && configGodModeNoWeightLimit.Value;
   public static ConfigEntry<bool> configGodModeNoStamina;
   public static bool GodModeNoStamina => Cheats && configGodModeNoStamina.Value;
+  public static ConfigEntry<bool> configGodModeNoEitr;
+  public static bool GodModeNoEitr => Cheats && configGodModeNoEitr.Value;
   public static ConfigEntry<bool> configGodModeAlwaysDodge;
   public static bool GodModeAlwaysDodge => Cheats && configGodModeAlwaysDodge.Value;
   public static ConfigEntry<bool> configGodModeAlwaysParry;
@@ -188,6 +190,7 @@ public static class Settings
     configDebugModeFastTeleport = config.Bind(section, "Debug mode fast teleport", true, "All teleporting is much faster with the debug mode.");
     configDisableNoMap = config.Bind(section, "Disable no map", false, "Disables no map having effect.");
     configGodModeNoStamina = config.Bind(section, "No stamina usage with god mode", true, "");
+    configGodModeNoEitr = config.Bind(section, "No eitr usage with god mode", true, "");
     configGodModeNoWeightLimit = config.Bind(section, "No weight limit with god mode", false, "");
     configGodModeAlwaysDodge = config.Bind(section, "Always dodge with god mode", false, "");
     configGodModeAlwaysParry = config.Bind(section, "Always parry with god mode (when not blocking)", false, "");
@@ -405,6 +408,7 @@ public static class Settings
     if (key == "disable_warnings") Toggle(context, configDisableParameterWarnings, "Command parameter warnings", value, true);
     if (key == "multiple_commands") Toggle(context, configMultiCommand, "Multiple commands per line", value);
     if (key == "god_no_stamina") Toggle(context, configGodModeNoStamina, "Stamina usage with god mode", value, true);
+    if (key == "god_no_eitr") Toggle(context, configGodModeNoEitr, "Eitr usage with god mode", value, true);
     if (key == "god_no_weight_limit") Toggle(context, configGodModeNoWeightLimit, "Weight limit with god mode", value, true);
     if (key == "god_no_stagger") Toggle(context, configGodModeNoStagger, "Staggering with god mode", value, true);
     if (key == "hide_shout_pings") Toggle(context, configHideShoutPings, "Shout pings", value, true);

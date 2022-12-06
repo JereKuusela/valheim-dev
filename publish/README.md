@@ -22,6 +22,9 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 # Changelog
 
+- v1.38
+  - Adds a new setting `No eitr usage with god mode` (default true).
+
 - v1.37
   - Adds a new setting `No Mistlands mist with god mode` (default false).
   - Restores "no pushback with god mode".

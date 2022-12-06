@@ -199,7 +199,9 @@ Three ways to edit the settings:
 - No clip view (default: `false`, key: `no_clip_view`): Removes collision check for the camera.
 - No creature drops (default: `false`, key: `no_drops`): Prevents creatures from dropping loot, can be useful if people accidentally spawn very high star creatures. Only works when as the zone owner.
 - No edge of world pull with god mode (default: `true`, key: `god_no_edge`): Removes the pull for an even godlier god mode.
+- No eitr usage with god mode (default: `true`, key: `god_no_eitr`): Removes the eitr usage for an even godlier god mode.
 - No knockback with god mode (default: `true`, key: `god_no_knockback`): Removes knockback for an even godlier god mode.
+- No Mistlands mist with god mode (default: `false`, key: `god_no_mist`): Removes the mist for an even godlier god mode.
 - No staggering with god mode (default: `true`, key: `god_no_stagger`): Removes staggering for an even godlier god mode.
 - No stamina usage with god mode (default: `true`, key: `god_no_stamina`): Removes the stamina usage for an even godlier god mode.
 - No weight limit with god mode (default: `false`, key: `god_no_weight_limit`): Removes the weight limit for an even godlier god mode.
