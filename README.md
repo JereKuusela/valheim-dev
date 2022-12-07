@@ -99,8 +99,8 @@ Examples:
 	- `dev_config auto_fly` toggles the auto fly setting.
 	- `dev_config auto_fly 0` disables the auto_fly setting.
 	- `dev_config auto_fly 1` enables the auto fly setting.
-	- `server dev_config disable_debug_mode_keys defeated_eikthyr,defeated_gdking,defeated_bonemass,defeated_dragon,defeated_goblinking`: Prevents boss kill global keys being set on the server.
-	- `server dev_config disable_debug_mode_keys`: Prints currently disabled global keys.
+	- `server dev_config disable_global_key defeated_eikthyr,defeated_gdking,defeated_bonemass,defeated_dragon,defeated_goblinking`: Prevents boss kill global keys being set on the server.
+	- `server dev_config disable_global_key`: Prints currently disabled global keys.
 - `env` prints the current environment.
 - `event [event] [x] [z]` allows setting the event coordinates.
 	- `event army_eikthyr` starts an event at your position.
