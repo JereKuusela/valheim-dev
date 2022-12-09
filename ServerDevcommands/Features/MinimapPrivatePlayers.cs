@@ -46,7 +46,7 @@ public class SendPrivatePositionsToAdmins
     {
       if (!peer.IsReady()) continue;
       var rpc = peer.m_rpc;
-      if (!obj.m_adminList.Contains(rpc.GetSocket().GetHostName())) continue;
+      if (!obj.ListContainsId(obj.m_adminList, rpc.GetSocket().GetHostName())) continue;
       rpc.Invoke("DEV_PrivatePlayerList", new[] { pkg });
     }
   }

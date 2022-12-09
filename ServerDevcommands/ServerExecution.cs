@@ -52,7 +52,7 @@ public class ServerExecution
     {
       return false;
     }
-    if (rpc != null && !zNet.m_adminList.Contains(rpc.GetSocket().GetHostName()))
+    if (rpc != null && !zNet.ListContainsId(zNet.m_adminList, rpc.GetSocket().GetHostName()))
     {
       Console.instance.AddString("Unauthorized to use devcommands.");
       return false;
