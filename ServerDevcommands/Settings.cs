@@ -48,6 +48,8 @@ public static class Settings
   public static bool GodModeNoStamina => Cheats && configGodModeNoStamina.Value;
   public static ConfigEntry<bool> configGodModeNoEitr;
   public static bool GodModeNoEitr => Cheats && configGodModeNoEitr.Value;
+  public static ConfigEntry<bool> configGodModeNoUsage;
+  public static bool GodModeNoUsage => Cheats && configGodModeNoUsage.Value;
   public static ConfigEntry<bool> configGodModeAlwaysDodge;
   public static bool GodModeAlwaysDodge => Cheats && configGodModeAlwaysDodge.Value;
   public static ConfigEntry<bool> configGodModeAlwaysParry;
@@ -191,6 +193,7 @@ public static class Settings
     configDisableNoMap = config.Bind(section, "Disable no map", false, "Disables no map having effect.");
     configGodModeNoStamina = config.Bind(section, "No stamina usage with god mode", true, "");
     configGodModeNoEitr = config.Bind(section, "No eitr usage with god mode", true, "");
+    configGodModeNoUsage = config.Bind(section, "No item usage with god mode", true, "");
     configGodModeNoWeightLimit = config.Bind(section, "No weight limit with god mode", false, "");
     configGodModeAlwaysDodge = config.Bind(section, "Always dodge with god mode", false, "");
     configGodModeAlwaysParry = config.Bind(section, "Always parry with god mode (when not blocking)", false, "");
@@ -304,7 +307,9 @@ public static class Settings
     "disable_no_map",
     "hide_shout_pings",
     "disable_unlock_messages",
-    "no_clip_view"
+    "no_clip_view",
+    "god_no_eitr",
+    "god_no_item"
   };
   private static string State(bool value) => value ? "enabled" : "disabled";
   private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -409,6 +414,7 @@ public static class Settings
     if (key == "multiple_commands") Toggle(context, configMultiCommand, "Multiple commands per line", value);
     if (key == "god_no_stamina") Toggle(context, configGodModeNoStamina, "Stamina usage with god mode", value, true);
     if (key == "god_no_eitr") Toggle(context, configGodModeNoEitr, "Eitr usage with god mode", value, true);
+    if (key == "god_no_item") Toggle(context, configGodModeNoUsage, "Item usage with god mode", value, true);
     if (key == "god_no_weight_limit") Toggle(context, configGodModeNoWeightLimit, "Weight limit with god mode", value, true);
     if (key == "god_no_stagger") Toggle(context, configGodModeNoStagger, "Staggering with god mode", value, true);
     if (key == "hide_shout_pings") Toggle(context, configHideShoutPings, "Shout pings", value, true);

@@ -22,6 +22,10 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 # Changelog
 
+- v1.39
+  - Adds a new setting `No item usage with god mode` (default true).
+  - Fixes `No eitr usage with god mode` not working without any eitr.
+
 - v1.38
   - Adds a new setting `No eitr usage with god mode` (default true).
 
