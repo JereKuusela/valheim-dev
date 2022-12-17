@@ -1,4 +1,5 @@
 using System.Linq;
+
 namespace ServerDevcommands;
 ///<summary>Commnand to print the seed.</summary>
 public class MoveSpawn

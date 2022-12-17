@@ -94,6 +94,7 @@ Examples:
 - `bind [key,modifier1,modifier2,...] [command]` allows specifying modifier keys (see Improved key bindings section).
 - `broadcast [center/side] [message]` allows broadcasting custom messages to all players.
 	- `broadcast center <color=red><size=20><i><b>Hello!</b></i></size></color>` broadcasts a small red message with bolding and italics.
+- `calm` calms nearby aggravated creatures.
 - `devcommands` includes an admin check to allow using on servers.
 - `dev_config [name] [value]` toggles settings.
 	- `dev_config auto_fly` toggles the auto fly setting.
@@ -128,6 +129,7 @@ Examples:
 - `raiseskill * [amount]` allows raising all skills. 
 - `resetskill [skill]` allows reseting skills.
 - `redo` restores an action added to the undo/redo manager.
+- `repair` repairs nearby structures.
 - `resetmap [x] [z] [radius]` allows hiding only a part of the map.
 - `resetpins [x] [z] [radius]` allows removing pins from the map.
 - `resolution` prints the screen properties.

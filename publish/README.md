@@ -24,6 +24,9 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 - v1.39
   - Adds a new setting `No item usage with god mode` (default true).
+  - Adds a new command `calm` to calm nearby aggravated creatures.
+  - Adds a new command `repair` to repair nearby damaged structures.
+  - Fixes `say` and `s` commands to work as the server (for Cron Jobs mod).
   - Fixes `No eitr usage with god mode` not working without any eitr.
 
 - v1.38
@@ -38,10 +41,3 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 - v1.35
 	- Update for Mistlands PTB.
-
-- v1.34
-	- Fixes rectangle shape not working on World Edit Commands and Infinity Hammer mods.
-
-- v1.33
-	- Adds a new command `inventory` for inventory management.
-	- Removes the ping when map teleporting.

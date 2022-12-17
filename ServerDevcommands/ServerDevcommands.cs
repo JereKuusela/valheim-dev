@@ -112,6 +112,8 @@ public class SetCommands
     new ResetSkillCommand();
     new RaiseSkillCommand();
     new InventoryCommand();
+    new CalmCommand();
+    new RepairCommand();
     DefaultAutoComplete.Register();
     Settings.RegisterCommands();
   }
