@@ -12,7 +12,7 @@ public class AliasManager
   public static string FileName = "alias.yaml";
   public static string FilePath = Path.Combine(Paths.ConfigPath, FileName);
 
-  [HarmonyPatch(typeof(Chat), nameof(Chat.Awake))]
+  [HarmonyPatch(typeof(Chat), nameof(Chat.Awake)), HarmonyPostfix]
   public static void ChatAwake()
   {
     if (File.Exists(FilePath))
@@ -25,6 +25,11 @@ public class AliasManager
   {
     ToBeSaved = false;
     var data = Settings.AliasKeys.ToDictionary(key => key, key => Settings.GetAliasValue(key));
+    if (data.Count == 0)
+    {
+      if (File.Exists(FilePath)) File.Delete(FilePath);
+      return;
+    }
     var yaml = Data.Serializer().Serialize(data);
     File.WriteAllText(FilePath, yaml);
   }

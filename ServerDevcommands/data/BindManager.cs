@@ -53,6 +53,11 @@ public class BindManager
   {
     ToBeSaved = false;
     var data = Terminal.m_bindList.Select(ToData).ToArray();
+    if (data.Length == 0)
+    {
+      if (File.Exists(FilePath)) File.Delete(FilePath);
+      return;
+    }
     var yaml = Data.Serializer().Serialize(data);
     File.WriteAllText(FilePath, yaml);
   }

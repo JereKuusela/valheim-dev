@@ -47,8 +47,9 @@ public class Data : MonoBehaviour
     }
   }
 
-  public static T Read<T>(string file, Func<string, string, T> action)
+  public static T Read<T>(string file, Func<string, string, T> action) where T : new()
   {
+    if (!File.Exists(file)) return new T();
     return action(File.ReadAllText(file), file);
   }
 }
