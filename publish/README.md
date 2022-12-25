@@ -22,6 +22,9 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 # Changelog
 
+- v1.41
+  - Adds duration and intensity to the `addstatus` command.
+
 - v1.40
   - Changes yaml files to not be created if they would be empty.
   - Fixes error when deleting yaml files when the mod is running.

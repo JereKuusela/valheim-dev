@@ -91,6 +91,7 @@ Examples:
 
 ## Enhanced commands
 
+ `addstatus [name] [duration] [intensity]` allows specifying duration and intensity.
 - `bind [key,modifier1,modifier2,...] [command]` allows specifying modifier keys (see Improved key bindings section).
 - `broadcast [center/side] [message]` allows broadcasting custom messages to all players.
 	- `broadcast center <color=red><size=20><i><b>Hello!</b></i></size></color>` broadcasts a small red message with bolding and italics.

@@ -62,7 +62,6 @@ public static class DefaultAutoComplete
     AutoComplete.RegisterEmpty("save");
     AutoComplete.RegisterAdmin("unban");
 
-    AutoComplete.RegisterDefault("addstatus");
     AutoComplete.Register("beard", (int index) =>
     {
       if (index == 0) return ParameterInfo.Beards;
