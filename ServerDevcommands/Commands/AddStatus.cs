@@ -40,7 +40,7 @@ public class AddStatusCommand
           poison.m_damagePerHit = intensity / effect.m_ttl * poison.m_damageInterval;
         }
       }
-    }, () => ParameterInfo.StatusEffects);
+    });
   }
 }
 

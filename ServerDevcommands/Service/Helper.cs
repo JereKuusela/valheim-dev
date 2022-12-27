@@ -84,14 +84,14 @@ public abstract class Helper
       parameters.Add(pos.x.ToString(CultureInfo.InvariantCulture) + "," + pos.z.ToString(CultureInfo.InvariantCulture) + "," + pos.y.ToString(CultureInfo.InvariantCulture));
     return parameters.ToArray();
   }
-  public static ZNet.PlayerInfo FindPlayer(string name)
+  public static ZNet.PlayerInfo FindPlayer(string name, bool publicOnly = false)
   {
     var players = ZNet.instance.m_players;
-    var player = players.FirstOrDefault(player => player.m_name == name);
+    var player = players.FirstOrDefault(player => player.m_name == name && (player.m_publicPosition || !publicOnly));
     if (!player.m_characterID.IsNone()) return player;
-    player = players.FirstOrDefault(player => player.m_name.ToLower().StartsWith(name.ToLower()));
+    player = players.FirstOrDefault(player => player.m_name.ToLower().StartsWith(name.ToLower()) && (player.m_publicPosition || !publicOnly));
     if (!player.m_characterID.IsNone()) return player;
-    player = players.FirstOrDefault(player => player.m_name.ToLower().Contains(name.ToLower()));
+    player = players.FirstOrDefault(player => player.m_name.ToLower().Contains(name.ToLower()) && (player.m_publicPosition || !publicOnly));
     if (!player.m_characterID.IsNone()) return player;
     throw new InvalidOperationException("Unable to find the player.");
   }

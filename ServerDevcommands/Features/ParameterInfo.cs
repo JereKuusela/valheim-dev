@@ -170,14 +170,22 @@ public partial class ParameterInfo
       return itemIds;
     }
   }
-  private static List<string> playerNames = new();
   public static List<string> PlayerNames
   {
     get
     {
-      if (ZNet.instance && ZNet.instance.m_players.Count != playerNames.Count)
-        playerNames = ZNet.instance.m_players.Select(player => player.m_name).ToList();
-      return playerNames;
+      if (ZNet.instance)
+        return ZNet.instance.m_players.Select(player => player.m_name).ToList();
+      return new();
+    }
+  }
+  public static List<string> PublicPlayerNames
+  {
+    get
+    {
+      if (ZNet.instance)
+        return ZNet.instance.m_players.Where(player => player.m_publicPosition).Select(player => player.m_name).ToList();
+      return new();
     }
   }
   private static List<string> hairs = new();

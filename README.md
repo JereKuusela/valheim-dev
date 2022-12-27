@@ -112,6 +112,7 @@ Examples:
 - `goto` teleports to the ground level.
 - `goto [y]` teleports to the altitude (dungeons are at 5000 altitude).
 - `goto last` teleports to the position before the previous teleport.
+- `goto [name]` teleports to the player position.
 - `hud` allows toggling the HUD visibility.
 - `hud [value]` allows directly setting the HUD visibility.
 - `inventory [clear/refill/repair/upgrade] [hand/worn/all] [amount]` to manage inventory.

@@ -119,6 +119,10 @@ public static class Parse
       return defaultValue;
     return result;
   }
+  public static bool TryFloat(string arg, out float value)
+  {
+     return float.TryParse(arg, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
+  }
   public static float Float(string[] args, int index, float defaultValue = 0f)
   {
     if (args.Length <= index) return defaultValue;

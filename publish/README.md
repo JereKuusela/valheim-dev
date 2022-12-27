@@ -24,6 +24,7 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 - v1.41
   - Adds duration and intensity to the `addstatus` command.
+  - Adds player name support to `goto` command.
   - Fixes the setting `No item usage with god mode` preventing usage of fermenters.
   - Fixes the setting `No eitr usage with god mode` showing small amount of eitr for some UI mods.
 
