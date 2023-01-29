@@ -32,6 +32,22 @@ public static class DefaultAutoComplete
     AutoComplete.RegisterEmpty("opterrain");
     AutoComplete.RegisterEmpty("point");
     AutoComplete.RegisterEmpty("ping");
+    var originalFetcher = Terminal.commands["raiseskill"].m_tabOptionsFetcher;
+    Terminal.ConsoleOptionsFetcher newFetcher = () =>
+    {
+      var options = originalFetcher();
+      if (!options.Contains(Skills.SkillType.All.ToString()))
+        options.Add(Skills.SkillType.All.ToString());
+      return options;
+    };
+    Terminal.commands["raiseskill"].m_tabOptionsFetcher = newFetcher;
+    AutoComplete.Register("raiseskill", (int index) =>
+    {
+      var fetcher = Terminal.commands["raiseskill"].m_tabOptionsFetcher;
+      if (index == 0) return fetcher();
+      if (index == 1) return ParameterInfo.Create("Amount of skill levels gained or lost (if negative).");
+      return ParameterInfo.None;
+    });
     AutoComplete.RegisterEmpty("resetbinds");
     AutoComplete.RegisterEmpty("resetsharedmap");
     AutoComplete.RegisterEmpty("resetspawn");

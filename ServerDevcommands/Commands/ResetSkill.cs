@@ -4,30 +4,24 @@ public class ResetSkillCommand
 {
   public ResetSkillCommand()
   {
-    AutoComplete.Register("resetskill", (int index) =>
-    {
-      var fetcher = Terminal.commands["resetskill"].m_tabOptionsFetcher;
-      if (index == 0) return fetcher();
-      return ParameterInfo.None;
-    });
-    var originalFetcher = Terminal.commands["raiseskill"].m_tabOptionsFetcher;
+    var originalFetcher = Terminal.commands["resetskill"].m_tabOptionsFetcher;
     var newFetcher = () =>
     {
       var options = originalFetcher();
-      if (!options.Contains("*"))
-        options.Add("*");
+      if (!options.Contains(Skills.SkillType.All.ToString()))
+        options.Add(Skills.SkillType.All.ToString());
       return options;
     };
     Helper.Command("resetskill", "[skill] - Resets a skill level.", (args) =>
     {
       var player = Helper.GetPlayer();
       Helper.ArgsCheck(args, 2, "Missing the skill.");
-      if (args[1] == "*")
+      if (args[1].ToLower() == Skills.SkillType.All.ToString().ToLower())
       {
-        var skills = Terminal.commands["raiseskill"].m_tabOptionsFetcher();
+        var skills = Terminal.commands["resetskill"].m_tabOptionsFetcher();
         foreach (var skill in skills)
         {
-          if (skill == "*") continue;
+          if (skill == Skills.SkillType.All.ToString()) continue;
           player.GetSkills().CheatResetSkill(skill);
         }
       }
@@ -36,5 +30,6 @@ public class ResetSkillCommand
         player.GetSkills().CheatResetSkill(args[1]);
       }
     }, () => newFetcher());
+    AutoComplete.RegisterDefault("resetskill");
   }
 }

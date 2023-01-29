@@ -128,8 +128,7 @@ Examples:
 - `pos [player name / precision] [precision]` allows getting the position of any player.
 	- `pos 1` returns your position with 1 decimal precision.
 	- `pos jay` returns the position of a player named Jay,Heyjay or whatever is the closest match.
-- `raiseskill * [amount]` allows raising all skills. 
-- `resetskill [skill]` allows reseting skills.
+- `resetskill all` allows reseting all skills.
 - `redo` restores an action added to the undo/redo manager.
 - `repair` repairs nearby structures.
 - `resetmap [x] [z] [radius]` allows hiding only a part of the map.

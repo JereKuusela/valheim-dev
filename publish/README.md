@@ -22,6 +22,11 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 # Changelog
 
+- v1.42
+  - Changes the command `resetskill` to reset all skills with the `All` argument (to match `raiseskill` behavior).
+  - Removes the customized `raiseskill` command (vanilla supports now the `All` argument).
+  - Fixes the `search_id` command.
+
 - v1.41
   - Adds duration and intensity to the `addstatus` command.
   - Adds player name support to `goto` command.
