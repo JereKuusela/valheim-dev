@@ -192,7 +192,6 @@ Three ways to edit the settings:
 - Disable no map (default: `false`, key: `disable_no_map`): Disables no map having effect.
 - Disable random events (default: `false`, key: `disable_events`): Prevents random events from happening (server side setting).
 - Disable start shout (default: `false`, key: `disable_start_shout`): Removes the initial shout message when joining the server.
-- Disable tutorials (default: `false`, key: `disable_tutorials`): Prevents the raven from appearing.
 - Disable unlock messages (default: `false`, key: `disable_unlock_messges`): Disables messages about new pieces and items.
 - Hide shout pings (default: `false`, key: `hide_shout_pings`): Forces shout pings at the world center.
 - Invisible to players with ghost mode (default: `false`, key: `ghost_invisibility`): Invisible to other players with ghost mode.

@@ -24,8 +24,9 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 - v1.42
   - Changes the command `resetskill` to reset all skills with the `All` argument (to match `raiseskill` behavior).
-  - Removes the customized `raiseskill` command (vanilla supports now the `All` argument).
   - Fixes the `search_id` command.
+  - Removes the customized `raiseskill` command (vanilla supports now the `All` argument).
+  - Removes the setting `Disable tutorials` as obsolete.
 
 - v1.41
   - Adds duration and intensity to the `addstatus` command.

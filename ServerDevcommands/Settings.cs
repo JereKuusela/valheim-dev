@@ -62,8 +62,6 @@ public static class Settings
   public static bool GodModeNoEdgeOfWorld => Cheats && configGodModeNoEdgeOfWorld.Value;
   public static ConfigEntry<bool> configDisableStartShout;
   public static bool DisableStartShout => configDisableStartShout.Value;
-  public static ConfigEntry<bool> configDisableTutorials;
-  public static bool DisableTutorials => configDisableTutorials.Value;
   public static ConfigEntry<bool> configAccessPrivateChests;
   public static bool AccessPrivateChests => Cheats && configAccessPrivateChests.Value;
   public static ConfigEntry<bool> configAccessWardedAreas;
@@ -201,7 +199,6 @@ public static class Settings
     configHideShoutPings = config.Bind(section, "Hide shout pings", false, "Forces shout pings at the world center.");
     configGodModeNoEdgeOfWorld = config.Bind(section, "No edge of world pull with god mode", true, "");
     configDisableStartShout = config.Bind(section, "Disable start shout", false, "Removes the initial shout message when joining the server.");
-    configDisableTutorials = config.Bind(section, "Disable tutorials", false, "Prevents the raven from appearing.");
     configAccessPrivateChests = config.Bind(section, "Access private chests", true, "Allows opening private chests.");
     configAccessWardedAreas = config.Bind(section, "Access warded areas", true, "Allows accessing warded areas.");
     configFlyNoClip = config.Bind(section, "No clip with fly mode", false, "");
@@ -295,7 +292,6 @@ public static class Settings
     "fly_down_key",
     "disable_start_shout",
     "mouse_wheel_bind_key",
-    "disable_tutorials",
     "god_no_weight_limit",
     "automatic_item_pick_up",
     "disable_messages",
@@ -430,7 +426,6 @@ public static class Settings
     if (key == "god_always_parry") Toggle(context, configGodModeAlwaysParry, "Always parry with god mode", value);
     if (key == "god_always_dodge") Toggle(context, configGodModeAlwaysDodge, "Always dodge with god mode", value);
     if (key == "disable_start_shout") Toggle(context, configDisableStartShout, "Start shout", value, true);
-    if (key == "disable_tutorials") Toggle(context, configDisableTutorials, "Tutorials", value, true);
     if (key == "disable_no_map") Toggle(context, configDisableNoMap, "Disable no map", value);
   }
 }
