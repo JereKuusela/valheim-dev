@@ -110,7 +110,6 @@ public class SetCommands
     new EnvCommand();
     new GotoCommand();
     new ResetSkillCommand();
-    new RaiseSkillCommand();
     new InventoryCommand();
     new CalmCommand();
     new RepairCommand();

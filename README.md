@@ -40,15 +40,6 @@ By default the best match is used. Which means that with above binds, toggling d
 
 It's also possible to use negative modifiers. For example `bind j,-leftalt god` won't toggle god mode while left alt is pressed. However using these is not usually needed. 
 
-### Bind modes
-
-The list of keys can also contain item names to enable/disable commands when a certain item is equipped.
-
-For example `bind j,hammer god` would only toggle god mode when the hammer is equipped.
-
-List of other special modes:
-- `build`: True when in build mode.
-
 ### Mouse wheel
 
 Mouse wheel allows binding too with custom keycode `wheel` (by default simulates the keycode `none`). It's important to use modifier keys because the binding will block build rotation.

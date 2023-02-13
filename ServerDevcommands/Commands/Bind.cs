@@ -140,13 +140,16 @@ public class BindCommand
     var keys = Parse.Split(arg[1]);
     return Valid(keys);
   }
-
+  private static string Mode = "";
+  public static void SetMode(string mode)
+  {
+    Mode = mode;
+  }
   public static bool Valid(string[] keys)
   {
     var tool = Player.m_localPlayer?.GetRightItem()?.m_dropPrefab;
-    var toolName = tool ? Utils.GetPrefabName(tool).ToLower() : "";
-    var toolRequired = false;
-    var hasTool = false;
+    var modeRequired = false;
+    var hasMode = false;
     var inBuildMode = Player.m_localPlayer?.InPlaceMode() ?? false;
     foreach (var key in keys)
     {
@@ -161,8 +164,7 @@ public class BindCommand
         {
           if (inBuildMode) return false;
         }
-        else if (key.Substring(1) == toolName) return false;
-
+        else if (sub == Mode) return false;
       }
       else
       {
@@ -176,12 +178,12 @@ public class BindCommand
         }
         else
         {
-          toolRequired = true;
-          if (key == toolName) hasTool = true;
+          modeRequired = true;
+          if (key == Mode) hasMode = true;
         }
       }
     }
-    if (toolRequired && !hasTool) return false;
+    if (modeRequired && !hasMode) return false;
     return true;
   }
   public static string CleanUp(string command)

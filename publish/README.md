@@ -23,10 +23,12 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 # Changelog
 
 - v1.42
+  - Internal change to support Infinity Hammer mod.
   - Changes the command `resetskill` to reset all skills with the `All` argument (to match `raiseskill` behavior).
   - Fixes the `search_id` command.
   - Removes the customized `raiseskill` command (vanilla supports now the `All` argument).
   - Removes the setting `Disable tutorials` as obsolete.
+  - Removes the support for tool specific keybinds as obsolete.
 
 - v1.41
   - Adds duration and intensity to the `addstatus` command.
