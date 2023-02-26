@@ -25,6 +25,7 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 - v1.42
   - Internal change to support Infinity Hammer mod.
   - Changes the command `resetskill` to reset all skills with the `All` argument (to match `raiseskill` behavior).
+  - Changes the ghost mode to prevent spawns (only when your client is controlling the area).
   - Fixes the `search_id` command.
   - Fixes the "No weight limit with god mode" setting appearing to work on other players (with mods that allow inspecting other players).
   - Removes the customized `raiseskill` command (vanilla supports now the `All` argument).
