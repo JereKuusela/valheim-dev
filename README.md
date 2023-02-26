@@ -20,6 +20,7 @@ Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available com
 - `debugmode`, `fly`, `ghost`, `god`, `nocost` and other commands can be configured to be used automatically.
 - God mode removes stamina usage, knockback and staggering.
 - Ghost mode can make you invisible also to the other players.
+- Ghost mode also disables enemy spawns (when alone in the area).
 - Fly mode can remove collision to pass through everything.
 - Minor tweaks to existing commands, some new commands and other useful admin features.
 
