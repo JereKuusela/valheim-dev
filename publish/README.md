@@ -22,6 +22,9 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 # Changelog
 
+- v1.43
+  - Fixes automatic parrying triggering on the player when the shield breaks.
+
 - v1.42
   - Internal change to support Infinity Hammer mod.
   - Changes the command `resetskill` to reset all skills with the `All` argument (to match `raiseskill` behavior).
