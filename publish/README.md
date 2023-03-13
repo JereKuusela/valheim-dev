@@ -24,6 +24,7 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 - v1.43
   - Fixes automatic parrying triggering on the player when the shield breaks.
+  - Fixes error with the new update.
 
 - v1.42
   - Internal change to support Infinity Hammer mod.
