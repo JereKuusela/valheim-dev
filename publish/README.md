@@ -22,6 +22,9 @@ Donations: [Buy me a computer](https://www.buymeacoffee.com/jerekuusela)
 
 # Changelog
 
+- v1.44
+  - Fixes the server side chat feature not working.
+
 - v1.43
   - Fixes automatic parrying triggering on the player when the shield breaks.
   - Fixes error with the new update.
