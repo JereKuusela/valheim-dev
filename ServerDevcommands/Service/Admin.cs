@@ -60,7 +60,6 @@ public class DefaultAdmin : IAdmin
 
   public virtual void AutomaticCheck()
   {
-    Console.instance.AddString("Automatic check.");
     Check();
   }
   public virtual bool Checking { get; set; }
@@ -81,7 +80,6 @@ public class DefaultAdmin : IAdmin
   }
   public virtual void Reset()
   {
-    Console.instance.AddString("Resetting.");
     Checking = false;
     Enabled = false;
   }
