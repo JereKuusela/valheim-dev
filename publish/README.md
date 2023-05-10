@@ -2,7 +2,7 @@
 
 Allows devcommands and utilities for server admins.
 
-Some features and commands require also installing the mod on the server (event, randomevent, resetkeys, skiptime, sleep, stopevent).
+Some features and commands require also installing the mod on the server (event, find, randomevent, resetkeys, skiptime, sleep, stopevent).
 
 Install on the admin client and optionally on the server (modding [guide](https://youtu.be/L9ljm2eKLrk)).
 

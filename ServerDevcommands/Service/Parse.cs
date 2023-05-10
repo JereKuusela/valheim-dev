@@ -121,7 +121,7 @@ public static class Parse
   }
   public static bool TryFloat(string arg, out float value)
   {
-     return float.TryParse(arg, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
+    return float.TryParse(arg, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
   }
   public static float Float(string[] args, int index, float defaultValue = 0f)
   {
@@ -169,6 +169,7 @@ public static class Parse
     return new(min, max);
   }
   ///<summary>Parses XZY vector starting at zero index. Zero is used for missing values.</summary>
+  public static Vector3 VectorXZY(string arg) => VectorXZY(Parse.Split(arg), 0, Vector3.zero);
   public static Vector3 VectorXZY(string[] args) => VectorXZY(args, 0, Vector3.zero);
   ///<summary>Parses XZY vector starting at zero index. Default values is used for missing values.</summary>
   public static Vector3 VectorXZY(string[] args, Vector3 defaultValue) => VectorXZY(args, 0, defaultValue);

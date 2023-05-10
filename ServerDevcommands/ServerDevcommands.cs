@@ -115,6 +115,7 @@ public class SetCommands
     new RepairCommand();
     new AddStatusCommand();
     new PlayersCommand();
+    new FindCommand();
     DefaultAutoComplete.Register();
     Settings.RegisterCommands();
   }

@@ -2,7 +2,7 @@
 
 Allows devcommands and utilities for server admins.
 
-Some features and commands require also installing the mod on the server (event, randomevent, resetkeys, skiptime, sleep, stopevent).
+Some features and commands require also installing the mod on the server (event, find, randomevent, resetkeys, skiptime, sleep, stopevent).
 
 Install on the admin client and optionally on the server (modding [guide](https://youtu.be/L9ljm2eKLrk)).
 
@@ -101,6 +101,7 @@ Examples:
 	- `event army_eikthyr` starts an event at your position.
 	- `event army_eikthyr 100 -100` starts an event at coordinates 100,-100.
 - `exploremap [x] [z] [radius]` allows revealing only a part of the map.
+- `find` works server side when on servers. On single player same as before.
 - `goto [x,z,y]` or ``goto x z y` teleports to the coordinates. If y is not given, teleports to the ground level.
 - `goto` teleports to the ground level.
 - `goto [y]` teleports to the altitude (dungeons are at 5000 altitude).

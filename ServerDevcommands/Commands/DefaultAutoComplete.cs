@@ -92,12 +92,6 @@ public static class DefaultAutoComplete
       if (index == 0) return ParameterInfo.Create("0 = normal, 1 = add smooth movement");
       return ParameterInfo.None;
     });
-    AutoComplete.Register("find", (int index) =>
-    {
-      if (index == 0) return ParameterInfo.Ids;
-      if (index == 1) return ParameterInfo.Create("Max amount", "a positive integer (default 1)");
-      return ParameterInfo.None;
-    });
     AutoComplete.RegisterEmpty("fly");
     AutoComplete.RegisterEmpty("freefly");
     AutoComplete.Register("forcedelete", (int index) =>
