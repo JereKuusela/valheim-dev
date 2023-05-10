@@ -12,7 +12,7 @@ public class ServerDevcommands : BaseUnityPlugin
 {
   public const string GUID = "server_devcommands";
   public const string NAME = "Server Devcommands";
-  public const string VERSION = "1.45";
+  public const string VERSION = "1.46";
   public const string COMFY_GIZMO_GUID = "com.rolopogo.gizmo.comfy";
   public const string RELOADED_GIZMO_GUID = "m3to.mods.GizmoReloaded";
   private static ManualLogSource? Logs;
@@ -114,6 +114,7 @@ public class SetCommands
     new CalmCommand();
     new RepairCommand();
     new AddStatusCommand();
+    new PlayersCommand();
     DefaultAutoComplete.Register();
     Settings.RegisterCommands();
   }

@@ -1,3 +1,6 @@
+- v1.46
+  - Adds a new command `players` to print online players.
+
 - v1.45
   - Adds server side command logging when installed on both client and server.
 

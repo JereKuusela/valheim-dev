@@ -11,6 +11,7 @@ public class RedirectOutput
   {
     if (ZNet.m_isServer && Target != null)
     {
+      ZLog.Log(text);
       ZNet.instance.RemotePrint(Target, text);
     }
   }
