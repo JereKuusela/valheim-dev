@@ -1,3 +1,4 @@
+using System;
 using HarmonyLib;
 using UnityEngine;
 namespace ServerDevcommands;
@@ -26,10 +27,19 @@ public class Minimap_ShowPos
     if (text == "" || !input.text.Contains(text)) return;
     input.text = input.text.Replace(text, "");
   }
+  private static string Format(Vector3 position)
+  {
+    var name = Player.m_localPlayer ? Player.m_localPlayer.GetPlayerName() : "Unknown";
+    var id = Player.m_localPlayer ? Player.m_localPlayer.GetPlayerID() : ZDOID.None.userID;
+    return String.Format(
+      Settings.Format(Settings.MinimapFormat),
+      "Not available", name, id, position.x, position.y, position.z
+    );
+  }
   private static string GetText(Vector3 position)
   {
     var zone = ZoneSystem.instance.GetZone(position);
-    var positionText = "x: " + position.x.ToString("F0") + " z: " + position.z.ToString("F0") + " y: " + position.y.ToString("F0");
+    var positionText = Format(position);
     var zoneText = "zone: " + zone.x + "/" + zone.y;
     return $"\n{zoneText}\n{positionText}";
   }

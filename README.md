@@ -119,7 +119,7 @@ Examples:
 	- `inventory level worn 2` sets equipped items to level 2.
 - `move_spawn [x,z,y = player's coordinates]` allows moving the default spawn point.
 - `nomap [value]` allows directly setting the nomap mode and works with `server` command.
-- `players` prints online players and their ids.
+- `playerlist` prints online players and their ids.
 - `pos [player name / precision] [precision]` allows getting the position of any player.
 	- `pos 1` returns your position with 1 decimal precision.
 	- `pos jay` returns the position of a player named Jay,Heyjay or whatever is the closest match.

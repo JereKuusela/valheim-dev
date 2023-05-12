@@ -1,3 +1,9 @@
+- v1.48
+  - Changes the custom command `players` to `playerlist` to not interfere with the vanilla commmand..
+
+- v1.47
+  - Adds new settings to change format of the command logging, `players` command and minimap coordinates.
+
 - v1.46
   - Adds a new command `players` to print online players.
   - Changes the `find` command to server side.

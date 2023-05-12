@@ -170,6 +170,25 @@ public static class Settings
   public static int UndoLimit => Parse.Int(configUndoLimit.Value, 50);
   public static HashSet<string> DisabledGlobalKeys => ParseList(configDisabledGlobalKeys.Value);
   public static bool IsGlobalKeyDisabled(string key) => DisabledGlobalKeys.Contains(key.ToLower());
+
+
+
+  public static ConfigEntry<string> configPlayerListFormat;
+  public static string PlayerListFormat => configPlayerListFormat.Value;
+  public static ConfigEntry<string> configCommandLogFormat;
+  public static string CommandLogFormat => configCommandLogFormat.Value;
+  public static ConfigEntry<string> configMinimapFormat;
+  public static string MinimapFormat => configMinimapFormat.Value;
+  public static string Format(string format)
+  {
+    return format
+      .Replace("player_id", "0")
+      .Replace("character_name", "1")
+      .Replace("character_id", "2")
+      .Replace("pos_x", "3")
+      .Replace("pos_y", "4")
+      .Replace("pos_z", "5");
+  }
   public static void Init(ConfigFile config)
   {
     var section = "1. General";
@@ -248,7 +267,11 @@ public static class Settings
     configFlyDownKeys = config.Bind(section, "Key for fly down", "LeftControl", "Key codes separated by ,");
     configFlyDownKeys.SettingChanged += (s, e) => FlyDownKeys = Parse.Split(configFlyDownKeys.Value);
     FlyDownKeys = Parse.Split(configFlyDownKeys.Value);
+    section = "3. Formatting";
     ParseAliases(configCommandAliases.Value);
+    configPlayerListFormat = config.Bind(section, "Player list format", "{player_id}/{character_name}/{character_id} ({pos_x:F0}, {pos_z:F0}, {pos_y:F0})", "Format of playerlist command.");
+    configCommandLogFormat = config.Bind(section, "Command log format", "{player_id}/{character_name} ({pos_x:F0}, {pos_z:F0}, {pos_y:F0}): {command}", "Format for command logging.");
+    configMinimapFormat = config.Bind(section, "Minimap format", "x: {pos_x:F0}, z: {pos_z:F0}, y: {pos_y:F0}", "Format for minimap coordinates.");
   }
 
 
@@ -305,7 +328,10 @@ public static class Settings
     "disable_unlock_messages",
     "no_clip_view",
     "god_no_eitr",
-    "god_no_item"
+    "god_no_item",
+    "players_format",
+    "command_log_format",
+    "minimap_format",
   };
   private static string State(bool value) => value ? "enabled" : "disabled";
   private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -427,5 +453,8 @@ public static class Settings
     if (key == "god_always_dodge") Toggle(context, configGodModeAlwaysDodge, "Always dodge with god mode", value);
     if (key == "disable_start_shout") Toggle(context, configDisableStartShout, "Start shout", value, true);
     if (key == "disable_no_map") Toggle(context, configDisableNoMap, "Disable no map", value);
+    if (key == "playerlist_format") SetValue(context, configPlayerListFormat, key, value);
+    if (key == "command_log_format") SetValue(context, configCommandLogFormat, key, value);
+    if (key == "minimap_format") SetValue(context, configMinimapFormat, key, value);
   }
 }

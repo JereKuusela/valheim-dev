@@ -34,8 +34,8 @@ public class FindCommand
       list.AddRange(zdos.Select(zdo => zdo.GetPosition()));
       list.Sort((Vector3 a, Vector3 b) => Vector3.Distance(a, pos).CompareTo(Vector3.Distance(b, pos)));
       list = list.Take(Parse.Int(args.Args, 2, 1)).ToList();
-      foreach (var item in list)
-        args.Context.AddString($"{Helper.PrintVectorXZY(item)}, distance {Vector3.Distance(item, pos)}");
+      var text = list.Select(p => $"{Helper.PrintVectorXZY(p)}, distance {Vector3.Distance(p, pos)}").ToList();
+      args.Context.AddString(string.Join("\n", text));
       if (RedirectOutput.Target != null)
       {
         var rpc = RedirectOutput.Target;

@@ -1,3 +1,4 @@
+using System;
 using HarmonyLib;
 namespace ServerDevcommands;
 
@@ -19,12 +20,16 @@ public class CommandLogging
 
   public static string RPC_Log = "DEV_Log";
 
+  private static string Format(ZNetPeer peer, string command)
+  {
+    return String.Format(
+      Settings.Format(Settings.CommandLogFormat).Replace("command", "6"),
+      peer.m_socket.GetHostName(), peer.m_playerName, peer.m_characterID.m_userID.ToString(), peer.m_refPos.x, peer.m_refPos.y, peer.m_refPos.z, command
+    );
+  }
   private static void RPC_LogCommand(ZRpc rpc, string command)
   {
-    var hostname = rpc.GetSocket().GetHostName();
-    var name = ZNet.instance.GetPeer(rpc).m_playerName;
-    var pos = ZNet.instance.GetPeer(rpc).m_refPos;
-    var message = $"{hostname}/{name} ({pos.x:F0} ,{pos.z:F0}, {pos.y:F0}): {command}";
+    var message = Format(ZNet.instance.GetPeer(rpc), command);
     ZLog.Log(message);
   }
   static void Postfix(ZNet __instance, ZRpc rpc)
