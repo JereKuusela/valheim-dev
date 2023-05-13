@@ -18,14 +18,19 @@ public class PlayerListCommand
       Game.instance.GetPlayerProfile().GetName(), PrivilegeManager.GetNetworkUserId(), ZNet.instance.m_characterID, pos.x, pos.y, pos.z
     );
   }
+  private void Execute(Terminal context)
+  {
+    var players = ZNet.instance.GetPeers().Select(Format).ToList();
+    if (ZNet.instance && !ZNet.instance.IsDedicated())
+      players.Add(Format());
+    context.AddString(string.Join("\n", players));
+  }
   public PlayerListCommand()
   {
     Helper.Command("playerlist", "- Prints online players.", (args) =>
     {
-      var players = ZNet.instance.GetPeers().Select(Format).ToList();
-      if (ZNet.instance && !ZNet.instance.IsDedicated())
-        players.Add(Format());
-      args.Context.AddString(string.Join("\n", players));
+      if (ZNet.instance.IsServer()) Execute(args.Context);
+      else ServerExecution.Send(args.Args);
     });
     AutoComplete.RegisterEmpty("playerlist");
   }

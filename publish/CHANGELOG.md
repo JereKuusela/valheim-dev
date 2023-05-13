@@ -1,5 +1,8 @@
+- v1.49
+  - Changes the `playerlist` command only work server side.
+
 - v1.48
-  - Changes the custom command `players` to `playerlist` to not interfere with the vanilla commmand..
+  - Changes the custom command `players` to `playerlist` to not interfere with the vanilla commmand.
 
 - v1.47
   - Adds new settings to change format of the command logging, `players` command and minimap coordinates.
