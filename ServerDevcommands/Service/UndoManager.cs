@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 namespace ServerDevcommands;
-public interface IUndoAction {
+#pragma warning disable IDE1006
+// Changing this would break other mods.
+public interface UndoAction {
+#pragma warning restore IDE1006
   void Undo();
   void Redo();
   string UndoMessage();
@@ -15,7 +18,7 @@ public class UndoManager {
   private static int Index = -1;
   private static bool Executing = false;
   public static int MaxSteps = 50;
-  public static void Add(IUndoAction action) {
+  public static void Add(UndoAction action) {
     Add((object)action);
   }
   ///<summary>Intended to be used with reflection.</summary>

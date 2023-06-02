@@ -10,7 +10,10 @@ public class PullCommand {
       Vector3 vector = player.transform.position + Vector3.up;
       foreach (Collider collider in Physics.OverlapSphere(vector, range, player.m_autoPickupMask)) {
         if (!collider.attachedRigidbody) continue;
-        collider.transform.position = player.transform.position;
+        var item = collider.attachedRigidbody.GetComponent<ItemDrop>();
+        if (!item) continue;
+        item.m_autoPickup = true;
+        item.transform.position = player.transform.position + Vector3.up * 0.5f;
       }
       Helper.AddMessage(args.Context, $"Pulled items within {range:F0} meters.");
     });
