@@ -5,8 +5,7 @@ using BepInEx.Configuration;
 using UnityEngine;
 namespace ServerDevcommands;
 #nullable disable
-public static class Settings
-{
+public static class Settings {
   public static bool Cheats => (ZNet.instance && ZNet.instance.IsServer()) || (Console.instance.IsCheatsEnabled() && Admin.Enabled);
   public static ConfigEntry<bool> configMapCoordinates;
   public static bool MapCoordinates => Cheats && configMapCoordinates.Value;
@@ -112,48 +111,38 @@ public static class Settings
   private static Dictionary<string, string> Aliases = new();
   public static string[] AliasKeys = new string[0];
 
-  private static void ParseAliases(string value)
-  {
+  private static void ParseAliases(string value) {
     Aliases = value.Split('¤').Select(str => str.Split(' ')).ToDictionary(split => split[0], split => string.Join(" ", split.Skip(1)));
     Aliases = Aliases.Where(kvp => kvp.Key != "").ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
     AliasKeys = Aliases.Keys.OrderBy(key => key).ToArray();
   }
   public static string GetAliasValue(string key) => Aliases.ContainsKey(key) ? Aliases[key] : "_";
-  public static void RegisterCommands()
-  {
-    foreach (var alias in Aliases)
-    {
+  public static void RegisterCommands() {
+    foreach (var alias in Aliases) {
       AliasCommand.AddCommand(alias.Key, alias.Value);
     }
     DisableCommands.UpdateCommands(configRootUsers.Value, configDisabledCommands.Value);
   }
 
-  private static void SaveAliases()
-  {
+  private static void SaveAliases() {
     var value = string.Join("¤", Aliases.Select(kvp => kvp.Key + " " + kvp.Value));
     configCommandAliases.Value = value;
   }
 
-  public static void AddAlias(string alias, string value)
-  {
-    if (value == "")
-    {
+  public static void AddAlias(string alias, string value) {
+    if (value == "") {
       RemoveAlias(alias);
-    }
-    else
-    {
+    } else {
       Aliases[alias] = value;
       SaveAliases();
     }
   }
 
-  public static void AddAlias(Dictionary<string, string> dict)
-  {
+  public static void AddAlias(Dictionary<string, string> dict) {
     Aliases = dict;
     SaveAliases();
   }
-  public static void RemoveAlias(string alias)
-  {
+  public static void RemoveAlias(string alias) {
     if (!Aliases.ContainsKey(alias)) return;
     Aliases.Remove(alias);
     SaveAliases();
@@ -179,8 +168,7 @@ public static class Settings
   public static string CommandLogFormat => configCommandLogFormat.Value;
   public static ConfigEntry<string> configMinimapFormat;
   public static string MinimapFormat => configMinimapFormat.Value;
-  public static string Format(string format)
-  {
+  public static string Format(string format) {
     return format
       .Replace("player_id", "0")
       .Replace("character_name", "1")
@@ -189,8 +177,7 @@ public static class Settings
       .Replace("pos_y", "4")
       .Replace("pos_z", "5");
   }
-  public static void Init(ConfigFile config)
-  {
+  public static void Init(ConfigFile config) {
     var section = "1. General";
     configGhostInvisibility = config.Bind(section, "Invisible to other players with ghost mode", false, "");
     configNoDrops = config.Bind(section, "No creature drops", false, "Disables drops from creatures (if you control the zone), intended to fix high star enemies crashing the game.");
@@ -201,8 +188,7 @@ public static class Settings
     configAutoGodMode = config.Bind(section, "Automatic god mode", false, "Automatically enables god mode when enabling devcommands.");
     configAutoGhostMode = config.Bind(section, "Automatic ghost mode", false, "Automatically enables ghost mode when enabling devcommands.");
     configAutomaticItemPickUp = config.Bind(section, "Automatic item pick up", true, "Sets the default value for the automatic item pick up feature.");
-    configAutomaticItemPickUp.SettingChanged += (s, e) =>
-    {
+    configAutomaticItemPickUp.SettingChanged += (s, e) => {
       if (Player.m_localPlayer) Player.m_localPlayer.m_enableAutoPickup = AutomaticItemPickUp;
     };
     configAutoDevcommands = config.Bind(section, "Automatic devcommands", true, "Automatically enables devcommands when joining servers.");
@@ -254,8 +240,7 @@ public static class Settings
     configDisableParameterWarnings = config.Bind(section, "Disable parameter warnings", false, "Removes warning texts from some command parameter descriptions.");
     configCommandAliases.SettingChanged += (s, e) => ParseAliases(configCommandAliases.Value);
     configRootUsers = config.Bind(section, "Root users", "", "Steam IDs separated by , that can execute blacklisted commands. Server side setting.");
-    configRootUsers.SettingChanged += (s, e) =>
-    {
+    configRootUsers.SettingChanged += (s, e) => {
       DisableCommands.UpdateCommands(configRootUsers.Value, configDisabledCommands.Value);
       RootUsers.Update();
     };
@@ -336,38 +321,34 @@ public static class Settings
   private static string State(bool value) => value ? "enabled" : "disabled";
   private static string Flag(bool value) => value ? "Removed" : "Added";
 
-  private static HashSet<string> Truthies = new() {
+  private static readonly HashSet<string> Truthies = new() {
     "1",
     "true",
     "yes",
     "on"
   };
   private static bool IsTruthy(string value) => Truthies.Contains(value);
-  private static HashSet<string> Falsies = new() {
+  private static readonly HashSet<string> Falsies = new() {
     "0",
     "false",
     "no",
     "off"
   };
   private static bool IsFalsy(string value) => Falsies.Contains(value);
-  private static void Toggle(Terminal context, ConfigEntry<bool> setting, string name, string value, bool reverse = false)
-  {
+  private static void Toggle(Terminal context, ConfigEntry<bool> setting, string name, string value, bool reverse = false) {
     if (value == "") setting.Value = !setting.Value;
     else if (IsTruthy(value)) setting.Value = true;
     else if (IsFalsy(value)) setting.Value = false;
     Helper.AddMessage(context, $"{name} {State(reverse ? !setting.Value : setting.Value)}.");
   }
-  private static void ToggleFlag(Terminal context, ConfigEntry<string> setting, string name, string value)
-  {
-    if (value == "")
-    {
+  private static void ToggleFlag(Terminal context, ConfigEntry<string> setting, string name, string value) {
+    if (value == "") {
       Helper.AddMessage(context, $"{name}: {setting.Value}.");
       return;
     }
     var list = ParseList(setting.Value);
     var newList = ParseList(value);
-    foreach (var flag in newList)
-    {
+    foreach (var flag in newList) {
       var remove = list.Contains(flag);
       if (remove) list.Remove(flag);
       else list.Add(flag);
@@ -375,20 +356,16 @@ public static class Settings
       Helper.AddMessage(context, $"{name}: {Flag(remove)} {flag}.");
     }
   }
-  private static void SetValue(Terminal context, ConfigEntry<string> setting, string name, string value)
-  {
-    if (value == "")
-    {
+  private static void SetValue(Terminal context, ConfigEntry<string> setting, string name, string value) {
+    if (value == "") {
       Helper.AddMessage(context, $"{name}: {setting.Value}.");
       return;
     }
     setting.Value = value;
     Helper.AddMessage(context, $"{name} set to {value}.");
   }
-  private static void SetKey(Terminal context, ConfigEntry<KeyboardShortcut> setting, string name, string value)
-  {
-    if (value == "")
-    {
+  private static void SetKey(Terminal context, ConfigEntry<KeyboardShortcut> setting, string name, string value) {
+    if (value == "") {
       Helper.AddMessage(context, $"{name}: {setting.Value}.");
       return;
     }
@@ -397,8 +374,7 @@ public static class Settings
     setting.Value = new(keyCode);
     Helper.AddMessage(context, $"{name} set to {value}.");
   }
-  public static void UpdateValue(Terminal context, string key, string value)
-  {
+  public static void UpdateValue(Terminal context, string key, string value) {
     if (key == "no_clip_view") Toggle(context, configNoClipView, key, value);
     if (key == "fly_up_key") SetValue(context, configFlyUpKeys, key, value);
     if (key == "fly_down_key") SetValue(context, configFlyDownKeys, key, value);

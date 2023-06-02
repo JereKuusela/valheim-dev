@@ -1,3 +1,7 @@
+- v1.50
+  - Fixes disabling of underground check not checking is the creature the player or not.
+  - Removes caching for location and event auto complete (for Expand World).
+
 - v1.49
   - Changes the `playerlist` command only work server side.
 

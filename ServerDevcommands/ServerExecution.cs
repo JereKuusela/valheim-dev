@@ -5,14 +5,11 @@ using HarmonyLib;
 namespace ServerDevcommands;
 
 [HarmonyPatch(typeof(Terminal), nameof(Terminal.AddString), new[] { typeof(string) })]
-public class RedirectOutput
-{
+public class RedirectOutput {
   public static ZRpc? Target = null;
 
-  static void Postfix(string text)
-  {
-    if (ZNet.m_isServer && Target != null)
-    {
+  static void Postfix(string text) {
+    if (ZNet.m_isServer && Target != null) {
       ZLog.Log(text);
       ZNet.instance.RemotePrint(Target, text);
     }
@@ -21,26 +18,21 @@ public class RedirectOutput
 
 /// <summary>Registers the server to accept resetkeys message (like clients do).</summary>
 [HarmonyPatch(typeof(ZoneSystem), nameof(ZoneSystem.Start))]
-public class RegisterResetKeys
-{
-  static void Postfix(ZoneSystem __instance)
-  {
-    if (ZNet.instance.IsServer())
-    {
+public class RegisterResetKeys {
+  static void Postfix(ZoneSystem __instance) {
+    if (ZNet.instance.IsServer()) {
       ZRoutedRpc.instance.Register<List<string>>("GlobalKeys", new(__instance.RPC_GlobalKeys));
     }
   }
 }
 [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_PeerInfo))]
-public class ServerExecution
-{
+public class ServerExecution {
 
   ///<summary>Sends command to the server so that it can be executed there.</summary>
-  public static void Send(string command)
-  {
+  public static void Send(string command) {
     var server = ZNet.instance.GetServerRPC();
     Console.instance.AddString("Sending command: " + command);
-    if (server != null) server.Invoke(RPC_Command, command);
+    server?.Invoke(RPC_Command, command);
   }
   ///<summary>Sends command to the server so that it can be executed there.</summary>
   public static void Send(IEnumerable<string> args) => Send(string.Join(" ", args));
@@ -49,60 +41,48 @@ public class ServerExecution
 
   public static string RPC_Command = "DEV_Command";
   public static string RPC_Pins = "DEV_Pins";
-  private static bool IsAllowed(ZRpc rpc, string command)
-  {
+  private static bool IsAllowed(ZRpc rpc, string command) {
     var zNet = ZNet.instance;
-    if (!zNet.enabled)
-    {
+    if (!zNet.enabled) {
       return false;
     }
-    if (rpc != null && !zNet.ListContainsId(zNet.m_adminList, rpc.GetSocket().GetHostName()))
-    {
+    if (rpc != null && !zNet.ListContainsId(zNet.m_adminList, rpc.GetSocket().GetHostName())) {
       Console.instance.AddString("Unauthorized to use devcommands.");
       return false;
     }
-    if (!DisableCommands.CanRun(command, rpc))
-    {
+    if (!DisableCommands.CanRun(command, rpc)) {
       Console.instance.AddString("Unauthorized to use this command.");
       return false;
     }
     return true;
   }
-  private static void RPC_Do_Command(ZRpc rpc, string command)
-  {
+  private static void RPC_Do_Command(ZRpc rpc, string command) {
     RedirectOutput.Target = rpc;
     if (IsAllowed(rpc, command))
       Console.instance.TryRunCommand(command);
     RedirectOutput.Target = null;
   }
-  private static void RPC_Do_Pins(ZRpc rpc, string data)
-  {
+  private static void RPC_Do_Pins(ZRpc rpc, string data) {
     var pins = Parse.Split(data, '|').Select(Parse.VectorXZY).ToArray();
     var findPins = Console.instance.m_findPins;
     foreach (var pin in findPins)
       Minimap.instance?.RemovePin(pin);
     findPins.Clear();
-    if (pins.Length == 1)
-    {
+    if (pins.Length == 1) {
       Chat.instance?.SendPing(pins[0]);
       return;
     }
-    foreach (var pos in pins)
-    {
+    foreach (var pos in pins) {
       var pin = Minimap.instance?.AddPin(pos, Minimap.PinType.Icon3, "", false, false, Player.m_localPlayer.GetPlayerID());
       if (pin != null)
         findPins.Add(pin);
     }
   }
 
-  static void Postfix(ZNet __instance, ZRpc rpc)
-  {
-    if (__instance.IsServer())
-    {
+  static void Postfix(ZNet __instance, ZRpc rpc) {
+    if (__instance.IsServer()) {
       rpc.Register<string>(RPC_Command, new(RPC_Do_Command));
-    }
-    else
-    {
+    } else {
       rpc.Register<string>(RPC_Pins, new(RPC_Do_Pins));
     }
   }
