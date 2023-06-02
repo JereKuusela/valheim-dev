@@ -102,6 +102,7 @@ public class SetCommands {
     new AddStatusCommand();
     new PlayerListCommand();
     new FindCommand();
+    new PullCommand();
     DefaultAutoComplete.Register();
     Settings.RegisterCommands();
   }

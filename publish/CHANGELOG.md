@@ -1,4 +1,5 @@
 - v1.50
+  - Adds a new command `pull` to pull nearby items.
   - Fixes disabling of underground check not checking is the creature the player or not.
   - Removes caching for location and event auto complete (for Expand World).
 
