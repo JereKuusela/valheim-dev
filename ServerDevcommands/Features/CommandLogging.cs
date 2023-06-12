@@ -20,7 +20,7 @@ public class CommandLogging {
   private static string Format(ZNetPeer peer, string command) {
     return String.Format(
       Settings.Format(Settings.CommandLogFormat).Replace("command", "6"),
-      peer.m_socket.GetHostName(), peer.m_playerName, peer.m_characterID.m_userID.ToString(), peer.m_refPos.x, peer.m_refPos.y, peer.m_refPos.z, command
+      peer.m_socket.GetHostName(), peer.m_playerName, peer.m_characterID.UserID.ToString(), peer.m_refPos.x, peer.m_refPos.y, peer.m_refPos.z, command
     );
   }
   private static void RPC_LogCommand(ZRpc rpc, string command) {

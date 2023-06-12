@@ -4,10 +4,8 @@ using System.Reflection.Emit;
 using HarmonyLib;
 namespace ServerDevcommands;
 [HarmonyPatch(typeof(Player), nameof(Player.Update))]
-public class DisableDebugModeKeys
-{
-  static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-  {
+public class DisableDebugModeKeys {
+  static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
     return new CodeMatcher(instructions)
          .MatchForward(
              useEnd: false,

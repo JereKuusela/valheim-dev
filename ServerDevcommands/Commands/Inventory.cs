@@ -28,7 +28,7 @@ public class InventoryCommand {
       var inventory = player.GetInventory();
       var items = inventory.GetAllItems();
       if (target == "hand" || target == "worn")
-        items = inventory.GetEquipedtems();
+        items = inventory.GetEquippedItems();
       if (target == "hand")
         items = items.Where(item => HandTypes.Contains(item.m_shared.m_itemType)).ToList();
       var operation = args[1];

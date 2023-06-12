@@ -7,26 +7,22 @@ using UnityEngine;
 namespace ServerDevcommands;
 
 [HarmonyPatch]
-public class GhostIgnorePlayers
-{
-  private static List<Player> Players()
-  {
-    return Player.m_players.Where(p => !p.InGhostMode()).ToList();
+public class GhostIgnorePlayers {
+  private static List<Player> Players() {
+    return Player.s_players.Where(p => !p.InGhostMode()).ToList();
   }
 
-  static IEnumerable<CodeInstruction> ReplacePlayers(IEnumerable<CodeInstruction> instructions)
-  {
+  static IEnumerable<CodeInstruction> ReplacePlayers(IEnumerable<CodeInstruction> instructions) {
     return new CodeMatcher(instructions)
          .MatchForward(
              useEnd: false,
-             new CodeMatch(OpCodes.Ldsfld, AccessTools.Field(typeof(Player), nameof(Player.m_players))))
+             new CodeMatch(OpCodes.Ldsfld, AccessTools.Field(typeof(Player), nameof(Player.s_players))))
          .SetAndAdvance(
               OpCodes.Call, Transpilers.EmitDelegate(Players).operand)
          .InstructionEnumeration();
   }
   [HarmonyPatch(typeof(SpawnSystem), nameof(SpawnSystem.GetPlayersInZone)), HarmonyPostfix]
-  static void GhostNoSpawns(List<Player> players)
-  {
+  static void GhostNoSpawns(List<Player> players) {
     var toRemove = players.Where(p => p.InGhostMode()).ToList();
     foreach (var player in toRemove)
       players.Remove(player);

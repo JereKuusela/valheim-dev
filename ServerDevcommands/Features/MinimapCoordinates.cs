@@ -24,7 +24,7 @@ public class Minimap_ShowPos {
   }
   private static string Format(Vector3 position) {
     var name = Player.m_localPlayer ? Player.m_localPlayer.GetPlayerName() : "Unknown";
-    var id = Player.m_localPlayer ? Player.m_localPlayer.GetPlayerID() : ZDOID.None.userID;
+    var id = Player.m_localPlayer ? Player.m_localPlayer.GetPlayerID() : ZDOID.None.UserID;
     return String.Format(
       Settings.Format(Settings.MinimapFormat),
       "Not available", name, id, position.x, position.y, position.z

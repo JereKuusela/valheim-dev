@@ -2,23 +2,20 @@ using System.Collections.Generic;
 
 namespace ServerDevcommands;
 ///<summary>Adds duration and intensity.</summary>
-public class AddStatusCommand
-{
-  public AddStatusCommand()
-  {
+public class AddStatusCommand {
+  public AddStatusCommand() {
     AutoComplete.Register("addstatus", (int index) => {
       if (index == 0) return ParameterInfo.StatusEffects;
       if (index == 1) return ParameterInfo.Create("Effect duration in seconds.");
       if (index == 2) return ParameterInfo.Create("Effect intensity.");
       return ParameterInfo.None;
     });
-    Helper.Command("addstatus", "[name] [duration] [intenstiy] - Adds a status effect.", (args) =>
-    {
+    Helper.Command("addstatus", "[name] [duration] [intenstiy] - Adds a status effect.", (args) => {
       Helper.ArgsCheck(args, 2, "Missing status name");
       var player = Helper.GetPlayer();
-
-      player.GetSEMan().AddStatusEffect(args[1], true);
-      var effect = player.GetSEMan().GetStatusEffect(args[1]);
+      var hash = args[1].GetStableHashCode();
+      player.GetSEMan().AddStatusEffect(hash, true);
+      var effect = player.GetSEMan().GetStatusEffect(hash);
       if (effect == null) return;
       if (args.TryParameterFloat(2, out var duration))
         effect.m_ttl = duration;
@@ -26,11 +23,10 @@ public class AddStatusCommand
         if (effect is SE_Shield shield)
           shield.m_absorbDamage = intensity;
         if (effect is SE_Burning burning) {
-          if (args[1] == "Burning") {   
+          if (args[1] == "Burning") {
             burning.m_fireDamageLeft = 0;
             burning.AddFireDamage(intensity);
-          }
-          else {   
+          } else {
             burning.m_spiritDamageLeft = 0;
             burning.AddSpiritDamage(intensity);
           }

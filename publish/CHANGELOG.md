@@ -1,3 +1,7 @@
+- v1.51
+  - Adds a radius parameter to the `calm` and `repair` commands.
+  - Updated for the new game version.
+
 - v1.50
   - Adds a new command `pull` to pull nearby items.
   - Fixes disabling of underground check not checking is the creature the player or not.

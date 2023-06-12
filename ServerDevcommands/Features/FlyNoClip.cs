@@ -27,12 +27,12 @@ public class NoObjectCollision {
     if (__instance != Player.m_localPlayer) return;
     if (__instance.IsDebugFlying()) {
       __instance.m_crouchToggled = false;
-      __instance.m_zanim.SetBool(Character.onGround, true);
-      __instance.m_zanim.SetBool(Character.inWater, false);
-      __instance.m_zanim.SetBool(Character.encumbered, false);
-      __instance.m_zanim.SetFloat(Character.sideway_speed, 0f);
-      __instance.m_zanim.SetFloat(Character.forward_speed, 0f);
-      __instance.m_zanim.SetFloat(Character.turn_speed, 0f);
+      __instance.m_zanim.SetBool(Character.s_onGround, true);
+      __instance.m_zanim.SetBool(Character.s_inWater, false);
+      __instance.m_zanim.SetBool(Character.s_encumbered, false);
+      __instance.m_zanim.SetFloat(Character.s_sidewaySpeed, 0f);
+      __instance.m_zanim.SetFloat(Character.s_forwardSpeed, 0f);
+      __instance.m_zanim.SetFloat(Character.s_turnSpeed, 0f);
     }
     var noClip = NoClip.PlayerEnabled();
     if (noClip) {

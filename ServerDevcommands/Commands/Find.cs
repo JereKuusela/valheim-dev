@@ -3,25 +3,20 @@ using UnityEngine;
 
 namespace ServerDevcommands;
 ///<summary>Adds server side support.</summary>
-public class FindCommand
-{
-  public FindCommand()
-  {
+public class FindCommand {
+  public FindCommand() {
     var defaultCommand = Terminal.commands["find"];
-    Helper.Command("find", defaultCommand.Description, (args) =>
-    {
+    Helper.Command("find", defaultCommand.Description, (args) => {
       Helper.ArgsCheck(args, 2, "Missing the search term.");
       // Works fine on single player.
-      if (!ZNet.m_instance || ZNet.instance.IsServer() && !ZNet.instance.IsDedicated())
-      {
+      if (!ZNet.m_instance || ZNet.instance.IsServer() && !ZNet.instance.IsDedicated()) {
         defaultCommand.RunAction(args);
         return;
       }
       if (args.Length < 3) args.Args = args.Args.Append("1").ToArray();
       var parameters = Helper.AddPlayerPosXZY(args.Args, 3);
       // Client only has surroundings which is not very useful.
-      if (!ZNet.instance.IsServer())
-      {
+      if (!ZNet.instance.IsServer()) {
         ServerExecution.Send(parameters);
         return;
       }
@@ -36,14 +31,12 @@ public class FindCommand
       list = list.Take(Parse.Int(args.Args, 2, 1)).ToList();
       var text = list.Select(p => $"{Helper.PrintVectorXZY(p)}, distance {Vector3.Distance(p, pos)}").ToList();
       args.Context.AddString(string.Join("\n", text));
-      if (RedirectOutput.Target != null)
-      {
+      if (RedirectOutput.Target != null) {
         var rpc = RedirectOutput.Target;
         rpc.Invoke(ServerExecution.RPC_Pins, string.Join("|", list.Select(Helper.PrintVectorXZY)));
       }
     }, () => ParameterInfo.Ids);
-    AutoComplete.Register("find", (int index) =>
-    {
+    AutoComplete.Register("find", (int index) => {
       if (index == 0) return ParameterInfo.Ids;
       if (index == 1) return ParameterInfo.Create("Max amount", "a positive integer (default 1)");
       if (index == 2) return ParameterInfo.Create("X coordinate", "if not specified, the current position is used");

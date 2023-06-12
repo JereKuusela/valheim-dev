@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 namespace ServerDevcommands;
-#pragma warning disable IDE1006
-// Changing this would break other mods.
-public interface UndoAction {
-#pragma warning restore IDE1006
+public interface IUndoAction {
   void Undo();
   void Redo();
   string UndoMessage();
@@ -18,7 +15,7 @@ public class UndoManager {
   private static int Index = -1;
   private static bool Executing = false;
   public static int MaxSteps = 50;
-  public static void Add(UndoAction action) {
+  public static void Add(IUndoAction action) {
     Add((object)action);
   }
   ///<summary>Intended to be used with reflection.</summary>
@@ -41,8 +38,9 @@ public class UndoManager {
     Executing = true;
     try {
       var obj = History[Index];
-      obj.GetType().GetMethod("Undo", Binding).Invoke(obj, null);
-      var message = obj.GetType().GetMethod("UndoMessage", Binding).Invoke(obj, null);
+      var message = obj.GetType().GetMethod("Undo", Binding).Invoke(obj, null);
+      if (string.IsNullOrEmpty((string)message))
+        message = obj.GetType().GetMethod("UndoMessage", Binding).Invoke(obj, null);
       Helper.AddMessage(terminal, (string)message);
     } catch (Exception e) { ServerDevcommands.Log.LogWarning(e); }
     Index--;
@@ -55,8 +53,9 @@ public class UndoManager {
       Index++;
       try {
         var obj = History[Index];
-        obj.GetType().GetMethod("Redo", Binding).Invoke(obj, null);
-        var message = obj.GetType().GetMethod("RedoMessage", Binding).Invoke(obj, null);
+        var message = obj.GetType().GetMethod("Redo", Binding).Invoke(obj, null);
+        if (string.IsNullOrEmpty((string)message))
+          message = obj.GetType().GetMethod("RedoMessage", Binding).Invoke(obj, null);
         Helper.AddMessage(terminal, (string)message);
       } catch (Exception e) { ServerDevcommands.Log.LogWarning(e); }
       Executing = false;
