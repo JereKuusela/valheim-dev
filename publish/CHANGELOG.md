@@ -1,3 +1,6 @@
+- v1.52
+  - Fix for Server Devcommands mod.
+
 - v1.51
   - Adds a radius parameter to the `calm` and `repair` commands.
   - Updated for the new game version.

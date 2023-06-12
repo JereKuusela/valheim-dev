@@ -4,10 +4,8 @@ using System.Linq;
 using System.Reflection;
 namespace ServerDevcommands;
 public interface IUndoAction {
-  void Undo();
-  void Redo();
-  string UndoMessage();
-  string RedoMessage();
+  string Undo();
+  string Redo();
 }
 public class UndoManager {
   private static readonly BindingFlags Binding = BindingFlags.Instance | BindingFlags.Public;
