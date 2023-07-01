@@ -234,6 +234,27 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - Substitution system (default: `$$`, key: `substitution`): Enables parameter substitution (with `$$`).
 - Server side commands (default: `randomevent,stopevent,genloc,sleep,skiptime`, key: `server_commands`): Names of commands that should be automatically executed on the server. `event` command is not included because it has a custom server-side support.
 
+## Formatting
+
+Output from this mod can be customized with the following settings.
+
+- Command log format (default: `true`, key: `command_log_format`): Format for the command log. Empty format disables the logging.
+- Minimap format (default: `true`, key: `minimap_format`): Format for minimap coordinates.
+- Player list format (default: `true`, key: `playerlist_format`): Format of playerlist command.
+
+Available variables:
+
+- `{player_id}`: Steam ID of the player.
+- `{character_id}`: Id of the character.
+- `{character_name}`: Name of the character.
+- `{pos_x}`: X coordinate of the player.
+- `{pos_y}`: Y coordinate of the player.
+- `{pos_z}`: Z coordinate of the player.
+- `{command}`: The executed command.
+
+Numeric values can be further formatted with [C# formatting](https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings). For example `{pos_x:F0}` for whole numbers.
+
+
 # Credits
 
 Thanks for Azumatt for creating the mod icon!

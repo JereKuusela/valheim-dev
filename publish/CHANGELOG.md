@@ -1,5 +1,6 @@
 - v1.53
   - Adds a setting for the no spawns in ghost mode feature.
+  - Adds support for disabling the command logging by emptying the format.
 
 - v1.52
   - Fix for Server Devcommands mod.
