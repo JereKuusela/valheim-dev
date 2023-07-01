@@ -85,6 +85,8 @@ public static class Settings {
   public static bool MultiCommand => configMultiCommand.Value;
   public static ConfigEntry<bool> configGhostInvisibility;
   public static bool GhostInvisibility => Cheats && configGhostInvisibility.Value;
+  public static ConfigEntry<bool> configGhostNoSpawns;
+  public static bool GhostNoSpawns => Cheats && configGhostNoSpawns.Value;
   public static ConfigEntry<string> configFlyUpKeys;
   public static string[] FlyUpKeys = new string[0];
   public static ConfigEntry<string> configFlyDownKeys;
@@ -180,6 +182,7 @@ public static class Settings {
   public static void Init(ConfigFile config) {
     var section = "1. General";
     configGhostInvisibility = config.Bind(section, "Invisible to other players with ghost mode", false, "");
+    configGhostNoSpawns = config.Bind(section, "Disables spawns with ghost mode", false, "");
     configNoDrops = config.Bind(section, "No creature drops", false, "Disables drops from creatures (if you control the zone), intended to fix high star enemies crashing the game.");
     configNoClipView = config.Bind(section, "No clip view", false, "Removes collision check for the camera.");
     configAutoDebugMode = config.Bind(section, "Automatic debug mode", false, "Automatically enables debug mode when enabling devcommands.");
@@ -421,6 +424,7 @@ public static class Settings {
     if (key == "god_no_mist") Toggle(context, configGodModeNoMist, "Mist with god mode", value, true);
     if (key == "fly_no_clip") Toggle(context, configFlyNoClip, "No clip with fly mode", value);
     if (key == "ghost_invibisility") Toggle(context, configGhostInvisibility, "Invisibility with ghost mode", value);
+    if (key == "ghost_no_spawns") Toggle(context, configGhostNoSpawns, "Spawns with ghost", value, true);
     if (key == "server_commands") ToggleFlag(context, configServerCommands, "Server commands", value);
     if (key == "disable_command") ToggleFlag(context, configDisabledCommands, "Disabled commands", value);
     if (key == "disable_global_key") ToggleFlag(context, configDisabledGlobalKeys, "Disabled global keys", value);

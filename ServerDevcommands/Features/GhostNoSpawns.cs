@@ -9,6 +9,7 @@ namespace ServerDevcommands;
 [HarmonyPatch]
 public class GhostIgnorePlayers {
   private static List<Player> Players() {
+    if (!Settings.GhostNoSpawns) return Player.s_players;
     return Player.s_players.Where(p => !p.InGhostMode()).ToList();
   }
 
@@ -23,6 +24,7 @@ public class GhostIgnorePlayers {
   }
   [HarmonyPatch(typeof(SpawnSystem), nameof(SpawnSystem.GetPlayersInZone)), HarmonyPostfix]
   static void GhostNoSpawns(List<Player> players) {
+    if (!Settings.GhostNoSpawns) return;
     var toRemove = players.Where(p => p.InGhostMode()).ToList();
     foreach (var player in toRemove)
       players.Remove(player);

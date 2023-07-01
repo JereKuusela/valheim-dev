@@ -200,6 +200,7 @@ Three ways to edit the settings:
 - No eitr usage with god mode (default: `true`, key: `god_no_eitr`): Removes the eitr usage for an even godlier god mode.
 - No knockback with god mode (default: `true`, key: `god_no_knockback`): Removes knockback for an even godlier god mode.
 - No Mistlands mist with god mode (default: `false`, key: `god_no_mist`): Removes the mist for an even godlier god mode.
+- No spawns with ghost mode (default: `false`, key: `ghost_no_spawns`): Removes creature spawning with ghost mode. Only works reliably when alone in the area.
 - No staggering with god mode (default: `true`, key: `god_no_stagger`): Removes staggering for an even godlier god mode.
 - No stamina usage with god mode (default: `true`, key: `god_no_stamina`): Removes the stamina usage for an even godlier god mode.
 - No weight limit with god mode (default: `false`, key: `god_no_weight_limit`): Removes the weight limit for an even godlier god mode.
