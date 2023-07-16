@@ -10,7 +10,6 @@ public class RedirectOutput {
 
   static void Postfix(string text) {
     if (ZNet.m_isServer && Target != null) {
-      ZLog.Log(text);
       ZNet.instance.RemotePrint(Target, text);
     }
   }

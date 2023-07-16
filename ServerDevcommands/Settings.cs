@@ -204,7 +204,7 @@ public static class Settings {
     configDisableNoMap = config.Bind(section, "Disable no map", false, "Disables no map having effect.");
     configGodModeNoStamina = config.Bind(section, "No stamina usage with god mode", true, "");
     configGodModeNoEitr = config.Bind(section, "No eitr usage with god mode", true, "");
-    configGodModeNoUsage = config.Bind(section, "No item usage with god mode", true, "");
+    configGodModeNoUsage = config.Bind(section, "No item usage with god mode", false, "");
     configGodModeNoWeightLimit = config.Bind(section, "No weight limit with god mode", false, "");
     configGodModeAlwaysDodge = config.Bind(section, "Always dodge with god mode", false, "");
     configGodModeAlwaysParry = config.Bind(section, "Always parry with god mode (when not blocking)", false, "");
@@ -264,7 +264,7 @@ public static class Settings {
     ParseAliases(configCommandAliases.Value);
     configPlayerListFormat = config.Bind(section, "Player list format", "{player_id}/{character_name}/{character_id} ({pos_x:F0}, {pos_z:F0}, {pos_y:F0})", "Format of playerlist command.");
     configCommandLogFormat = config.Bind(section, "Command log format", "{player_id}/{character_name} ({pos_x:F0}, {pos_z:F0}, {pos_y:F0}): {command}", "Format for the command log.");
-    configFindFormat = config.Bind(section, "Find format", "{pos_x:F0}, {pos_z:F0}, {pos_y:F0}), distance {distance:F0}", "Format for the find command. Server side setting.");
+    configFindFormat = config.Bind(section, "Find format", "{pos_x:F0}, {pos_z:F0}, {pos_y:F0}, distance {distance:F0}", "Format for the find command. Server side setting.");
     configMinimapFormat = config.Bind(section, "Minimap format", "x: {pos_x:F0}, z: {pos_z:F0}, y: {pos_y:F0}", "Format for minimap coordinates.");
   }
 

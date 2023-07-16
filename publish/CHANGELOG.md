@@ -1,8 +1,9 @@
 - v1.54
   - Adds total count to the `find` command.
-  - Changes the default amount of shown items in the `find` command to 10.
   - Adds a new setting for changing the `find` command format.
   - Adds a new setting to ignore sleep check with ghost mode.
+  - Changes the default amount of shown items in the `find` command to 10.
+  - Fixes the default value of "god mode no item usage" being true.
 
 - v1.53
   - Adds a setting for the no spawns in ghost mode feature.

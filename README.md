@@ -203,6 +203,7 @@ Three ways to edit the settings:
 - No creature drops (default: `false`, key: `no_drops`): Prevents creatures from dropping loot, can be useful if people accidentally spawn very high star creatures. Only works when as the zone owner.
 - No edge of world pull with god mode (default: `true`, key: `god_no_edge`): Removes the pull for an even godlier god mode.
 - No eitr usage with god mode (default: `true`, key: `god_no_eitr`): Removes the eitr usage for an even godlier god mode.
+- No item usage with god mode (default: `false`, key: `god_no_item`): Removes the item usage for an even godlier god mode.
 - No knockback with god mode (default: `true`, key: `god_no_knockback`): Removes knockback for an even godlier god mode.
 - No Mistlands mist with god mode (default: `false`, key: `god_no_mist`): Removes the mist for an even godlier god mode.
 - No spawns with ghost mode (default: `false`, key: `ghost_no_spawns`): Removes creature spawning with ghost mode. Only works reliably when alone in the area.
@@ -244,7 +245,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 Output from this mod can be customized with the following settings.
 
 - Command log format (default: `{player_id}/{character_name} ({pos_x:F0}, {pos_z:F0}, {pos_y:F0}): {command}`, key: `command_log_format`): Format for the command log. Empty format disables the logging.
-- Find format (default: `{pos_x:F0}, {pos_z:F0}, {pos_y:F0}), distance {distance:F0}`, key: `find_format`): Format for the command log. Empty format disables the logging.
+- Find format (default: `{pos_x:F0}, {pos_z:F0}, {pos_y:F0}, distance {distance:F0}`, key: `find_format`): Format for the command log. Empty format disables the logging.
 - Minimap format (default: `x: {pos_x:F0}, z: {pos_z:F0}, y: {pos_y:F0}`, key: `minimap_format`): Format for minimap coordinates.
 - Player list format (default: `{player_id}/{character_name}/{character_id} ({pos_x:F0}, {pos_z:F0}, {pos_y:F0})`, key: `playerlist_format`): Format of playerlist command.
 
