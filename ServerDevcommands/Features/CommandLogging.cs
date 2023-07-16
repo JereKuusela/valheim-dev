@@ -19,7 +19,7 @@ public class CommandLogging {
 
   private static string Format(ZNetPeer peer, string command) {
     return string.Format(
-      Settings.Format(Settings.CommandLogFormat).Replace("command", "6"),
+      Settings.Format(Settings.CommandLogFormat).Replace("{command", "{6"),
       peer.m_socket.GetHostName(), peer.m_playerName, peer.m_characterID.UserID.ToString(), peer.m_refPos.x, peer.m_refPos.y, peer.m_refPos.z, command
     );
   }

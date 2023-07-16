@@ -87,6 +87,8 @@ public static class Settings {
   public static bool GhostInvisibility => Cheats && configGhostInvisibility.Value;
   public static ConfigEntry<bool> configGhostNoSpawns;
   public static bool GhostNoSpawns => Cheats && configGhostNoSpawns.Value;
+  public static ConfigEntry<bool> configGhostIgnoreSleep;
+  public static bool GhostIgnoreSleep => Cheats && configGhostIgnoreSleep.Value;
   public static ConfigEntry<string> configFlyUpKeys;
   public static string[] FlyUpKeys = new string[0];
   public static ConfigEntry<string> configFlyDownKeys;
@@ -168,21 +170,24 @@ public static class Settings {
   public static string PlayerListFormat => configPlayerListFormat.Value;
   public static ConfigEntry<string> configCommandLogFormat;
   public static string CommandLogFormat => configCommandLogFormat.Value;
-  public static ConfigEntry<string> configMinimapFormat;
+
+  public static ConfigEntry<string> configFindFormat;
+  public static string FindFormat => configFindFormat.Value; public static ConfigEntry<string> configMinimapFormat;
   public static string MinimapFormat => configMinimapFormat.Value;
   public static string Format(string format) {
     return format
-      .Replace("player_id", "0")
-      .Replace("character_name", "1")
-      .Replace("character_id", "2")
-      .Replace("pos_x", "3")
-      .Replace("pos_y", "4")
-      .Replace("pos_z", "5");
+      .Replace("{player_id", "{0")
+      .Replace("{character_name", "{1")
+      .Replace("{character_id", "{2")
+      .Replace("{pos_x", "{3")
+      .Replace("{pos_y", "{4")
+      .Replace("{pos_z", "{5");
   }
   public static void Init(ConfigFile config) {
     var section = "1. General";
     configGhostInvisibility = config.Bind(section, "Invisible to other players with ghost mode", false, "");
     configGhostNoSpawns = config.Bind(section, "Disables spawns with ghost mode", false, "");
+    configGhostIgnoreSleep = config.Bind(section, "Ignores sleep check with ghost mode", false, "");
     configNoDrops = config.Bind(section, "No creature drops", false, "Disables drops from creatures (if you control the zone), intended to fix high star enemies crashing the game.");
     configNoClipView = config.Bind(section, "No clip view", false, "Removes collision check for the camera.");
     configAutoDebugMode = config.Bind(section, "Automatic debug mode", false, "Automatically enables debug mode when enabling devcommands.");
@@ -259,6 +264,7 @@ public static class Settings {
     ParseAliases(configCommandAliases.Value);
     configPlayerListFormat = config.Bind(section, "Player list format", "{player_id}/{character_name}/{character_id} ({pos_x:F0}, {pos_z:F0}, {pos_y:F0})", "Format of playerlist command.");
     configCommandLogFormat = config.Bind(section, "Command log format", "{player_id}/{character_name} ({pos_x:F0}, {pos_z:F0}, {pos_y:F0}): {command}", "Format for the command log.");
+    configFindFormat = config.Bind(section, "Find format", "{pos_x:F0}, {pos_z:F0}, {pos_y:F0}), distance {distance:F0}", "Format for the find command. Server side setting.");
     configMinimapFormat = config.Bind(section, "Minimap format", "x: {pos_x:F0}, z: {pos_z:F0}, y: {pos_y:F0}", "Format for minimap coordinates.");
   }
 
@@ -425,6 +431,7 @@ public static class Settings {
     if (key == "fly_no_clip") Toggle(context, configFlyNoClip, "No clip with fly mode", value);
     if (key == "ghost_invibisility") Toggle(context, configGhostInvisibility, "Invisibility with ghost mode", value);
     if (key == "ghost_no_spawns") Toggle(context, configGhostNoSpawns, "Spawns with ghost", value, true);
+    if (key == "ghost_ignore_sleep") Toggle(context, configGhostIgnoreSleep, "Sleeping checked with ghost", value, true);
     if (key == "server_commands") ToggleFlag(context, configServerCommands, "Server commands", value);
     if (key == "disable_command") ToggleFlag(context, configDisabledCommands, "Disabled commands", value);
     if (key == "disable_global_key") ToggleFlag(context, configDisabledGlobalKeys, "Disabled global keys", value);
@@ -435,6 +442,7 @@ public static class Settings {
     if (key == "disable_no_map") Toggle(context, configDisableNoMap, "Disable no map", value);
     if (key == "playerlist_format") SetValue(context, configPlayerListFormat, key, value);
     if (key == "command_log_format") SetValue(context, configCommandLogFormat, key, value);
+    if (key == "find_format") SetValue(context, configFindFormat, key, value);
     if (key == "minimap_format") SetValue(context, configMinimapFormat, key, value);
   }
 }

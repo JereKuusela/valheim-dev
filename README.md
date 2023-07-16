@@ -101,7 +101,11 @@ Examples:
 	- `event army_eikthyr` starts an event at your position.
 	- `event army_eikthyr 100 -100` starts an event at coordinates 100,-100.
 - `exploremap [x] [z] [radius]` allows revealing only a part of the map.
-- `find` works server side when on servers. On single player same as before.
+- `find [id] [limit=10] [x] [z]` works server side when on servers. On single player same as before.
+  - On server, only searches zdos and locations. On single player, searches all game objects.
+	- On server, only returns exact matches.
+	- On server, always adds pins. On single player, must use `limit` for pins.
+	- On server, the format can be changed.
 - `goto [x,z,y]` or ``goto x z y` teleports to the coordinates. If y is not given, teleports to the ground level.
 - `goto` teleports to the ground level.
 - `goto [y]` teleports to the altitude (dungeons are at 5000 altitude).
@@ -190,6 +194,7 @@ Three ways to edit the settings:
 - Disable start shout (default: `false`, key: `disable_start_shout`): Removes the initial shout message when joining the server.
 - Disable unlock messages (default: `false`, key: `disable_unlock_messges`): Disables messages about new pieces and items.
 - Hide shout pings (default: `false`, key: `hide_shout_pings`): Forces shout pings at the world center.
+- Ignores sleep check with ghost mode (default: `false`, key: `ghost_ignore_sleep`): If enabled, other players can sleep if you are in ghost mode.
 - Invisible to players with ghost mode (default: `false`, key: `ghost_invisibility`): Invisible to other players with ghost mode.
 - Max undo steps (default: `50`, key: `max_undo_steps`): How many undo actions are stored.
 - No clip clear environment (default: `true`, key: `no_clip_clear_environment`): Removes any forced environments when the noclip is enabled. This disables any dark dungeon environments and prevents them from staying on when exiting the dungeon.
@@ -238,9 +243,10 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 
 Output from this mod can be customized with the following settings.
 
-- Command log format (default: `true`, key: `command_log_format`): Format for the command log. Empty format disables the logging.
-- Minimap format (default: `true`, key: `minimap_format`): Format for minimap coordinates.
-- Player list format (default: `true`, key: `playerlist_format`): Format of playerlist command.
+- Command log format (default: `{player_id}/{character_name} ({pos_x:F0}, {pos_z:F0}, {pos_y:F0}): {command}`, key: `command_log_format`): Format for the command log. Empty format disables the logging.
+- Find format (default: `{pos_x:F0}, {pos_z:F0}, {pos_y:F0}), distance {distance:F0}`, key: `find_format`): Format for the command log. Empty format disables the logging.
+- Minimap format (default: `x: {pos_x:F0}, z: {pos_z:F0}, y: {pos_y:F0}`, key: `minimap_format`): Format for minimap coordinates.
+- Player list format (default: `{player_id}/{character_name}/{character_id} ({pos_x:F0}, {pos_z:F0}, {pos_y:F0})`, key: `playerlist_format`): Format of playerlist command.
 
 Available variables:
 
@@ -251,6 +257,7 @@ Available variables:
 - `{pos_y}`: Y coordinate of the player.
 - `{pos_z}`: Z coordinate of the player.
 - `{command}`: The executed command.
+- `{distance}`: Distance.
 
 Numeric values can be further formatted with [C# formatting](https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings). For example `{pos_x:F0}` for whole numbers.
 

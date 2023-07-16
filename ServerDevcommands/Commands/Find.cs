@@ -13,7 +13,7 @@ public class FindCommand {
         defaultCommand.RunAction(args);
         return;
       }
-      if (args.Length < 3) args.Args = args.Args.Append("1").ToArray();
+      if (args.Length < 3) args.Args = args.Args.Append("10").ToArray();
       var parameters = Helper.AddPlayerPosXZY(args.Args, 3);
       // Client only has surroundings which is not very useful.
       if (!ZNet.instance.IsServer()) {
@@ -28,8 +28,10 @@ public class FindCommand {
       var zdos = ZDOMan.instance.m_objectsByID.Values.Where(zdo => zdo.IsValid() && zdo.GetPrefab() == prefab);
       list.AddRange(zdos.Select(zdo => zdo.GetPosition()));
       list.Sort((Vector3 a, Vector3 b) => Vector3.Distance(a, pos).CompareTo(Vector3.Distance(b, pos)));
-      list = list.Take(Parse.Int(args.Args, 2, 1)).ToList();
-      var text = list.Select(p => $"{Helper.PrintVectorXZY(p)}, distance {Vector3.Distance(p, pos)}").ToList();
+      var count = list.Count;
+      list = list.Take(Parse.Int(args.Args, 2, 10)).ToList();
+      var text = list.Select(p => Format(pos, p)).ToList();
+      args.Context.AddString($"Found {count} of {args[1]}. Showing {list.Count} closest:");
       args.Context.AddString(string.Join("\n", text));
       if (RedirectOutput.Target != null) {
         var rpc = RedirectOutput.Target;
@@ -38,10 +40,20 @@ public class FindCommand {
     }, () => ParameterInfo.Ids);
     AutoComplete.Register("find", (int index) => {
       if (index == 0) return ParameterInfo.Ids;
-      if (index == 1) return ParameterInfo.Create("Max amount", "a positive integer (default 1)");
+      if (index == 1) return ParameterInfo.Create("Max amount", "a positive integer (default 10)");
       if (index == 2) return ParameterInfo.Create("X coordinate", "if not specified, the current position is used");
       if (index == 3) return ParameterInfo.Create("Z coordinate", "if not specified, the current position is used");
       return ParameterInfo.None;
     });
+  }
+
+  private static string Format(Vector3 pos, Vector3 p) {
+    var distance = Vector3.Distance(pos, p);
+    var format = Settings.FindFormat
+      .Replace("{pos_x", "{0")
+      .Replace("{pos_y", "{1")
+      .Replace("{pos_z", "{2")
+      .Replace("{distance", "{3");
+    return string.Format(format, p.x, p.y, p.z, distance);
   }
 }
