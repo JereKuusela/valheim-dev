@@ -100,6 +100,9 @@ public static class Settings {
   public static ConfigEntry<string> configCommandAliases;
   public static ConfigEntry<KeyboardShortcut> configMouseWheelBindKey;
   public static KeyCode MouseWheelBindKey => configMouseWheelBindKey.Value.MainKey;
+
+  public static ConfigEntry<KeyboardShortcut> configMapTeleport;
+  public static KeyboardShortcut MapTeleport => configMapTeleport.Value;
   public static ConfigEntry<string> configAutoExecBoot;
   public static string AutoExecBoot => configAutoExecBoot.Value;
   public static ConfigEntry<string> configAutoExec;
@@ -234,6 +237,7 @@ public static class Settings {
     configDisableMessages = config.Bind(section, "Disable messages", false, "Prevents messages from commands.");
     configServerCommands = config.Bind(section, "Server side commands", "randomevent,stopevent,genloc,sleep,skiptime", "Command names separated by , that should be executed server side.");
     configMouseWheelBindKey = config.Bind(section, "Mouse wheel bind key", new KeyboardShortcut(KeyCode.None), "The simulated key code when scrolling the wheel.");
+    configMapTeleport = config.Bind(section, "Map teleport bind key", new KeyboardShortcut(KeyCode.Mouse2, KeyCode.LeftControl), "Key bind for map teleport.");
     configAutoExecBoot = config.Bind(section, "Auto exec boot", "", "Executes the given command when starting the game.");
     configAutoExecDevOn = config.Bind(section, "Auto exec dev on", "", "Executes the given command when enabling devcommands.");
     configAutoExecDevOff = config.Bind(section, "Auto exec dev off", "", "Executes the given command when disabling devcommands.");

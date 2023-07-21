@@ -131,6 +131,8 @@ Examples:
 - `resetskill all` allows reseting all skills.
 - `redo` restores an action added to the undo/redo manager.
 - `repair [radius=20]` repairs nearby structures.
+- `resetdungeon` resets the nearest camp or dungeon within 20 meters.
+  - This will remove everything inside the camp or dungeon. Use at your own risk!
 - `resetmap [x] [z] [radius]` allows hiding only a part of the map.
 - `resetpins [x] [z] [radius]` allows removing pins from the map.
 - `resolution` prints the screen properties.
@@ -196,6 +198,7 @@ Three ways to edit the settings:
 - Hide shout pings (default: `false`, key: `hide_shout_pings`): Forces shout pings at the world center.
 - Ignores sleep check with ghost mode (default: `false`, key: `ghost_ignore_sleep`): If enabled, other players can sleep if you are in ghost mode.
 - Invisible to players with ghost mode (default: `false`, key: `ghost_invisibility`): Invisible to other players with ghost mode.
+- Map teleport bind key: Key bind for map teleport.
 - Max undo steps (default: `50`, key: `max_undo_steps`): How many undo actions are stored.
 - No clip clear environment (default: `true`, key: `no_clip_clear_environment`): Removes any forced environments when the noclip is enabled. This disables any dark dungeon environments and prevents them from staying on when exiting the dungeon.
 - No clip with fly mode (default: `false`, key: `fly_no_clip`): Removes collision check with fly mode.

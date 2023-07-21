@@ -1,3 +1,7 @@
+- v1.55
+  - Adds a new command `resetdungeon`.
+  - Adds a new setting to change map teleport binding.
+
 - v1.54
   - Adds total count to the `find` command.
   - Adds a new setting for changing the `find` command format.

@@ -11,7 +11,7 @@ namespace ServerDevcommands;
 public class ServerDevcommands : BaseUnityPlugin {
   public const string GUID = "server_devcommands";
   public const string NAME = "Server Devcommands";
-  public const string VERSION = "1.54";
+  public const string VERSION = "1.55";
   public const string COMFY_GIZMO_GUID = "com.rolopogo.gizmo.comfy";
   public const string RELOADED_GIZMO_GUID = "m3to.mods.GizmoReloaded";
   private static ManualLogSource? Logs;
@@ -103,6 +103,7 @@ public class SetCommands {
     new PlayerListCommand();
     new FindCommand();
     new PullCommand();
+    new ResetDungeonCommand();
     DefaultAutoComplete.Register();
     Settings.RegisterCommands();
   }
