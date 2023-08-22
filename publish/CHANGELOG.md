@@ -1,3 +1,6 @@
+- v1.56
+  - Fixed for new patch.
+
 - v1.55
   - Adds a new command `resetdungeon`.
   - Adds a new setting to change map teleport binding.

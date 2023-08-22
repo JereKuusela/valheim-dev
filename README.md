@@ -8,7 +8,7 @@ Install on the admin client and optionally on the server (modding [guide](https:
 
 Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available commands and how to use them. Remember to add your steamID64 to the adminlist.txt.
 
-# Features
+## Features
 
 - Console is enabled without having to set the start parameter.
 - Cheat commands can also be used from the chat window (with autocomplete).
@@ -34,13 +34,13 @@ Key binds are stored to `binds.yaml` file in the config folder. It will be gener
 Keybindings work with modifier keys ([key codes](https://docs.unity3d.com/ScriptReference/KeyCode.html)).
 
 - `bind [keycode,modifier1,modifier2,...] [command] [parameter]`: Adds a new key binding with modifier keys.
-	- `bind j god`: Toggles god mode when pressing J.
-	- `bind j,leftalt,h debugmode`: Toggles debug mode when pressing J while both left alt and h are down.
-	- `bind j keys=leftalt,h`: Alternative way.
+  - `bind j god`: Toggles god mode when pressing J.
+  - `bind j,leftalt,h debugmode`: Toggles debug mode when pressing J while both left alt and h are down.
+  - `bind j keys=leftalt,h`: Alternative way.
 
 By default the best match is used. Which means that with above binds, toggling debugmode won't also toggle the god mode.
 
-It's also possible to use negative modifiers. For example `bind j,-leftalt god` won't toggle god mode while left alt is pressed. However using these is not usually needed. 
+It's also possible to use negative modifiers. For example `bind j,-leftalt god` won't toggle god mode while left alt is pressed. However using these is not usually needed.
 
 ### Mouse wheel
 
@@ -84,28 +84,28 @@ Examples:
 
 ## Enhanced commands
 
- `addstatus [name] [duration] [intensity]` allows specifying duration and intensity.
+- `addstatus [name] [duration] [intensity]` allows specifying duration and intensity.
 - `bind [key,modifier1,modifier2,...] [command]` allows specifying modifier keys (see Improved key bindings section).
 - `broadcast [center/side] [message]` allows broadcasting custom messages to all players.
-	- `broadcast center <color=red><size=20><i><b>Hello!</b></i></size></color>` broadcasts a small red message with bolding and italics.
+  - `broadcast center <color=red><size=20><i><b>Hello!</b></i></size></color>` broadcasts a small red message with bolding and italics.
 - `calm [radius=20]` calms nearby aggravated creatures.
 - `devcommands` includes an admin check to allow using on servers.
 - `dev_config [name] [value]` toggles settings.
-	- `dev_config auto_fly` toggles the auto fly setting.
-	- `dev_config auto_fly 0` disables the auto_fly setting.
-	- `dev_config auto_fly 1` enables the auto fly setting.
-	- `server dev_config disable_global_key defeated_eikthyr,defeated_gdking,defeated_bonemass,defeated_dragon,defeated_goblinking`: Prevents boss kill global keys being set on the server.
-	- `server dev_config disable_global_key`: Prints currently disabled global keys.
+  - `dev_config auto_fly` toggles the auto fly setting.
+  - `dev_config auto_fly 0` disables the auto_fly setting.
+  - `dev_config auto_fly 1` enables the auto fly setting.
+  - `server dev_config disable_global_key defeated_eikthyr,defeated_gdking,defeated_bonemass,defeated_dragon,defeated_goblinking`: Prevents boss kill global keys being set on the server.
+  - `server dev_config disable_global_key`: Prints currently disabled global keys.
 - `env` prints the current environment.
 - `event [event] [x] [z]` allows setting the event coordinates.
-	- `event army_eikthyr` starts an event at your position.
-	- `event army_eikthyr 100 -100` starts an event at coordinates 100,-100.
+  - `event army_eikthyr` starts an event at your position.
+  - `event army_eikthyr 100 -100` starts an event at coordinates 100,-100.
 - `exploremap [x] [z] [radius]` allows revealing only a part of the map.
 - `find [id] [limit=10] [x] [z]` works server side when on servers. On single player same as before.
   - On server, only searches zdos and locations. On single player, searches all game objects.
-	- On server, only returns exact matches.
-	- On server, always adds pins. On single player, must use `limit` for pins.
-	- On server, the format can be changed.
+    - On server, only returns exact matches.
+    - On server, always adds pins. On single player, must use `limit` for pins.
+    - On server, the format can be changed.
 - `goto [x,z,y]` or ``goto x z y` teleports to the coordinates. If y is not given, teleports to the ground level.
 - `goto` teleports to the ground level.
 - `goto [y]` teleports to the altitude (dungeons are at 5000 altitude).
@@ -114,19 +114,19 @@ Examples:
 - `hud` allows toggling the HUD visibility.
 - `hud [value]` allows directly setting the HUD visibility.
 - `inventory [clear/refill/repair/upgrade] [hand/worn/all] [amount]` to manage inventory.
-	- Recommended to create an `alias` for commonly used commands.
-	- `inventory clear` removes all items.
-	- `inventory refill` refills all stacks.
-	- `inventory repair hand` repairs held items.
-	- `inventory upgrade` upgrades all items to the max level.
-	- `inventory upgrade 5` upgrades all items by given 5 levels (over the max limit).
-	- `inventory level worn 2` sets equipped items to level 2.
+  - Recommended to create an `alias` for commonly used commands.
+  - `inventory clear` removes all items.
+  - `inventory refill` refills all stacks.
+  - `inventory repair hand` repairs held items.
+  - `inventory upgrade` upgrades all items to the max level.
+  - `inventory upgrade 5` upgrades all items by given 5 levels (over the max limit).
+  - `inventory level worn 2` sets equipped items to level 2.
 - `move_spawn [x,z,y = player's coordinates]` allows moving the default spawn point.
 - `nomap [value]` allows directly setting the nomap mode and works with `server` command.
 - `playerlist` prints online players and their ids.
 - `pos [player name / precision] [precision]` allows getting the position of any player.
-	- `pos 1` returns your position with 1 decimal precision.
-	- `pos jay` returns the position of a player named Jay,Heyjay or whatever is the closest match.
+  - `pos 1` returns your position with 1 decimal precision.
+  - `pos jay` returns the position of a player named Jay,Heyjay or whatever is the closest match.
 - `pull [radius]` pulls nearby items.
 - `resetskill all` allows reseting all skills.
 - `redo` restores an action added to the undo/redo manager.
@@ -137,22 +137,22 @@ Examples:
 - `resetpins [x] [z] [radius]` allows removing pins from the map.
 - `resolution` prints the screen properties.
 - `resolution [mode] [width] [height] [refresh rate]` sets the screen properties.
-	- `resolution exclusive` sets to full screen with the maximum supported resolution and refresh rate.
-	- `resolution max` sets to maximized window with the maximum supported resolution.
-	- `resolution full` sets to full screen window with the maximum supported resolution.
-	- `resolution window 1920 1080`sets to windowed with HD resolution.
+  - `resolution exclusive` sets to full screen with the maximum supported resolution and refresh rate.
+  - `resolution max` sets to maximized window with the maximum supported resolution.
+  - `resolution full` sets to full screen window with the maximum supported resolution.
+  - `resolution window 1920 1080`sets to windowed with HD resolution.
 - `search_id [term] [max_lines=5]` allows searching the object ID list.
-	- `search_id wolf` prints all object IDs that contain word "wolf".
-	- `search_id fx_ 10` prints all object IDs that contain word "fx_" on up to 10 lines.
+  - `search_id wolf` prints all object IDs that contain word "wolf".
+  - `search_id fx_ 10` prints all object IDs that contain word "fx_" on up to 10 lines.
 - `seed` prints the world seed.
 - `server [command]` executes given command on the server.
-	- `server dev_config disable_command event` disables usage of `event` command for non-root users.
-	- `server dev_config disable_events 1` disables random events.
+  - `server dev_config disable_command event` disables usage of `event` command for non-root users.
+  - `server dev_config disable_events 1` disables random events.
 - `unbind [keycode] [amount=0] [silent]` allows specifying how many binds are removed. Also prints removed binds, unless the third parameter is given.
-	- `unbind wheel` removes all binds from the mouse wheel.
-	- `unbind wheel 0` removes all binds from the mouse wheel.
-	- `unbind wheel 1` removes the last bind from the mouse wheel.
-	- `unbind wheel 3` removes the last 3 binds from the mouse wheel.
+  - `unbind wheel` removes all binds from the mouse wheel.
+  - `unbind wheel 0` removes all binds from the mouse wheel.
+  - `unbind wheel 1` removes the last bind from the mouse wheel.
+  - `unbind wheel 3` removes the last 3 binds from the mouse wheel.
 - `unbind [tag] [silent]` removes all binds with a given tag. Also prints removed binds, unless the third parameter is given.
 - `undo` reverts an action added to the undo/redo manager.
 - `wait [milliseconds]`delays the execution of the next commands.
@@ -168,7 +168,7 @@ If this mod is also installed on the server, admins can also receive position of
 
 These players are shown on the map with a ticked off icon and will also be available for the `pos` command.
 
-# Configuration
+## Configuration
 
 Three ways to edit the settings:
 
@@ -190,7 +190,7 @@ Three ways to edit the settings:
 - Automatic item pick up (default: `true`, key: `automatic_item_pick_up`): Sets the default value for the automatic item pick up feature.
 - Automatic no cost mode (default: `false`, key: `auto_nocost`): Automatically turns no cost mode on/off when devcommands are enabled or disabled.
 - Debug mode fast teleport (default: `true`, key: `debug_fast_teleport`): Makes teleporting much faster.
-- Disabled global keys (default: ` `, key: `disable_global_key`): Global keys separated by , that can't be set (server side).
+- Disabled global keys (default: ``, key: `disable_global_key`): Global keys separated by , that can't be set (server side).
 - Disable no map (default: `false`, key: `disable_no_map`): Disables no map having effect.
 - Disable random events (default: `false`, key: `disable_events`): Prevents random events from happening (server side setting).
 - Disable start shout (default: `false`, key: `disable_start_shout`): Removes the initial shout message when joining the server.
@@ -215,7 +215,7 @@ Three ways to edit the settings:
 - No weight limit with god mode (default: `false`, key: `god_no_weight_limit`): Removes the weight limit for an even godlier god mode.
 - Show map coordinates (default: `true`, key: `map_coordinates`): Shows cursor coordinates when hovering the map.
 - Show minimap coordinates (default: `false`, key: `minimap_coordinates`): Shows player coordinates on the minimap.
-- Show private players (default: `false`, key: `private_players`): Shows players on the map even if they have set their position as private. Must be enabled both client and server side to work (admins can individually keep the feature off even when enabled from the server). 
+- Show private players (default: `false`, key: `private_players`): Shows players on the map even if they have set their position as private. Must be enabled both client and server side to work (admins can individually keep the feature off even when enabled from the server).
 
 ## Console
 
@@ -265,8 +265,7 @@ Available variables:
 
 Numeric values can be further formatted with [C# formatting](https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings). For example `{pos_x:F0}` for whole numbers.
 
-
-# Credits
+## Credits
 
 Thanks for Azumatt for creating the mod icon!
 
