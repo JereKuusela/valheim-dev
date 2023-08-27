@@ -5,7 +5,8 @@ using BepInEx.Configuration;
 using UnityEngine;
 namespace ServerDevcommands;
 #nullable disable
-public static class Settings {
+public static class Settings
+{
   public static bool Cheats => (ZNet.instance && ZNet.instance.IsServer()) || (Console.instance.IsCheatsEnabled() && Admin.Enabled);
   public static ConfigEntry<bool> configMapCoordinates;
   public static bool MapCoordinates => Cheats && configMapCoordinates.Value;
@@ -39,6 +40,10 @@ public static class Settings {
   public static bool DebugConsole => configDebugConsole.Value;
   public static ConfigEntry<bool> configAutoFly;
   public static bool AutoFly => configAutoFly.Value;
+  public static ConfigEntry<string> configAutoTod;
+  public static string AutoTod => configAutoTod.Value;
+  public static ConfigEntry<string> configAutoEnv;
+  public static string AutoEnv => configAutoEnv.Value;
   public static ConfigEntry<bool> configDisableMessages;
   public static bool DisableMessages => configDisableMessages.Value;
   public static ConfigEntry<bool> configGodModeNoWeightLimit;
@@ -118,38 +123,48 @@ public static class Settings {
   private static Dictionary<string, string> Aliases = new();
   public static string[] AliasKeys = new string[0];
 
-  private static void ParseAliases(string value) {
+  private static void ParseAliases(string value)
+  {
     Aliases = value.Split('¤').Select(str => str.Split(' ')).ToDictionary(split => split[0], split => string.Join(" ", split.Skip(1)));
     Aliases = Aliases.Where(kvp => kvp.Key != "").ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
     AliasKeys = Aliases.Keys.OrderBy(key => key).ToArray();
   }
   public static string GetAliasValue(string key) => Aliases.ContainsKey(key) ? Aliases[key] : "_";
-  public static void RegisterCommands() {
-    foreach (var alias in Aliases) {
+  public static void RegisterCommands()
+  {
+    foreach (var alias in Aliases)
+    {
       AliasCommand.AddCommand(alias.Key, alias.Value);
     }
     DisableCommands.UpdateCommands(configRootUsers.Value, configDisabledCommands.Value);
   }
 
-  private static void SaveAliases() {
+  private static void SaveAliases()
+  {
     var value = string.Join("¤", Aliases.Select(kvp => kvp.Key + " " + kvp.Value));
     configCommandAliases.Value = value;
   }
 
-  public static void AddAlias(string alias, string value) {
-    if (value == "") {
+  public static void AddAlias(string alias, string value)
+  {
+    if (value == "")
+    {
       RemoveAlias(alias);
-    } else {
+    }
+    else
+    {
       Aliases[alias] = value;
       SaveAliases();
     }
   }
 
-  public static void AddAlias(Dictionary<string, string> dict) {
+  public static void AddAlias(Dictionary<string, string> dict)
+  {
     Aliases = dict;
     SaveAliases();
   }
-  public static void RemoveAlias(string alias) {
+  public static void RemoveAlias(string alias)
+  {
     if (!Aliases.ContainsKey(alias)) return;
     Aliases.Remove(alias);
     SaveAliases();
@@ -177,7 +192,8 @@ public static class Settings {
   public static ConfigEntry<string> configFindFormat;
   public static string FindFormat => configFindFormat.Value; public static ConfigEntry<string> configMinimapFormat;
   public static string MinimapFormat => configMinimapFormat.Value;
-  public static string Format(string format) {
+  public static string Format(string format)
+  {
     return format
       .Replace("{player_id", "{0")
       .Replace("{character_name", "{1")
@@ -186,7 +202,8 @@ public static class Settings {
       .Replace("{pos_y", "{4")
       .Replace("{pos_z", "{5");
   }
-  public static void Init(ConfigFile config) {
+  public static void Init(ConfigFile config)
+  {
     var section = "1. General";
     configGhostInvisibility = config.Bind(section, "Invisible to other players with ghost mode", false, "");
     configGhostNoSpawns = config.Bind(section, "Disables spawns with ghost mode", false, "");
@@ -195,11 +212,14 @@ public static class Settings {
     configNoClipView = config.Bind(section, "No clip view", false, "Removes collision check for the camera.");
     configAutoDebugMode = config.Bind(section, "Automatic debug mode", false, "Automatically enables debug mode when enabling devcommands.");
     configAutoFly = config.Bind(section, "Automatic fly mode", false, "Automatically enables fly mode when enabling devcommands.");
+    configAutoEnv = config.Bind(section, "Automatic environment", "", "Automatically enables environment when enabling devcommands (for example clear).");
+    configAutoTod = config.Bind(section, "Automatic time of day", "", "Automatically enables time of day when enabling devcommands (for example 0.33).");
     configAutoNoCost = config.Bind(section, "Automatic no cost mode", false, "Automatically enables no cost mode when enabling devcommands.");
     configAutoGodMode = config.Bind(section, "Automatic god mode", false, "Automatically enables god mode when enabling devcommands.");
     configAutoGhostMode = config.Bind(section, "Automatic ghost mode", false, "Automatically enables ghost mode when enabling devcommands.");
     configAutomaticItemPickUp = config.Bind(section, "Automatic item pick up", true, "Sets the default value for the automatic item pick up feature.");
-    configAutomaticItemPickUp.SettingChanged += (s, e) => {
+    configAutomaticItemPickUp.SettingChanged += (s, e) =>
+    {
       if (Player.m_localPlayer) Player.m_localPlayer.m_enableAutoPickup = AutomaticItemPickUp;
     };
     configAutoDevcommands = config.Bind(section, "Automatic devcommands", true, "Automatically enables devcommands when joining servers.");
@@ -252,7 +272,8 @@ public static class Settings {
     configDisableParameterWarnings = config.Bind(section, "Disable parameter warnings", false, "Removes warning texts from some command parameter descriptions.");
     configCommandAliases.SettingChanged += (s, e) => ParseAliases(configCommandAliases.Value);
     configRootUsers = config.Bind(section, "Root users", "", "Steam IDs separated by , that can execute blacklisted commands. Server side setting.");
-    configRootUsers.SettingChanged += (s, e) => {
+    configRootUsers.SettingChanged += (s, e) =>
+    {
       DisableCommands.UpdateCommands(configRootUsers.Value, configDisabledCommands.Value);
       RootUsers.Update();
     };
@@ -348,20 +369,24 @@ public static class Settings {
     "off"
   };
   private static bool IsFalsy(string value) => Falsies.Contains(value);
-  private static void Toggle(Terminal context, ConfigEntry<bool> setting, string name, string value, bool reverse = false) {
+  private static void Toggle(Terminal context, ConfigEntry<bool> setting, string name, string value, bool reverse = false)
+  {
     if (value == "") setting.Value = !setting.Value;
     else if (IsTruthy(value)) setting.Value = true;
     else if (IsFalsy(value)) setting.Value = false;
     Helper.AddMessage(context, $"{name} {State(reverse ? !setting.Value : setting.Value)}.");
   }
-  private static void ToggleFlag(Terminal context, ConfigEntry<string> setting, string name, string value) {
-    if (value == "") {
+  private static void ToggleFlag(Terminal context, ConfigEntry<string> setting, string name, string value)
+  {
+    if (value == "")
+    {
       Helper.AddMessage(context, $"{name}: {setting.Value}.");
       return;
     }
     var list = ParseList(setting.Value);
     var newList = ParseList(value);
-    foreach (var flag in newList) {
+    foreach (var flag in newList)
+    {
       var remove = list.Contains(flag);
       if (remove) list.Remove(flag);
       else list.Add(flag);
@@ -369,16 +394,20 @@ public static class Settings {
       Helper.AddMessage(context, $"{name}: {Flag(remove)} {flag}.");
     }
   }
-  private static void SetValue(Terminal context, ConfigEntry<string> setting, string name, string value) {
-    if (value == "") {
+  private static void SetValue(Terminal context, ConfigEntry<string> setting, string name, string value)
+  {
+    if (value == "")
+    {
       Helper.AddMessage(context, $"{name}: {setting.Value}.");
       return;
     }
     setting.Value = value;
     Helper.AddMessage(context, $"{name} set to {value}.");
   }
-  private static void SetKey(Terminal context, ConfigEntry<KeyboardShortcut> setting, string name, string value) {
-    if (value == "") {
+  private static void SetKey(Terminal context, ConfigEntry<KeyboardShortcut> setting, string name, string value)
+  {
+    if (value == "")
+    {
       Helper.AddMessage(context, $"{name}: {setting.Value}.");
       return;
     }
@@ -387,7 +416,8 @@ public static class Settings {
     setting.Value = new(keyCode);
     Helper.AddMessage(context, $"{name} set to {value}.");
   }
-  public static void UpdateValue(Terminal context, string key, string value) {
+  public static void UpdateValue(Terminal context, string key, string value)
+  {
     if (key == "no_clip_view") Toggle(context, configNoClipView, key, value);
     if (key == "fly_up_key") SetValue(context, configFlyUpKeys, key, value);
     if (key == "fly_down_key") SetValue(context, configFlyDownKeys, key, value);
@@ -397,6 +427,8 @@ public static class Settings {
     if (key == "auto_exec_boot") SetValue(context, configAutoExecBoot, key, value);
     if (key == "auto_exec") SetValue(context, configAutoExec, key, value);
     if (key == "substitution") SetValue(context, configSubstitution, key, value);
+    if (key == "auto_tod") SetValue(context, configAutoTod, key, value);
+    if (key == "auto_env") SetValue(context, configAutoEnv, key, value);
     if (key == "mouse_wheel_bind_key") SetKey(context, configMouseWheelBindKey, "Mouse wheel bind key", value);
     if (key == "debug_fast_teleport") Toggle(context, configDebugModeFastTeleport, key, value);
     if (key == "best_command_match") Toggle(context, configBestCommandMatch, key, value);
