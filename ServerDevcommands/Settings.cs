@@ -171,9 +171,6 @@ public static class Settings
   }
 
   private static HashSet<string> ParseList(string value) => Parse.Split(value).Select(s => s.ToLower()).ToHashSet();
-  public static ConfigEntry<string> configServerCommands;
-  public static HashSet<string> ServerCommands => ParseList(configServerCommands.Value);
-  public static bool IsServerCommand(string command) => ServerCommands.Contains(command.ToLower());
   public static ConfigEntry<string> configDisabledCommands;
   public static ConfigEntry<string> configRootUsers;
   public static ConfigEntry<string> configDisabledGlobalKeys;
@@ -255,7 +252,6 @@ public static class Settings
     section = "2. Console";
     configBestCommandMatch = config.Bind(section, "Best command match", true, "Executes only the commands with the most modifiers keys pressed.");
     configDisableMessages = config.Bind(section, "Disable messages", false, "Prevents messages from commands.");
-    configServerCommands = config.Bind(section, "Server side commands", "randomevent,stopevent,genloc,sleep,skiptime", "Command names separated by , that should be executed server side.");
     configMouseWheelBindKey = config.Bind(section, "Mouse wheel bind key", new KeyboardShortcut(KeyCode.None), "The simulated key code when scrolling the wheel.");
     configMapTeleport = config.Bind(section, "Map teleport bind key", new KeyboardShortcut(KeyCode.Mouse2, KeyCode.LeftControl), "Key bind for map teleport.");
     configAutoExecBoot = config.Bind(section, "Auto exec boot", "", "Executes the given command when starting the game.");
@@ -468,7 +464,6 @@ public static class Settings
     if (key == "ghost_invibisility") Toggle(context, configGhostInvisibility, "Invisibility with ghost mode", value);
     if (key == "ghost_no_spawns") Toggle(context, configGhostNoSpawns, "Spawns with ghost", value, true);
     if (key == "ghost_ignore_sleep") Toggle(context, configGhostIgnoreSleep, "Sleeping checked with ghost", value, true);
-    if (key == "server_commands") ToggleFlag(context, configServerCommands, "Server commands", value);
     if (key == "disable_command") ToggleFlag(context, configDisabledCommands, "Disabled commands", value);
     if (key == "disable_global_key") ToggleFlag(context, configDisabledGlobalKeys, "Disabled global keys", value);
     if (key == "disable_debug_mode_keys") Toggle(context, configDisableDebugModeKeys, "Debug mode key bindings", value, true);

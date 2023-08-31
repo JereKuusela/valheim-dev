@@ -1,5 +1,7 @@
 - v1.57
   - Adds new setting for automatic usage of `env` and `tod` commands.
+  - Fixes `setworldmodifier` and `setworldpreset` commands not always working correctly.
+  - Removes setting "Server side commands" as obsolete.
 
 - v1.56
   - Fixed for new patch.

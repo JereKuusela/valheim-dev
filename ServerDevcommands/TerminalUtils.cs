@@ -157,16 +157,7 @@ public class TryRunCommand
     }
     // Server side checks this already at the server side execution.
     if (Player.m_localPlayer && !DisableCommands.CanRun(text)) return false;
-    if (CommandQueue.CanRun())
-    {
-      string[] array = text.Split(' ');
-      if (ZNet.instance && !ZNet.instance.IsServer() && Settings.IsServerCommand(array[0]))
-      {
-        ServerExecution.Send(text);
-        return false;
-      }
-    }
-    else
+    if (!CommandQueue.CanRun())
     {
       CommandQueue.Add(__instance, text);
       return false;

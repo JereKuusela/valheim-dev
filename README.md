@@ -241,7 +241,6 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - Multiple commands per line (default: `true`, key: `multiple_commands`): Enables multiple commands per line (when separate by `;`).
 - Root users: Steam IDs separated by , that can execute blacklisted commands. Can't be set with `dev_config` command.
 - Substitution system (default: `$$`, key: `substitution`): Enables parameter substitution (with `$$`).
-- Server side commands (default: `randomevent,stopevent,genloc,sleep,skiptime`, key: `server_commands`): Names of commands that should be automatically executed on the server. `event` command is not included because it has a custom server-side support.
 
 ## Formatting
 
