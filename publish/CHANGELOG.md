@@ -1,3 +1,7 @@
+- v1.58
+  - Fixes world modifiers cleaned up on world load.
+  - Fixes `resetkeys` command not working.
+
 - v1.57
   - Adds new setting for automatic usage of `env` and `tod` commands.
   - Fixes `setworldmodifier` and `setworldpreset` commands not always working correctly.

@@ -47,7 +47,20 @@ public class ServerCommand
       }
       return ParameterInfo.None;
     });
-    MakeServer("resetkeys");
+    var original = Terminal.commands["resetkeys"];
+    Helper.Command("resetkeys", original.Description, (args) =>
+    {
+      Player.m_localPlayer?.ResetUniqueKeys();
+      if (ZNet.instance && !ZNet.instance.IsServer())
+      {
+        ServerExecution.Send(args);
+      }
+      else
+      {
+        ZoneSystem.instance.ResetGlobalKeys();
+        args.Context.AddString("Global and player keys cleared");
+      }
+    }, original.m_tabOptionsFetcher);
     AutoComplete.RegisterEmpty("resetkeys");
   }
 }

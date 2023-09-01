@@ -18,14 +18,6 @@ public class RedirectOutput
   }
 }
 
-[HarmonyPatch(typeof(ZoneSystem), nameof(ZoneSystem.ClearGlobalKeys))]
-public class ResetServerKeys
-{
-  static void Postfix()
-  {
-    ZNet.World?.m_startingGlobalKeys.Clear();
-  }
-}
 [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_PeerInfo))]
 public class ServerExecution
 {
