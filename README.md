@@ -38,7 +38,7 @@ Keybindings work with modifier keys ([key codes](https://docs.unity3d.com/Script
   - `bind j,leftalt,h debugmode`: Toggles debug mode when pressing J while both left alt and h are down.
   - `bind j keys=leftalt,h`: Alternative way.
 
-By default the best match is used. Which means that with above binds, toggling debugmode won't also toggle the god mode.
+The best match is used. Which means that with above binds, toggling debugmode won't also toggle the god mode.
 
 It's also possible to use negative modifiers. For example `bind j,-leftalt god` won't toggle god mode while left alt is pressed. However using these is not usually needed.
 
@@ -226,7 +226,6 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - Auto exec boot (key: `auto_exec_boot`): Executes the given command when starting the game.
 - Auto exec dev off (key: `auto_exec_dev_off`): Executes the given command when disabling devcommands.
 - Auto exec dev on (key: `auto_exec_dev_off`): Executes the given command when enabling devcommands.
-- Best command match (default: `true`, key: `best_command_match`): Executes only the commands with the most modifiers keys pressed. Simplifies key binding because negative modifier keys don't have to be used.
 - Command aliases: Saved command aliases.
 - Command descriptions (default: `true`, key: `command_descriptions`): Shows command descriptions as autocomplete.
 - Debug console (default: `false`, key: `debug_console`): Prints debug output to the console related to aliasing and parameter substitution.
@@ -237,6 +236,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - Fly down key (default: `leftcontrol`, key: `fly_down_key`): Changes the key command for flying down. Multiple keys are supported (see Bind section for more info).
 - Fly up key (default: `space`, key: `fly_up_key`): Changes the key command for flying up. Multiple keys are supported (see Bind section for more info).
 - Improved auto complete (default: `true`, key: `improved_autocomplete`): Enables parameter info or options for every parameter.
+- Improved chat (default: `true`, key: `improved_chat`): Enables alias and multicommand systems for chat.
 - Mouse wheel bind key (default: `none`, key: `mouse_wheel_bind_key`): The simulated keycode when using the mouse wheel.
 - Multiple commands per line (default: `true`, key: `multiple_commands`): Enables multiple commands per line (when separate by `;`).
 - Root users: Steam IDs separated by , that can execute blacklisted commands. Can't be set with `dev_config` command.

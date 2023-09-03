@@ -8,6 +8,7 @@ namespace ServerDevcommands;
 public static class Settings
 {
   public static bool Cheats => (ZNet.instance && ZNet.instance.IsServer()) || (Console.instance.IsCheatsEnabled() && Admin.Enabled);
+
   public static ConfigEntry<bool> configMapCoordinates;
   public static bool MapCoordinates => Cheats && configMapCoordinates.Value;
   public static ConfigEntry<bool> configMiniMapCoordinates;
@@ -105,6 +106,8 @@ public static class Settings
   public static ConfigEntry<string> configCommandAliases;
   public static ConfigEntry<KeyboardShortcut> configMouseWheelBindKey;
   public static KeyCode MouseWheelBindKey => configMouseWheelBindKey.Value.MainKey;
+  public static ConfigEntry<bool> configImprovedChat;
+  public static bool ImprovedChat => configImprovedChat.Value;
 
   public static ConfigEntry<KeyboardShortcut> configMapTeleport;
   public static KeyboardShortcut MapTeleport => configMapTeleport.Value;
@@ -118,8 +121,6 @@ public static class Settings
   public static string AutoExecDevOff => configAutoExecDevOff.Value;
   public static ConfigEntry<bool> configCommandDescriptions;
   public static bool CommandDescriptions => configCommandDescriptions.Value;
-  public static ConfigEntry<bool> configBestCommandMatch;
-  public static bool BestCommandMatch => configBestCommandMatch.Value;
   private static Dictionary<string, string> Aliases = new();
   public static string[] AliasKeys = new string[0];
 
@@ -250,7 +251,6 @@ public static class Settings
     configUndoLimit.SettingChanged += (s, e) => UndoManager.MaxSteps = UndoLimit;
     UndoManager.MaxSteps = UndoLimit;
     section = "2. Console";
-    configBestCommandMatch = config.Bind(section, "Best command match", true, "Executes only the commands with the most modifiers keys pressed.");
     configDisableMessages = config.Bind(section, "Disable messages", false, "Prevents messages from commands.");
     configMouseWheelBindKey = config.Bind(section, "Mouse wheel bind key", new KeyboardShortcut(KeyCode.None), "The simulated key code when scrolling the wheel.");
     configMapTeleport = config.Bind(section, "Map teleport bind key", new KeyboardShortcut(KeyCode.Mouse2, KeyCode.LeftControl), "Key bind for map teleport.");
@@ -263,6 +263,7 @@ public static class Settings
     configImprovedAutoComplete = config.Bind(section, "Improved autocomplete", true, "Enables parameter info or options for every parameter.");
     configCommandAliases = config.Bind(section, "Command aliases", "", "Internal data for aliases.");
     configMultiCommand = config.Bind(section, "Multiple commands per line", true, "Enables multiple commands when separated with ;.");
+    configImprovedChat = config.Bind(section, "Improved chat", true, "Enables alias and multicommands system for chat.");
     configSubstitution = config.Bind(section, "Substitution", "$$", "Enables the command parameter substitution system (substitution gets replaced with the next free parameter).");
     configDebugConsole = config.Bind(section, "Debug console", false, "Extra debug information about aliasing.");
     configDisableParameterWarnings = config.Bind(section, "Disable parameter warnings", false, "Removes warning texts from some command parameter descriptions.");
@@ -427,7 +428,7 @@ public static class Settings
     if (key == "auto_env") SetValue(context, configAutoEnv, key, value);
     if (key == "mouse_wheel_bind_key") SetKey(context, configMouseWheelBindKey, "Mouse wheel bind key", value);
     if (key == "debug_fast_teleport") Toggle(context, configDebugModeFastTeleport, key, value);
-    if (key == "best_command_match") Toggle(context, configBestCommandMatch, key, value);
+    if (key == "improved_chat") Toggle(context, configImprovedChat, key, value);
     if (key == "access_private_chests") Toggle(context, configAccessPrivateChests, key, value);
     if (key == "access_warded_areas") Toggle(context, configAccessWardedAreas, key, value);
     if (key == "no_clip_clear_environment") Toggle(context, configNoClipClearEnvironment, key, value);

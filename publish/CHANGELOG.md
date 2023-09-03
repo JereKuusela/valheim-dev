@@ -1,3 +1,8 @@
+- v1.59
+  - Adds a new setting "Improved chat" to allow turning off most chat changes.
+  - Improves compatibility with KGChat.
+  - Removes the setting "Best command match" as obsolete.
+
 - v1.58
   - Fixes world modifiers cleaned up on world load.
   - Fixes `resetkeys` command not working.

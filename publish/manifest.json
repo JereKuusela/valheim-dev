@@ -1,7 +1,9 @@
 {
   "name": "Server_devcommands",
-  "version_number": "1.58.0",
+  "version_number": "1.59.0",
   "website_url": "https://github.com/JereKuusela/valheim-dev",
   "description": "Enables devcommands and utilities for server admins.",
-  "dependencies": ["denikson-BepInExPack_Valheim-5.4.2105"]
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.2105"
+  ]
 }

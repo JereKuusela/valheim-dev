@@ -138,6 +138,7 @@ public class TryRunCommand
   }
   static bool Prefix(Terminal __instance, ref string text)
   {
+    if (!Settings.ImprovedChat && __instance == Chat.instance) return true;
     var isComposite = TerminalUtils.IsComposite(text);
     // Some commands (like alias or bind) are expected to be executed as they are.
     if (TerminalUtils.SkipProcessing(text)) return true;
@@ -167,11 +168,13 @@ public class TryRunCommand
 }
 
 [HarmonyPatch(typeof(Terminal), nameof(Terminal.UpdateInput))]
-public class AliasInput
+public class PlainInputForAutoComplete
 {
   private static string LastActual = "";
   static bool Prefix(Terminal __instance)
   {
+    // Chat doesn't have autocomplete so no need to do anything.
+    if (__instance == Chat.instance) return true;
     // Safe-guard because actions need different kind of input.
     if (Input.GetKeyDown(KeyCode.Return) && Input.GetKeyDown(KeyCode.Tab)) return false;
     // For execution, keep the actual input so that the history is saved properly.
@@ -191,6 +194,8 @@ public class AliasInput
   }
   static void Postfix(Terminal __instance)
   {
+    // Chat doesn't have autocomplete so no need to do anything.
+    if (__instance == Chat.instance) return;
     // Same logic as on Prefix.
     if (Input.GetKeyDown(KeyCode.Return) || ZInput.GetButtonDown("ChatUp") || ZInput.GetButtonDown("ChatDown")) return;
     TerminalUtils.ToActualInput(__instance);
