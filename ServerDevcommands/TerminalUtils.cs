@@ -70,38 +70,34 @@ public static class TerminalUtils
     return parameters.Skip(start).Where(par => !par.Contains("=")).Count();
   }
 
-  private static string ReplaceFirst(string text, string search, string replace)
+  private static string ReplaceValues(string text, string search, Queue<string> replace)
   {
     var pos = text.IndexOf(search);
-    if (pos < 0) return text;
-    return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
-  }
-  public static string Substitute(string input, string value)
-  {
-    if (CanSubstitute(input) && !value.Contains("="))
-      return ReplaceFirst(input, Settings.Substitution, value);
-    else
-      return input + " " + value;
+    while (pos >= 0 && replace.Count > 0)
+    {
+      var value = replace.Dequeue();
+      text = text.Substring(0, pos) + value + text.Substring(pos + search.Length);
+      pos = text.IndexOf(search);
+    }
+    return text;
   }
 
   public static bool CanSubstitute(string input) => input.Contains(Settings.Substitution);
-  public static string Substitute(string input)
+
+  public static string Substitute(string alias, string command)
   {
-    if (Settings.Substitution == "") return input;
-    if (input.StartsWith("alias ")) return input;
-    if (!CanSubstitute(input)) return input;
-    GetSubstitutions(input.Split(' '), out var mainPars, out var substitutions);
-    input = string.Join(" ", mainPars);
-    foreach (var parameter in substitutions)
-      input = Substitute(input, parameter);
+    if (Settings.Substitution == "") return alias + " " + command;
+    if (alias.StartsWith("alias")) return alias + " " + command;
+    if (!CanSubstitute(alias)) return alias + " " + command;
+    var substitutions = new Queue<string>(command.Split(' '));
+    alias = ReplaceValues(alias, Settings.Substitution, substitutions);
     // Removes any extra substitutions that didn't receive values so "cmd par=$$,$$" works with "foo 3".
-    input = input.Replace($",{Settings.Substitution}", "");
-    // Remove any trailing substitution that didn't receive a parameter so "cmd $$ $$" works with "foo 3".
-    var parameters = input.Split(' ');
-    while (parameters.Length > 0 && parameters.Last().Contains(Settings.Substitution))
-      parameters = parameters.Take(parameters.Length - 1).ToArray();
-    input = string.Join(" ", parameters);
-    return input;
+    alias = alias.Replace($",{Settings.Substitution}", "");
+    // Removes any extra substitutions that didn't receive values so "cmd $$ $$" works with "foo 3".
+    if (CanSubstitute(alias))
+      alias = string.Join(" ", alias.Split(' ').Where(s => !s.Contains(Settings.Substitution)));
+    return alias + " " + string.Join(" ", substitutions);
+
   }
   public static bool SkipProcessing(string command) => ParameterInfo.SpecialCommands.Any(cmd => command.StartsWith($"{cmd} ", StringComparison.OrdinalIgnoreCase));
   public static bool IsComposite(string command)
@@ -143,7 +139,7 @@ public class TryRunCommand
     // Some commands (like alias or bind) are expected to be executed as they are.
     if (TerminalUtils.SkipProcessing(text)) return true;
     // Composites need aliasing for each part.
-    text = string.Join(";", MultiCommands.Split(text).Select(s => TerminalUtils.Substitute(Aliasing.Plain(s))));
+    text = string.Join(";", MultiCommands.Split(text).Select(s => Aliasing.Plain(s)));
     // Multiple commands in an alias.
     if (!isComposite && MultiCommands.IsMulti(text))
     {
@@ -170,7 +166,6 @@ public class TryRunCommand
 [HarmonyPatch(typeof(Terminal), nameof(Terminal.UpdateInput))]
 public class PlainInputForAutoComplete
 {
-  private static string LastActual = "";
   static bool Prefix(Terminal __instance)
   {
     // Chat doesn't have autocomplete so no need to do anything.
@@ -182,14 +177,6 @@ public class PlainInputForAutoComplete
     // Cycling commands doesn't need any modifications.
     if (ZInput.GetButtonDown("ChatUp") || ZInput.GetButtonDown("ChatDown")) return true;
     TerminalUtils.ToCurrentInput(__instance);
-    if (Settings.DebugConsole)
-    {
-      var actual = __instance.m_input.text;
-      actual = TerminalUtils.Substitute(actual);
-      if (actual != LastActual)
-        ServerDevcommands.Log.LogInfo("Command: " + actual);
-      LastActual = actual;
-    }
     return true;
   }
   static void Postfix(Terminal __instance)
@@ -217,5 +204,51 @@ public class UnlockCharacterLimit
   static void Postfix(Terminal __instance)
   {
     if (__instance.m_input) __instance.m_input.characterLimit = 0;
+  }
+}
+[HarmonyPatch(typeof(Terminal.ConsoleEventArgs), MethodType.Constructor, typeof(string), typeof(Terminal))]
+public class Wrapping
+{
+  static void Postfix(Terminal.ConsoleEventArgs __instance)
+  {
+    if (string.IsNullOrWhiteSpace(Settings.Wrapping)) return;
+    if (!__instance.FullLine.Contains(Settings.Wrapping)) return;
+    List<string> pieces = [];
+    var store = "";
+    foreach (var arg in __instance.Args)
+    {
+      if (store == "")
+      {
+        if (arg.Contains(Settings.Wrapping))
+        {
+          var matchingWrap = arg.Count(c => c == Settings.Wrapping[0]) % 2 == 0;
+          if (matchingWrap && arg.EndsWith(Settings.Wrapping, StringComparison.OrdinalIgnoreCase))
+          {
+            // Special case for wrapped without spaces.
+            var startWrapper = arg.IndexOf(Settings.Wrapping);
+            var endWrapper = arg.LastIndexOf(Settings.Wrapping);
+            var wrapped = arg.Remove(endWrapper, 1).Remove(startWrapper, 1);
+            pieces.Add(wrapped);
+          }
+          else
+            store = arg;
+        }
+        else
+          pieces.Add(arg);
+      }
+      else
+      {
+        store += " " + arg;
+        if (arg.EndsWith(Settings.Wrapping, StringComparison.OrdinalIgnoreCase))
+        {
+          var startWrapper = store.IndexOf(Settings.Wrapping);
+          var endWrapper = store.LastIndexOf(Settings.Wrapping);
+          var wrapped = store.Remove(endWrapper, 1).Remove(startWrapper, 1);
+          pieces.Add(wrapped);
+          store = "";
+        }
+      }
+    }
+    __instance.Args = [.. pieces];
   }
 }

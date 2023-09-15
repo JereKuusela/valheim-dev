@@ -37,8 +37,6 @@ public static class Settings
   public static bool DisableUnlockMessages => configDisableUnlockMessages.Value;
   public static ConfigEntry<bool> configDisableDebugModeKeys;
   public static bool DisableDebugModeKeys => configDisableDebugModeKeys.Value;
-  public static ConfigEntry<bool> configDebugConsole;
-  public static bool DebugConsole => configDebugConsole.Value;
   public static ConfigEntry<bool> configAutoFly;
   public static bool AutoFly => configAutoFly.Value;
   public static ConfigEntry<string> configAutoTod;
@@ -85,6 +83,8 @@ public static class Settings
   public static bool DisableParameterWarnings => configDisableParameterWarnings.Value;
   public static ConfigEntry<string> configSubstitution;
   public static string Substitution => configSubstitution.Value;
+  public static ConfigEntry<string> configWrapping;
+  public static string Wrapping => configWrapping.Value;
   public static ConfigEntry<bool> configImprovedAutoComplete;
   public static bool ImprovedAutoComplete => configImprovedAutoComplete.Value;
   public static ConfigEntry<bool> configMultiCommand;
@@ -265,7 +265,7 @@ public static class Settings
     configMultiCommand = config.Bind(section, "Multiple commands per line", true, "Enables multiple commands when separated with ;.");
     configImprovedChat = config.Bind(section, "Improved chat", true, "Enables alias and multicommands system for chat.");
     configSubstitution = config.Bind(section, "Substitution", "$$", "Enables the command parameter substitution system (substitution gets replaced with the next free parameter).");
-    configDebugConsole = config.Bind(section, "Debug console", false, "Extra debug information about aliasing.");
+    configWrapping = config.Bind(section, "Wrapping", "\"", "Allows using space bars in command parameters.");
     configDisableParameterWarnings = config.Bind(section, "Disable parameter warnings", false, "Removes warning texts from some command parameter descriptions.");
     configCommandAliases.SettingChanged += (s, e) => ParseAliases(configCommandAliases.Value);
     configRootUsers = config.Bind(section, "Root users", "", "Steam IDs separated by , that can execute blacklisted commands. Server side setting.");
@@ -308,6 +308,7 @@ public static class Settings
     "aliasing",
     "god_no_stamina",
     "substitution",
+    "wrapping",
     "improved_autocomplete",
     "disable_events",
     "disable_warnings",
@@ -424,6 +425,7 @@ public static class Settings
     if (key == "auto_exec_boot") SetValue(context, configAutoExecBoot, key, value);
     if (key == "auto_exec") SetValue(context, configAutoExec, key, value);
     if (key == "substitution") SetValue(context, configSubstitution, key, value);
+    if (key == "wrapping") SetValue(context, configWrapping, key, value);
     if (key == "auto_tod") SetValue(context, configAutoTod, key, value);
     if (key == "auto_env") SetValue(context, configAutoEnv, key, value);
     if (key == "mouse_wheel_bind_key") SetKey(context, configMouseWheelBindKey, "Mouse wheel bind key", value);
@@ -444,7 +446,6 @@ public static class Settings
     if (key == "auto_nocost") Toggle(context, configAutoNoCost, "Automatic no cost", value);
     if (key == "auto_god") Toggle(context, configAutoGodMode, "Automatic god mode", value);
     if (key == "auto_ghost") Toggle(context, configAutoGhostMode, "Automatic ghost mode", value);
-    if (key == "debug_console") Toggle(context, configDebugConsole, "Debug console", value);
     if (key == "no_drops") Toggle(context, configNoDrops, "Creature drops", value, true);
     if (key == "aliasing") Toggle(context, configAliasing, "Command aliasing", value);
     if (key == "improved_autocomplete") Toggle(context, configImprovedAutoComplete, "Improved autocomplete", value);

@@ -1,3 +1,8 @@
+- v1.60
+  - Adds a new setting "Wrapping" to allow using space bar in command parameters.
+  - Reworks the substitution system to only work with aliases (less interference with normal commands).
+  - Removes the setting "Debug console" as obsolete.
+
 - v1.59
   - Adds a new setting "Improved chat" to allow turning off most chat changes.
   - Improves compatibility with KGChat.

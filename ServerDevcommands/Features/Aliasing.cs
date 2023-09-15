@@ -40,13 +40,15 @@ public static class Aliasing
     foreach (var key in Settings.AliasKeys)
     {
       if (command.Length < key.Length) continue;
+      if (command == key) return Plain(Settings.GetAliasValue(key), rounds - 1);
       if (command != key)
       {
         if (!command.StartsWith(key)) continue;
         var nextChar = command[key.Length];
         if (nextChar != ' ' && nextChar != ',' && nextChar != '=' && nextChar != ';') continue;
       }
-      command = Settings.GetAliasValue(key) + command.Substring(key.Length);
+      var alias = Settings.GetAliasValue(key);
+      command = TerminalUtils.Substitute(alias, command.Substring(key.Length + 1));
       return Plain(command, rounds - 1);
 
     }

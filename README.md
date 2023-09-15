@@ -228,7 +228,6 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - Auto exec dev on (key: `auto_exec_dev_off`): Executes the given command when enabling devcommands.
 - Command aliases: Saved command aliases.
 - Command descriptions (default: `true`, key: `command_descriptions`): Shows command descriptions as autocomplete.
-- Debug console (default: `false`, key: `debug_console`): Prints debug output to the console related to aliasing and parameter substitution.
 - Disable debug mode keys (default: `false`, key: `disable_debug_mode_keys`): Removes debug mode key bindings for killall, removedrops, fly and no cost.
 - Disable messages (default: `false`, key: `disable_messages`): Prevents messages from commands.
 - Disable parameter warnings (default: `false`, key: `disable_warnings`): Removes warning texts from some command parameter descriptions.
@@ -241,6 +240,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - Multiple commands per line (default: `true`, key: `multiple_commands`): Enables multiple commands per line (when separate by `;`).
 - Root users: Steam IDs separated by , that can execute blacklisted commands. Can't be set with `dev_config` command.
 - Substitution system (default: `$$`, key: `substitution`): Enables parameter substitution (with `$$`).
+- Wrapping (default: `"`, key: `wrapping`): Allows using space bars in command parameters.
 
 ## Formatting
 
