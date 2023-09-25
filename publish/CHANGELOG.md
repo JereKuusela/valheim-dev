@@ -1,3 +1,6 @@
+- v1.61
+  - Fixes tab completion not working with aliases.
+
 - v1.60
   - Adds a new setting "Wrapping" to allow using space bar in command parameters.
   - Reworks the substitution system to only work with aliases (less interference with normal commands).

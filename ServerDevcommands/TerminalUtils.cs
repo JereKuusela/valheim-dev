@@ -28,7 +28,12 @@ public static class TerminalUtils
     Aliasing.RestoreAlias(input);
     MultiCommands.RestorePreviousCommands(input);
     // Modifies the input and removes selection, so don't set it back.
-    if (!Input.GetKeyDown(KeyCode.Tab))
+    if (ZInput.GetKeyDown(KeyCode.Tab))
+    {
+      input.selectionAnchorPosition = input.text.Length;
+      input.selectionFocusPosition = input.text.Length;
+    }
+    else
     {
       input.selectionAnchorPosition = Anchor;
       input.selectionFocusPosition = Focus;
@@ -171,9 +176,9 @@ public class PlainInputForAutoComplete
     // Chat doesn't have autocomplete so no need to do anything.
     if (__instance == Chat.instance) return true;
     // Safe-guard because actions need different kind of input.
-    if (Input.GetKeyDown(KeyCode.Return) && Input.GetKeyDown(KeyCode.Tab)) return false;
+    if (ZInput.GetKeyDown(KeyCode.Return) && ZInput.GetKeyDown(KeyCode.Tab)) return false;
     // For execution, keep the actual input so that the history is saved properly.
-    if (Input.GetKeyDown(KeyCode.Return)) return true;
+    if (ZInput.GetKeyDown(KeyCode.Return)) return true;
     // Cycling commands doesn't need any modifications.
     if (ZInput.GetButtonDown("ChatUp") || ZInput.GetButtonDown("ChatDown")) return true;
     TerminalUtils.ToCurrentInput(__instance);
@@ -184,7 +189,7 @@ public class PlainInputForAutoComplete
     // Chat doesn't have autocomplete so no need to do anything.
     if (__instance == Chat.instance) return;
     // Same logic as on Prefix.
-    if (Input.GetKeyDown(KeyCode.Return) || ZInput.GetButtonDown("ChatUp") || ZInput.GetButtonDown("ChatDown")) return;
+    if (ZInput.GetKeyDown(KeyCode.Return) || ZInput.GetButtonDown("ChatUp") || ZInput.GetButtonDown("ChatDown")) return;
     TerminalUtils.ToActualInput(__instance);
   }
 }
