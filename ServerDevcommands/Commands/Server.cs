@@ -31,11 +31,8 @@ public class ServerCommand
     AutoComplete.RegisterEmpty("randomevent");
     MakeServer("stopevent");
     AutoComplete.RegisterEmpty("stopevent");
-    MakeServer("genloc");
     AutoComplete.RegisterEmpty("genloc");
-    MakeServer("sleep");
     AutoComplete.RegisterEmpty("sleep");
-    MakeServer("skiptime");
     AutoComplete.Register("skiptime", (int index) =>
     {
       if (index == 0)
@@ -47,20 +44,6 @@ public class ServerCommand
       }
       return ParameterInfo.None;
     });
-    var original = Terminal.commands["resetkeys"];
-    Helper.Command("resetkeys", original.Description, (args) =>
-    {
-      Player.m_localPlayer?.ResetUniqueKeys();
-      if (ZNet.instance && !ZNet.instance.IsServer())
-      {
-        ServerExecution.Send(args);
-      }
-      else
-      {
-        ZoneSystem.instance.ResetGlobalKeys();
-        args.Context.AddString("Global and player keys cleared");
-      }
-    }, original.m_tabOptionsFetcher);
     AutoComplete.RegisterEmpty("resetkeys");
   }
 }
