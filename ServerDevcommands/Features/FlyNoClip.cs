@@ -52,7 +52,7 @@ public class NoObjectCollision {
 }
 [HarmonyPatch(typeof(Character), nameof(Character.UnderWorldCheck))]
 public class NoGroundCollision {
-  static bool Prefix(Character __instance) => __instance == Player.m_localPlayer && !NoClip.PlayerEnabled();
+  static bool Prefix(Character __instance) => !(__instance == Player.m_localPlayer && NoClip.PlayerEnabled());
 }
 
 [HarmonyPatch(typeof(GameCamera), nameof(GameCamera.GetCameraPosition))]
