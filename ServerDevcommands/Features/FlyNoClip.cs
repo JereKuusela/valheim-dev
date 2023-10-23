@@ -4,7 +4,8 @@ using System.Reflection.Emit;
 using HarmonyLib;
 namespace ServerDevcommands;
 
-public class NoClip {
+public class NoClip
+{
   public static bool PlayerEnabled() => Player.m_localPlayer && Player.m_localPlayer.IsDebugFlying() && Settings.FlyNoClip;
   public static bool CameraEnabled() => Settings.NoClipView || PlayerEnabled();
   // Tracks when the noclip was turned on by this mod (better compatibility with other noclip mods).
@@ -12,9 +13,11 @@ public class NoClip {
 }
 
 [HarmonyPatch(typeof(Player), nameof(Player.SetControls))]
-public class SetControls {
+public class SetControls
+{
 
-  static void Prefix(Player __instance, ref bool jump, ref bool crouch) {
+  static void Prefix(Player __instance, ref bool jump, ref bool crouch)
+  {
     if (__instance != Player.m_localPlayer) return;
     jump = jump && !__instance.IsDebugFlying();
     crouch = crouch && !__instance.IsDebugFlying();
@@ -22,10 +25,13 @@ public class SetControls {
   }
 }
 [HarmonyPatch(typeof(Player), nameof(Player.LateUpdate))]
-public class NoObjectCollision {
-  static void Postfix(Player __instance) {
+public class NoObjectCollision
+{
+  static void Postfix(Player __instance)
+  {
     if (__instance != Player.m_localPlayer) return;
-    if (__instance.IsDebugFlying()) {
+    if (__instance.IsDebugFlying())
+    {
       __instance.m_crouchToggled = false;
       __instance.m_zanim.SetBool(Character.s_onGround, true);
       __instance.m_zanim.SetBool(Character.s_inWater, false);
@@ -35,8 +41,10 @@ public class NoObjectCollision {
       __instance.m_zanim.SetFloat(Character.s_turnSpeed, 0f);
     }
     var noClip = NoClip.PlayerEnabled();
-    if (noClip) {
-      if (!NoClip.TurnedOn && Settings.NoClipClearEnvironment) {
+    if (noClip)
+    {
+      if (!NoClip.TurnedOn && Settings.NoClipClearEnvironment)
+      {
         // Forced environemnts rely on collider check so they won't get deactivated with noclip.
         // Easiest way around this is to just get rid of them.
         EnvMan.instance.SetForceEnvironment("");
@@ -44,20 +52,25 @@ public class NoObjectCollision {
       }
       NoClip.TurnedOn = true;
       __instance.m_collider.enabled = false;
-    } else if (NoClip.TurnedOn) {
+    }
+    else if (NoClip.TurnedOn)
+    {
       NoClip.TurnedOn = false;
       __instance.m_collider.enabled = true;
     }
   }
 }
 [HarmonyPatch(typeof(Character), nameof(Character.UnderWorldCheck))]
-public class NoGroundCollision {
-  static bool Prefix(Character __instance) => !(__instance == Player.m_localPlayer && NoClip.PlayerEnabled());
+public class NoGroundCollision
+{
+  static bool Prefix(Character __instance) => __instance != Player.m_localPlayer || !NoClip.PlayerEnabled();
 }
 
 [HarmonyPatch(typeof(GameCamera), nameof(GameCamera.GetCameraPosition))]
-public class NoCameraCapping {
-  static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+public class NoCameraCapping
+{
+  static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+  {
     return new CodeMatcher(instructions)
          .MatchForward(
              useEnd: false,
@@ -73,6 +86,7 @@ public class NoCameraCapping {
 }
 
 [HarmonyPatch(typeof(GameCamera), nameof(GameCamera.CollideRay2))]
-public class NoCameraClipping {
+public class NoCameraClipping
+{
   static bool Prefix() => !NoClip.CameraEnabled();
 }

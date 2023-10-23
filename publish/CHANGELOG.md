@@ -1,3 +1,6 @@
+- v1.63
+  - Fixes underground check being disabled for creatures, thanks Tristan!
+
 - v1.62
   - Fixed for new patch.
   - Removes admin implementation of commands `resetkeys`, `sleep`, `skiptime` and `genloc` (vanilla supports this now).
