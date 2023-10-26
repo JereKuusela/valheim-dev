@@ -32,11 +32,10 @@ public class FindCommand
       var text = list.Select(p => Format(pos, p)).ToList();
       args.Context.AddString($"Found {count} of {args[1]}. Showing {list.Count} closest:");
       args.Context.AddString(string.Join("\n", text));
-      if (RedirectOutput.Target != null)
-      {
-        var rpc = RedirectOutput.Target;
-        rpc.Invoke(ServerExecution.RPC_Pins, string.Join("|", list.Select(Helper.PrintVectorXZY)));
-      }
+      if (RedirectOutput.Target == null)
+        ServerExecution.RPC_Do_Pins(null, string.Join("|", list.Select(Helper.PrintVectorXZY)));
+      else
+        RedirectOutput.Target.Invoke(ServerExecution.RPC_Pins, string.Join("|", list.Select(Helper.PrintVectorXZY)));
     }, () => ParameterInfo.Ids);
     AutoComplete.Register("find", (int index) =>
     {

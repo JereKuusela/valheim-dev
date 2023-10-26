@@ -62,7 +62,7 @@ public class ServerExecution
       Console.instance.TryRunCommand(command);
     RedirectOutput.Target = null;
   }
-  private static void RPC_Do_Pins(ZRpc rpc, string data)
+  public static void RPC_Do_Pins(ZRpc? rpc, string data)
   {
     var pins = Parse.Split(data, '|').Select(Parse.VectorXZY).ToArray();
     var findPins = Console.instance.m_findPins;

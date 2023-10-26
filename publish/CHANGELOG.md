@@ -1,3 +1,6 @@
+- v1.64
+  - Fixes `find` command not adding pins on single player.
+
 - v1.63
   - Fixes underground check being disabled for creatures, thanks Tristan!
 
