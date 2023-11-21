@@ -54,19 +54,17 @@ public class NoObjectCollision
         }
         Ship.GetLocalShip()?.OnTriggerExit(__instance.m_collider);
         // Water surfaces keep track of the entered player, must be manually removed.
-        var surfaces = UnityEngine.Object.FindObjectsOfType<LiquidSurface>(true);
         var obj = __instance.GetComponent<IWaterInteractable>();
+        var surfaces = UnityEngine.Object.FindObjectsOfType<LiquidSurface>(true);
         foreach (var surface in surfaces)
         {
-          if (surface.m_inWater == null) continue;
-          if (!surface.m_inWater.Contains(obj)) continue;
+          if (surface.m_inWater == null || !surface.m_inWater.Contains(obj)) continue;
           surface.OnTriggerExit(__instance.m_collider);
         }
         var volumes = UnityEngine.Object.FindObjectsOfType<WaterVolume>(true);
         foreach (var volume in volumes)
         {
-          if (volume.m_inWater == null) continue;
-          if (!volume.m_inWater.Contains(obj)) continue;
+          if (volume.m_inWater == null || !volume.m_inWater.Contains(obj)) continue;
           volume.OnTriggerExit(__instance.m_collider);
         }
       }
