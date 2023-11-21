@@ -1,3 +1,6 @@
+- v1.65
+  - Fixes noclip flying not resetting water level.
+
 - v1.64
   - Fixes `find` command not adding pins on single player.
 

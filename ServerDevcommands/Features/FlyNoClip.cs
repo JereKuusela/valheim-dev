@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 using HarmonyLib;
+using UnityEngine;
 namespace ServerDevcommands;
 
 public class NoClip
@@ -43,12 +44,31 @@ public class NoObjectCollision
     var noClip = NoClip.PlayerEnabled();
     if (noClip)
     {
-      if (!NoClip.TurnedOn && Settings.NoClipClearEnvironment)
+      if (!NoClip.TurnedOn)
       {
-        // Forced environemnts rely on collider check so they won't get deactivated with noclip.
-        // Easiest way around this is to just get rid of them.
-        EnvMan.instance.SetForceEnvironment("");
+        if (Settings.NoClipClearEnvironment)
+        {
+          // Forced environemnts rely on collider check so they won't get deactivated with noclip.
+          // Easiest way around this is to just get rid of them.
+          EnvMan.instance.SetForceEnvironment("");
+        }
         Ship.GetLocalShip()?.OnTriggerExit(__instance.m_collider);
+        // Water surfaces keep track of the entered player, must be manually removed.
+        var surfaces = UnityEngine.Object.FindObjectsOfType<LiquidSurface>(true);
+        var obj = __instance.GetComponent<IWaterInteractable>();
+        foreach (var surface in surfaces)
+        {
+          if (surface.m_inWater == null) continue;
+          if (!surface.m_inWater.Contains(obj)) continue;
+          surface.OnTriggerExit(__instance.m_collider);
+        }
+        var volumes = UnityEngine.Object.FindObjectsOfType<WaterVolume>(true);
+        foreach (var volume in volumes)
+        {
+          if (volume.m_inWater == null) continue;
+          if (!volume.m_inWater.Contains(obj)) continue;
+          volume.OnTriggerExit(__instance.m_collider);
+        }
       }
       NoClip.TurnedOn = true;
       __instance.m_collider.enabled = false;
