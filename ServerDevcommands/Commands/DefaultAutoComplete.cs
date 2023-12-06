@@ -114,7 +114,7 @@ public static class DefaultAutoComplete
     AutoComplete.Register("itemset", (int index) =>
     {
       if (index == 0) return Terminal.commands["itemset"].m_tabOptionsFetcher();
-      if (index == 1) return new() { "keep", "clear" };
+      if (index == 1) return ["keep", "clear"];
       return ParameterInfo.None;
     });
     AutoComplete.RegisterEmpty("killall");
@@ -124,7 +124,7 @@ public static class DefaultAutoComplete
     AutoComplete.Register("location", (int index) =>
     {
       if (index == 0) return ParameterInfo.LocationIds;
-      if (index == 1) return new List<string>() { "SAVE" };
+      if (index == 1) return ["SAVE"];
       return ParameterInfo.None;
     });
     AutoComplete.Register("maxfps", (int index) =>
@@ -194,7 +194,7 @@ public static class DefaultAutoComplete
     AutoComplete.RegisterEmpty("tame");
     AutoComplete.Register("test", (int index) =>
     {
-      if (index == 0) return new() { "oldcomfort" };
+      if (index == 0) return ["oldcomfort"];
       return ParameterInfo.None;
     });
     AutoComplete.RegisterEmpty("time");

@@ -7,38 +7,6 @@ namespace ServerDevcommands;
 #pragma warning disable IDE0046
 public static class TerminalUtils
 {
-  // Logic for input:
-  // - Discard any previous commands (separated by ';') so other code doesn't have to consider ';' at all.
-  // - Convert aliases to plain text to get parameter options working.
-  // - Substitutions don't have to be handled (no need to worry about converting back).
-  // - At end of handling, convert plain to aliases and restore discarded commands.
-  private static int Anchor = 0;
-  private static int Focus = 0;
-  public static void ToCurrentInput(Terminal terminal)
-  {
-    var input = terminal.m_input;
-    Anchor = input.selectionAnchorPosition;
-    Focus = input.selectionFocusPosition;
-    MultiCommands.DiscardPreviousCommands(input);
-    Aliasing.RemoveAlias(input);
-  }
-  public static void ToActualInput(Terminal terminal)
-  {
-    var input = terminal.m_input;
-    Aliasing.RestoreAlias(input);
-    MultiCommands.RestorePreviousCommands(input);
-    // Modifies the input and removes selection, so don't set it back.
-    if (ZInput.GetKeyDown(KeyCode.Tab))
-    {
-      input.selectionAnchorPosition = input.text.Length;
-      input.selectionFocusPosition = input.text.Length;
-    }
-    else
-    {
-      input.selectionAnchorPosition = Anchor;
-      input.selectionFocusPosition = Focus;
-    }
-  }
   public static string GetLastWord(Terminal obj) => obj.m_input.text.Split(' ').Last().Split('=').Last().Split(',').Last();
   public static IEnumerable<string> GetPositionalParameters(string[] parameters)
   {
@@ -105,11 +73,6 @@ public static class TerminalUtils
 
   }
   public static bool SkipProcessing(string command) => ParameterInfo.SpecialCommands.Any(cmd => command.StartsWith($"{cmd} ", StringComparison.OrdinalIgnoreCase));
-  public static bool IsComposite(string command)
-  {
-    command = Aliasing.Plain(command);
-    return ParameterInfo.CompositeCommands.Any(cmd => command.StartsWith($"{cmd} ", StringComparison.OrdinalIgnoreCase));
-  }
 
   public static bool IsExecuting = false;
 }
@@ -128,75 +91,25 @@ public class TryRunCommand
     });
     return string.Join(" ", args);
   }
-  static void SplitOff(Terminal __instance, string text)
-  {
-    // Must be split off one by one because later commands can be composite (and shouldn't be split).
-    var split = MultiCommands.Split(text);
-    var first = split.Take(1).First();
-    var second = string.Join(";", split.Skip(1));
-    __instance.TryRunCommand(first);
-    __instance.TryRunCommand(second);
-  }
   static bool Prefix(Terminal __instance, ref string text)
   {
     if (!Settings.ImprovedChat && __instance == Chat.instance) return true;
-    var isComposite = TerminalUtils.IsComposite(text);
     // Some commands (like alias or bind) are expected to be executed as they are.
     if (TerminalUtils.SkipProcessing(text)) return true;
-    // Composites need aliasing for each part.
-    text = string.Join(";", MultiCommands.Split(text).Select(s => Aliasing.Plain(s)));
     // Multiple commands in an alias.
-    if (!isComposite && MultiCommands.IsMulti(text))
+    if (MultiCommands.IsMulti(text))
     {
-      SplitOff(__instance, text);
+      MultiCommands.Handle(__instance, text);
       return false;
     }
-    if (!isComposite && !BindCommand.Valid(text)) return false;
-    if (!isComposite)
-    {
-      text = BindCommand.CleanUp(text);
-      text = CheckLogic(text);
-    }
+    if (!BindCommand.Valid(text)) return false;
+    text = BindCommand.CleanUp(text);
+    text = CheckLogic(text);
     // Server side checks this already at the server side execution.
     if (Player.m_localPlayer && !DisableCommands.CanRun(text)) return false;
-    if (!CommandQueue.CanRun())
-    {
-      CommandQueue.Add(__instance, text);
-      return false;
-    }
     return true;
   }
 }
-
-[HarmonyPatch(typeof(Terminal), nameof(Terminal.UpdateInput))]
-public class PlainInputForAutoComplete
-{
-  static bool Prefix(Terminal __instance)
-  {
-    // Chat doesn't have autocomplete so no need to do anything.
-    if (__instance == Chat.instance) return true;
-    // Safe-guard because actions need different kind of input.
-    if (ZInput.GetKeyDown(KeyCode.Return) && ZInput.GetKeyDown(KeyCode.Tab)) return false;
-    // For execution, keep the actual input so that the history is saved properly.
-    if (ZInput.GetKeyDown(KeyCode.Return)) return true;
-    // Cycling commands doesn't need any modifications.
-    if (ZInput.GetButtonDown("ChatUp") || ZInput.GetButtonDown("ChatDown")) return true;
-    // Copy paste thing requires the actual input.
-    if (ZInput.GetKey(KeyCode.LeftControl) || ZInput.GetKey(KeyCode.RightControl)) return true;
-    TerminalUtils.ToCurrentInput(__instance);
-    return true;
-  }
-  static void Postfix(Terminal __instance)
-  {
-    // Chat doesn't have autocomplete so no need to do anything.
-    if (__instance == Chat.instance) return;
-    // Same logic as on Prefix.
-    if (ZInput.GetKeyDown(KeyCode.Return) || ZInput.GetButtonDown("ChatUp") || ZInput.GetButtonDown("ChatDown")) return;
-    if (ZInput.GetKey(KeyCode.LeftControl) || ZInput.GetKey(KeyCode.RightControl)) return;
-    TerminalUtils.ToActualInput(__instance);
-  }
-}
-
 
 ///<summary>Needed to temporarily disable better autocomplete to provide case insensitivity for the first parameter.</summary>
 [HarmonyPatch(typeof(Terminal.ConsoleCommand), nameof(Terminal.ConsoleCommand.RunAction))]

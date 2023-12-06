@@ -12,7 +12,7 @@ public class ServerDevcommands : BaseUnityPlugin
 {
   public const string GUID = "server_devcommands";
   public const string NAME = "Server Devcommands";
-  public const string VERSION = "1.66";
+  public const string VERSION = "1.67";
   public const string COMFY_GIZMO_GUID = "com.rolopogo.gizmo.comfy";
   public const string RELOADED_GIZMO_GUID = "m3to.mods.GizmoReloaded";
   private static ManualLogSource? Logs;
@@ -46,7 +46,7 @@ public class ServerDevcommands : BaseUnityPlugin
 
   public void LateUpdate()
   {
-    CommandQueue.TickQueue(Time.deltaTime);
+    MultiCommands.Execute(Time.deltaTime);
     MouseWheelBinding.Execute(Input.GetAxis("Mouse ScrollWheel"));
     if (AliasManager.ToBeSaved) AliasManager.ToFile();
     if (BindManager.ToBeSaved) BindManager.ToFile();
@@ -120,6 +120,7 @@ public class SetCommands
     new PullCommand();
     new ResetDungeonCommand();
     new TeleportCommand();
+    new SearchComponentCommand();
     DefaultAutoComplete.Register();
     Settings.RegisterCommands();
   }

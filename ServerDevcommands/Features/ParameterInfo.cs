@@ -6,20 +6,17 @@ namespace ServerDevcommands;
 ///<summary>Helper class for parameter options/info. The main purpose is to provide some caching to avoid performance issues.</summary>
 public partial class ParameterInfo
 {
-  public static HashSet<string> SpecialCommands = new() {
+  public static HashSet<string> SpecialCommands = [
     "bind",
     "alias"
-  };
-  public static HashSet<string> CompositeCommands = new()
-  {
-  };
-  public static HashSet<string> SpecialCommands1 = new() {
+  ];
+  public static HashSet<string> SpecialCommands1 = [
     "server"
-  };
-  public static HashSet<string> SpecialCommands2 = new() {
+  ];
+  public static HashSet<string> SpecialCommands2 = [
     "bind",
     "alias"
-  };
+  ];
   public static void AddSpecialCommand1(string command)
   {
     SpecialCommands.Add(command);
@@ -32,7 +29,7 @@ public partial class ParameterInfo
   }
   public static void AddCompositeCommand(string command)
   {
-    CompositeCommands.Add(command);
+    // Backwards compatibility.
   }
   private static readonly List<string> globalKeys = Enum.GetNames(typeof(GlobalKeys)).Select(s => s.ToLowerInvariant()).ToList();
   public static List<string> GlobalKeys
@@ -42,7 +39,7 @@ public partial class ParameterInfo
       return globalKeys;
     }
   }
-  private static List<string> ids = new();
+  private static List<string> ids = [];
   public static List<string> Ids
   {
     get
@@ -55,7 +52,7 @@ public partial class ParameterInfo
       return ids;
     }
   }
-  private static List<string> environments = new();
+  private static List<string> environments = [];
   public static List<string> Environments
   {
     get
@@ -68,7 +65,7 @@ public partial class ParameterInfo
       return environments;
     }
   }
-  private static readonly List<string> colors = new() {
+  private static readonly List<string> colors = [
     "#rrggbbaa",
     "aqua",
     "black",
@@ -92,7 +89,7 @@ public partial class ParameterInfo
     "teal",
     "white",
     "yellow"
-  };
+  ];
   public static List<string> Colors
   {
     get
@@ -100,7 +97,7 @@ public partial class ParameterInfo
       return colors;
     }
   }
-  private static List<string> objectIds = new();
+  private static List<string> objectIds = [];
   public static List<string> ObjectIds
   {
     get
@@ -126,7 +123,7 @@ public partial class ParameterInfo
       return RandEventSystem.instance.m_events.Select(ev => ev.m_name).ToList();
     }
   }
-  private static List<string> statusEffects = new();
+  private static List<string> statusEffects = [];
   public static List<string> StatusEffects
   {
     get
@@ -143,7 +140,7 @@ public partial class ParameterInfo
       return Enum.GetNames(typeof(EffectArea.Type)).ToList();
     }
   }
-  private static List<string> itemIds = new();
+  private static List<string> itemIds = [];
   public static List<string> ItemIds
   {
     get
@@ -159,7 +156,7 @@ public partial class ParameterInfo
     {
       if (ZNet.instance)
         return ZNet.instance.m_players.Select(player => player.m_name).ToList();
-      return new();
+      return [];
     }
   }
   public static List<string> PublicPlayerNames
@@ -168,10 +165,10 @@ public partial class ParameterInfo
     {
       if (ZNet.instance)
         return ZNet.instance.m_players.Where(player => player.m_publicPosition).Select(player => player.m_name).ToList();
-      return new();
+      return [];
     }
   }
-  private static List<string> hairs = new();
+  private static List<string> hairs = [];
   public static List<string> Hairs
   {
     get
@@ -182,7 +179,7 @@ public partial class ParameterInfo
       return hairs;
     }
   }
-  private static List<string> beards = new();
+  private static List<string> beards = [];
   public static List<string> Beards
   {
     get
@@ -193,7 +190,7 @@ public partial class ParameterInfo
       return beards;
     }
   }
-  private static List<string> keyCodes = new();
+  private static List<string> keyCodes = [];
   public static List<string> KeyCodes
   {
     get
@@ -207,7 +204,7 @@ public partial class ParameterInfo
       return keyCodes;
     }
   }
-  private static List<string> keyCodesWithNegative = new();
+  private static List<string> keyCodesWithNegative = [];
   public static List<string> KeyCodesWithNegative
   {
     get
@@ -229,9 +226,9 @@ public partial class ParameterInfo
     }
   }
 
-  public static List<string> Origin = new() { "player", "object", "world" };
-  public static List<string> Create(string value) => new() { $"?{value}" };
-  public static List<string> Error(string value) => new() { $"?<color=red>Error:</color> {value}" };
+  public static List<string> Origin = ["player", "object", "world"];
+  public static List<string> Create(string value) => [$"?{value}"];
+  public static List<string> Error(string value) => [$"?<color=red>Error:</color> {value}"];
   public static List<string> Create(string name, string value, string description) => Create($"{name}=<color=yellow>{value}</color> | {description}");
   public static List<string> CreateWithMinMax(string name, string value, string description) => Create($"{name}=<color=yellow>{value}</color> or {name}=<color=yellow>min-max</color> | {description}");
   public static List<string> Create(string values, string description) => Create($"{values} | {description}");

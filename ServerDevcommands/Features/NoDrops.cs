@@ -9,7 +9,7 @@ public class GenerateDropList
   {
     if (Settings.NoDrops)
     {
-      __result = new();
+      __result = [];
       return false;
     }
     return true;

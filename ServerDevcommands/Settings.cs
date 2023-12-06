@@ -121,7 +121,7 @@ public static class Settings
   public static string AutoExecDevOff => configAutoExecDevOff.Value;
   public static ConfigEntry<bool> configCommandDescriptions;
   public static bool CommandDescriptions => configCommandDescriptions.Value;
-  private static Dictionary<string, string> Aliases = new();
+  private static Dictionary<string, string> Aliases = [];
   public static string[] AliasKeys = new string[0];
 
   private static void ParseAliases(string value)
@@ -291,7 +291,7 @@ public static class Settings
   }
 
 
-  public static List<string> Options = new() {
+  public static List<string> Options = [
     "access_private_chests",
     "access_warded_areas",
     "map_coordinates",
@@ -349,23 +349,23 @@ public static class Settings
     "players_format",
     "command_log_format",
     "minimap_format",
-  };
+  ];
   private static string State(bool value) => value ? "enabled" : "disabled";
   private static string Flag(bool value) => value ? "Removed" : "Added";
 
-  private static readonly HashSet<string> Truthies = new() {
+  private static readonly HashSet<string> Truthies = [
     "1",
     "true",
     "yes",
     "on"
-  };
+  ];
   private static bool IsTruthy(string value) => Truthies.Contains(value);
-  private static readonly HashSet<string> Falsies = new() {
+  private static readonly HashSet<string> Falsies = [
     "0",
     "false",
     "no",
     "off"
-  };
+  ];
   private static bool IsFalsy(string value) => Falsies.Contains(value);
   private static void Toggle(Terminal context, ConfigEntry<bool> setting, string name, string value, bool reverse = false)
   {

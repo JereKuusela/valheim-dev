@@ -1,3 +1,7 @@
+- v1.67
+  - Adds a new command `search_component` for debugging purposes.
+  - Changes the timer from `wait` command to be separate for each command.
+
 - v1.66
   - Adds a new command `tp` to teleport players.
   - Fixes Ctrl+A not working in the console.

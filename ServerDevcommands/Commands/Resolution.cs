@@ -45,7 +45,7 @@ public class ResolutionCommand
     });
     AutoComplete.Register("resolution", (int index) =>
     {
-      if (index == 0) return new() { "exclusive", "full", "max", "window" };
+      if (index == 0) return ["exclusive", "full", "max", "window"];
       if (index == 1) return ParameterInfo.Create("Width", "a positive integer (max supported if not given)");
       if (index == 2) return ParameterInfo.Create("Height", "a positive integer (max supported if not given)");
       if (index == 3) return ParameterInfo.Create("Refresh rate", "a positive integer (max supported if not given)");

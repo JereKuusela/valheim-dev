@@ -1,43 +1,60 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace ServerDevcommands;
-///<summary>Code related to handling multiple commands per line.</summary>
-public static class MultiCommands
+
+public class MultiCommands(Terminal terminal, string row)
 {
-  private static string[]? PreviousCommands = null;
-  private static int CurrentCommand = -1;
-  private static int DiscardCaretDelta = 0;
-  ///<summary>Discarding previous commands makes handling much simpler.</summary>
-  public static void DiscardPreviousCommands(Fishlabs.GuiInputField input)
-  {
-    if (!Settings.MultiCommand) return;
-    PreviousCommands = input.text.Split(';');
-    DiscardCaretDelta = input.caretPosition;
-    for (CurrentCommand = 0; CurrentCommand < PreviousCommands.Length; CurrentCommand++)
-    {
-      var command = PreviousCommands[CurrentCommand];
-      if (input.caretPosition > command.Length)
-        input.caretPosition -= command.Length;
-      else break;
-      // ';" character.
-      input.caretPosition--;
-    }
-    DiscardCaretDelta -= input.caretPosition;
-    if (CurrentCommand >= PreviousCommands.Length)
-    {
-      PreviousCommands = null;
-      CurrentCommand = -1;
-    }
-    else
-      input.text = PreviousCommands[CurrentCommand];
-  }
-  public static void RestorePreviousCommands(Fishlabs.GuiInputField input)
-  {
-    if (PreviousCommands == null) return;
-    PreviousCommands[CurrentCommand] = input.text;
-    input.text = string.Join(";", PreviousCommands);
-    if (DiscardCaretDelta != 0) input.caretPosition += DiscardCaretDelta;
-    PreviousCommands = null;
-    CurrentCommand = -1;
-  }
   public static bool IsMulti(string text) => Settings.MultiCommand && text.Contains(";");
-  public static string[] Split(string text) => text.Split(';');
+  private static string[] Split(string text) => text.Split(';').Select(s => s.Trim()).ToArray();
+  private static readonly List<MultiCommands> Groups = [];
+  public static void Handle(Terminal terminal, string row)
+  {
+    MultiCommands cmd = new(terminal, row);
+    cmd.Run(0);
+    if (cmd.IsDone()) return;
+    Groups.Add(cmd);
+  }
+  public static void Execute(float dt)
+  {
+    for (var i = 0; i < Groups.Count; i++)
+    {
+      Groups[i].Run(dt);
+      if (Groups[i].IsDone())
+      {
+        Groups.RemoveAt(i);
+        i--;
+      }
+    }
+  }
+
+
+  private readonly Queue<string> Commands = new(Split(row).Select(s => Aliasing.Plain(s)));
+  private readonly Terminal Terminal = terminal;
+  private float WaitTimer = 0f;
+
+  public bool IsDone() => Commands.Count() == 0;
+
+  public void Run(float dt)
+  {
+    if (WaitTimer > -0.01)
+      WaitTimer -= dt;
+    // Another check to execute at the same frame as the timer is done.
+    if (WaitTimer > -0.01)
+      return;
+    while (Commands.Count() > 0)
+    {
+      var command = Commands.Dequeue();
+      if (command.StartsWith("wait ", StringComparison.InvariantCultureIgnoreCase))
+      {
+        var args = command.Split(' ');
+        if (args.Length < 2) continue;
+        WaitTimer = float.Parse(args[1]) / 1000f;
+        // Might need some tweaks to take in account frame time.
+        break;
+      }
+      Terminal.TryRunCommand(command);
+    }
+  }
 }
