@@ -1,3 +1,7 @@
+- v1.66
+  - Adds a new command `tp` to teleport players.
+  - Fixes Ctrl+A not working in the console.
+
 - v1.65
   - Fixes noclip flying not resetting water level.
 

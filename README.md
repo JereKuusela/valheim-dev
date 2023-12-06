@@ -148,6 +148,12 @@ Examples:
 - `server [command]` executes given command on the server.
   - `server dev_config disable_command event` disables usage of `event` command for non-root users.
   - `server dev_config disable_events 1` disables random events.
+- `tp [player1,player2,...] [x,z,y/player] [rotY=0] [fast=false]` teleports players.
+  - Player name, character id or Steam/Playfab ID can be used.
+  - Wildcard * can be used on player name for partial matches. All found players are teleported.
+  - Target y coordinate is optional. If not given, teleports to the ground level.
+  - For close teleports, you can put `true` at end of command to teleport instantly.
+  - For longer teleports, this may cause issues because the world is not loaded yet.
 - `unbind [keycode] [amount=0] [silent]` allows specifying how many binds are removed. Also prints removed binds, unless the third parameter is given.
   - `unbind wheel` removes all binds from the mouse wheel.
   - `unbind wheel 0` removes all binds from the mouse wheel.

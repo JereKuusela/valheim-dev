@@ -181,6 +181,8 @@ public class PlainInputForAutoComplete
     if (ZInput.GetKeyDown(KeyCode.Return)) return true;
     // Cycling commands doesn't need any modifications.
     if (ZInput.GetButtonDown("ChatUp") || ZInput.GetButtonDown("ChatDown")) return true;
+    // Copy paste thing requires the actual input.
+    if (ZInput.GetKey(KeyCode.LeftControl) || ZInput.GetKey(KeyCode.RightControl)) return true;
     TerminalUtils.ToCurrentInput(__instance);
     return true;
   }
@@ -190,6 +192,7 @@ public class PlainInputForAutoComplete
     if (__instance == Chat.instance) return;
     // Same logic as on Prefix.
     if (ZInput.GetKeyDown(KeyCode.Return) || ZInput.GetButtonDown("ChatUp") || ZInput.GetButtonDown("ChatDown")) return;
+    if (ZInput.GetKey(KeyCode.LeftControl) || ZInput.GetKey(KeyCode.RightControl)) return;
     TerminalUtils.ToActualInput(__instance);
   }
 }
