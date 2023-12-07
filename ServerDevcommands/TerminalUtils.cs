@@ -80,6 +80,25 @@ public static class TerminalUtils
 [HarmonyPatch(typeof(Terminal), nameof(Terminal.TryRunCommand))]
 public class TryRunCommand
 {
+  static bool Prefix(Terminal __instance, ref string text)
+  {
+    if (!Settings.ImprovedChat && __instance == Chat.instance) return true;
+    // Some commands (like alias or bind) are expected to be executed as they are.
+    if (TerminalUtils.SkipProcessing(text)) return true;
+    var commands = MultiCommands.Split(text).Select(s => Aliasing.Plain(s)).ToArray();
+    if (commands.Length > 1)
+    {
+      MultiCommands.Handle(__instance, commands);
+      return false;
+    }
+    text = commands[0];
+    if (!BindCommand.Valid(text)) return false;
+    text = BindCommand.CleanUp(text);
+    text = CheckLogic(text);
+    // Server side checks this already at the server side execution.
+    if (Player.m_localPlayer && !DisableCommands.CanRun(text)) return false;
+    return true;
+  }
   static string CheckLogic(string text)
   {
     var args = text.Split(' ').Select(arg =>
@@ -90,24 +109,6 @@ public class TryRunCommand
       return $"{split[0]}={Parse.Logic(split[1])}";
     });
     return string.Join(" ", args);
-  }
-  static bool Prefix(Terminal __instance, ref string text)
-  {
-    if (!Settings.ImprovedChat && __instance == Chat.instance) return true;
-    // Some commands (like alias or bind) are expected to be executed as they are.
-    if (TerminalUtils.SkipProcessing(text)) return true;
-    // Multiple commands in an alias.
-    if (MultiCommands.IsMulti(text))
-    {
-      MultiCommands.Handle(__instance, text);
-      return false;
-    }
-    if (!BindCommand.Valid(text)) return false;
-    text = BindCommand.CleanUp(text);
-    text = CheckLogic(text);
-    // Server side checks this already at the server side execution.
-    if (Player.m_localPlayer && !DisableCommands.CanRun(text)) return false;
-    return true;
   }
 }
 

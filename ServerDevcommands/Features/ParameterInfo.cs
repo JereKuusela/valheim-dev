@@ -155,7 +155,7 @@ public partial class ParameterInfo
     get
     {
       if (ZNet.instance)
-        return ZNet.instance.m_players.Select(player => player.m_name).ToList();
+        return ZNet.instance.m_players.Select(player => player.m_name).Append("self").ToList();
       return [];
     }
   }

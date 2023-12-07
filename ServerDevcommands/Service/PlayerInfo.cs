@@ -31,13 +31,13 @@ public class PlayerInfo
     Rot = player.transform.rotation;
     PeerId = ZNet.GetUID();
     ZDOID = player.GetZDOID();
-    HostId = "server";
+    HostId = "self";
   }
 
   public static List<PlayerInfo> FindPlayers(string[] args)
   {
     List<PlayerInfo> players = ZNet.instance.GetPeers().Select(peer => new PlayerInfo(peer)).ToList();
-    if (ZNet.instance.IsServer() && !ZNet.instance.IsDedicated() && Player.m_localPlayer)
+    if (Player.m_localPlayer)
       players.Add(new(Player.m_localPlayer));
 
     Dictionary<long, PlayerInfo> foundPlayers = [];
@@ -60,6 +60,8 @@ public class PlayerInfo
           foundPlayers[player.PeerId] = player;
       }
     }
-    return [.. foundPlayers.Values];
+    List<PlayerInfo> ret = [.. foundPlayers.Values];
+    if (ret.Count == 0) throw new InvalidOperationException($"No target player found with id/name '{string.Join(",", args)}'.");
+    return ret;
   }
 }

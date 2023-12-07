@@ -4,14 +4,13 @@ using System.Linq;
 
 namespace ServerDevcommands;
 
-public class MultiCommands(Terminal terminal, string row)
+public class MultiCommands(Terminal terminal, string[] commands)
 {
-  public static bool IsMulti(string text) => Settings.MultiCommand && text.Contains(";");
-  private static string[] Split(string text) => text.Split(';').Select(s => s.Trim()).ToArray();
+  public static string[] Split(string text) => Settings.MultiCommand ? text.Split(';').Select(s => s.Trim()).ToArray() : [text];
   private static readonly List<MultiCommands> Groups = [];
-  public static void Handle(Terminal terminal, string row)
+  public static void Handle(Terminal terminal, string[] commands)
   {
-    MultiCommands cmd = new(terminal, row);
+    MultiCommands cmd = new(terminal, commands);
     cmd.Run(0);
     if (cmd.IsDone()) return;
     Groups.Add(cmd);
@@ -30,7 +29,7 @@ public class MultiCommands(Terminal terminal, string row)
   }
 
 
-  private readonly Queue<string> Commands = new(Split(row).Select(s => Aliasing.Plain(s)));
+  private readonly Queue<string> Commands = new(commands);
   private readonly Terminal Terminal = terminal;
   private float WaitTimer = 0f;
 

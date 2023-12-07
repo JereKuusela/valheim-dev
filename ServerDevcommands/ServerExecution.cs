@@ -18,6 +18,7 @@ public class RedirectOutput
   }
 }
 
+// Base game has a way to execute commands on the server, but there is no admin check on it.
 [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_PeerInfo))]
 public class ServerExecution
 {
