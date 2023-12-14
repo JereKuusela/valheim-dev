@@ -11,27 +11,31 @@ public class PlayerInfo
   public string Name;
   public Vector3 Pos;
   public Quaternion Rot;
-  public long PeerId;
+  public long Character;
   public string HostId;
   public ZDOID ZDOID;
   public PlayerInfo(ZNetPeer peer)
   {
+    HostId = peer.m_rpc.GetSocket().GetHostName();
     Name = peer.m_playerName;
     Pos = peer.m_refPos;
-    Rot = Quaternion.identity;
-    PeerId = peer.m_uid;
     ZDOID = peer.m_characterID;
-    HostId = peer.m_rpc.GetSocket().GetHostName();
-
+    var zdo = ZDOMan.instance.GetZDO(peer.m_characterID);
+    if (zdo != null)
+    {
+      Character = zdo.GetLong(ZDOVars.s_playerID, 0L);
+      Pos = zdo.m_position;
+      Rot = zdo.GetRotation();
+    }
   }
   public PlayerInfo(Player player)
   {
+    HostId = "self";
     Name = player.GetPlayerName();
+    ZDOID = player.GetZDOID();
+    Character = player.GetPlayerID();
     Pos = player.transform.position;
     Rot = player.transform.rotation;
-    PeerId = ZNet.GetUID();
-    ZDOID = player.GetZDOID();
-    HostId = "self";
   }
 
   public static List<PlayerInfo> FindPlayers(string[] args)
@@ -49,15 +53,15 @@ public class PlayerInfo
       {
         var name = player.Name.ToLowerInvariant();
         if (player.HostId == argu)
-          foundPlayers[player.PeerId] = player;
-        else if (player.PeerId.ToString() == argu || name == arg)
-          foundPlayers[player.PeerId] = player;
+          foundPlayers[player.Character] = player;
+        else if (player.Character.ToString() == argu || name == arg)
+          foundPlayers[player.Character] = player;
         else if (arg[0] == '*' && arg[arg.Length - 1] == '*' && name.Contains(arg.Substring(1, arg.Length - 2)))
-          foundPlayers[player.PeerId] = player;
+          foundPlayers[player.Character] = player;
         else if (arg[0] == '*' && player.Name.EndsWith(arg.Substring(1), StringComparison.OrdinalIgnoreCase))
-          foundPlayers[player.PeerId] = player;
+          foundPlayers[player.Character] = player;
         else if (arg[arg.Length - 1] == '*' && player.Name.StartsWith(arg.Substring(0, arg.Length - 1), StringComparison.OrdinalIgnoreCase))
-          foundPlayers[player.PeerId] = player;
+          foundPlayers[player.Character] = player;
       }
     }
     List<PlayerInfo> ret = [.. foundPlayers.Values];
