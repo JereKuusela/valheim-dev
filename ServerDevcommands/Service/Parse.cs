@@ -169,7 +169,7 @@ public static class Parse
     return new(min, max);
   }
   ///<summary>Parses XZY vector starting at zero index. Zero is used for missing values.</summary>
-  public static Vector3 VectorXZY(string arg) => VectorXZY(Parse.Split(arg), 0, Vector3.zero);
+  public static Vector3 VectorXZY(string arg) => VectorXZY(Split(arg), 0, Vector3.zero);
   public static Vector3 VectorXZY(string[] args) => VectorXZY(args, 0, Vector3.zero);
   ///<summary>Parses XZY vector starting at zero index. Default values is used for missing values.</summary>
   public static Vector3 VectorXZY(string[] args, Vector3 defaultValue) => VectorXZY(args, 0, defaultValue);
@@ -183,6 +183,31 @@ public static class Parse
     vector.y = Float(args, index + 2, defaultValue.y);
     vector.z = Float(args, index + 1, defaultValue.z);
     return vector;
+  }
+  public static Vector3 VectorZYX(string arg) => VectorZYX(Split(arg), 0, Vector3.zero);
+  public static Vector3 VectorZYX(string[] args, int index, Vector3 defaultValue)
+  {
+    var vector = Vector3.zero;
+    vector.x = Float(args, index + 2, defaultValue.z);
+    vector.y = Float(args, index + 1, defaultValue.y);
+    vector.z = Float(args, index, defaultValue.x);
+    return vector;
+  }
+  public static Range<Vector3> VectorZYXRange(string arg, Vector3 defaultValue)
+  {
+    var parts = Split(arg);
+    var x = FloatRange(parts, 2, defaultValue.x);
+    var y = FloatRange(parts, 1, defaultValue.y);
+    var z = FloatRange(parts, 0, defaultValue.z);
+    return ToVectorRange(x, y, z);
+  }
+  public static Range<Vector3Int> VectorIntZYXRange(string arg, Vector3Int defaultValue)
+  {
+    var parts = Split(arg);
+    var x = IntRange(parts, 2, defaultValue.x);
+    var y = IntRange(parts, 1, defaultValue.y);
+    var z = IntRange(parts, 0, defaultValue.z);
+    return ToVectorRange(x, y, z);
   }
   public static Range<Vector3> VectorXZYRange(string arg, Vector3 defaultValue)
   {
@@ -221,6 +246,13 @@ public static class Parse
     Vector3 max = new(x.Max, y.Max, z.Max);
     return new(min, max);
   }
+  private static Range<Vector3Int> ToVectorRange(Range<int> x, Range<int> y, Range<int> z)
+  {
+    Vector3Int min = new(x.Min, y.Min, z.Min);
+    Vector3Int max = new(x.Max, y.Max, z.Max);
+    return new(min, max);
+  }
+  public static Vector3 VectorYXZ(string arg) => VectorYXZ(Split(arg), 0, Vector3.zero);
   ///<summary>Parses YXZ vector starting at zero index. Zero is used for missing values.</summary>
   public static Vector3 VectorYXZ(string[] args) => VectorYXZ(args, 0, Vector3.zero);
   ///<summary>Parses YXZ vector starting at zero index. Default values is used for missing values.</summary>
@@ -303,4 +335,19 @@ public static class Parse
     var truth = Boolean(condition) ?? false;
     return truth ? split[0] : split[1];
   }
+
+  public static float Multiplier(string value)
+  {
+    var multiplier = 1f;
+    var split = value.Split('*');
+    foreach (var str in split) multiplier *= Float(str, 1f);
+    return multiplier;
+  }
+  public static float TryMultiplier(string[] args, int index, float defaultValue = 1f)
+  {
+    if (args.Length <= index) return defaultValue;
+    return Multiplier(args[index]);
+  }
+  public static float Direction(string[] args, int index) => args.Length <= index ? 1f : Direction(args[index]);
+  public static float Direction(string arg) => Float(arg, 1) > 0 ? 1f : -1f;
 }

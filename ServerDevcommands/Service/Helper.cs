@@ -119,9 +119,9 @@ public abstract class Helper
   {
     if (args.Length < amount) throw new InvalidOperationException(message);
   }
-  public static void Command(string name, string description, Terminal.ConsoleEvent action, Terminal.ConsoleOptionsFetcher? fetcher = null)
+  public static void Command(string name, string description, Terminal.ConsoleEvent action)
   {
-    new Terminal.ConsoleCommand(name, description, Catch(action), isCheat: true, isNetwork: true, optionsFetcher: fetcher);
+    new Terminal.ConsoleCommand(name, description, Catch(action), isCheat: true, isNetwork: true);
   }
   public static Terminal.ConsoleEvent Catch(Terminal.ConsoleEvent action) =>
     (args) =>
@@ -135,9 +135,9 @@ public abstract class Helper
         AddError(args.Context, e.Message);
       }
     };
-  public static void Command(string name, string description, Terminal.ConsoleEventFailable action, Terminal.ConsoleOptionsFetcher? fetcher = null)
+  public static void Command(string name, string description, Terminal.ConsoleEventFailable action)
   {
-    new Terminal.ConsoleCommand(name, description, Catch(action), isCheat: true, isNetwork: true, optionsFetcher: fetcher);
+    new Terminal.ConsoleCommand(name, description, Catch(action), isCheat: true, isNetwork: true);
   }
   public static Terminal.ConsoleEventFailable Catch(Terminal.ConsoleEventFailable action) =>
     (args) =>

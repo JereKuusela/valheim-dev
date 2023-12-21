@@ -86,7 +86,7 @@ public class InventoryCommand
       }
       else throw new InvalidOperationException("Invalid operation. Use level, repair or upgrade.");
       inventory.Changed();
-    }, () => Operations);
+    });
     AutoComplete.Register("inventory", (int index) =>
     {
       if (index == 0) return Operations;

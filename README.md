@@ -56,12 +56,6 @@ The same system also works for rebinding the debug flying. For example:
 
 - `devconfig fly_down_key space,leftcontrol`: Changes to fly down when both left control and space are pressed.
 
-### Bind tagging
-
-Binds can be tagged with `tag=[name]` parameter. The tag can be used to directly `unbind` these commands.
-
-This is mostly indended to be used by other mods.
-
 ## Command aliasing
 
 New commands can be created to shorten command names or to set parameter values.
@@ -159,7 +153,6 @@ Examples:
   - `unbind wheel 0` removes all binds from the mouse wheel.
   - `unbind wheel 1` removes the last bind from the mouse wheel.
   - `unbind wheel 3` removes the last 3 binds from the mouse wheel.
-- `unbind [tag] [silent]` removes all binds with a given tag. Also prints removed binds, unless the third parameter is given.
 - `undo` reverts an action added to the undo/redo manager.
 - `wait [milliseconds]`delays the execution of the next commands.
 - `wind` prints the current wind strength.

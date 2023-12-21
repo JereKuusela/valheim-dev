@@ -2,12 +2,16 @@ using System.Linq;
 
 namespace ServerDevcommands;
 ///<summary>Adds output when used without the parameter.</summary>
-public class EnvCommand {
-  public EnvCommand() {
-    Helper.Command("env", "[value] - Prints or overrides the environment.", (args) => {
+public class EnvCommand
+{
+  public EnvCommand()
+  {
+    Helper.Command("env", "[value] - Prints or overrides the environment.", (args) =>
+    {
       var em = EnvMan.instance;
       if (!em) return;
-      if (args.Length < 2) {
+      if (args.Length < 2)
+      {
         Helper.AddMessage(args.Context, $"Environment: {em.GetCurrentEnvironment()}.");
         return;
       }
@@ -16,7 +20,7 @@ public class EnvCommand {
         text = text.Replace("_", " ");
       Helper.AddMessage(args.Context, $"Setting debug environment: {text}");
       em.m_debugEnv = text;
-    }, () => ParameterInfo.Environments);
-    AutoComplete.RegisterDefault("env");
+    });
+    AutoComplete.Register("env", (int index) => index == 0 ? ParameterInfo.Environments : ParameterInfo.None);
   }
 }

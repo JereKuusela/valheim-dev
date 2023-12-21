@@ -30,14 +30,14 @@ public class AliasManager
       if (File.Exists(FilePath)) File.Delete(FilePath);
       return;
     }
-    var yaml = Data.Serializer().Serialize(data);
+    var yaml = Yaml.Serializer().Serialize(data);
     File.WriteAllText(FilePath, yaml);
   }
   public static void FromFile()
   {
     try
     {
-      var data = Data.Read(FilePath, Data.Deserialize<Dictionary<string, string>>);
+      var data = Yaml.Read(FilePath, Yaml.Deserialize<Dictionary<string, string>>);
       Settings.AddAlias(data);
       ServerDevcommands.Log.LogInfo($"Reloading {data.Count} alias data.");
     }
@@ -48,6 +48,6 @@ public class AliasManager
   }
   public static void SetupWatcher()
   {
-    Data.SetupWatcher(FileName, FromFile);
+    Yaml.SetupWatcher(FileName, FromFile);
   }
 }

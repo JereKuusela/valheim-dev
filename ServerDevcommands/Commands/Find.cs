@@ -36,7 +36,7 @@ public class FindCommand
         ServerExecution.RPC_Do_Pins(null, string.Join("|", list.Select(Helper.PrintVectorXZY)));
       else
         RedirectOutput.Target.Invoke(ServerExecution.RPC_Pins, string.Join("|", list.Select(Helper.PrintVectorXZY)));
-    }, () => ParameterInfo.Ids);
+    });
     AutoComplete.Register("find", (int index) =>
     {
       if (index == 0) return ParameterInfo.Ids;

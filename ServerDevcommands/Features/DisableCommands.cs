@@ -14,7 +14,7 @@ public class DisableCommands
   {
     if (rpc != null && rpc.m_socket != null && RootUsers.Contains(rpc.m_socket.GetHostName())) return true;
     if (DisallowedCommands.Contains(command.ToLower())) return false;
-    if (DisallowedCommands.Any(black => command.StartsWith((black + " "), StringComparison.OrdinalIgnoreCase))) return false;
+    if (DisallowedCommands.Any(black => command.StartsWith(black + " ", StringComparison.OrdinalIgnoreCase))) return false;
     return true;
   }
 

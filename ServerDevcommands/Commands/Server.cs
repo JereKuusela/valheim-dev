@@ -14,7 +14,7 @@ public class ServerCommand
         ServerExecution.Send(args);
       }
       else original.action(args);
-    }, original.m_tabOptionsFetcher);
+    });
   }
   public ServerCommand()
   {

@@ -170,7 +170,13 @@ public class GetTabOptionsWithImprovedAutoComplete
       while (parameters.Length > 2 && ParameterInfo.SpecialCommands2.Contains(parameters.First()))
         parameters = parameters.Skip(2).ToArray();
     }
-    if (parameters.Length < 2) __result = DisableCommands.AllowedCommands;
+    if (parameters.Length < 2)
+    {
+      if (text.StartsWith("_", StringComparison.OrdinalIgnoreCase))
+        __result = DisableCommands.AllowedCommands.Where(cmd => cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
+      else
+        __result = DisableCommands.AllowedCommands.Where(cmd => !cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
+    }
     else __result = GetOptions(parameters);
     return false;
   }
@@ -179,8 +185,15 @@ public class GetTabOptionsWithImprovedAutoComplete
 [HarmonyPatch(typeof(Terminal), nameof(Terminal.tabCycle))]
 public class TabCycleWithImprovedAutoComplete
 {
-  static void Prefix(Terminal __instance, ref List<string> options, ref string word)
+  static void Prefix(Terminal __instance, ref List<string> options, ref string word, bool usePrefix)
   {
+    if (usePrefix)
+    {
+      if (word.StartsWith("_", StringComparison.OrdinalIgnoreCase))
+        options = options.Where(cmd => cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
+      else
+        options = options.Where(cmd => !cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
+    }
     if (!Settings.ImprovedAutoComplete || __instance == Chat.instance) return;
     // Auto complete is parameter specific, so need to use the current word instead of always using the first.
     word = TerminalUtils.GetLastWord(__instance);
@@ -200,8 +213,15 @@ public class UpdateSearchWithImprovedAutoComplete
     word = TerminalUtils.GetLastWord(__instance);
 
   }
-  static void Postfix(Terminal __instance, List<string> options, ref string word)
+  static void Postfix(Terminal __instance, List<string> options, ref string word, bool usePrefix)
   {
+    if (usePrefix)
+    {
+      if (word.StartsWith("_", StringComparison.OrdinalIgnoreCase))
+        options = options.Where(cmd => cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
+      else
+        options = options.Where(cmd => !cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
+    }
     if (!Settings.ImprovedAutoComplete || options == null || !__instance.m_search || __instance == Chat.instance) return;
     if (Settings.CommandDescriptions && options == __instance.m_commandList)
     {

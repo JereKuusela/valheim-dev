@@ -1,3 +1,7 @@
+- v1.68
+  - Internal changes for new Infinity Hammer and Infinity Tools mods.
+  - Removes the bind tagging system as obsolete.
+
 - v1.67
   - Adds a new command `search_component` for debugging purposes.
   - Changes the timer from `wait` command to be separate for each command.

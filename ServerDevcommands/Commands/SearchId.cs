@@ -36,7 +36,7 @@ public class SearchIdCommand
         Array.Copy(objects, i, buffer, 0, bufferSize);
         args.Context.AddString(string.Join(", ", buffer));
       }
-    }, () => ParameterInfo.Create("Search term"));
+    });
     AutoComplete.Register("search_id", (int index) =>
     {
       if (index == 0) return ParameterInfo.Create("Search term");

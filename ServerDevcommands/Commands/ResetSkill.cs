@@ -29,7 +29,7 @@ public class ResetSkillCommand
       {
         player.GetSkills().CheatResetSkill(args[1]);
       }
-    }, () => newFetcher());
-    AutoComplete.RegisterDefault("resetskill");
+    });
+    AutoComplete.Register("resetskill", (int index) => index == 0 ? newFetcher() : ParameterInfo.None);
   }
 }
