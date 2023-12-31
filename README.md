@@ -229,7 +229,6 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - Command descriptions (default: `true`, key: `command_descriptions`): Shows command descriptions as autocomplete.
 - Disable debug mode keys (default: `false`, key: `disable_debug_mode_keys`): Removes debug mode key bindings for killall, removedrops, fly and no cost.
 - Disable messages (default: `false`, key: `disable_messages`): Prevents messages from commands.
-- Disable parameter warnings (default: `false`, key: `disable_warnings`): Removes warning texts from some command parameter descriptions.
 - Disabled commands (default: `dev_config disable_command`, key: `disable_command`): Command names separated by , that can't be executed. Mainly useful on the server to prevent some server-side commands.
 - Fly down key (default: `leftcontrol`, key: `fly_down_key`): Changes the key command for flying down. Multiple keys are supported (see Bind section for more info).
 - Fly up key (default: `space`, key: `fly_up_key`): Changes the key command for flying up. Multiple keys are supported (see Bind section for more info).

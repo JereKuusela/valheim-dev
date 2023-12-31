@@ -174,20 +174,8 @@ public static class DefaultAutoComplete
     AutoComplete.Register("spawn", (int index) =>
     {
       if (index == 0) return ParameterInfo.ObjectIds;
-      if (index == 1)
-      {
-        if (Settings.DisableParameterWarnings)
-          return ParameterInfo.Create("Amount", "a positive integer (default 1)");
-        else
-          return ParameterInfo.Create("Amount", "a positive integer (default 1), <color=yellow>WARNING</color>: Very high values (100+) may crash the game!, <color=yellow>WARNING</color>: Some objects can't be removed after spawning!");
-      }
-      if (index == 2)
-      {
-        if (Settings.DisableParameterWarnings)
-          return ParameterInfo.Create("Level", "a positive integer (default 1)");
-        else
-          return ParameterInfo.Create("Level", "a positive integer (default 1), <color=yellow>WARNING</color>: High values (5+) may crash the server when the creature is killed!, <color=yellow>WARNING</color>: Some objects can't be removed after spawning!");
-      }
+      if (index == 1) return ParameterInfo.Create("Amount", "a positive integer (default 1)");
+      if (index == 2) return ParameterInfo.Create("Level", "a positive integer (default 1)");
       if (index == 2) return ParameterInfo.Create("<color=yellow>p</color> to automatically pick up items. <color=yellow>e</color> to automatically equip items.");
       return ParameterInfo.None;
     });

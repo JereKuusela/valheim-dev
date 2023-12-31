@@ -152,21 +152,11 @@ public partial class ParameterInfo
   }
   public static List<string> PlayerNames
   {
-    get
-    {
-      if (ZNet.instance)
-        return ZNet.instance.m_players.Select(player => player.m_name).Append("self").ToList();
-      return [];
-    }
+    get => ZNet.instance?.m_players.Select(player => player.m_name).ToList() ?? [];
   }
   public static List<string> PublicPlayerNames
   {
-    get
-    {
-      if (ZNet.instance)
-        return ZNet.instance.m_players.Where(player => player.m_publicPosition).Select(player => player.m_name).ToList();
-      return [];
-    }
+    get => ZNet.instance?.m_players.Where(player => player.m_publicPosition).Select(player => player.m_name).ToList() ?? [];
   }
   private static List<string> hairs = [];
   public static List<string> Hairs
@@ -236,7 +226,9 @@ public partial class ParameterInfo
   public static List<string> Missing = Create("No autocomplete available.");
   public static List<string> InvalidNamed(string name) => Error($"Invalid named parameter {name}!");
   public static List<string> Flag(string name) => Error($"{name} is a flag so it doesn't have any arguments!");
+  public static List<string> Flag(string name, int subIndex) => subIndex == 0 ? [name] : Flag(name);
   public static List<string> Flag(string name, string description) => Error($"{name} is a flag so it doesn't have any arguments! | {description}");
+  public static List<string> Flag(string name, string description, int subIndex) => subIndex == 0 ? [name] : Flag(name, description);
   public static List<string> XZY(string name, string description, int index)
   {
     if (index == 0) return Create($"{name}=<color=yellow>X</color>,Z,Y | {description}.");

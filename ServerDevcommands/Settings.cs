@@ -79,8 +79,6 @@ public static class Settings
   public static bool GodModeNoMist => Cheats && configGodModeNoMist.Value;
   public static ConfigEntry<bool> configAliasing;
   public static bool Aliasing => configAliasing.Value;
-  public static ConfigEntry<bool> configDisableParameterWarnings;
-  public static bool DisableParameterWarnings => configDisableParameterWarnings.Value;
   public static ConfigEntry<string> configSubstitution;
   public static string Substitution => configSubstitution.Value;
   public static ConfigEntry<string> configWrapping;
@@ -266,7 +264,6 @@ public static class Settings
     configImprovedChat = config.Bind(section, "Improved chat", true, "Enables alias and multicommands system for chat.");
     configSubstitution = config.Bind(section, "Substitution", "$$", "Enables the command parameter substitution system (substitution gets replaced with the next free parameter).");
     configWrapping = config.Bind(section, "Wrapping", "\"", "Allows using space bars in command parameters.");
-    configDisableParameterWarnings = config.Bind(section, "Disable parameter warnings", false, "Removes warning texts from some command parameter descriptions.");
     configCommandAliases.SettingChanged += (s, e) => ParseAliases(configCommandAliases.Value);
     configRootUsers = config.Bind(section, "Root users", "", "Steam IDs separated by , that can execute blacklisted commands. Server side setting.");
     configRootUsers.SettingChanged += (s, e) =>
@@ -451,7 +448,6 @@ public static class Settings
     if (key == "improved_autocomplete") Toggle(context, configImprovedAutoComplete, "Improved autocomplete", value);
     if (key == "disable_unlock_messages") Toggle(context, configDisableUnlockMessages, "Unlock messages", value, true);
     if (key == "disable_events") Toggle(context, configDisableEvents, "Random events", value, true);
-    if (key == "disable_warnings") Toggle(context, configDisableParameterWarnings, "Command parameter warnings", value, true);
     if (key == "multiple_commands") Toggle(context, configMultiCommand, "Multiple commands per line", value);
     if (key == "god_no_stamina") Toggle(context, configGodModeNoStamina, "Stamina usage with god mode", value, true);
     if (key == "god_no_eitr") Toggle(context, configGodModeNoEitr, "Eitr usage with god mode", value, true);

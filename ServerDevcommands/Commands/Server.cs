@@ -35,13 +35,7 @@ public class ServerCommand
     AutoComplete.RegisterEmpty("sleep");
     AutoComplete.Register("skiptime", (int index) =>
     {
-      if (index == 0)
-      {
-        if (Settings.DisableParameterWarnings)
-          return ParameterInfo.Create("Seconds", "a number (default 240.0)");
-        else
-          return ParameterInfo.Create("Seconds", "a number (default 240.0), <color=yellow>WARNING</color>: High negative values may cause issues because object timestamps won't get updated!");
-      }
+      if (index == 0) return ParameterInfo.Create("Seconds", "a number (default 240.0)");
       return ParameterInfo.None;
     });
     AutoComplete.RegisterEmpty("resetkeys");

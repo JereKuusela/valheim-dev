@@ -12,6 +12,7 @@ public class PlayerInfo
   public Vector3 Pos;
   public Quaternion Rot;
   public long Character;
+  public long SessionId;
   public string HostId;
   public ZDOID ZDOID;
   public PlayerInfo(ZNetPeer peer)
@@ -20,6 +21,7 @@ public class PlayerInfo
     Name = peer.m_playerName;
     Pos = peer.m_refPos;
     ZDOID = peer.m_characterID;
+    SessionId = peer.m_uid;
     var zdo = ZDOMan.instance.GetZDO(peer.m_characterID);
     if (zdo != null)
     {
@@ -34,6 +36,7 @@ public class PlayerInfo
     Name = player.GetPlayerName();
     ZDOID = player.GetZDOID();
     Character = player.GetPlayerID();
+    SessionId = ZNet.GetUID();
     Pos = player.transform.position;
     Rot = player.transform.rotation;
   }
