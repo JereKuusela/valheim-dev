@@ -6,30 +6,12 @@ namespace ServerDevcommands;
 ///<summary>Helper class for parameter options/info. The main purpose is to provide some caching to avoid performance issues.</summary>
 public partial class ParameterInfo
 {
-  public static HashSet<string> SpecialCommands = [
-    "bind",
-    "alias"
-  ];
-  public static HashSet<string> SpecialCommands1 = [
-    "server"
-  ];
-  public static HashSet<string> SpecialCommands2 = [
-    "bind",
-    "alias"
-  ];
-  public static void AddSpecialCommand1(string command)
+  public static List<string> Command(int index)
   {
-    SpecialCommands.Add(command);
-    SpecialCommands1.Add(command);
-  }
-  public static void AddSpecialCommand2(string command)
-  {
-    SpecialCommands.Add(command);
-    SpecialCommands2.Add(command);
-  }
-  public static void AddCompositeCommand(string command)
-  {
-    // Backwards compatibility.
+    var text = Console.instance.m_input.text;
+    var parameters = text.Split(';').Last().Split(' ');
+    parameters = parameters.Skip(parameters.Length - index - 1).ToArray();
+    return AutoComplete.GetOptions(parameters);
   }
   private static readonly List<string> globalKeys = Enum.GetNames(typeof(GlobalKeys)).Select(s => s.ToLowerInvariant()).ToList();
   public static List<string> GlobalKeys

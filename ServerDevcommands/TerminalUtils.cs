@@ -72,7 +72,8 @@ public static class TerminalUtils
     return alias + " " + string.Join(" ", substitutions);
 
   }
-  public static bool SkipProcessing(string command) => ParameterInfo.SpecialCommands.Any(cmd => command.StartsWith($"{cmd} ", StringComparison.OrdinalIgnoreCase));
+  public static readonly List<string> SpecialCommands = ["alias", "bind"];
+  public static bool SkipProcessing(string command) => SpecialCommands.Any(cmd => command.StartsWith($"{cmd} ", StringComparison.OrdinalIgnoreCase));
 
   public static bool IsExecuting = false;
 }

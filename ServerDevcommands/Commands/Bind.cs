@@ -44,7 +44,7 @@ public class BindCommand
     {
       if (index == 0 && subIndex == 0) return ParameterInfo.KeyCodes;
       if (index == 0 && subIndex == 1) return ParameterInfo.KeyCodesWithNegative;
-      return ParameterInfo.Create("The command to bind.");
+      return ParameterInfo.Command(index - 1);
     }, new() {
       { "keys", (int index) => ParameterInfo.KeyCodesWithNegative }
     });

@@ -26,6 +26,7 @@ public class ServerCommand
       Console.instance.AddString("Sending command: " + command);
       server?.Invoke(ServerExecution.RPC_Command, new[] { command });
     }, true, true);
+    AutoComplete.Register("server", ParameterInfo.Command);
 
     MakeServer("randomevent");
     AutoComplete.RegisterEmpty("randomevent");

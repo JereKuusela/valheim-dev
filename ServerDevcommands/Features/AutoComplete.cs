@@ -13,7 +13,7 @@ public static class AutoComplete
   private static readonly Dictionary<string, OptionsFetcher> OptionsFetchers = [];
   private static readonly Dictionary<string, NamedOptionsFetchers> OptionsNamedFetchers = [];
   ///<summary>Returns options, either from the custom or the default options fetcher.</summary>
-  public static List<string> GetOptions(string command, int index, int subIndex, string namedParameter)
+  private static List<string> GetOptions(string command, int index, int subIndex, string namedParameter)
   {
     command = command.ToLower();
     if (namedParameter != "")
@@ -79,33 +79,16 @@ public static class AutoComplete
       return ParameterInfo.None;
     });
   }
-}
 
-
-[HarmonyPatch(typeof(Terminal.ConsoleCommand), nameof(Terminal.ConsoleCommand.GetTabOptions))]
-public class GetTabOptionsWithImprovedAutoComplete
-{
-  private static string GetName(string parameter)
+  public static List<string> GetOptions(string[] parameters)
   {
-    var split = parameter.Split('=');
-    if (split.Length < 2) return "";
-    return split[0];
-  }
-  private static int GetSubIndex(string parameter) => parameter.Split(',').Length - 1;
-
-  private static int CountSubstitution(string parameter)
-  {
-    var count = 0;
-    var len = Settings.Substitution.Length;
-    var index = -len;
-    while ((index = parameter.IndexOf(Settings.Substitution, index + len)) > -1)
+    if (parameters.Length < 2)
     {
-      count += 1;
+      if (parameters[0].StartsWith("_", StringComparison.OrdinalIgnoreCase))
+        return DisableCommands.AllowedCommands.Where(cmd => cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
+      else
+        return DisableCommands.AllowedCommands.Where(cmd => !cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
     }
-    return count;
-  }
-  private static List<string> GetOptions(string[] parameters)
-  {
     var commandName = parameters.First();
     parameters = parameters.Skip(1).ToArray();
     var parameter = parameters.Last();
@@ -155,6 +138,32 @@ public class GetTabOptionsWithImprovedAutoComplete
     }
     return AutoComplete.GetOptions(commandName, index, subIndex, name);
   }
+
+  private static string GetName(string parameter)
+  {
+    var split = parameter.Split('=');
+    if (split.Length < 2) return "";
+    return split[0];
+  }
+  private static int GetSubIndex(string parameter) => parameter.Split(',').Length - 1;
+
+  private static int CountSubstitution(string parameter)
+  {
+    var count = 0;
+    var len = Settings.Substitution.Length;
+    var index = -len;
+    while ((index = parameter.IndexOf(Settings.Substitution, index + len)) > -1)
+    {
+      count += 1;
+    }
+    return count;
+  }
+}
+
+
+[HarmonyPatch(typeof(Terminal.ConsoleCommand), nameof(Terminal.ConsoleCommand.GetTabOptions))]
+public class GetTabOptionsWithImprovedAutoComplete
+{
   static bool Prefix(Terminal __instance, ref List<string> __result)
   {
     // While executing, options are used to make the first parameter case insensitive. So the default options should be returned.
@@ -163,21 +172,7 @@ public class GetTabOptionsWithImprovedAutoComplete
     if (!Settings.ImprovedAutoComplete) return true;
     var text = Console.instance.m_input.text;
     var parameters = text.Split(';').Last().Split(' ');
-    if (parameters.Length > 1)
-    {
-      while (parameters.Length > 1 && ParameterInfo.SpecialCommands1.Contains(parameters.First()))
-        parameters = parameters.Skip(1).ToArray();
-      while (parameters.Length > 2 && ParameterInfo.SpecialCommands2.Contains(parameters.First()))
-        parameters = parameters.Skip(2).ToArray();
-    }
-    if (parameters.Length < 2)
-    {
-      if (text.StartsWith("_", StringComparison.OrdinalIgnoreCase))
-        __result = DisableCommands.AllowedCommands.Where(cmd => cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
-      else
-        __result = DisableCommands.AllowedCommands.Where(cmd => !cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
-    }
-    else __result = GetOptions(parameters);
+    __result = AutoComplete.GetOptions(parameters);
     return false;
   }
 }
