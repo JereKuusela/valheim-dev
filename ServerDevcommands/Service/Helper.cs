@@ -44,8 +44,8 @@ public abstract class Helper
     if (range2.Min == range2.Max || value2 >= range2.Min) return true;
     return false;
   }
-  public static float RandomValue(Range<float> range) => UnityEngine.Random.Range(range.Min, range.Max);
-  public static int RandomValue(Range<int> range) => UnityEngine.Random.Range(range.Min, range.Max + 1);
+  public static float RandomValue(Range<float> range) => range.Min == range.Max ? range.Min : UnityEngine.Random.Range(range.Min, range.Max);
+  public static int RandomValue(Range<int> range) => range.Min == range.Max ? range.Min : UnityEngine.Random.Range(range.Min, range.Max + 1);
   public static Vector3 RandomValue(Range<Vector3> range)
   {
     var x = UnityEngine.Random.Range(range.Min.x, range.Max.x);

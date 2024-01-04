@@ -136,7 +136,7 @@ public static class AutoComplete
         }
       }
     }
-    return AutoComplete.GetOptions(commandName, index, subIndex, name);
+    return GetOptions(commandName, index, subIndex, name);
   }
 
   private static string GetName(string parameter)
