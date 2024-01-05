@@ -133,7 +133,9 @@ public class BindCommand
     var arg = args.First(arg => arg.StartsWith("keys=")).Split('=');
     if (arg.Length < 2) return 0;
     var keys = Parse.Split(arg[1]);
-    return CountKeys(keys);
+    // If a specific mode is set, commmands for that mode should have the highest priority.
+    var modeMultiplier = keys.Contains(Mode) ? 100 : 1;
+    return modeMultiplier * CountKeys(keys);
   }
   public static int CountKeys(string[] keys) => keys.Count(key => !key.StartsWith("-", StringComparison.Ordinal) && Enum.TryParse<KeyCode>(key, true, out var _));
 

@@ -12,18 +12,13 @@ public class SearchComponentCommand
       Helper.ArgsCheck(args, 3, "Missing the component");
       var component = args[2].ToLowerInvariant();
       var maxLines = args.TryParameterInt(2, 5);
-      var objects = ZNetScene.instance.m_namedPrefabs.Values.Where(prefab =>
-      {
-        prefab.GetComponentsInChildren<MonoBehaviour>(ZNetView.m_tempComponents);
-        return ZNetView.m_tempComponents.Any(s => s.GetType().Name.ToLowerInvariant() == component);
-      }).Select(prefab => prefab.name);
       var locations = ZoneSystem.instance.m_locations.Where(location =>
       {
         if (!location.m_prefab) return false;
         location.m_prefab.GetComponentsInChildren<MonoBehaviour>(ZNetView.m_tempComponents);
         return ZNetView.m_tempComponents.Any(s => s.GetType().Name.ToLowerInvariant() == component);
       }).Select(location => location.m_prefab.name);
-      var result = args[1] == "location" ? locations.ToArray() : objects.ToArray();
+      var result = args[1] == "location" ? locations.ToArray() : ComponentInfo.PrefabsByComponent(component);
       if (result.Length > 100)
       {
         args.Context.AddString("Over 100 results, printing to the log file.");

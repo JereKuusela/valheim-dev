@@ -6,6 +6,16 @@ namespace ServerDevcommands;
 ///<summary>Helper class for parameter options/info. The main purpose is to provide some caching to avoid performance issues.</summary>
 public partial class ParameterInfo
 {
+  private static List<string> components = [];
+  public static List<string> Components
+  {
+    get
+    {
+      if (components.Count == 0)
+        components = ComponentInfo.Types.Select(t => t.Name).ToList();
+      return components;
+    }
+  }
   public static List<string> Command(int index)
   {
     var text = Console.instance.m_input.text;
