@@ -188,6 +188,8 @@ public static class Settings
   public static ConfigEntry<string> configFindFormat;
   public static string FindFormat => configFindFormat.Value; public static ConfigEntry<string> configMinimapFormat;
   public static string MinimapFormat => configMinimapFormat.Value;
+  public static ConfigEntry<bool> configChatOutput;
+  public static bool ChatOutput => configChatOutput.Value;
   public static string Format(string format)
   {
     return format
@@ -279,6 +281,7 @@ public static class Settings
     configFlyDownKeys = config.Bind(section, "Key for fly down", "LeftControl", "Key codes separated by ,");
     configFlyDownKeys.SettingChanged += (s, e) => FlyDownKeys = Parse.Split(configFlyDownKeys.Value);
     FlyDownKeys = Parse.Split(configFlyDownKeys.Value);
+    configChatOutput = config.Bind(section, "Chat output", false, "Sends messages to the chat window from bound keys.");
     section = "3. Formatting";
     ParseAliases(configCommandAliases.Value);
     configPlayerListFormat = config.Bind(section, "Player list format", "{player_id}/{character_name}/{character_id} ({pos_x:F0}, {pos_z:F0}, {pos_y:F0})", "Format of playerlist command.");
@@ -346,6 +349,7 @@ public static class Settings
     "players_format",
     "command_log_format",
     "minimap_format",
+    "chat_output"
   ];
   private static string State(bool value) => value ? "enabled" : "disabled";
   private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -469,6 +473,7 @@ public static class Settings
     if (key == "god_always_dodge") Toggle(context, configGodModeAlwaysDodge, "Always dodge with god mode", value);
     if (key == "disable_start_shout") Toggle(context, configDisableStartShout, "Start shout", value, true);
     if (key == "disable_no_map") Toggle(context, configDisableNoMap, "Disable no map", value);
+    if (key == "chat_output") Toggle(context, configChatOutput, "Chat output", value);
     if (key == "playerlist_format") SetValue(context, configPlayerListFormat, key, value);
     if (key == "command_log_format") SetValue(context, configCommandLogFormat, key, value);
     if (key == "find_format") SetValue(context, configFindFormat, key, value);

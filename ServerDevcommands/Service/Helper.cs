@@ -7,10 +7,26 @@ namespace ServerDevcommands;
 ///<summary>Contains functions for parsing arguments, etc.</summary>
 public abstract class Helper
 {
-  public static void AddMessage(Terminal context, string message)
+  public static void AddMessage(Terminal context, string message, bool priority = false)
   {
-    context.AddString(message);
-    Player.m_localPlayer?.Message(MessageHud.MessageType.TopLeft, message);
+    if (context == Console.instance || Settings.ChatOutput)
+      context.AddString(message);
+    var hud = MessageHud.instance;
+    if (!hud) return;
+    if (!Player.m_localPlayer) return;
+    if (priority)
+    {
+      var items = hud.m_msgQeue.ToArray();
+      hud.m_msgQeue.Clear();
+      Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, message);
+      foreach (var item in items)
+        hud.m_msgQeue.Enqueue(item);
+      hud.m_msgQueueTimer = 10f;
+    }
+    else
+    {
+      Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, message);
+    }
   }
   public static GameObject GetPrefab(string name)
   {
@@ -98,9 +114,9 @@ public abstract class Helper
   public static string PrintVectorXZY(Vector3 vector) => vector.x.ToString("0.##", CultureInfo.InvariantCulture) + ", " + vector.z.ToString("0.##", CultureInfo.InvariantCulture) + ", " + vector.y.ToString("0.##", CultureInfo.InvariantCulture);
   public static string PrintVectorYXZ(Vector3 vector) => vector.y.ToString("0.##", CultureInfo.InvariantCulture) + ", " + vector.x.ToString("0.##", CultureInfo.InvariantCulture) + ", " + vector.z.ToString("0.##", CultureInfo.InvariantCulture);
   public static string PrintAngleYXZ(Quaternion quaternion) => PrintVectorYXZ(quaternion.eulerAngles);
-  public static void AddError(Terminal context, string message)
+  public static void AddError(Terminal context, string message, bool priority = false)
   {
-    AddMessage(context, $"Error: {message}");
+    AddMessage(context, $"Error: {message}", priority);
   }
   public static bool? IsDown(string key)
   {
