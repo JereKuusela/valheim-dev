@@ -1,7 +1,7 @@
 - v1.68
   - Fixes the `tp` command not working.
   - Fixes not working with latest Comfy Gizmo.
-  - Internal changes for new Infinity Hammer and Infinity Tools mods.
+  - Internal changes for World Edit Commands, Infinity Hammer and Infinity Tools mods.
   - Removes the bind tagging system as obsolete.
   - Removes setting "Disable parameter warnings" as obsolete.
 
