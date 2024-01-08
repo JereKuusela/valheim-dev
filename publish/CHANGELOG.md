@@ -1,9 +1,10 @@
 - v1.68
   - Fixes the `tp` command not working.
-  - Fixes not working with latest Comfy Gizmo.
+  - Fixes issues with latest Comfy Gizmo.
   - Internal changes for World Edit Commands, Infinity Hammer and Infinity Tools mods.
   - Removes the bind tagging system as obsolete.
-  - Removes setting "Disable parameter warnings" as obsolete.
+  - Removes the setting "Disable parameter warnings" as obsolete.
+  - Removes the ping from the `find` command when a single object was found.
 
 - v1.67
   - Adds a new command `search_component` for debugging purposes.

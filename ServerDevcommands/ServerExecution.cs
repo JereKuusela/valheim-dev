@@ -70,11 +70,6 @@ public class ServerExecution
     foreach (var pin in findPins)
       Minimap.instance?.RemovePin(pin);
     findPins.Clear();
-    if (pins.Length == 1)
-    {
-      Chat.instance?.SendPing(pins[0]);
-      return;
-    }
     foreach (var pos in pins)
     {
       var pin = Minimap.instance?.AddPin(pos, Minimap.PinType.Icon3, "", false, false, Player.m_localPlayer.GetPlayerID());

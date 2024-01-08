@@ -75,13 +75,24 @@ public static class Selector
     var dz = position.z - center.z;
     var distanceX = GetX(dx, dz, angle);
     var distanceZ = GetY(dx, dz, angle);
-    if (center.y - position.y > 1000f) return false;
-    if (position.y - center.y > (height == 0f ? 1000f : height)) return false;
+    if (!WithinHeight(position, center, height)) return false;
     return Helper.Within(width, depth, Mathf.Abs(distanceX), Mathf.Abs(distanceZ));
   }
   public static bool Within(Vector3 position, Vector3 center, Range<float> radius, float height)
   {
-    return Helper.Within(radius, Utils.DistanceXZ(position, center)) && center.y - position.y < 1000f && position.y - center.y <= (height == 0f ? 1000f : height);
+    if (!WithinHeight(position, center, height)) return false;
+    return Helper.Within(radius, Utils.DistanceXZ(position, center));
+  }
+  private static bool WithinHeight(Vector3 position, Vector3 center, float height)
+  {
+    var cy = center.y;
+    var y = position.y;
+    // Default range is 1000 to avoid selecting objects from dungeons.
+    if (Helper.IsZero(height)) return Mathf.Abs(y - cy) <= 1000f;
+    // But if the user selects a bigger range then than should be used.
+    var min = Mathf.Min(cy, cy + height);
+    var max = Mathf.Max(cy, cy + height);
+    return y >= min && y <= max;
   }
   private static bool IsIncluded(string id, string name)
   {
