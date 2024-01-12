@@ -6,8 +6,7 @@ namespace ServerDevcommands;
 public class DisableCommands
 {
 
-  public static List<string> AllowedCommands = [];
-  public static List<string> DisallowedCommands = [];
+  private static List<string> DisallowedCommands = [];
   public static HashSet<string> RootUsers = [];
 
   public static bool CanRun(string command, ZRpc? rpc = null)
@@ -22,6 +21,5 @@ public class DisableCommands
   {
     RootUsers = Parse.Split(rootUsers).ToHashSet();
     DisallowedCommands = Parse.Split(blackList).ToList();
-    AllowedCommands = Terminal.commands.Keys.Where(s => CanRun(s)).ToList();
   }
 }

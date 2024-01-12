@@ -16,15 +16,6 @@ public partial class ParameterInfo
       return components;
     }
   }
-  public static List<string> Command(int index)
-  {
-    var text = Console.instance.m_input.text;
-    var parameters = text.Split(';').Last().Split(' ');
-    parameters = parameters.Skip(parameters.Length - index - 1).ToArray();
-    // Plain only done automatically for the first command, so commands involving subcommands have to do it again.
-    parameters = Aliasing.Plain(string.Join(" ", parameters)).Split(' ');
-    return AutoComplete.GetOptions(parameters);
-  }
   private static readonly List<string> globalKeys = Enum.GetNames(typeof(GlobalKeys)).Select(s => s.ToLowerInvariant()).ToList();
   public static List<string> GlobalKeys
   {

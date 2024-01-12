@@ -10,7 +10,7 @@ public static class TerminalUtils
   public static string GetLastWord(Terminal obj) => obj.m_input.text.Split(' ').Last().Split('=').Last().Split(',').Last();
   public static IEnumerable<string> GetPositionalParameters(string[] parameters)
   {
-    return parameters.Where(par => !par.Contains("="));
+    return parameters.Where(par => !par.Contains("=") && !par.StartsWith("<", StringComparison.OrdinalIgnoreCase));
   }
   public static void GetSubstitutions(string[] parameters, out IEnumerable<string> mainPars, out IEnumerable<string> substitutions)
   {
@@ -72,8 +72,7 @@ public static class TerminalUtils
     return alias + " " + string.Join(" ", substitutions);
 
   }
-  public static readonly List<string> SpecialCommands = ["alias", "bind"];
-  public static bool SkipProcessing(string command) => SpecialCommands.Any(cmd => command.StartsWith($"{cmd} ", StringComparison.OrdinalIgnoreCase));
+  public static bool SkipProcessing(string command) => AutoComplete.Offsets.Any(cmd => command.StartsWith($"{cmd} ", StringComparison.OrdinalIgnoreCase));
 
   public static bool IsExecuting = false;
 }

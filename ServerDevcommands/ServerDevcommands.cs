@@ -12,7 +12,7 @@ public class ServerDevcommands : BaseUnityPlugin
 {
   public const string GUID = "server_devcommands";
   public const string NAME = "Server Devcommands";
-  public const string VERSION = "1.68";
+  public const string VERSION = "1.69";
   public const string COMFY_GIZMO_GUID = "bruce.valheim.comfymods.gizmo";
   public const string RELOADED_GIZMO_GUID = "m3to.mods.GizmoReloaded";
   private static ManualLogSource? Logs;
@@ -85,11 +85,15 @@ public class ServerDevcommands : BaseUnityPlugin
   }
 }
 
-[HarmonyPatch(typeof(Terminal), nameof(Terminal.InitTerminal))]
+[HarmonyPatch(typeof(Terminal), nameof(Terminal.InitTerminal)), HarmonyPriority(Priority.HigherThanNormal)]
 public class SetCommands
 {
+  private static bool Initialized = false;
   static void Postfix()
   {
+    if (Initialized) return;
+    Debug.LogWarning("ServerDevcommands: Initializing commands.");
+    Initialized = true;
     new DevcommandsCommand();
     new ConfigCommand();
     new StartEventCommand();
@@ -123,6 +127,7 @@ public class SetCommands
     new SearchComponentCommand();
     new RPCCommand();
     DefaultAutoComplete.Register();
+    AliasManager.Init();
     Settings.RegisterCommands();
   }
 }

@@ -42,7 +42,8 @@ public class AliasCommand
     AutoComplete.Register("alias", (int index, int subIndex) =>
     {
       if (index == 0) return ParameterInfo.Create("Name of the alias.");
-      return ParameterInfo.Command(index - 1);
+      return ParameterInfo.None;
     });
+    AutoComplete.Offsets["bind"] = 1;
   }
 }

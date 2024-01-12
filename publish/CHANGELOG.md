@@ -1,3 +1,7 @@
+- v1.69
+  - Fixes the first parameter not being case insensitive (for example `env clear`).
+  - Improves autocomplete of nested commands.
+
 - v1.68
   - Fixes the `tp` command not working.
   - Fixes issues with latest Comfy Gizmo.

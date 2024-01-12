@@ -53,6 +53,9 @@ public static class AutoComplete
   ///<summary>Registers a new custom options fetcher.</summary>
   public static void Register(string command, SimpleOptionsFetcher fetcher)
   {
+    // Original fetcher is used to make the first parameter case insensitive.
+    if (Terminal.commands.TryGetValue(command.ToLower(), out var cmd))
+      cmd.m_tabOptionsFetcher = () => fetcher(0);
     OptionsFetchers[command] = (int index, int subIndex) => fetcher(index);
   }
 
@@ -79,17 +82,22 @@ public static class AutoComplete
       return ParameterInfo.None;
     });
   }
-
+  public static Dictionary<string, int> Offsets = [];
   public static List<string> GetOptions(string[] parameters)
   {
+    var commandName = parameters.First();
+    if (Offsets.TryGetValue(commandName, out var offset) && parameters.Length - 1 > offset)
+    {
+      parameters = parameters.Skip(offset + 1).ToArray();
+      commandName = parameters.First();
+    }
     if (parameters.Length < 2)
     {
-      if (parameters[0].StartsWith("_", StringComparison.OrdinalIgnoreCase))
-        return DisableCommands.AllowedCommands.Where(cmd => cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
+      if (commandName.StartsWith("_", StringComparison.OrdinalIgnoreCase))
+        return Terminal.commands.Keys.Where(cmd => cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
       else
-        return DisableCommands.AllowedCommands.Where(cmd => !cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
+        return Terminal.commands.Keys.Where(cmd => !cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
     }
-    var commandName = parameters.First();
     parameters = parameters.Skip(1).ToArray();
     var parameter = parameters.Last();
     var name = GetName(parameter);

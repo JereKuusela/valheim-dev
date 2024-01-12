@@ -12,8 +12,7 @@ public class AliasManager
   public static string FileName = "alias.yaml";
   public static string FilePath = Path.Combine(Paths.ConfigPath, FileName);
 
-  [HarmonyPatch(typeof(Chat), nameof(Chat.Awake)), HarmonyPostfix]
-  public static void ChatAwake()
+  public static void Init()
   {
     if (File.Exists(FilePath))
       FromFile();
