@@ -1,3 +1,6 @@
+- v1.70
+  - Fixes the commands `raiseskill` and `resetskill` crashing the game.
+
 - v1.69
   - Fixes the first parameter not being case insensitive (for example `env clear`).
   - Improves autocomplete of nested commands.

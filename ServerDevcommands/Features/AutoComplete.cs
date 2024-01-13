@@ -53,9 +53,13 @@ public static class AutoComplete
   ///<summary>Registers a new custom options fetcher.</summary>
   public static void Register(string command, SimpleOptionsFetcher fetcher)
   {
-    // Original fetcher is used to make the first parameter case insensitive.
-    if (Terminal.commands.TryGetValue(command.ToLower(), out var cmd))
-      cmd.m_tabOptionsFetcher = () => fetcher(0);
+    // These commands use the original fetcher which would cause infinite recursion.
+    if (command != "raiseskill" && command != "resetskill")
+    {
+      // Original fetcher is used to make the first parameter case insensitive.
+      if (Terminal.commands.TryGetValue(command.ToLower(), out var cmd))
+        cmd.m_tabOptionsFetcher = () => fetcher(0);
+    }
     OptionsFetchers[command] = (int index, int subIndex) => fetcher(index);
   }
 
