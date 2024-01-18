@@ -13,6 +13,14 @@ public static class AutoComplete
   private static readonly Dictionary<string, OptionsFetcher> OptionsFetchers = [];
   private static readonly Dictionary<string, NamedOptionsFetchers> OptionsNamedFetchers = [];
   ///<summary>Returns options, either from the custom or the default options fetcher.</summary>
+  public static List<string>? GetOptions(string command, int index)
+  {
+    command = command.ToLower();
+    if (OptionsFetchers.ContainsKey(command)) return OptionsFetchers[command](index, 0);
+    if (index == 0 && Terminal.commands.TryGetValue(command, out var cmd) && cmd.m_tabOptionsFetcher != null)
+      return cmd.m_tabOptionsFetcher();
+    return null;
+  }
   private static List<string> GetOptions(string command, int index, int subIndex, string namedParameter)
   {
     command = command.ToLower();
@@ -28,9 +36,8 @@ public static class AutoComplete
       return ParameterInfo.InvalidNamed(namedParameter);
     }
     if (OptionsFetchers.ContainsKey(command)) return OptionsFetchers[command](index, subIndex) ?? ParameterInfo.None;
-    if (!Terminal.commands.ContainsKey(command)) return ParameterInfo.None;
-    var fetcher = Terminal.commands[command].m_tabOptionsFetcher;
-    if (fetcher != null) return fetcher();
+    if (Terminal.commands.TryGetValue(command, out var cmd) && cmd.m_tabOptionsFetcher != null)
+      return cmd.m_tabOptionsFetcher() ?? ParameterInfo.Missing;
     return ParameterInfo.Missing;
   }
   ///<summary>Registers a new custom options fetcher.</summary>
@@ -53,13 +60,6 @@ public static class AutoComplete
   ///<summary>Registers a new custom options fetcher.</summary>
   public static void Register(string command, SimpleOptionsFetcher fetcher)
   {
-    // These commands use the original fetcher which would cause infinite recursion.
-    if (command != "raiseskill" && command != "resetskill")
-    {
-      // Original fetcher is used to make the first parameter case insensitive.
-      if (Terminal.commands.TryGetValue(command.ToLower(), out var cmd))
-        cmd.m_tabOptionsFetcher = () => fetcher(0);
-    }
     OptionsFetchers[command] = (int index, int subIndex) => fetcher(index);
   }
 
@@ -178,13 +178,21 @@ public class GetTabOptionsWithImprovedAutoComplete
 {
   static bool Prefix(Terminal __instance, ref List<string> __result)
   {
-    // While executing, options are used to make the first parameter case insensitive. So the default options should be returned.
-    if (TerminalUtils.IsExecuting) return true;
     if (__instance == Chat.instance) return true;
     if (!Settings.ImprovedAutoComplete) return true;
-    var text = Console.instance.m_input.text;
-    var parameters = text.Split(';').Last().Split(' ');
-    __result = AutoComplete.GetOptions(parameters);
+
+    // While executing, options are used to make the first parameter case insensitive.
+    // Own implementation is used so return nothing to prevent the default one from doing anything.
+    if (TerminalUtils.IsExecuting)
+    {
+      __result = [];
+    }
+    else
+    {
+      var text = Console.instance.m_input.text;
+      var parameters = text.Split(';').Last().Split(' ');
+      __result = AutoComplete.GetOptions(parameters);
+    }
     return false;
   }
 }

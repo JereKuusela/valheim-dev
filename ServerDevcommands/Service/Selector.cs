@@ -29,7 +29,7 @@ public static class Selector
   public static int GetPrefabFromHit(RaycastHit hit) => hit.collider.GetComponentInParent<ZNetView>().GetZDO().GetPrefab();
   public static Hovered? GetHovered(Player obj, float maxDistance, string[] included, string[] excluded, bool allowOtherPlayers = false)
   {
-    var includedPrefabs = GetPrefabs(included);
+    var includedPrefabs = GetAllPrefabs(included);
     var excludedPrefabs = GetExcludedPrefabs(excluded);
     var raycast = Math.Max(maxDistance + 5f, 50f);
     var mask = LayerMask.GetMask(
@@ -120,19 +120,42 @@ public static class Selector
   }
   public static HashSet<int> GetPrefabs(string[] ids)
   {
-    if (ids.Length == 0) return GetPrefabs("*");
+    if (ids.Length == 0) return GetSafePrefabs("");
     HashSet<int> prefabs = [];
     foreach (var id in ids)
-      prefabs.UnionWith(GetPrefabs(id));
+      prefabs.UnionWith(GetSafePrefabs(id));
     return prefabs;
   }
-  private static HashSet<int> GetPrefabs(string id)
+  public static HashSet<int> GetAllPrefabs(string[] ids)
+  {
+    if (ids.Length == 0) return [];
+    HashSet<int> prefabs = [];
+    foreach (var id in ids)
+      prefabs.UnionWith(GetAllPrefabs(id));
+    return prefabs;
+  }
+  // Reason for this is to make area selections less error prone (for example accidentaly removing players or _ZoneCtrl).
+  private static HashSet<int> GetSafePrefabs(string id)
   {
     id = id.ToLower();
     IEnumerable<GameObject> values = ZNetScene.instance.m_namedPrefabs.Values;
     values = values.Where(prefab => prefab.name != "Player");
     if (id == "*" || id == "")
       values = values.Where(prefab => !prefab.name.StartsWith("_", StringComparison.Ordinal));
+    else if (id.Contains("*"))
+      values = values.Where(prefab => IsIncluded(id, prefab.name.ToLower()));
+    else
+      values = values.Where(prefab => prefab.name.ToLower() == id);
+    return values.Select(prefab => prefab.name.GetStableHashCode()).ToHashSet();
+  }
+  private static HashSet<int> GetAllPrefabs(string id)
+  {
+    id = id.ToLower();
+    IEnumerable<GameObject> values = ZNetScene.instance.m_namedPrefabs.Values;
+    if (id == "*" || id == "")
+    {
+      // Empty on purpose.
+    }
     else if (id.Contains("*"))
       values = values.Where(prefab => IsIncluded(id, prefab.name.ToLower()));
     else

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
-using UnityEngine;
 namespace ServerDevcommands;
 #pragma warning disable IDE0046
 public static class TerminalUtils
@@ -116,7 +115,24 @@ public class TryRunCommand
 [HarmonyPatch(typeof(Terminal.ConsoleCommand), nameof(Terminal.ConsoleCommand.RunAction))]
 public class RunAction
 {
-  static void Prefix() => TerminalUtils.IsExecuting = true;
+  static void Prefix(Terminal.ConsoleEventArgs args)
+  {
+    TerminalUtils.IsExecuting = true;
+    var command = args.Args[0];
+    for (var i = 1; i < args.Args.Length; i++)
+    {
+      var options = AutoComplete.GetOptions(command, i - 1);
+      if (options == null) continue;
+      foreach (var option in options)
+      {
+        if (option.Equals(args.Args[i], StringComparison.OrdinalIgnoreCase))
+        {
+          args.Args[i] = option;
+          break;
+        }
+      }
+    }
+  }
   static void Postfix() => TerminalUtils.IsExecuting = false;
 }
 

@@ -1,3 +1,14 @@
+- v1.73
+  - Fixes single selector not being able to target Players or _ZoneCtrl objects (for example with Infinity Hammer).
+  - Fixes some commands still being case sensitive.
+
+- v1.72
+  - Fixes commands, this time for real.
+
+- v1.71
+  - Improves the parameter case insensitivity to work for every parameter (for example `forcedelete`).
+  - Fixes some commands crashing the game.
+
 - v1.70
   - Fixes the commands `raiseskill` and `resetskill` crashing the game.
 
