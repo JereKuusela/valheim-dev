@@ -1,3 +1,6 @@
+- v1.74
+  - Reverts the admin check change. Lovely!
+
 - v1.73
   - Changes the admin check to use the official admin check.
   - Fixes single selector not being able to target players or _ZoneCtrl objects (for example with Infinity Hammer).
