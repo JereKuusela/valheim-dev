@@ -1,115 +1,56 @@
 using HarmonyLib;
 namespace ServerDevcommands;
-///<summary>Static accessors for easier usage.</summary>
-public static class Admin
-{
-  public static IAdmin Instance = new DefaultAdmin();
-  ///<summary>Admin status.</summary>
-  public static bool Enabled
-  {
-    get => Instance.Enabled;
-    set => Instance.Enabled = value;
-  }
-  ///<summary>Is admin status currently being checked.</summary>
-  public static bool Checking
-  {
-    get => Instance.Checking;
-    set => Instance.Checking = value;
-  }
-  ///<summary>Checks for admin status. Terminal is used for the output.</summary>
-  public static void ManualCheck() => Instance.ManualCheck();
-  ///<summary>Verifies the admin status with a given text. Shouldn't be called directly.</summary>
-  public static void Verify(string text) => Instance.Verify(text);
-  ///<summary>Automatic check at the start of joining servers. Shouldn't be called directly.</summary>
-  public static void AutomaticCheck() => Instance.AutomaticCheck();
-  ///<summary>Resets the admin status when joining servers. Shouldn't be called directly.</summary>
-  public static void Reset() => Instance.Reset();
-}
 
-public interface IAdmin
-{
-  bool Enabled { get; set; }
-  bool Checking { get; set; }
-  void ManualCheck();
-  void Verify(string text);
-  void AutomaticCheck();
-  void Reset();
-}
-
-///<summary>Admin checker. Can be extended by overloading OnSuccess and OnFail.</summary>
-public class DefaultAdmin : IAdmin
-{
-  public virtual bool Enabled { get; set; }
-  ///<summary>Admin status is checked by issuing a dummy unban command.</summary>
-  protected void Check()
-  {
-    if (!ZNet.instance) return;
-    Checking = true;
-    if (ZNet.instance.IsServer())
-      OnSuccess();
-    else
-      ZNet.instance.Unban("admintest");
-  }
-  public void Verify(string text)
-  {
-    if (text == "Unbanning user admintest")
-      OnSuccess();
-    else
-      OnFail();
-  }
-
-  public virtual void AutomaticCheck()
-  {
-    Check();
-  }
-  public virtual bool Checking { get; set; }
-  protected virtual void OnSuccess()
-  {
-    Checking = false;
-    Enabled = true;
-  }
-  protected virtual void OnFail()
-  {
-    Checking = false;
-    Enabled = false;
-  }
-
-  public virtual void ManualCheck()
-  {
-    Check();
-  }
-  public virtual void Reset()
-  {
-    Checking = false;
-    Enabled = false;
-  }
-}
-
-[HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_RemotePrint))]
-public class ZNet_RPC_RemotePrint
-{
-  static bool Prefix(string text)
-  {
-    if (!Admin.Checking) return true;
-    Admin.Verify(text);
-    return false;
-  }
-}
-
-///<summary>Check admin status on connect to ensure features are enabled/disabled when changing servers.</summary>
-[HarmonyPatch(typeof(Game), nameof(Game.Awake))]
+[HarmonyPatch(typeof(ZNet), nameof(ZNet.Awake))]
 public class AdminReset
 {
-  static void Postfix()
-  {
-    Admin.Reset();
-  }
-}  ///<summary>Check admin status on connect to ensure features are enabled/disabled when changing servers.</summary>
+  // Dedicated should always be able to use devcommands.
+  // Otherwise reset becase it depends on admin status and AutoDevcommands setting.
+  static void Postfix(ZNet __instance) => Terminal.m_cheat = __instance.IsDedicated();
+}
+
+// This is the most reliable way, since admin list is not synced on single player.
 [HarmonyPatch(typeof(Player), nameof(Player.OnSpawned))]
 public class AdminCheck
 {
   static void Postfix()
   {
-    if (!Admin.Checking) Admin.AutomaticCheck();
+    if (Settings.AutoDevcommands)
+      DevcommandsCommand.Set(IsAdmin());
+  }
+
+  public static bool IsAdmin()
+  {
+    if (ZNet.instance.IsServer()) return true;
+    var list = ZNet.instance.GetAdminList();
+    var id = UserInfo.GetLocalUser().NetworkUserId;
+    if (list.Contains(id)) return true;
+    if (id.StartsWith(PrivilegeManager.GetPlatformPrefix(PrivilegeManager.Platform.Steam)))
+      id = id.Substring(PrivilegeManager.GetPlatformPrefix(PrivilegeManager.Platform.Steam).Length);
+    if (list.Contains(id)) return true;
+    if (!id.Contains("_"))
+      id = PrivilegeManager.GetPlatformPrefix(PrivilegeManager.Platform.Steam) + id;
+    return list.Contains(id);
+
+  }
+}
+
+// But good to handle this too if admin list changes while in game.
+[HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_AdminList))]
+public class RPC_AdminList
+{
+  static void Postfix()
+  {
+    // Will be handled by Player.OnSpawned.
+    if (!Player.m_localPlayer) return;
+    var admin = AdminCheck.IsAdmin();
+    // No need to set if already set.
+    if (admin == Terminal.m_cheat) return;
+    // Only enable if AutoDevcommands is enabled.
+    // But always disabled if not authorized.
+    if (admin && !Settings.AutoDevcommands) return;
+    DevcommandsCommand.Set(admin);
+    if (admin)
+      Console.instance.AddString("Authorized to use devcommands.");
   }
 }

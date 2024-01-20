@@ -65,37 +65,16 @@ public class DevcommandsCommand
       }
       else
       {
-        args.Context.AddString("Authenticating for devcommands...");
-        Admin.ManualCheck();
+        if (AdminCheck.IsAdmin())
+        {
+          args.Context.AddString("Authorized to use devcommands.");
+          Set(args.Context, true);
+        }
+        else
+          args.Context.AddString("You are not authorized to use devcommands.");
       }
     });
     AutoComplete.RegisterEmpty("devcommands");
-  }
-}
-///<summary>Custom admin check to update devcommands.</summary>
-public class DevCommandsAdmin : DefaultAdmin
-{
-  protected override void OnSuccess()
-  {
-    base.OnSuccess();
-    DevcommandsCommand.Set(true);
-    Console.instance.AddString("Authorized to use devcommands.");
-  }
-  protected override void OnFail()
-  {
-    base.OnFail();
-    DevcommandsCommand.Set(false);
-    Console.instance.AddString("Unauthorized to use devcommands.");
-  }
-  public override void AutomaticCheck()
-  {
-    if (!Settings.AutoDevcommands) return;
-    base.AutomaticCheck();
-  }
-  public override void Reset()
-  {
-    base.Reset();
-    DevcommandsCommand.Set(false);
   }
 }
 
