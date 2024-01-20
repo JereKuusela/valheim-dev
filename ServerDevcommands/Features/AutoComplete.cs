@@ -96,12 +96,7 @@ public static class AutoComplete
       commandName = parameters.First();
     }
     if (parameters.Length < 2)
-    {
-      if (commandName.StartsWith("_", StringComparison.OrdinalIgnoreCase))
-        return Terminal.commands.Keys.Where(cmd => cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
-      else
-        return Terminal.commands.Keys.Where(cmd => !cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
-    }
+      return Console.instance.m_commandList;
     parameters = parameters.Skip(1).ToArray();
     var parameter = parameters.Last();
     var name = GetName(parameter);
@@ -350,3 +345,11 @@ public class PlainInputForAutoComplete
   }
 }
 
+[HarmonyPatch(typeof(Terminal), nameof(Terminal.updateCommandList))]
+public class RemoveHiddenCommands
+{
+  static void Postfix(Terminal __instance)
+  {
+    __instance.m_commandList.RemoveAll(command => command.StartsWith("_", StringComparison.OrdinalIgnoreCase));
+  }
+}

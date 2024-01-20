@@ -1,6 +1,8 @@
 - v1.73
-  - Fixes single selector not being able to target Players or _ZoneCtrl objects (for example with Infinity Hammer).
+  - Changes the admin check to use the official admin check.
+  - Fixes single selector not being able to target players or _ZoneCtrl objects (for example with Infinity Hammer).
   - Fixes some commands still being case sensitive.
+  - Fixes commands without autocomplete causing an error.
 
 - v1.72
   - Fixes commands, this time for real.

@@ -6,7 +6,7 @@ namespace ServerDevcommands;
 public class DisableCommands
 {
 
-  private static List<string> DisallowedCommands = [];
+  private static string[] DisallowedCommands = [];
   public static HashSet<string> RootUsers = [];
 
   public static bool CanRun(string command, ZRpc? rpc = null)
@@ -19,7 +19,7 @@ public class DisableCommands
 
   public static void UpdateCommands(string rootUsers, string blackList)
   {
-    RootUsers = Parse.Split(rootUsers).ToHashSet();
-    DisallowedCommands = Parse.Split(blackList).ToList();
+    RootUsers = [.. Parse.Split(rootUsers)];
+    DisallowedCommands = Parse.Split(blackList);
   }
 }

@@ -44,6 +44,6 @@ public class AliasCommand
       if (index == 0) return ParameterInfo.Create("Name of the alias.");
       return ParameterInfo.None;
     });
-    AutoComplete.Offsets["bind"] = 1;
+    AutoComplete.Offsets["alias"] = 1;
   }
 }
