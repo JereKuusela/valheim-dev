@@ -57,6 +57,21 @@ public class ComponentInfo
     if (PrefabComponents.Count == 0) SearchComponents();
     return PrefabComponents.Where(kvp => kvp.Value.Any(type => type.Name.ToLowerInvariant() == component)).Select(kvp => kvp.Key).ToArray();
   }
+  public static string[] PrefabsByField(string component, string field, string value)
+  {
+    var prefabs = PrefabsByComponent(component);
+    var type = Types.FirstOrDefault(t => t.Name.ToLowerInvariant() == component);
+    if (type == null) return [];
+    return prefabs.Where(prefab =>
+    {
+      var component = ZNetScene.instance.GetPrefab(prefab).GetComponentInChildren(type);
+      if (!component) return false;
+      var fieldInfo = component.GetType().GetField(field);
+      if (fieldInfo == null) return false;
+      var fieldValue = fieldInfo.GetValue(component);
+      return fieldValue.ToString() == value;
+    }).ToArray();
+  }
   public static string[] Get(ZNetView view)
   {
     view.GetComponentsInChildren<MonoBehaviour>(ZNetView.m_tempComponents);

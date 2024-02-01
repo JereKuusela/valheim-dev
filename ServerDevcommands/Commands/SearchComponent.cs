@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 namespace ServerDevcommands;
 public class SearchComponentCommand
@@ -11,6 +13,15 @@ public class SearchComponentCommand
       Helper.ArgsCheck(args, 2, "Missing the object/location");
       Helper.ArgsCheck(args, 3, "Missing the component");
       var component = args[2].ToLowerInvariant();
+      var field = "";
+      var value = "";
+      var split = component.Split(',');
+      if (split.Length == 3)
+      {
+        component = split[0];
+        field = split[1];
+        value = split[2];
+      }
       var maxLines = args.TryParameterInt(2, 5);
       var locations = ZoneSystem.instance.m_locations.Where(location =>
       {
@@ -18,7 +29,7 @@ public class SearchComponentCommand
         location.m_prefab.GetComponentsInChildren<MonoBehaviour>(ZNetView.m_tempComponents);
         return ZNetView.m_tempComponents.Any(s => s.GetType().Name.ToLowerInvariant() == component);
       }).Select(location => location.m_prefab.name);
-      var result = args[1] == "location" ? locations.ToArray() : ComponentInfo.PrefabsByComponent(component);
+      var result = args[1] == "location" ? locations.ToArray() : field == "" ? ComponentInfo.PrefabsByComponent(component) : ComponentInfo.PrefabsByField(component, field, value);
       if (result.Length > 100)
       {
         args.Context.AddString("Over 100 results, printing to the log file.");
@@ -45,5 +56,63 @@ public class SearchComponentCommand
       if (index == 2) return ParameterInfo.Create("Max lines", "number (default 5)");
       return ParameterInfo.None;
     });
+
   }
+}
+
+
+public class SearchItemCommand
+{
+  public SearchItemCommand()
+  {
+    Helper.Command("search_item", "[field,value] [field,value] ...  - Searches items.", (args) =>
+    {
+      Helper.ArgsCheck(args, 2, "Missing the search term");
+      var items = ObjectDB.instance.m_items;
+      for (int i = 1; i < args.Length; i++)
+      {
+        var split = args[i].Split(',');
+        if (split.Length != 2)
+        {
+          args.Context.AddString("Invalid search term: " + args[i]);
+          continue;
+        }
+        var field = split[0];
+        var value = split[1].ToLowerInvariant();
+        items = ItemDropsByField(items, field, value);
+      }
+      var names = items.Select(item => item.name).ToList();
+      if (names.Count > 50)
+      {
+        args.Context.AddString("Over 50 results, printing to the log file.");
+        Debug.Log("Search item results:\n" + string.Join("\n", names));
+        return;
+      }
+      foreach (var item in names) args.Context.AddString(item);
+    });
+    List<string> itemFields = [];
+    AutoComplete.Register("search_item", (int index, int subIndex) =>
+    {
+      if (itemFields.Count == 0) itemFields = GenerateAutocomplete();
+      if (subIndex == 0) return itemFields;
+      if (subIndex == 1) return ParameterInfo.Create("Value");
+      return ParameterInfo.None;
+    });
+
+  }
+  readonly static HashSet<Type> validTypes = [typeof(bool), typeof(int), typeof(float), typeof(string)];
+  private static List<string> GenerateAutocomplete() => typeof(ItemDrop.ItemData.SharedData).GetFields(BindingFlags.Instance | BindingFlags.Public).Where(f => validTypes.Contains(f.FieldType) || f.FieldType.IsEnum).Select(p => p.Name).ToList();
+  private static List<GameObject> ItemDropsByField(List<GameObject> items, string field, string value) => items.Where(item =>
+  {
+    var drop = item.GetComponent<ItemDrop>();
+    if (drop == null) return false;
+    var data = drop.m_itemData;
+    if (data == null) return false;
+    var shared = data.m_shared;
+    if (shared == null) return false;
+    var f = typeof(ItemDrop.ItemData.SharedData).GetField(field, BindingFlags.Instance | BindingFlags.Public);
+    if (f == null) return false;
+    var v = f.GetValue(shared);
+    return v.ToString().ToLowerInvariant() == value;
+  }).ToList();
 }

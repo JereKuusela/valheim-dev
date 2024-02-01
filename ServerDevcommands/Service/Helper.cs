@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using UnityEngine;
@@ -47,7 +46,16 @@ public abstract class Helper
     return Utils.GetPrefabName(prefab);
   }
 
-
+  public static int Hash(string key)
+  {
+    if (key.StartsWith("$", StringComparison.InvariantCultureIgnoreCase))
+    {
+      var hash = ZSyncAnimation.GetHash(key.Substring(1));
+      if (key == "$anim_speed") return hash;
+      return 438569 + hash;
+    }
+    return key.GetStableHashCode();
+  }
   public static bool Within(Range<float> range, float value)
   {
     if (range.Min == range.Max) return value <= range.Max;

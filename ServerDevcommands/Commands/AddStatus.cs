@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace ServerDevcommands;
 ///<summary>Adds duration and intensity.</summary>
 public class AddStatusCommand

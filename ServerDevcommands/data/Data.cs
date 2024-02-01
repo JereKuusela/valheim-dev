@@ -49,7 +49,16 @@ public class Yaml
       }
     }
   }
-
+  public static List<T> LoadList<T>(string file) where T : new()
+  {
+    if (!File.Exists(file)) return [];
+    return Deserialize<List<T>>(File.ReadAllText(file), file);
+  }
+  public static T Load<T>(string file) where T : new()
+  {
+    if (!File.Exists(file)) return new T();
+    return Deserialize<T>(File.ReadAllText(file), file);
+  }
   public static T Read<T>(string file, Func<string, string, T> action) where T : new()
   {
     if (!File.Exists(file)) return new T();

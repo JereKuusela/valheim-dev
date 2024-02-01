@@ -144,13 +144,14 @@ public static class Parse
     return args[index];
   }
   public static Quaternion AngleYXZ(string arg) => AngleYXZ(arg, Quaternion.identity);
-  public static Quaternion AngleYXZ(string arg, Quaternion defaultValue)
+  public static Quaternion AngleYXZ(string[] values, int index) => AngleYXZ(values, Quaternion.identity, index);
+  public static Quaternion AngleYXZ(string arg, Quaternion defaultValue) => AngleYXZ(Split(arg), defaultValue);
+  public static Quaternion AngleYXZ(string[] values, Quaternion defaultValue, int index = 0)
   {
-    var values = Split(arg);
     var angle = Vector3.zero;
-    angle.y = Parse.Float(values, 0, defaultValue.eulerAngles.y);
-    angle.x = Parse.Float(values, 1, defaultValue.eulerAngles.x);
-    angle.z = Parse.Float(values, 2, defaultValue.eulerAngles.z);
+    angle.y = Float(values, 0 + index, defaultValue.eulerAngles.y);
+    angle.x = Float(values, 1 + index, defaultValue.eulerAngles.x);
+    angle.z = Float(values, 2 + index, defaultValue.eulerAngles.z);
     return Quaternion.Euler(angle);
   }
   public static Range<Quaternion> AngleYXZRange(string arg) => AngleYXZRange(arg, Quaternion.identity);

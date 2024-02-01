@@ -125,6 +125,7 @@ public class SetCommands
     new ResetDungeonCommand();
     new TeleportCommand();
     new SearchComponentCommand();
+    new SearchItemCommand();
     new RPCCommand();
     DefaultAutoComplete.Register();
     AliasManager.Init();
