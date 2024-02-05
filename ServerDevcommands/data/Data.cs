@@ -13,9 +13,10 @@ namespace ServerDevcommands;
 
 public class Yaml
 {
-  public static void SetupWatcher(string pattern, Action action)
+  public static void SetupWatcher(string pattern, Action action) => SetupWatcher(Paths.ConfigPath, pattern, action);
+  public static void SetupWatcher(string path, string pattern, Action action)
   {
-    FileSystemWatcher watcher = new(Paths.ConfigPath, pattern);
+    FileSystemWatcher watcher = new(path, pattern);
     watcher.Created += (s, e) => action();
     watcher.Changed += (s, e) => action();
     watcher.Renamed += (s, e) => action();
