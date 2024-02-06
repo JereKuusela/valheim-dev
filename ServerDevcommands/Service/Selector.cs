@@ -20,14 +20,19 @@ public static class Selector
   public static bool IsValid(ZDO zdo) => zdo != null && zdo.IsValid();
 
   ///<summary>Returns the hovered object.</summary>
-  public static ZNetView? GetHovered(float range, string[] included, string[] excluded)
+  public static ZNetView? GetHovered(float range, string[] included, string[] excluded) => GetHovered(range, included, [], excluded);
+  public static ZNetView? GetHovered(float range, string[] included, HashSet<string> types, string[] excluded)
   {
-    var hovered = GetHovered(Player.m_localPlayer, range, included, excluded);
+    var hovered = GetHovered(Player.m_localPlayer, range, included, types, excluded);
     if (hovered == null) return null;
     return hovered.Obj;
   }
+
+
   public static int GetPrefabFromHit(RaycastHit hit) => hit.collider.GetComponentInParent<ZNetView>().GetZDO().GetPrefab();
-  public static Hovered? GetHovered(Player obj, float maxDistance, string[] included, string[] excluded, bool allowOtherPlayers = false)
+
+  public static Hovered? GetHovered(Player obj, float maxDistance, string[] included, string[] excluded, bool allowOtherPlayers = false) => GetHovered(obj, maxDistance, included, [], excluded, allowOtherPlayers);
+  public static Hovered? GetHovered(Player obj, float maxDistance, string[] included, HashSet<string> types, string[] excluded, bool allowOtherPlayers = false)
   {
     var includedPrefabs = GetAllPrefabs(included);
     var excludedPrefabs = GetExcludedPrefabs(excluded);
@@ -59,6 +64,7 @@ public static class Selector
       var player = netView.GetComponentInChildren<Player>();
       if (player == obj) continue;
       if (!allowOtherPlayers && player) continue;
+      if (types.Count > 0 && !ComponentInfo.HasComponent(netView, types)) continue;
       var mineRock = netView.GetComponent<MineRock5>();
       var index = 0;
       if (mineRock)
