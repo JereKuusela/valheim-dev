@@ -71,7 +71,7 @@ public static class TerminalUtils
     return alias + " " + string.Join(" ", substitutions);
 
   }
-  public static bool SkipProcessing(string command) => AutoComplete.Offsets.Any(cmd => command.StartsWith($"{cmd} ", StringComparison.OrdinalIgnoreCase));
+  public static bool SkipProcessing(string command) => AutoComplete.Offsets.Any(kvp => command.StartsWith($"{kvp.Key} ", StringComparison.OrdinalIgnoreCase));
 
   public static bool IsExecuting = false;
 }

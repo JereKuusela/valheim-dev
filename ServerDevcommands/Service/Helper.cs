@@ -45,9 +45,9 @@ public abstract class Helper
     if (!prefab) return "";
     return Utils.GetPrefabName(prefab);
   }
-
   public static int Hash(string key)
   {
+    if (int.TryParse(key, out var h)) return h;
     if (key.StartsWith("$", StringComparison.InvariantCultureIgnoreCase))
     {
       var hash = ZSyncAnimation.GetHash(key.Substring(1));

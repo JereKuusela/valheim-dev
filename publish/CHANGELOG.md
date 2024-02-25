@@ -1,3 +1,7 @@
+- v1.75
+  - Fixes the `alias` and `bind` commands not working with multiple commands.
+  - Lots of changes to support the new data system for World Edit Commands.
+
 - v1.74
   - Reverts the admin check change. Lovely!
 

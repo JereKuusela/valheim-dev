@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -41,9 +42,9 @@ public static class Parse
   }
   public static int Int(string arg, int defaultValue = 0)
   {
-    if (!int.TryParse(arg, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
-      return defaultValue;
-    return result;
+    if (int.TryParse(arg, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
+      return result;
+    return defaultValue;
   }
   public static int Int(string[] args, int index, int defaultValue = 0)
   {
@@ -52,9 +53,9 @@ public static class Parse
   }
   public static int? IntNull(string arg)
   {
-    if (!int.TryParse(arg, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
-      return null;
-    return result;
+    if (int.TryParse(arg, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
+      return result;
+    return null;
   }
   public static int? IntNull(string[] args, int index)
   {
@@ -73,9 +74,9 @@ public static class Parse
   }
   public static uint UInt(string arg, uint defaultValue = 0)
   {
-    if (!uint.TryParse(arg, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
-      return defaultValue;
-    return result;
+    if (uint.TryParse(arg, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
+      return result;
+    return defaultValue;
   }
   public static uint UInt(string[] args, int index, uint defaultValue = 0)
   {
@@ -94,14 +95,25 @@ public static class Parse
   }
   public static long Long(string arg, long defaultValue = 0)
   {
-    if (!long.TryParse(arg, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
-      return defaultValue;
-    return result;
+    if (long.TryParse(arg, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
+      return result;
+    return defaultValue;
   }
   public static long Long(string[] args, int index, long defaultValue = 0)
   {
     if (args.Length <= index) return defaultValue;
     return Long(args[index], defaultValue);
+  }
+  public static long? LongNull(string[] args, int index)
+  {
+    if (args.Length <= index) return null;
+    return LongNull(args[index]);
+  }
+  public static long? LongNull(string arg)
+  {
+    if (long.TryParse(arg, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
+      return result;
+    return null;
   }
   public static Range<long> LongRange(string arg, long defaultValue = 0)
   {
@@ -127,6 +139,17 @@ public static class Parse
   {
     if (args.Length <= index) return defaultValue;
     return Float(args[index], defaultValue);
+  }
+  public static float? FloatNull(string arg)
+  {
+    if (float.TryParse(arg, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
+      return result;
+    return null;
+  }
+  public static float? FloatNull(string[] args, int index)
+  {
+    if (args.Length <= index) return null;
+    return FloatNull(args[index]);
   }
   public static Range<float> FloatRange(string arg, float defaultValue = 0f)
   {
@@ -218,6 +241,11 @@ public static class Parse
     var z = FloatRange(parts, 1, defaultValue.z);
     return ToVectorRange(x, y, z);
   }
+  public static Vector2i Vector2Int(string arg)
+  {
+    var parts = SplitWithEmpty(arg);
+    return new(Int(parts[0]), parts.Length > 1 ? Int(parts[1]) : 0);
+  }
   ///<summary>Parses ZXY vector starting at zero index. Zero is used for missing values.</summary>
   public static Vector3 VectorZXY(string[] args) => VectorZXY(args, 0, Vector3.zero);
   ///<summary>Parses ZXY vector starting at zero index. Default values is used for missing values.</summary>
@@ -301,6 +329,41 @@ public static class Parse
     return range;
   }
 
+  public static string[] SplitWithEscape(string arg, char separator = ',')
+  {
+    var parts = new List<string>();
+    var split = arg.Split(separator);
+    for (var i = 0; i < split.Length; i++)
+    {
+      var part = split[i].TrimStart();
+      // Escape should only work if at start/end of the string.
+      if (part.StartsWith("\""))
+      {
+        split[i] = part.Substring(1);
+        var j = i;
+        for (; j < split.Length; j++)
+        {
+          part = split[j].TrimEnd();
+          if (part.EndsWith("\""))
+          {
+            split[j] = part.Substring(0, part.Length - 1);
+            break;
+          }
+        }
+        parts.Add(string.Join(separator.ToString(), split.Skip(i).Take(j - i + 1)));
+        i = j;
+        continue;
+      }
+      parts.Add(split[i].Trim());
+    }
+    return [.. parts];
+  }
+  public static KeyValuePair<string, string> Kvp(string str, char separator = ',')
+  {
+    var split = str.Split([separator], 2);
+    return split.Length < 2 ? new("", "") : new(split[0], split[1].Trim());
+  }
+  public static string[] SplitWithEmpty(string arg, char separator = ',') => arg.Split(separator).Select(s => s.Trim()).ToArray();
   public static string[] Split(string arg, char separator = ',') => arg.Split(separator).Select(s => s.Trim()).Where(s => s != "").ToArray();
   public static string[] Split(string[] args, int index, char separator)
   {
@@ -326,6 +389,10 @@ public static class Parse
     if (IsTruthy(value)) return true;
     if (IsFalsy(value)) return false;
     return Helper.IsDown(value);
+  }
+  public static bool? BoolNull(string arg)
+  {
+    return arg == null ? null : arg == "true";
   }
   public static string Logic(string value)
   {

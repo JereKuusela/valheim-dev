@@ -34,6 +34,7 @@ public static class Selector
   public static Hovered? GetHovered(Player obj, float maxDistance, string[] included, string[] excluded, bool allowOtherPlayers = false) => GetHovered(obj, maxDistance, included, [], excluded, allowOtherPlayers);
   public static Hovered? GetHovered(Player obj, float maxDistance, string[] included, HashSet<string> types, string[] excluded, bool allowOtherPlayers = false)
   {
+    allowOtherPlayers |= included.Contains("Player");
     var includedPrefabs = GetAllPrefabs(included);
     var excludedPrefabs = GetExcludedPrefabs(excluded);
     var raycast = Math.Max(maxDistance + 5f, 50f);
@@ -145,7 +146,8 @@ public static class Selector
   {
     id = id.ToLower();
     IEnumerable<GameObject> values = ZNetScene.instance.m_namedPrefabs.Values;
-    values = values.Where(prefab => prefab.name != "Player");
+    if (id != "Player")
+      values = values.Where(prefab => prefab.name != "Player");
     if (id == "*" || id == "")
       values = values.Where(prefab => !prefab.name.StartsWith("_", StringComparison.Ordinal));
     else if (id.Contains("*"))
