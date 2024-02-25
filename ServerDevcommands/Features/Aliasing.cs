@@ -30,7 +30,8 @@ public static class Aliasing
   }
 
   ///<summary>Converts a given command to plain text (without aliases).</summary>
-  public static string Plain(string command, int rounds = 10)
+  public static string Plain(string command) => Plain(command, 10);
+  private static string Plain(string command, int rounds)
   {
     if (!Settings.Aliasing) return command;
     // This functions gets constantly called so this can help with the performance.

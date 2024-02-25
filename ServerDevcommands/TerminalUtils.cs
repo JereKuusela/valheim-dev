@@ -84,7 +84,7 @@ public class TryRunCommand
     if (!Settings.ImprovedChat && __instance == Chat.instance) return true;
     // Some commands (like alias or bind) are expected to be executed as they are.
     if (TerminalUtils.SkipProcessing(text)) return true;
-    var commands = MultiCommands.Split(text).Select(s => Aliasing.Plain(s)).ToArray();
+    var commands = MultiCommands.Split(text).Select(Aliasing.Plain).SelectMany(MultiCommands.Split).ToArray();
     if (commands.Length > 1)
     {
       MultiCommands.Handle(__instance, commands);
