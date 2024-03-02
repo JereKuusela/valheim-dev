@@ -7,25 +7,16 @@ public class DmgCommand
 {
     public DmgCommand()
     {
-        Helper.Command("dmg", "[target,,value] - Default value: 5. (Negative values heal the character).", (args) =>
+        Helper.Command("dmg", "[target] [value] - Default value: 5. (Negative values heal the character).", (args) =>
         {
-            if (args == null || args.Length < 2)
-            {
-                Console.instance.Print("Error: Insufficient arguments.");
-                return;
-            }
-
             if (Player.m_localPlayer == null)
             {
                 Console.instance.Print("Error: Local player not found.");
                 return;
             }
 
-            string commandArgs = args.FullLine.Substring(4);
-            string[] parts = commandArgs.Split(new string[] { ",," }, StringSplitOptions.None);
-
-            string argName = parts.Length >= 1 && !string.IsNullOrWhiteSpace(parts[0]) ? parts[0] : "all";
-            float argDmg = parts.Length >= 2 && float.TryParse(parts[1].Trim(), out float parsedDmg) ? parsedDmg : 5f;
+            string argName = args.Length > 1 && !string.IsNullOrWhiteSpace(args[1]) ? args[1] : "all";
+            float argDmg = args.Length > 2 && float.TryParse(args[2].Trim(), out float parsedDmg) ? parsedDmg : 5f;
 
             float absDmg = Math.Abs(argDmg);
             string action = argDmg >= 0 ? " damage" : " healing";
@@ -68,8 +59,8 @@ public class DmgCommand
         });
         AutoComplete.Register("dmg", (int index) =>
         {
-            if (index == 0) return new List<string> { "others", "all" }.Concat(ParameterInfo.PlayerNames).ToList();
-            if (index == 1) return ParameterInfo.Create("Value", "Positive = damage / Negative = healing");
+            if (index == 0) return new List<string> { "others", "all" }.Concat(ParameterInfo.PlayerNames.Select(name => name.Contains(" ") ? $"\"{name}\"" : name)).ToList();
+            if (index >= 1) return ParameterInfo.Create("Value", "Positive = damage / Negative = healing");
             return ParameterInfo.None;
         });
     }
