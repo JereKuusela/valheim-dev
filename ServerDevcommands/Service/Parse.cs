@@ -177,6 +177,15 @@ public static class Parse
     angle.z = Float(values, 2 + index, defaultValue.eulerAngles.z);
     return Quaternion.Euler(angle);
   }
+  public static Quaternion? AngleYXZNull(string arg) => AngleYXZNull(Split(arg));
+  public static Quaternion? AngleYXZNull(string[] values)
+  {
+    var y = FloatNull(values, 0);
+    var x = FloatNull(values, 1);
+    var z = FloatNull(values, 2);
+    if (y == null || x == null || z == null) return null;
+    return Quaternion.Euler(new(x.Value, y.Value, z.Value));
+  }
   public static Range<Quaternion> AngleYXZRange(string arg) => AngleYXZRange(arg, Quaternion.identity);
   public static Range<Quaternion> AngleYXZRange(string arg, Quaternion defaultValue)
   {
@@ -207,6 +216,15 @@ public static class Parse
     vector.y = Float(args, index + 2, defaultValue.y);
     vector.z = Float(args, index + 1, defaultValue.z);
     return vector;
+  }
+  public static Vector3? VectorXZYNull(string arg) => VectorXZYNull(Split(arg));
+  public static Vector3? VectorXZYNull(string[] args)
+  {
+    var x = FloatNull(args, 0);
+    var y = FloatNull(args, 2);
+    var z = FloatNull(args, 1);
+    if (x == null || y == null || z == null) return null;
+    return new(x.Value, y.Value, z.Value);
   }
   public static Vector3 VectorZYX(string arg) => VectorZYX(Split(arg), 0, Vector3.zero);
   public static Vector3 VectorZYX(string[] args, int index, Vector3 defaultValue)

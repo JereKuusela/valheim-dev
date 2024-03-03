@@ -123,6 +123,7 @@ public abstract class Helper
   public static float Round(float value) => Mathf.Round(value * 1000f) / 1000f;
   public static bool IsZero(float a) => Mathf.Abs(a) < 0.001f;
   public static bool Approx(float a, float b) => Mathf.Abs(a - b) < 0.001f;
+  public static bool ApproxBetween(float a, float min, float max) => min - 0.001f <= a && a <= max + 0.001f;
   public static string PrintVectorXZY(Vector3 vector) => vector.x.ToString("0.##", CultureInfo.InvariantCulture) + ", " + vector.z.ToString("0.##", CultureInfo.InvariantCulture) + ", " + vector.y.ToString("0.##", CultureInfo.InvariantCulture);
   public static string PrintVectorYXZ(Vector3 vector) => vector.y.ToString("0.##", CultureInfo.InvariantCulture) + ", " + vector.x.ToString("0.##", CultureInfo.InvariantCulture) + ", " + vector.z.ToString("0.##", CultureInfo.InvariantCulture);
   public static string PrintAngleYXZ(Quaternion quaternion) => PrintVectorYXZ(quaternion.eulerAngles);
