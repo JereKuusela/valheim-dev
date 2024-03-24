@@ -127,6 +127,7 @@ public class SetCommands
     new SearchComponentCommand();
     new SearchItemCommand();
     new RPCCommand();
+    new DmgCommand();
     DefaultAutoComplete.Register();
     AliasManager.Init();
     Settings.RegisterCommands();
