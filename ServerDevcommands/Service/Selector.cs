@@ -238,6 +238,7 @@ public static class Selector
           var wear2 = collider.GetComponentInParent<WearNTear>();
           if (!wear2 || !IsValid(wear2.m_nview)) continue;
           if (views.Contains(wear2.m_nview)) continue;
+          if (excludedPrefabs.Contains(wear2.m_nview.GetZDO().GetPrefab())) continue;
           views.Add(wear2.m_nview);
           todo.Enqueue(wear2);
         }
@@ -246,8 +247,6 @@ public static class Selector
     IEnumerable<ZNetView> linq = views;
     if (includedPrefabs.Count > 0)
       linq = linq.Where(view => includedPrefabs.Contains(view.GetZDO().GetPrefab()));
-    if (excludedPrefabs.Count > 0)
-      linq = linq.Where(view => !excludedPrefabs.Contains(view.GetZDO().GetPrefab()));
     return linq.ToArray();
   }
 }

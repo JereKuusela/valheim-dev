@@ -1,3 +1,8 @@
+- v1.76
+  - Fixes the "Disable no map" setting not working.
+  - Fixes the `tp` command not working on other players.
+  - Fixes autocomplete breaking when wrapping "" was used.
+
 - v1.75
   - Fixes the `alias` and `bind` commands not working with multiple commands.
   - Lots of changes to support the new data system for World Edit Commands.

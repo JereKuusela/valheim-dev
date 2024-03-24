@@ -47,7 +47,7 @@ public class SendPrivatePositionsToAdmins
       if (!peer.IsReady()) continue;
       var rpc = peer.m_rpc;
       if (!obj.IsAdmin(rpc.GetSocket().GetHostName())) continue;
-      rpc.Invoke("DEV_PrivatePlayerList", new[] { pkg });
+      rpc.Invoke("DEV_PrivatePlayerList", [pkg]);
     }
   }
   static void Postfix(ZNet __instance)

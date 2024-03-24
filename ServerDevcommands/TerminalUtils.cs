@@ -24,7 +24,7 @@ public static class TerminalUtils
     if (start == -1)
     {
       mainPars = parameters;
-      substitutions = new string[0];
+      substitutions = [];
       return;
     }
     mainPars = parameters.Take(start);

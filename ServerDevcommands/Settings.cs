@@ -94,9 +94,9 @@ public static class Settings
   public static ConfigEntry<bool> configGhostIgnoreSleep;
   public static bool GhostIgnoreSleep => Cheats && configGhostIgnoreSleep.Value;
   public static ConfigEntry<string> configFlyUpKeys;
-  public static string[] FlyUpKeys = new string[0];
+  public static string[] FlyUpKeys = [];
   public static ConfigEntry<string> configFlyDownKeys;
-  public static string[] FlyDownKeys = new string[0];
+  public static string[] FlyDownKeys = [];
   public static ConfigEntry<bool> configNoDrops;
   public static bool NoDrops => Cheats && configNoDrops.Value;
   public static ConfigEntry<bool> configNoClipView;
@@ -120,7 +120,7 @@ public static class Settings
   public static ConfigEntry<bool> configCommandDescriptions;
   public static bool CommandDescriptions => configCommandDescriptions.Value;
   private static Dictionary<string, string> Aliases = [];
-  public static string[] AliasKeys = new string[0];
+  public static string[] AliasKeys = [];
 
   private static void ParseAliases(string value)
   {
@@ -223,6 +223,7 @@ public static class Settings
     configAutoDevcommands = config.Bind(section, "Automatic devcommands", true, "Automatically enables devcommands when joining servers.");
     configDebugModeFastTeleport = config.Bind(section, "Debug mode fast teleport", true, "All teleporting is much faster with the debug mode.");
     configDisableNoMap = config.Bind(section, "Disable no map", false, "Disables no map having effect.");
+    configDisableNoMap.SettingChanged += (s, e) => Game.UpdateNoMap();
     configGodModeNoStamina = config.Bind(section, "No stamina usage with god mode", true, "");
     configGodModeNoEitr = config.Bind(section, "No eitr usage with god mode", true, "");
     configGodModeNoUsage = config.Bind(section, "No item usage with god mode", false, "");

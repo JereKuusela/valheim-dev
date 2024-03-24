@@ -185,10 +185,36 @@ public class GetTabOptionsWithImprovedAutoComplete
     else
     {
       var text = Console.instance.m_input.text;
-      var parameters = text.Split(';').Last().Split(' ');
+      var parameters = ParseParameters(text.Split(';').Last());
       __result = AutoComplete.GetOptions(parameters);
     }
     return false;
+  }
+
+  private static string[] ParseParameters(string arg)
+  {
+    var parts = new List<string>();
+    var split = arg.Split(' ');
+    for (var i = 0; i < split.Length; i++)
+    {
+      var part = split[i];
+      // Escape should only work if at start/end of the string.
+      if (part.StartsWith("\""))
+      {
+        var j = i;
+        for (; j < split.Length; j++)
+        {
+          part = split[j].TrimEnd();
+          if (part.EndsWith("\""))
+            break;
+        }
+        parts.Add(string.Join(" ", split.Skip(i).Take(j - i + 1)));
+        i = j;
+        continue;
+      }
+      parts.Add(split[i].Trim());
+    }
+    return [.. parts];
   }
 }
 

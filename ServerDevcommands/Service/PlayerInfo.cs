@@ -30,6 +30,22 @@ public class PlayerInfo
       Rot = zdo.GetRotation();
     }
   }
+  public PlayerInfo(ZNet.PlayerInfo info)
+  {
+    HostId = info.m_host;
+    Name = info.m_name;
+    Pos = info.m_position;
+    ZDOID = info.m_characterID;
+    SessionId = -1;
+    var zdo = ZDOMan.instance.GetZDO(info.m_characterID);
+    if (zdo != null)
+    {
+      Character = zdo.GetLong(ZDOVars.s_playerID, 0L);
+      SessionId = zdo.GetOwner();
+      Pos = zdo.m_position;
+      Rot = zdo.GetRotation();
+    }
+  }
   public PlayerInfo(Player player)
   {
     HostId = "self";
@@ -43,7 +59,9 @@ public class PlayerInfo
 
   public static List<PlayerInfo> FindPlayers(string[] args)
   {
-    List<PlayerInfo> players = ZNet.instance.GetPeers().Select(peer => new PlayerInfo(peer)).ToList();
+    List<PlayerInfo> players = ZNet.instance.IsServer()
+      ? ZNet.instance.GetPeers().Select(peer => new PlayerInfo(peer)).ToList()
+      : ZNet.instance.m_players.Select(player => new PlayerInfo(player)).ToList();
     if (Player.m_localPlayer)
       players.Add(new(Player.m_localPlayer));
 

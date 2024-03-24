@@ -4,7 +4,7 @@ using HarmonyLib;
 
 namespace ServerDevcommands;
 
-[HarmonyPatch(typeof(Terminal), nameof(Terminal.AddString), new[] { typeof(string) })]
+[HarmonyPatch(typeof(Terminal), nameof(Terminal.AddString), typeof(string))]
 public class RedirectOutput
 {
   public static ZRpc? Target = null;

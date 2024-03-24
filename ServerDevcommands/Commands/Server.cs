@@ -24,7 +24,7 @@ public class ServerCommand
       var command = string.Join(" ", args.Args.Skip(1));
       var server = ZNet.instance.GetServerRPC();
       Console.instance.AddString("Sending command: " + command);
-      server?.Invoke(ServerExecution.RPC_Command, new[] { command });
+      server?.Invoke(ServerExecution.RPC_Command, [command]);
     }, true, true);
     AutoComplete.RegisterEmpty("server");
     AutoComplete.Offsets["server"] = 0;

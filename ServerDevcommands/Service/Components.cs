@@ -59,7 +59,7 @@ public class ComponentInfo
       kvp => kvp.Value.name,
       kvp =>
       {
-        kvp.Value.GetComponentsInChildren<MonoBehaviour>(ZNetView.m_tempComponents);
+        kvp.Value.GetComponentsInChildren(ZNetView.m_tempComponents);
         return ZNetView.m_tempComponents.Select(s => s.GetType().Name.ToLowerInvariant()).ToHashSet();
       }
     );

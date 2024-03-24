@@ -137,11 +137,11 @@ public partial class ParameterInfo
   }
   public static List<string> PlayerNames
   {
-    get => ZNet.instance?.m_players.Select(player => player.m_name).ToList() ?? [];
+    get => ZNet.instance?.m_players.Select(player => player.m_name.Contains(" ") ? $"\"{player.m_name}\"" : player.m_name).ToList() ?? ["No players found!"];
   }
   public static List<string> PublicPlayerNames
   {
-    get => ZNet.instance?.m_players.Where(player => player.m_publicPosition).Select(player => player.m_name).ToList() ?? [];
+    get => ZNet.instance?.m_players.Where(player => player.m_publicPosition).Select(player => player.m_name.Contains(" ") ? $"\"{player.m_name}\"" : player.m_name).ToList() ?? ["No public players found!"];
   }
   private static List<string> hairs = [];
   public static List<string> Hairs
@@ -219,6 +219,14 @@ public partial class ParameterInfo
     if (index == 0) return Create($"{name}=<color=yellow>X</color>,Z,Y | {description}.");
     if (index == 1) return Create($"{name}=X,<color=yellow>Z</color>,Y | {description}.");
     if (index == 2) return Create($"{name}=X,Z,<color=yellow>Y</color> | {description}.");
+    return None;
+  }
+  public static List<string> XZYR(string description, int index)
+  {
+    if (index == 0) return Create($"<color=yellow>X</color>,Z,Y,R | {description}.");
+    if (index == 1) return Create($"X,<color=yellow>Z</color>,Y,R | {description}.");
+    if (index == 2) return Create($"X,Z,<color=yellow>Y</color>,R | {description}.");
+    if (index == 4) return Create($"X,Z,Y,<color=yellow>R</color> | {description}.");
     return None;
   }
   public static List<string> XZY(string description, int index)

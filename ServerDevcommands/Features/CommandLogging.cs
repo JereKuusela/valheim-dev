@@ -9,7 +9,7 @@ public class LogCommand
     if (!ZNet.instance) return;
     if (ZNet.instance.IsServer()) return;
     var server = ZNet.instance.GetServerRPC();
-    server?.Invoke(CommandLogging.RPC_Log, new[] { text });
+    server?.Invoke(CommandLogging.RPC_Log, [text]);
   }
 }
 
