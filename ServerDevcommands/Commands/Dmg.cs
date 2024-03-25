@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace ServerDevcommands;
+///<summary>Applies damage or healing to nearby players.</summary>
 public class DmgCommand
 {
     public DmgCommand()
@@ -59,8 +60,8 @@ public class DmgCommand
         });
         AutoComplete.Register("dmg", (int index) =>
         {
-            if (index == 0) return new List<string> { "others", "all" }.Concat(ParameterInfo.PlayerNames.Select(name => name.Contains(" ") ? $"\"{name}\"" : name)).ToList();
-            if (index >= 1) return ParameterInfo.Create("Value", "Positive = damage / Negative = healing");
+            if (index == 0) return new List<string> { "others", "all" }.Concat(ParameterInfo.PlayerNames).ToList();
+            if (index == 1) return ParameterInfo.Create("Value", "Positive = damage / Negative = healing");
             return ParameterInfo.None;
         });
     }
