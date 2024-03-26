@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using Service;
 
 namespace ServerDevcommands;
 public class DmgCommand
@@ -9,58 +9,40 @@ public class DmgCommand
     {
         Helper.Command("dmg", "[target] [value] - Default value: 5. (Negative values heal the character).", (args) =>
         {
-            if (Player.m_localPlayer == null)
+            Helper.ArgsCheck(args, 1, "Missing target.");
+            Helper.ArgsCheck(args, 2, "Missing amount.");
+            var name = args.Args[1];
+            var dmg = Parse.Float(args.Args[2], 5f);
+
+            var absDmg = Math.Abs(dmg);
+            var action = dmg >= 0 ? " damage" : " healing";
+
+            var targets = PlayerInfo.FindPlayers([name]);
+
+            foreach (var target in targets)
             {
-                Console.instance.Print("Error: Local player not found.");
-                return;
-            }
-
-            string argName = args.Length > 1 && !string.IsNullOrWhiteSpace(args[1]) ? args[1] : "all";
-            float argDmg = args.Length > 2 && float.TryParse(args[2].Trim(), out float parsedDmg) ? parsedDmg : 5f;
-
-            float absDmg = Math.Abs(argDmg);
-            string action = argDmg >= 0 ? " damage" : " healing";
-
-            string damageMessage = $"{absDmg}{action} applied to: ";
-
-            List<string> affectedPlayers = new List<string>();
-
-            foreach (Player targetPlayer in Player.GetAllPlayers())
-            {
-                if (argName == "all" || (argName == "others" && targetPlayer != Player.m_localPlayer) || targetPlayer.GetPlayerName().Contains(argName))
+                if (dmg >= 0)
                 {
-                    if (argDmg >= 0)
+                    HitData hit = new HitData
                     {
-                        HitData hit = new HitData
-                        {
-                            m_damage = { m_damage = argDmg },
-                            m_hitType = HitData.HitType.Self
-                        };
-                        targetPlayer.Damage(hit);
-                    }
-                    else
-                    {
-                        targetPlayer.Heal(absDmg);
-                    }
-                    affectedPlayers.Add(targetPlayer.GetPlayerName());
+                        m_damage = { m_damage = dmg },
+                        m_hitType = HitData.HitType.Self,
+                    };
+                    ZRoutedRpc.instance.InvokeRoutedRPC(0, target.ZDOID, "Damage", [hit]);
+                }
+                else
+                {
+                    ZRoutedRpc.instance.InvokeRoutedRPC(0, target.ZDOID, "Heal", [absDmg, true]);
                 }
             }
 
-            if (affectedPlayers.Count == 0)
-            {
-                damageMessage = "No players affected.";
-            }
-            else
-            {
-                damageMessage += string.Join(" / ", affectedPlayers);
-            }
-
-            Console.instance.Print(damageMessage);
+            var msg = $"{absDmg}{action} applied to: {string.Join(", ", targets.Select(p => p.Name))}";
+            args.Context.AddString(msg);
         });
         AutoComplete.Register("dmg", (int index) =>
         {
-            if (index == 0) return new List<string> { "others", "all" }.Concat(ParameterInfo.PlayerNames.Select(name => name.Contains(" ") ? $"\"{name}\"" : name)).ToList();
-            if (index >= 1) return ParameterInfo.Create("Value", "Positive = damage / Negative = healing");
+            if (index == 0) return ["others", "all", .. ParameterInfo.PlayerNames];
+            if (index == 1) return ParameterInfo.Create("Value", "Positive = damage / Negative = healing");
             return ParameterInfo.None;
         });
     }
