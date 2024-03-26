@@ -46,7 +46,7 @@ public class TeleportCommand
       var fastTeleport = args.Length > 3 && args[3].Equals("fast", StringComparison.OrdinalIgnoreCase);
       foreach (var player in players)
       {
-        ZRoutedRpc.instance.InvokeRoutedRPC(player.SessionId, "RPC_TeleportPlayer", [pos, rot, !fastTeleport]);
+        ZRoutedRpc.instance.InvokeRoutedRPC(0, player.ZDOID, "RPC_TeleportTo", [pos, rot, !fastTeleport]);
       }
     });
   }
