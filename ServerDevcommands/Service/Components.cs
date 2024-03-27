@@ -26,7 +26,6 @@ public class ComponentInfo
   private static Type[] LoadTypes()
   {
     List<Assembly> assemblies = [Assembly.GetAssembly(typeof(ZNetView)), .. Chainloader.PluginInfos.Values.Where(p => p.Instance != null).Select(p => p.Instance.GetType().Assembly)];
-    var assembly = Assembly.GetAssembly(typeof(ZNetView));
     var baseType = typeof(MonoBehaviour);
     return assemblies.SelectMany(s =>
     {
