@@ -3,16 +3,18 @@ using System.Linq;
 using Service;
 
 namespace ServerDevcommands;
+///<summary>Applies damage or healing to players.</summary>
 public class DmgCommand
 {
     public DmgCommand()
     {
-        Helper.Command("dmg", "[target] [value] - Default value: 5. (Negative values heal the character).", (args) =>
+        Helper.Command("dmg", "[target] [amount] - (Negative values heal the character).", (args) =>
         {
-            Helper.ArgsCheck(args, 1, "Missing target.");
-            Helper.ArgsCheck(args, 2, "Missing amount.");
+            Helper.ArgsCheck(args, 2, "Missing target.");
+            Helper.ArgsCheck(args, 3, "Missing amount.");
+            
             var name = args.Args[1];
-            var dmg = Parse.Float(args.Args[2], 5f);
+            var dmg = Parse.Float(args.Args[2], 0f);
 
             var absDmg = Math.Abs(dmg);
             var action = dmg >= 0 ? " damage" : " healing";
