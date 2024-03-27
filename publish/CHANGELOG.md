@@ -1,4 +1,5 @@
 - v1.76
+  - Adds a new command `dmg` to deal damage to players, thanks Trapaceiro!
   - Fixes the "Disable no map" setting not working.
   - Fixes the `tp` command not working on other players.
   - Fixes autocomplete breaking when wrapping "" was used.
