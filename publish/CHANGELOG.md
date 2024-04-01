@@ -1,3 +1,6 @@
+- v1.77
+  - Fixes the command `recall` (now internally uses tp command).
+
 - v1.76
   - Adds a new command `dmg` to deal damage to players, thanks Trapaceiro!
   - Fixes the "Disable no map" setting not working.
