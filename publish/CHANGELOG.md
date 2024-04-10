@@ -1,5 +1,6 @@
 - v1.77
   - Fixes the command `recall` (now internally uses tp command).
+  - Fixed for the new version of the game.
 
 - v1.76
   - Adds a new command `dmg` to deal damage to players, thanks Trapaceiro!

@@ -25,10 +25,12 @@ public class SearchComponentCommand
       var maxLines = args.TryParameterInt(2, 5);
       var locations = ZoneSystem.instance.m_locations.Where(location =>
       {
-        if (!location.m_prefab) return false;
-        location.m_prefab.GetComponentsInChildren<MonoBehaviour>(ZNetView.m_tempComponents);
+        if (!location.m_prefab.IsValid) return false;
+        location.m_prefab.Load();
+        location.m_prefab.Asset.GetComponentsInChildren(ZNetView.m_tempComponents);
+        location.m_prefab.Release();
         return ZNetView.m_tempComponents.Any(s => s.GetType().Name.ToLowerInvariant() == component);
-      }).Select(location => location.m_prefab.name);
+      }).Select(location => location.m_prefabName);
       var result = args[1] == "location" ? locations.ToArray() : field == "" ? ComponentInfo.PrefabsByComponent(component) : ComponentInfo.PrefabsByField(component, field, value);
       if (result.Length > 100)
       {

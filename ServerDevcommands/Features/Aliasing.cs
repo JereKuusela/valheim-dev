@@ -1,8 +1,10 @@
+using GUIFramework;
+
 namespace ServerDevcommands;
 public static class Aliasing
 {
   private static string Alias = "";
-  public static void RemoveAlias(Fishlabs.GuiInputField input)
+  public static void RemoveAlias(GuiInputField input)
   {
     if (!Settings.Aliasing) return;
     Alias = GetAlias(input.text);
@@ -18,7 +20,7 @@ public static class Aliasing
     input.text = plain + input.text.Substring(Alias.Length);
     input.caretPosition += plain.Length - Alias.Length;
   }
-  public static void RestoreAlias(Fishlabs.GuiInputField input)
+  public static void RestoreAlias(GuiInputField input)
   {
     if (!Settings.Aliasing) return;
     if (Alias == string.Empty) return;

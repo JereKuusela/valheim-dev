@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GUIFramework;
 using HarmonyLib;
 using UnityEngine;
 namespace ServerDevcommands;
@@ -337,7 +338,7 @@ public class PlainInputForAutoComplete
   private static int CurrentCommand = -1;
   private static int DiscardCaretDelta = 0;
   ///<summary>Discarding previous commands makes handling much simpler.</summary>
-  private static void DiscardPreviousCommands(Fishlabs.GuiInputField input)
+  private static void DiscardPreviousCommands(GuiInputField input)
   {
     if (!Settings.MultiCommand) return;
     PreviousCommands = input.text.Split(';');
@@ -360,7 +361,7 @@ public class PlainInputForAutoComplete
     else
       input.text = PreviousCommands[CurrentCommand];
   }
-  private static void RestorePreviousCommands(Fishlabs.GuiInputField input)
+  private static void RestorePreviousCommands(GuiInputField input)
   {
     if (PreviousCommands == null) return;
     PreviousCommands[CurrentCommand] = input.text;
