@@ -22,7 +22,7 @@ public class FindCommand
 
       var prefab = args[1].GetStableHashCode();
       var pos = Parse.VectorXZY(string.Join(",", args.Args.Skip(3)));
-      var locations = ZoneSystem.instance.GetLocationList().Where(l => l.m_location != null && l.m_location.m_prefab.Name == args[1]);
+      var locations = ZoneSystem.instance.GetLocationList().Where(l => Helper.IsValid(l.m_location) && l.m_location.m_prefab.Name == args[1]);
       var list = locations.Select(l => l.m_position).ToList();
       var zdos = ZDOMan.instance.m_objectsByID.Values.Where(zdo => zdo.IsValid() && zdo.GetPrefab() == prefab);
       list.AddRange(zdos.Select(zdo => zdo.GetPosition()));

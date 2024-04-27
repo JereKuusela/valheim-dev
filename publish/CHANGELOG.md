@@ -1,3 +1,6 @@
+- v1.79
+  - Fixes autocomplete not working for locations (without Expand World Data mod installed).
+
 - v1.78
   - Fixes autocomplete not working for location clones (from Expand World Data mod).
   - Fixes error message when typoing an object name.

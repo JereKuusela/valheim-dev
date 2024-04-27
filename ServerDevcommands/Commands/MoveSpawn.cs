@@ -14,7 +14,7 @@ public class MoveSpawn
         var zs = ZoneSystem.instance;
         if (!zs) return;
         var coords = Parse.VectorXZY(Parse.Split(parameters[1]));
-        var location = zs.m_locationInstances.First(location => location.Value.m_location.m_prefab.Name == "StartTemple");
+        var location = zs.m_locationInstances.First(location => Helper.IsValid(location.Value.m_location) && location.Value.m_location.m_prefab.Name == "StartTemple");
         var newLocation = location.Value;
         newLocation.m_position = coords;
         zs.m_locationInstances[location.Key] = newLocation;
