@@ -47,7 +47,7 @@ public class ServerDevcommands : BaseUnityPlugin
   public void LateUpdate()
   {
     MultiCommands.Execute(Time.deltaTime);
-    MouseWheelBinding.Execute(Input.GetAxis("Mouse ScrollWheel"));
+    MouseWheelBinding.Execute(ZInput.GetMouseScrollWheel() * 20f);
     if (AliasManager.ToBeSaved) AliasManager.ToFile();
     if (BindManager.ToBeSaved) BindManager.ToFile();
   }

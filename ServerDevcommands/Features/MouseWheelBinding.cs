@@ -22,6 +22,7 @@ public class MouseWheelBinding
   ///<summary>Returns whether any commands could run with the current modifier keys.</summary>
   public static bool CouldExecute()
   {
+    if (ZInput.GetMouseScrollWheel() == 0f) return false;
     if (Terminal.m_binds.TryGetValue(Settings.MouseWheelBindKey, out var commands))
       return commands.Any(BindCommand.Valid);
     return false;

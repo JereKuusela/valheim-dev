@@ -1,6 +1,7 @@
 - v1.78
   - Fixes autocomplete not working for location clones (from Expand World Data mod).
   - Fixes error message when typoing an object name.
+  - Fixes vanilla object copy not copying the rotation.
 
 - v1.77
   - Fixes the command `recall` (now internally uses tp command).
