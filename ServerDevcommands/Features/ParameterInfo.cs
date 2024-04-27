@@ -97,7 +97,7 @@ public partial class ParameterInfo
     get
     {
       // No caching to make Expand World easier to use.
-      return ZoneSystem.instance.m_locations.Select(location => location.m_prefabName).ToList();
+      return ZoneSystem.instance.m_locations.Select(location => location.m_prefab.Name).ToList();
     }
   }
   public static List<string> Events

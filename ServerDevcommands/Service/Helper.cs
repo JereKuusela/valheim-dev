@@ -28,13 +28,12 @@ public abstract class Helper
       Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, message);
     }
   }
-  public static GameObject GetPrefab(string name)
+  public static GameObject? GetPrefab(string name)
   {
-    name = name.ToLower();
-    var realName = ParameterInfo.ObjectIds.Find(id => id.ToLower() == name);
-    if (string.IsNullOrEmpty(realName))
-      Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "Missing object " + name, 0, null);
-    var prefab = ZNetScene.instance.GetPrefab(realName);
+    var prefab = ZNetScene.instance.GetPrefab(name);
+    if (prefab) return prefab;
+    var realName = ParameterInfo.ObjectIds.Find(id => string.Equals(id, name, StringComparison.OrdinalIgnoreCase));
+    prefab = realName == null ? null : ZNetScene.instance.GetPrefab(realName);
     if (!prefab)
       Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "Missing object " + name, 0, null);
     return prefab;

@@ -1,3 +1,7 @@
+- v1.78
+  - Fixes autocomplete not working for location clones (from Expand World Data mod).
+  - Fixes error message when typoing an object name.
+
 - v1.77
   - Fixes the command `recall` (now internally uses tp command).
   - Fixed for the new version of the game.

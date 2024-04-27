@@ -30,7 +30,7 @@ public class SearchComponentCommand
         location.m_prefab.Asset.GetComponentsInChildren(ZNetView.m_tempComponents);
         location.m_prefab.Release();
         return ZNetView.m_tempComponents.Any(s => s.GetType().Name.ToLowerInvariant() == component);
-      }).Select(location => location.m_prefabName);
+      }).Select(location => location.m_prefab.Name);
       var result = args[1] == "location" ? locations.ToArray() : field == "" ? ComponentInfo.PrefabsByComponent(component) : ComponentInfo.PrefabsByField(component, field, value);
       if (result.Length > 100)
       {
