@@ -218,7 +218,7 @@ public static class Settings
     configAutomaticItemPickUp = config.Bind(section, "Automatic item pick up", true, "Sets the default value for the automatic item pick up feature.");
     configAutomaticItemPickUp.SettingChanged += (s, e) =>
     {
-      if (Player.m_localPlayer) Player.m_localPlayer.m_enableAutoPickup = AutomaticItemPickUp;
+      if (Player.m_localPlayer) Player.m_enableAutoPickup = AutomaticItemPickUp;
     };
     configAutoDevcommands = config.Bind(section, "Automatic devcommands", true, "Automatically enables devcommands when joining servers.");
     configDebugModeFastTeleport = config.Bind(section, "Debug mode fast teleport", true, "All teleporting is much faster with the debug mode.");

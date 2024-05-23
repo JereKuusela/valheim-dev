@@ -12,7 +12,7 @@ public class DmgCommand
         {
             Helper.ArgsCheck(args, 2, "Missing target.");
             Helper.ArgsCheck(args, 3, "Missing amount.");
-            
+
             var name = args.Args[1];
             var dmg = Parse.Float(args.Args[2], 0f);
 
@@ -30,11 +30,11 @@ public class DmgCommand
                         m_damage = { m_damage = dmg },
                         m_hitType = HitData.HitType.Self,
                     };
-                    ZRoutedRpc.instance.InvokeRoutedRPC(0, target.ZDOID, "Damage", [hit]);
+                    ZRoutedRpc.instance.InvokeRoutedRPC(0, target.ZDOID, "RPC_Damage", [hit]);
                 }
                 else
                 {
-                    ZRoutedRpc.instance.InvokeRoutedRPC(0, target.ZDOID, "Heal", [absDmg, true]);
+                    ZRoutedRpc.instance.InvokeRoutedRPC(0, target.ZDOID, "RPC_Heal", [absDmg, true]);
                 }
             }
 

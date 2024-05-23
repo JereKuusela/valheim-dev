@@ -1,3 +1,8 @@
+- v1.80
+  - Changes the `calm` command to also remove the creature target.
+  - Fixes the `dmg` command not working.
+  - Fixes the setting "Automatic item pick up" not working.
+
 - v1.79
   - Fixes autocomplete not working for locations (without Expand World Data mod installed).
 
