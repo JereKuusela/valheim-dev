@@ -1,3 +1,6 @@
+- v1.81
+  - Changes the setting "Access private chests" to forcefully open the chest.
+
 - v1.80
   - Changes the `calm` command to also remove the creature target.
   - Fixes the `dmg` command not working.
