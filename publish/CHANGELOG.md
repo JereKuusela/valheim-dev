@@ -1,4 +1,5 @@
 - v1.81
+  - Adds a new setting "Kill destroys spawners".
   - Changes the setting "Access private chests" to forcefully open the chest.
 
 - v1.80

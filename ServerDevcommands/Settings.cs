@@ -21,6 +21,8 @@ public static class Settings
   public static bool DebugModeFastTeleport => configDebugModeFastTeleport.Value;
   public static ConfigEntry<bool> configAutoDebugMode;
   public static bool AutoDebugMode => configAutoDebugMode.Value;
+  public static ConfigEntry<bool> configKillDestroySpawners;
+  public static bool KillDestroySpawners => configKillDestroySpawners.Value;
   public static ConfigEntry<bool> configAutoGodMode;
   public static bool AutoGodMode => configAutoGodMode.Value;
   public static ConfigEntry<bool> configDisableNoMap;
@@ -209,6 +211,7 @@ public static class Settings
     configNoDrops = config.Bind(section, "No creature drops", false, "Disables drops from creatures (if you control the zone), intended to fix high star enemies crashing the game.");
     configNoClipView = config.Bind(section, "No clip view", false, "Removes collision check for the camera.");
     configAutoDebugMode = config.Bind(section, "Automatic debug mode", false, "Automatically enables debug mode when enabling devcommands.");
+    configKillDestroySpawners = config.Bind(section, "Kill destroys spawners", true, "Destroys spawners when using kill commands");
     configAutoFly = config.Bind(section, "Automatic fly mode", false, "Automatically enables fly mode when enabling devcommands.");
     configAutoEnv = config.Bind(section, "Automatic environment", "", "Automatically enables environment when enabling devcommands (for example clear).");
     configAutoTod = config.Bind(section, "Automatic time of day", "", "Automatically enables time of day when enabling devcommands (for example 0.33).");
@@ -479,5 +482,6 @@ public static class Settings
     if (key == "command_log_format") SetValue(context, configCommandLogFormat, key, value);
     if (key == "find_format") SetValue(context, configFindFormat, key, value);
     if (key == "minimap_format") SetValue(context, configMinimapFormat, key, value);
+    if (key == "kill_destroys_spawners") Toggle(context, configKillDestroySpawners, "Kill commands destroy spawners", value);
   }
 }

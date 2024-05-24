@@ -199,6 +199,7 @@ Three ways to edit the settings:
 - Hide shout pings (default: `false`, key: `hide_shout_pings`): Forces shout pings at the world center.
 - Ignores sleep check with ghost mode (default: `false`, key: `ghost_ignore_sleep`): If enabled, other players can sleep if you are in ghost mode.
 - Invisible to players with ghost mode (default: `false`, key: `ghost_invisibility`): Invisible to other players with ghost mode.
+- Kill destroys spawners (default: `true`, key: `kill_destroys_spawners`): Destroys spawners when using kill commands.
 - Map teleport bind key: Key bind for map teleport.
 - Max undo steps (default: `50`, key: `max_undo_steps`): How many undo actions are stored.
 - No clip clear environment (default: `true`, key: `no_clip_clear_environment`): Removes any forced environments when the noclip is enabled. This disables any dark dungeon environments and prevents them from staying on when exiting the dungeon.

@@ -128,6 +128,7 @@ public class SetCommands
     new SearchItemCommand();
     new RPCCommand();
     new DmgCommand();
+    new KillCommand();
     DefaultAutoComplete.Register();
     AliasManager.Init();
     Settings.RegisterCommands();

@@ -115,8 +115,7 @@ public static class DefaultAutoComplete
       if (index == 1) return ["keep", "clear"];
       return ParameterInfo.None;
     });
-    AutoComplete.RegisterEmpty("killall");
-    AutoComplete.RegisterEmpty("killenemies");
+    AutoComplete.RegisterEmpty("killenemycreatures");
     AutoComplete.RegisterEmpty("killtame");
     AutoComplete.RegisterEmpty("listkeys");
     AutoComplete.Register("location", (int index) =>
