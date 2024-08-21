@@ -404,6 +404,19 @@ public static class Settings
       Helper.AddMessage(context, $"{name}: {setting.Value}.");
       return;
     }
+    if (value.Contains("/"))
+    {
+      var values = value.Split('/');
+      value = values[0];
+      for (var i = 0; i < values.Length - 1; i++)
+      {
+        if (string.Equals(setting.Value?.ToString(), values[i], StringComparison.OrdinalIgnoreCase))
+        {
+          value = values[i + 1];
+          break;
+        }
+      }
+    }
     setting.Value = value;
     Helper.AddMessage(context, $"{name} set to {value}.");
   }

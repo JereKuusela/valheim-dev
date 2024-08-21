@@ -1,3 +1,8 @@
+- v1.82
+  - Adds setting toggling to the command "dev_config".
+  - Internal change: Adds autocomplete support for dungeon room names.
+  - Internal change: Scale range parameters can be randomized uniformly.
+
 - v1.81
   - Adds a new setting "Kill destroys spawners".
   - Changes the setting "Access private chests" to forcefully open the chest.

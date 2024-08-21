@@ -92,6 +92,16 @@ public partial class ParameterInfo
       return objectIds;
     }
   }
+  private static List<string> roomIds = [];
+  public static List<string> RoomIds
+  {
+    get
+    {
+      if (DungeonDB.instance && DungeonDB.instance.m_rooms.Count != roomIds.Count)
+        roomIds = DungeonDB.instance.m_rooms.Select(room => room.m_prefab.Name).ToList();
+      return roomIds;
+    }
+  }
   public static List<string> LocationIds
   {
     get
@@ -292,8 +302,11 @@ public partial class ParameterInfo
   }
   public static List<string> Scale(string name, string description, int index)
   {
-    if (index == 0) return Create($"{name}=<color=yellow>number</color> or {XYZ(name, description, index)[0].Substring(0)}");
-    return XYZ(name, description, index);
+    if (index == 0) return Create($"{name}=<color=yellow>number</color> or {name}=<color=yellow>X</color>,Z,Y,free | {description}");
+    if (index == 1) return Create($"{name}=X,<color=yellow>Y</color>,Z,free  | {description}.");
+    if (index == 2) return Create($"{name}=X,Y,<color=yellow>Z</color>,free  | {description}.");
+    if (index == 3) return Create($"{name}=X,Y,Z<color=yellow>free</color>  | If given, each axis is randomized separately.");
+    return None;
   }
   public static List<string> Scale(string description, int index)
   {

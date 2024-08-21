@@ -8,6 +8,7 @@ public class Range<T>
 {
   public T Min;
   public T Max;
+  public bool Uniform;
   public Range(T value)
   {
     Min = value;
@@ -25,7 +26,9 @@ public static class Parse
 {
   private static Range<string> Range(string arg)
   {
-    var range = arg.Split('-').ToList();
+    var range = arg.Split(';').ToList();
+    if (range.Count == 2) return new(range[0], range[1]);
+    range = arg.Split('-').ToList();
     if (range.Count > 1 && range[0] == "")
     {
       range[0] = "-" + range[1];
@@ -344,6 +347,7 @@ public static class Parse
     var range = ToVectorRange(x, y, z);
     range.Min = SanityCheck(range.Min);
     range.Max = SanityCheck(range.Max);
+    range.Uniform = parts.Length < 4;
     return range;
   }
 

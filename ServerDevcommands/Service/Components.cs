@@ -54,7 +54,7 @@ public class ComponentInfo
   private static Dictionary<string, HashSet<string>> PrefabComponents = [];
   private static void SearchComponents()
   {
-    PrefabComponents = ZNetScene.instance.m_namedPrefabs.ToDictionary(
+    PrefabComponents = ZNetScene.instance.m_namedPrefabs.Where(kvp => kvp.Value).ToDictionary(
       kvp => kvp.Value.name,
       kvp =>
       {

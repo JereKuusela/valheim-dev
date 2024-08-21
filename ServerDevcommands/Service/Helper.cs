@@ -69,17 +69,24 @@ public abstract class Helper
     if (range2.Min == range2.Max || value2 >= range2.Min) return true;
     return false;
   }
-  public static float RandomValue(Range<float> range) => range.Min == range.Max ? range.Min : UnityEngine.Random.Range(range.Min, range.Max);
-  public static int RandomValue(Range<int> range) => range.Min == range.Max ? range.Min : UnityEngine.Random.Range(range.Min, range.Max + 1);
-  public static Vector3 RandomValue(Range<Vector3> range)
+  public static float RandomValue(Range<float>? range) => range == null ? 0f : range.Min == range.Max ? range.Min : UnityEngine.Random.Range(range.Min, range.Max);
+  public static int RandomValue(Range<int>? range) => range == null ? 0 : range.Min == range.Max ? range.Min : UnityEngine.Random.Range(range.Min, range.Max + 1);
+  public static Vector3 RandomValue(Range<Vector3>? range)
   {
+    if (range == null) return Vector3.zero;
+    if (range.Uniform)
+    {
+      var r = UnityEngine.Random.Range(0f, 1f);
+      return Vector3.Lerp(range.Min, range.Max, r);
+    }
     var x = UnityEngine.Random.Range(range.Min.x, range.Max.x);
     var y = UnityEngine.Random.Range(range.Min.y, range.Max.y);
     var z = UnityEngine.Random.Range(range.Min.z, range.Max.z);
     return new(x, y, z);
   }
-  public static Quaternion RandomValue(Range<Quaternion> range)
+  public static Quaternion RandomValue(Range<Quaternion>? range)
   {
+    if (range == null) return Quaternion.identity;
     var x = UnityEngine.Random.Range(range.Min.x, range.Max.x);
     var y = UnityEngine.Random.Range(range.Min.y, range.Max.y);
     var z = UnityEngine.Random.Range(range.Min.z, range.Max.z);
