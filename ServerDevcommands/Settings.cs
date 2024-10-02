@@ -360,6 +360,7 @@ public static class Settings
 
   private static readonly HashSet<string> Truthies = [
     "1",
+    "t",
     "true",
     "yes",
     "on"
@@ -367,6 +368,7 @@ public static class Settings
   private static bool IsTruthy(string value) => Truthies.Contains(value);
   private static readonly HashSet<string> Falsies = [
     "0",
+    "f",
     "false",
     "no",
     "off"

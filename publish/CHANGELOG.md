@@ -1,3 +1,9 @@
+- v1.83
+  - Internal change: Adds room index to the object selector.
+  - Internal change: Adds "t" and "f" as accepted values for true and false.
+  - Internal change: Fixes all prefabs being selected if no valid prefab is found.
+  - Internal change: Removes excess logging.
+
 - v1.82
   - Adds setting toggling to the command "dev_config".
   - Internal change: Adds autocomplete support for dungeon room names.

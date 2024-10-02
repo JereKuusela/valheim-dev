@@ -394,6 +394,7 @@ public static class Parse
   }
   private static readonly HashSet<string> Truthies = [
     "1",
+    "t",
     "true",
     "yes",
     "on"
@@ -401,6 +402,7 @@ public static class Parse
   private static bool IsTruthy(string value) => Truthies.Contains(value);
   private static readonly HashSet<string> Falsies = [
     "0",
+    "f",
     "false",
     "no",
     "off"
@@ -412,9 +414,13 @@ public static class Parse
     if (IsFalsy(value)) return false;
     return Helper.IsDown(value);
   }
-  public static bool? BoolNull(string arg)
+  public static bool? BoolNull(string? arg)
   {
-    return arg == null ? null : arg == "true";
+    if (arg == null) return null;
+    arg = arg.ToLower();
+    if (IsTruthy(arg)) return true;
+    if (IsFalsy(arg)) return false;
+    return null;
   }
   public static string Logic(string value)
   {

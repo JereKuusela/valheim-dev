@@ -36,6 +36,7 @@ public static class Selector
   {
     allowOtherPlayers |= included.Contains("Player");
     var includedPrefabs = GetAllPrefabs(included);
+    if (included.Length > 0 && includedPrefabs.Count == 0) throw new InvalidOperationException("No valid prefabs found.");
     var excludedPrefabs = GetExcludedPrefabs(excluded);
     var raycast = Math.Max(maxDistance + 5f, 50f);
     var mask = LayerMask.GetMask(
@@ -66,10 +67,23 @@ public static class Selector
       if (player == obj) continue;
       if (!allowOtherPlayers && player) continue;
       if (types.Count > 0 && !ComponentInfo.HasComponent(netView, types)) continue;
+      var index = -1;
       var mineRock = netView.GetComponent<MineRock5>();
-      var index = 0;
       if (mineRock)
         index = mineRock.GetAreaIndex(hit.collider);
+      var room = hit.collider.GetComponentInParent<Room>();
+      if (room)
+      {
+        var tr = netView.transform;
+        for (int i = 0; i < tr.childCount; i++)
+        {
+          if (tr.GetChild(i).gameObject == room.gameObject)
+          {
+            index = i;
+            break;
+          }
+        }
+      }
       return new(netView, index);
     }
     return null;
@@ -173,6 +187,7 @@ public static class Selector
   public static ZNetView[] GetNearby(string[] included, HashSet<string> types, string[] excluded, Vector3 center, Range<float> radius, float height)
   {
     var includedPrefabs = GetPrefabs(included);
+    if (included.Length > 0 && includedPrefabs.Count == 0) throw new InvalidOperationException("No valid prefabs found.");
     var excludedPrefabs = GetExcludedPrefabs(excluded);
     bool checker(Vector3 pos) => Within(pos, center, radius, height);
     return GetNearby(includedPrefabs, types, excludedPrefabs, checker);
@@ -180,6 +195,7 @@ public static class Selector
   public static ZNetView[] GetNearby(string[] included, HashSet<string> types, string[] excluded, Vector3 center, float angle, Range<float> width, Range<float> depth, float height)
   {
     var includedPrefabs = GetPrefabs(included);
+    if (included.Length > 0 && includedPrefabs.Count == 0) throw new InvalidOperationException("No valid prefabs found.");
     var excludedPrefabs = GetExcludedPrefabs(excluded);
     bool checker(Vector3 pos) => Within(pos, center, angle, width, depth, height);
     return GetNearby(includedPrefabs, types, excludedPrefabs, checker);
