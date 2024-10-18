@@ -37,7 +37,7 @@ public class Minimap_ShowPos
   }
   private static string GetText(Vector3 position)
   {
-    var zone = ZoneSystem.instance.GetZone(position);
+    var zone = ZoneSystem.GetZone(position);
     var positionText = Format(position);
     var zoneText = "zone: " + zone.x + "/" + zone.y;
     return $"\n{zoneText}\n{positionText}";
