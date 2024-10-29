@@ -1,3 +1,6 @@
+- v1.84
+  - Fixed for the new game version.
+
 - v1.83
   - Internal change: Adds room index to the object selector.
   - Internal change: Adds "t" and "f" as accepted values for true and false.
