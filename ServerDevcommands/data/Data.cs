@@ -91,7 +91,7 @@ public class FloatConverter : IYamlTypeConverter
 {
   public bool Accepts(Type type) => type == typeof(float);
 
-  public object ReadYaml(IParser parser, Type type)
+  public object ReadYaml(IParser parser, Type type, ObjectDeserializer rootDeserializer)
   {
     var scalar = (YamlDotNet.Core.Events.Scalar)parser.Current;
     var number = float.Parse(scalar.Value, NumberStyles.Float, CultureInfo.InvariantCulture);
@@ -99,7 +99,7 @@ public class FloatConverter : IYamlTypeConverter
     return number;
   }
 
-  public void WriteYaml(IEmitter emitter, object value, Type type)
+  public void WriteYaml(IEmitter emitter, object value, Type type, ObjectSerializer serializer)
   {
     var number = (float)value;
     emitter.Emit(new YamlDotNet.Core.Events.Scalar(number.ToString("0.###", CultureInfo.InvariantCulture)));

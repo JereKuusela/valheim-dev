@@ -144,6 +144,7 @@ Examples:
 - `server [command]` executes given command on the server.
   - `server dev_config disable_command event` disables usage of `event` command for non-root users.
   - `server dev_config disable_events 1` disables random events.
+- `shutdown` shuts down the game.
 - `tp [player1,player2,...] [x,z,y,rotY/player] [fast=false]` teleports players.
   - Player name or Steam/Playfab ID can be used.
   - Wildcard * can be used on player name for partial matches. All found players are teleported.
