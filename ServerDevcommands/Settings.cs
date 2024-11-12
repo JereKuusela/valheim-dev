@@ -188,7 +188,8 @@ public static class Settings
   public static string CommandLogFormat => configCommandLogFormat.Value;
 
   public static ConfigEntry<string> configFindFormat;
-  public static string FindFormat => configFindFormat.Value; public static ConfigEntry<string> configMinimapFormat;
+  public static string FindFormat => configFindFormat.Value;
+  public static ConfigEntry<string> configMinimapFormat;
   public static string MinimapFormat => configMinimapFormat.Value;
   public static ConfigEntry<bool> configChatOutput;
   public static bool ChatOutput => configChatOutput.Value;
@@ -290,7 +291,7 @@ public static class Settings
     ParseAliases(configCommandAliases.Value);
     configPlayerListFormat = config.Bind(section, "Player list format", "{player_id}/{character_name}/{character_id} ({pos_x:F0}, {pos_z:F0}, {pos_y:F0})", "Format of playerlist command.");
     configCommandLogFormat = config.Bind(section, "Command log format", "{player_id}/{character_name} ({pos_x:F0}, {pos_z:F0}, {pos_y:F0}): {command}", "Format for the command log.");
-    configFindFormat = config.Bind(section, "Find format", "{pos_x:F0}, {pos_z:F0}, {pos_y:F0}, distance {distance:F0}", "Format for the find command. Server side setting.");
+    configFindFormat = config.Bind(section, "Find format", "{pos_x:F0}, {pos_z:F0}, {pos_y:F0}, distance {distance:F0} ({name})", "Format for the find command. Server side setting.");
     configMinimapFormat = config.Bind(section, "Minimap format", "x: {pos_x:F0}, z: {pos_z:F0}, y: {pos_y:F0}", "Format for minimap coordinates.");
   }
 

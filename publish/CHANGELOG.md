@@ -1,3 +1,6 @@
+- v1.86
+  - Adds wildcard support to the `find` command (works automatically if no exact matches are found).
+
 - v1.85
   - Adds a new command `shutdown` to shut down.
   - Fixes autocomplete for custom locations.

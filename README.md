@@ -97,11 +97,11 @@ Examples:
   - `event army_eikthyr` starts an event at your position.
   - `event army_eikthyr 100 -100` starts an event at coordinates 100,-100.
 - `exploremap [x] [z] [radius]` allows revealing only a part of the map.
-- `find [id] [limit=10] [x] [z]` works server side when on servers. On single player same as before.
-  - On server, only searches zdos and locations. On single player, searches all game objects.
-    - On server, only returns exact matches.
-    - On server, always adds pins. On single player, must use `limit` for pins.
-    - On server, the format can be changed.
+- `find [id] [limit=10] [x] [z]` works on servers when also installed on the server.
+  - Wildcard * can be used for partial matches.
+  - Partial matching is used automatically if no exact matches are found.
+  - Always adds pins to the map.
+  - The format can be configured.
 - `goto [x,z,y]` or ``goto x z y` teleports to the coordinates. If y is not given, teleports to the ground level.
 - `goto` teleports to the ground level.
 - `goto [y]` teleports to the altitude (dungeons are at 5000 altitude).
@@ -249,7 +249,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 Output from this mod can be customized with the following settings.
 
 - Command log format (default: `{player_id}/{character_name} ({pos_x:F0}, {pos_z:F0}, {pos_y:F0}): {command}`, key: `command_log_format`): Format for the command log. Empty format disables the logging.
-- Find format (default: `{pos_x:F0}, {pos_z:F0}, {pos_y:F0}, distance {distance:F0}`, key: `find_format`): Format for the command log. Empty format disables the logging.
+- Find format (default: `{pos_x:F0}, {pos_z:F0}, {pos_y:F0}, distance {distance:F0} ({name})`, key: `find_format`): Format for the command log. Empty format disables the logging.
 - Minimap format (default: `x: {pos_x:F0}, z: {pos_z:F0}, y: {pos_y:F0}`, key: `minimap_format`): Format for minimap coordinates.
 - Player list format (default: `{player_id}/{character_name}/{character_id} ({pos_x:F0}, {pos_z:F0}, {pos_y:F0})`, key: `playerlist_format`): Format of playerlist command.
 
@@ -263,6 +263,7 @@ Available variables:
 - `{pos_z}`: Z coordinate of the player.
 - `{command}`: The executed command.
 - `{distance}`: Distance.
+- `{name}`: Name of the object.
 
 Numeric values can be further formatted with [C# formatting](https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings). For example `{pos_x:F0}` for whole numbers.
 
