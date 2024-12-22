@@ -99,6 +99,8 @@ public static class Settings
   public static string[] FlyUpKeys = [];
   public static ConfigEntry<string> configFlyDownKeys;
   public static string[] FlyDownKeys = [];
+  public static ConfigEntry<bool> configFreeFlyInvertCamera;
+  public static bool FreeFlyCameraInvert => configFreeFlyInvertCamera.Value;
   public static ConfigEntry<bool> configNoDrops;
   public static bool NoDrops => Cheats && configNoDrops.Value;
   public static ConfigEntry<bool> configNoClipView;
@@ -241,6 +243,7 @@ public static class Settings
     configAccessPrivateChests = config.Bind(section, "Access private chests", true, "Allows opening private chests.");
     configAccessWardedAreas = config.Bind(section, "Access warded areas", true, "Allows accessing warded areas.");
     configFlyNoClip = config.Bind(section, "No clip with fly mode", false, "");
+    configFreeFlyInvertCamera = config.Bind(section, "Free fly uses camera invert", true, "Makes free fly to use camera invert settings.");
     configNoClipClearEnvironment = config.Bind(section, "No clip clears forced environments", true, "Removes any forced environments when the noclip is enabled. This disables any dark dungeon environments and prevents them from staying on when exiting the dungeon.");
     configGodModeNoKnockback = config.Bind(section, "No knockback with god mode", true, "");
     configGodModeNoMist = config.Bind(section, "No Mistlands mist with god mode", false, "");
@@ -354,7 +357,8 @@ public static class Settings
     "players_format",
     "command_log_format",
     "minimap_format",
-    "chat_output"
+    "chat_output",
+    "free_fly_camera_invert",
   ];
   private static string State(bool value) => value ? "enabled" : "disabled";
   private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -499,5 +503,6 @@ public static class Settings
     if (key == "find_format") SetValue(context, configFindFormat, key, value);
     if (key == "minimap_format") SetValue(context, configMinimapFormat, key, value);
     if (key == "kill_destroys_spawners") Toggle(context, configKillDestroySpawners, "Kill commands destroy spawners", value);
+    if (key == "free_fly_camera_invert") Toggle(context, configFreeFlyInvertCamera, "Free fly camera invert", value);
   }
 }

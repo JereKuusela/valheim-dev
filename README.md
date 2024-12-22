@@ -206,6 +206,7 @@ Three ways to edit the settings:
 - No clip clear environment (default: `true`, key: `no_clip_clear_environment`): Removes any forced environments when the noclip is enabled. This disables any dark dungeon environments and prevents them from staying on when exiting the dungeon.
 - No clip with fly mode (default: `false`, key: `fly_no_clip`): Removes collision check with fly mode.
 - No clip view (default: `false`, key: `no_clip_view`): Removes collision check for the camera.
+- Free fly camera invert (default: `true`, key: `free_fly_camera_invert`): Makes free fly to use camera invert settings.
 - No creature drops (default: `false`, key: `no_drops`): Prevents creatures from dropping loot, can be useful if people accidentally spawn very high star creatures. Only works when as the zone owner.
 - No edge of world pull with god mode (default: `true`, key: `god_no_edge`): Removes the pull for an even godlier god mode.
 - No eitr usage with god mode (default: `true`, key: `god_no_eitr`): Removes the eitr usage for an even godlier god mode.
