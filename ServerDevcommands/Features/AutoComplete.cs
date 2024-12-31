@@ -45,7 +45,7 @@ public static class AutoComplete
   public static void Register(string command, OptionsFetcher fetcher, NamedOptionsFetchers namedFetchers)
   {
     OptionsFetchers[command.ToLower()] = fetcher;
-    OptionsNamedFetchers[command.ToLower()] = namedFetchers.ToDictionary(kvp => kvp.Key.ToLower(), kvp => kvp.Value);
+    OptionsNamedFetchers[command.ToLower()] = namedFetchers.ToDictionary(static kvp => kvp.Key.ToLower(), static kvp => kvp.Value);
   }
   ///<summary>Registers a new custom options fetcher.</summary>
   public static void Register(string command, SimpleOptionsFetcher fetcher, NamedOptionsFetchers namedFetchers)
@@ -67,12 +67,12 @@ public static class AutoComplete
   ///<summary>Registers an options fetcher without parameters.</summary>
   public static void RegisterEmpty(string command)
   {
-    Register(command, (int index) => ParameterInfo.None);
+    Register(command, static (int index) => ParameterInfo.None);
   }
   ///<summary>Registers an options fetcher for an admion action.</summary>
   public static void RegisterAdmin(string command)
   {
-    Register(command, (int index) =>
+    Register(command, static (int index) =>
     {
       if (index == 0) return ParameterInfo.Create("Name / IP / UserId");
       return ParameterInfo.None;
@@ -227,16 +227,16 @@ public class TabCycleWithImprovedAutoComplete
     if (usePrefix)
     {
       if (word.StartsWith("_", StringComparison.OrdinalIgnoreCase))
-        options = options.Where(cmd => cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
+        options = options.Where(static cmd => cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
       else
-        options = options.Where(cmd => !cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
+        options = options.Where(static cmd => !cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
     }
     if (!Settings.ImprovedAutoComplete || __instance == Chat.instance) return;
     // Auto complete is parameter specific, so need to use the current word instead of always using the first.
     word = TerminalUtils.GetLastWord(__instance);
     if (options == null) return;
     // Cycling the help text wouldn't make any sense.
-    options = options.Where(option => !option.Contains("?")).ToList();
+    options = options.Where(static option => !option.Contains("?")).ToList();
   }
 }
 
@@ -255,9 +255,9 @@ public class UpdateSearchWithImprovedAutoComplete
     if (usePrefix)
     {
       if (word.StartsWith("_", StringComparison.OrdinalIgnoreCase))
-        options = options.Where(cmd => cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
+        options = options.Where(static cmd => cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
       else
-        options = options.Where(cmd => !cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
+        options = options.Where(static cmd => !cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
     }
     if (!Settings.ImprovedAutoComplete || options == null || !__instance.m_search || __instance == Chat.instance) return;
     if (Settings.CommandDescriptions && options == __instance.m_commandList)
@@ -265,10 +265,10 @@ public class UpdateSearchWithImprovedAutoComplete
       if (Terminal.commands.TryGetValue(word, out var command))
         options = ParameterInfo.Create(command.Description);
     }
-    var helpText = options.All(option => option.StartsWith("?"));
+    var helpText = options.All(static option => option.StartsWith("?"));
     // Always show the help text since there isn't any real search option.
     if (helpText)
-      __instance.m_search.text = "<color=white>" + string.Join(", ", options.Select(option => option.Substring(1))) + "</color>";
+      __instance.m_search.text = "<color=white>" + string.Join(", ", options.Select(static option => option.Substring(1))) + "</color>";
   }
 }
 
@@ -377,6 +377,6 @@ public class RemoveHiddenCommands
 {
   static void Postfix(Terminal __instance)
   {
-    __instance.m_commandList.RemoveAll(command => command.StartsWith("_", StringComparison.OrdinalIgnoreCase));
+    __instance.m_commandList.RemoveAll(static command => command.StartsWith("_", StringComparison.OrdinalIgnoreCase));
   }
 }

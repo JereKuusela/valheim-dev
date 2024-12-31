@@ -8,7 +8,7 @@ public class DmgCommand
 {
     public DmgCommand()
     {
-        Helper.Command("dmg", "[target] [amount] - (Negative values heal the character).", (args) =>
+        Helper.Command("dmg", "[target] [amount] - (Negative values heal the character).", static (args) =>
         {
             Helper.ArgsCheck(args, 2, "Missing target.");
             Helper.ArgsCheck(args, 3, "Missing amount.");
@@ -38,10 +38,10 @@ public class DmgCommand
                 }
             }
 
-            var msg = $"{absDmg}{action} applied to: {string.Join(", ", targets.Select(p => p.Name))}";
+            var msg = $"{absDmg}{action} applied to: {string.Join(", ", targets.Select(static p => p.Name))}";
             args.Context.AddString(msg);
         });
-        AutoComplete.Register("dmg", (int index) =>
+        AutoComplete.Register("dmg", static (int index) =>
         {
             if (index == 0) return ["others", "all", .. ParameterInfo.PlayerNames];
             if (index == 1) return ParameterInfo.Create("Value", "Positive = damage / Negative = healing");

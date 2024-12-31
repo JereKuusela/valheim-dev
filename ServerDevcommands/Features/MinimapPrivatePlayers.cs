@@ -10,7 +10,7 @@ public class Server_UpdatePrivatePositions
   static void Postfix(ZNet __instance)
   {
     if (!__instance.IsServer() || !Settings.ShowPrivatePlayers) return;
-    var idToPeer = __instance.m_peers.Where(peer => peer.IsReady() && peer.m_characterID != ZDOID.None).ToDictionary(peer => peer.m_characterID, peer => peer);
+    var idToPeer = __instance.m_peers.Where(static peer => peer.IsReady() && peer.m_characterID != ZDOID.None).ToDictionary(static peer => peer.m_characterID, static peer => peer);
     for (var i = 0; i < __instance.m_players.Count; i++)
     {
       var player = __instance.m_players[i];

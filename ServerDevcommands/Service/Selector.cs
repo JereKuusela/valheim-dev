@@ -54,7 +54,7 @@ public static class Selector
       "character_trigger" // Added to remove spawners with ESP mod.
     ]);
     var hits = Physics.RaycastAll(GameCamera.instance.transform.position, GameCamera.instance.transform.forward, raycast, mask);
-    Array.Sort(hits, (RaycastHit x, RaycastHit y) => x.distance.CompareTo(y.distance));
+    Array.Sort(hits, static (RaycastHit x, RaycastHit y) => x.distance.CompareTo(y.distance));
     foreach (var hit in hits)
     {
       if (Vector3.Distance(hit.point, obj.m_eye.position) >= maxDistance) continue;
@@ -160,7 +160,7 @@ public static class Selector
   {
     id = id.ToLower();
     IEnumerable<GameObject> values = ZNetScene.instance.m_namedPrefabs.Values;
-    if (id != "Player")
+    if (id != "player")
       values = values.Where(prefab => prefab.name != "Player");
     if (id == "*" || id == "")
       values = values.Where(prefab => !prefab.name.StartsWith("_", StringComparison.Ordinal));

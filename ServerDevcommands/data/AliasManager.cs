@@ -23,7 +23,7 @@ public class AliasManager
   public static void ToFile()
   {
     ToBeSaved = false;
-    var data = Settings.AliasKeys.ToDictionary(key => key, key => Settings.GetAliasValue(key));
+    var data = Settings.AliasKeys.ToDictionary(static key => key, static key => Settings.GetAliasValue(key));
     if (data.Count == 0)
     {
       if (File.Exists(FilePath)) File.Delete(FilePath);

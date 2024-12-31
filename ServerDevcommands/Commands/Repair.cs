@@ -7,12 +7,12 @@ public class RepairCommand
 {
   public RepairCommand()
   {
-    AutoComplete.Register("repair", (int index) =>
+    AutoComplete.Register("repair", static (int index) =>
     {
       if (index == 0) return ParameterInfo.Create("Radius", "a positive integer");
       return ParameterInfo.None;
     });
-    Helper.Command("repair", "[radius=20] - Repair structures within given  meters.", (args) =>
+    Helper.Command("repair", "[radius=20] - Repair structures within given  meters.", static (args) =>
     {
       var player = Helper.GetPlayer();
       var pos = player.transform.position;

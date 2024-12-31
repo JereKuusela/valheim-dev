@@ -1,3 +1,6 @@
+- v1.88
+  - Internal change: Fixes player objects not being selectable.
+
 - v1.87
   - Adds a new setting to enable input inverting for free fly.
 

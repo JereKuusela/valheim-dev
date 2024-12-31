@@ -7,7 +7,7 @@ public class KillCommand
 {
   public KillCommand()
   {
-    Helper.Command("killall", "kill nearby creatures", (args) =>
+    Helper.Command("killall", "kill nearby creatures", static (args) =>
     {
       var allCharacters = Character.GetAllCharacters();
       var killedCreatures = 0;
@@ -36,7 +36,7 @@ public class KillCommand
     });
     AutoComplete.RegisterEmpty("killall");
 
-    Helper.Command("killenemies", "kill nearby enemies", (args) =>
+    Helper.Command("killenemies", "kill nearby enemies", static (args) =>
     {
       var allCharacters = Character.GetAllCharacters();
       var killedCreatures = 0;

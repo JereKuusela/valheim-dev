@@ -5,11 +5,11 @@ public class NoMapCommand
 {
   public NoMapCommand()
   {
-    AutoComplete.Register("nomap", (int index) =>
+    AutoComplete.Register("nomap", static (int index) =>
     {
       return index == 0 ? ParameterInfo.Create("1 = disable map, 0 = enable map, no value = toggle") : ParameterInfo.None;
     });
-    new Terminal.ConsoleCommand("nomap", "[set] - Toggles or sets the nomap mode. Can be executed on the server.", (args) =>
+    new Terminal.ConsoleCommand("nomap", "[set] - Toggles or sets the nomap mode. Can be executed on the server.", static (args) =>
     {
       var disableMap = false;
       var isServer = ZNet.instance && ZNet.instance.IsServer();

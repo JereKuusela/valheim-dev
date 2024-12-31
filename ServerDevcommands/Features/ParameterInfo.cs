@@ -12,11 +12,11 @@ public partial class ParameterInfo
     get
     {
       if (components.Count == 0)
-        components = ComponentInfo.Types.Select(t => t.Name).ToList();
+        components = ComponentInfo.Types.Select(static t => t.Name).ToList();
       return components;
     }
   }
-  private static readonly List<string> globalKeys = Enum.GetNames(typeof(GlobalKeys)).Select(s => s.ToLowerInvariant()).ToList();
+  private static readonly List<string> globalKeys = Enum.GetNames(typeof(GlobalKeys)).Select(static s => s.ToLowerInvariant()).ToList();
   public static List<string> GlobalKeys
   {
     get
@@ -44,7 +44,7 @@ public partial class ParameterInfo
     {
       if (EnvMan.instance && EnvMan.instance.m_environments.Count != environments.Count)
       {
-        environments = EnvMan.instance.m_environments.Select(env => env.m_name.Replace(" ", "_")).ToList();
+        environments = EnvMan.instance.m_environments.Select(static env => env.m_name.Replace(" ", "_")).ToList();
         environments.Sort();
       }
       return environments;
@@ -98,7 +98,7 @@ public partial class ParameterInfo
     get
     {
       if (DungeonDB.instance && DungeonDB.instance.m_rooms.Count != roomIds.Count)
-        roomIds = DungeonDB.instance.m_rooms.Select(room => room.m_prefab.Name).ToList();
+        roomIds = DungeonDB.instance.m_rooms.Select(static room => room.m_prefab.Name).ToList();
       return roomIds;
     }
   }
@@ -107,7 +107,7 @@ public partial class ParameterInfo
     get
     {
       // No caching to make Expand World easier to use.
-      return ZoneSystem.instance.m_locations.Where(Helper.IsValid).Select(l => l.m_prefab.Name).ToList();
+      return ZoneSystem.instance.m_locations.Where(Helper.IsValid).Select(static l => l.m_prefab.Name).ToList();
     }
   }
   public static List<string> Events
@@ -115,7 +115,7 @@ public partial class ParameterInfo
     get
     {
       // No caching to make Expand World easier to use.
-      return RandEventSystem.instance.m_events.Select(ev => ev.m_name).ToList();
+      return RandEventSystem.instance.m_events.Select(static ev => ev.m_name).ToList();
     }
   }
   private static List<string> statusEffects = [];
@@ -124,7 +124,7 @@ public partial class ParameterInfo
     get
     {
       if (ObjectDB.instance && ObjectDB.instance.m_StatusEffects.Count != statusEffects.Count)
-        statusEffects = ObjectDB.instance.m_StatusEffects.Select(se => se.name).ToList();
+        statusEffects = ObjectDB.instance.m_StatusEffects.Select(static se => se.name).ToList();
       return statusEffects;
     }
   }
@@ -141,17 +141,17 @@ public partial class ParameterInfo
     get
     {
       if (ObjectDB.instance && ObjectDB.instance.m_items.Count != itemIds.Count)
-        itemIds = ObjectDB.instance.m_items.Select(item => item.name).ToList();
+        itemIds = ObjectDB.instance.m_items.Select(static item => item.name).ToList();
       return itemIds;
     }
   }
   public static List<string> PlayerNames
   {
-    get => ZNet.instance?.m_players.Select(player => player.m_name.Contains(" ") ? $"\"{player.m_name}\"" : player.m_name).ToList() ?? ["No players found!"];
+    get => ZNet.instance?.m_players.Select(static player => player.m_name.Contains(" ") ? $"\"{player.m_name}\"" : player.m_name).ToList() ?? ["No players found!"];
   }
   public static List<string> PublicPlayerNames
   {
-    get => ZNet.instance?.m_players.Where(player => player.m_publicPosition).Select(player => player.m_name.Contains(" ") ? $"\"{player.m_name}\"" : player.m_name).ToList() ?? ["No public players found!"];
+    get => ZNet.instance?.m_players.Where(static player => player.m_publicPosition).Select(static player => player.m_name.Contains(" ") ? $"\"{player.m_name}\"" : player.m_name).ToList() ?? ["No public players found!"];
   }
   private static List<string> hairs = [];
   public static List<string> Hairs
@@ -160,7 +160,7 @@ public partial class ParameterInfo
     {
       // Missing proper caching.
       if (ObjectDB.instance)
-        hairs = ObjectDB.instance.GetAllItems(ItemDrop.ItemData.ItemType.Customization, "Hair").Select(item => item.name).ToList();
+        hairs = ObjectDB.instance.GetAllItems(ItemDrop.ItemData.ItemType.Customization, "Hair").Select(static item => item.name).ToList();
       return hairs;
     }
   }
@@ -171,7 +171,7 @@ public partial class ParameterInfo
     {
       // Missing proper caching.
       if (ObjectDB.instance)
-        beards = ObjectDB.instance.GetAllItems(ItemDrop.ItemData.ItemType.Customization, "Beard").Select(item => item.name).ToList();
+        beards = ObjectDB.instance.GetAllItems(ItemDrop.ItemData.ItemType.Customization, "Beard").Select(static item => item.name).ToList();
       return beards;
     }
   }
@@ -183,7 +183,7 @@ public partial class ParameterInfo
       if (keyCodes.Count == 0)
       {
         var values = Enum.GetNames(typeof(KeyCode));
-        keyCodes = values.Select(value => value.ToLower()).ToList();
+        keyCodes = values.Select(static value => value.ToLower()).ToList();
         keyCodes.Add("wheel");
       }
       return keyCodes;
@@ -197,8 +197,8 @@ public partial class ParameterInfo
       if (keyCodesWithNegative.Count == 0)
       {
         var values = Enum.GetNames(typeof(KeyCode));
-        keyCodesWithNegative = values.Select(value => value.ToLower()).ToList();
-        keyCodesWithNegative.AddRange(keyCodesWithNegative.Select(value => "-" + value).ToList());
+        keyCodesWithNegative = values.Select(static value => value.ToLower()).ToList();
+        keyCodesWithNegative.AddRange(keyCodesWithNegative.Select(static value => "-" + value).ToList());
       }
       return keyCodesWithNegative;
     }

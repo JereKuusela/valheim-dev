@@ -29,7 +29,7 @@ public class Yaml
   public static IDeserializer DeserializerUnSafe() => new DeserializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance)
   .IgnoreUnmatchedProperties().Build();
   public static ISerializer Serializer() => new SerializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance).DisableAliases()
-    .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitDefaults).WithTypeConverter(new FloatConverter()).WithEventEmitter(nextEmitter => new MultilineScalarFlowStyleEmitter(nextEmitter)).Build();
+    .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitDefaults).WithTypeConverter(new FloatConverter()).WithEventEmitter(static nextEmitter => new MultilineScalarFlowStyleEmitter(nextEmitter)).Build();
 
   public static T Deserialize<T>(string raw, string fileName) where T : new()
   {

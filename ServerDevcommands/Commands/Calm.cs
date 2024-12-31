@@ -6,12 +6,12 @@ public class CalmCommand
 {
   public CalmCommand()
   {
-    AutoComplete.Register("calm", (int index) =>
+    AutoComplete.Register("calm", static (int index) =>
     {
       if (index == 0) return ParameterInfo.Create("Radius", "a positive integer");
       return ParameterInfo.None;
     });
-    Helper.Command("calm", "[radius=20] - Calms creatures within given meters.", (args) =>
+    Helper.Command("calm", "[radius=20] - Calms creatures within given meters.", static (args) =>
     {
       var player = Helper.GetPlayer();
       var pos = player.transform.position;

@@ -4,7 +4,7 @@ public class PosCommand
 {
   public PosCommand()
   {
-    Helper.Command("pos", "[name/precision] [precision] - Prints the position of a player. If name is not given, prints the current position.", (args) =>
+    Helper.Command("pos", "[name/precision] [precision] - Prints the position of a player. If name is not given, prints the current position.", static (args) =>
     {
       var player = Helper.GetPlayer();
       var pos = player.transform.position;
@@ -22,7 +22,7 @@ public class PosCommand
         precision = args.TryParameterInt(2, 0);
       Helper.AddMessage(args.Context, $"Player position (X,Z,Y): ({pos.x.ToString($"F{precision}")}, {pos.z.ToString($"F{precision}")}, {pos.y.ToString($"F{precision}")})");
     });
-    AutoComplete.Register("pos", (int index) =>
+    AutoComplete.Register("pos", static (int index) =>
     {
       if (index == 0) return ParameterInfo.PlayerNames;
       if (index == 1) return ParameterInfo.Create("Precision", "a positive integer");

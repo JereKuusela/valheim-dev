@@ -42,7 +42,7 @@ public class DevcommandsCommand
       if (Settings.AutoFly)
       {
         player.m_debugFly = value;
-        player.m_nview.GetZDO().Set("DebugFly", value);
+        player.m_nview.GetZDO().Set(ZDOVars.s_debugFly, value);
       }
       if (Settings.AutoNoCost)
         player.m_noPlacementCost = value;
@@ -53,7 +53,7 @@ public class DevcommandsCommand
 
   public DevcommandsCommand()
   {
-    new Terminal.ConsoleCommand("devcommands", "Toggles cheats", (args) =>
+    new Terminal.ConsoleCommand("devcommands", "Toggles cheats", static (args) =>
     {
       if (Terminal.m_cheat)
       {

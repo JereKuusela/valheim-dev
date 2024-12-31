@@ -9,7 +9,7 @@ public static class TerminalUtils
   public static string GetLastWord(Terminal obj) => obj.m_input.text.Split(' ').Last().Split('=').Last().Split(',').Last();
   public static IEnumerable<string> GetPositionalParameters(string[] parameters)
   {
-    return parameters.Where(par => !par.Contains("=") && !par.StartsWith("<", StringComparison.OrdinalIgnoreCase));
+    return parameters.Where(static par => !par.Contains("=") && !par.StartsWith("<", StringComparison.OrdinalIgnoreCase));
   }
   public static void GetSubstitutions(string[] parameters, out IEnumerable<string> mainPars, out IEnumerable<string> substitutions)
   {
@@ -39,7 +39,7 @@ public static class TerminalUtils
       if (parameters[i].Contains(Settings.Substitution)) start = i + 1;
     }
     if (start == -1) return 0;
-    return parameters.Skip(start).Where(par => !par.Contains("=")).Count();
+    return parameters.Skip(start).Where(static par => !par.Contains("=")).Count();
   }
 
   private static string ReplaceValues(string text, string search, Queue<string> replace)
@@ -67,7 +67,7 @@ public static class TerminalUtils
     alias = alias.Replace($",{Settings.Substitution}", "");
     // Removes any extra substitutions that didn't receive values so "cmd $$ $$" works with "foo 3".
     if (CanSubstitute(alias))
-      alias = string.Join(" ", alias.Split(' ').Where(s => !s.Contains(Settings.Substitution)));
+      alias = string.Join(" ", alias.Split(' ').Where(static s => !s.Contains(Settings.Substitution)));
     return alias + " " + string.Join(" ", substitutions);
 
   }
@@ -159,7 +159,7 @@ public class Wrapping
       {
         if (arg.Contains(Settings.Wrapping))
         {
-          var matchingWrap = arg.Count(c => c == Settings.Wrapping[0]) % 2 == 0;
+          var matchingWrap = arg.Count(static c => c == Settings.Wrapping[0]) % 2 == 0;
           if (matchingWrap && arg.EndsWith(Settings.Wrapping, StringComparison.OrdinalIgnoreCase))
           {
             // Special case for wrapped without spaces.
