@@ -8,7 +8,7 @@ public class BroadcastCommand
   private static readonly List<string> Modifiers = ["<b", "<color", "<i", "<size"];
   public BroadcastCommand()
   {
-    Helper.Command("broadcast", "[center/side] [message] - Broadcasts a message.", static (args) =>
+    Helper.Command("broadcast", "[center/side] [message] - Broadcasts a message.", (args) =>
     {
       Helper.ArgsCheck(args, 2, "Missing the center/side parameter.");
       Helper.ArgsCheck(args, 3, "Missing the message");
@@ -17,15 +17,15 @@ public class BroadcastCommand
       var message = string.Join(" ", args.Args.Skip(2));
       MessageHud.instance.MessageAll(type, message);
     });
-    AutoComplete.Register("broadcast", static (int index) =>
+    AutoComplete.Register("broadcast", (int index) =>
     {
       if (index == 0) return Types;
       return Modifiers;
     }, new() {
-      { "<b", static (int index) => ParameterInfo.Create("Bolds the text.") },
-      { "<i", static (int index) => ParameterInfo.Create("Italics the text.") },
-      { "<color", static (int index) => ParameterInfo.Colors },
-      { "<size", static (int index) => ParameterInfo.Create("Size in pixels.") }
+      { "<b", (int index) => ParameterInfo.Create("Bolds the text.") },
+      { "<i", (int index) => ParameterInfo.Create("Italics the text.") },
+      { "<color", (int index) => ParameterInfo.Colors },
+      { "<size", (int index) => ParameterInfo.Create("Size in pixels.") }
     });
   }
 }

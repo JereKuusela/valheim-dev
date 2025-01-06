@@ -385,8 +385,8 @@ public static class Parse
     var split = str.Split([separator], 2);
     return split.Length < 2 ? new("", "") : new(split[0], split[1].Trim());
   }
-  public static string[] SplitWithEmpty(string arg, char separator = ',') => arg.Split(separator).Select(static s => s.Trim()).ToArray();
-  public static string[] Split(string arg, char separator = ',') => arg.Split(separator).Select(static s => s.Trim()).Where(static s => s != "").ToArray();
+  public static string[] SplitWithEmpty(string arg, char separator = ',') => arg.Split(separator).Select(s => s.Trim()).ToArray();
+  public static string[] Split(string arg, char separator = ',') => arg.Split(separator).Select(s => s.Trim()).Where(s => s != "").ToArray();
   public static string[] Split(string[] args, int index, char separator)
   {
     if (args.Length <= index) return [];

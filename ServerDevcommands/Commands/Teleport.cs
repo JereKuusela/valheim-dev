@@ -8,14 +8,14 @@ public class TeleportCommand
 {
   public TeleportCommand()
   {
-    AutoComplete.Register("tp", static (int index, int subIndex) =>
+    AutoComplete.Register("tp", (int index, int subIndex) =>
     {
       if (index == 0) return ParameterInfo.PlayerNames;
       if (index == 1) return subIndex == 0 ? ParameterInfo.PublicPlayerNames : ParameterInfo.XZYR("Coordinates", subIndex);
       if (index == 2) return ParameterInfo.Flag("fast", subIndex);
       return ParameterInfo.None;
     });
-    Helper.Command("tp", "[player1,player2,...] [x,z,y,rot/player] [fast=false] - Teleports the player to coordinates or another player.", static (args) =>
+    Helper.Command("tp", "[player1,player2,...] [x,z,y,rot/player] [fast=false] - Teleports the player to coordinates or another player.", (args) =>
     {
       Helper.ArgsCheck(args, 2, "Missing player id/name.");
       var players = PlayerInfo.FindPlayers(Parse.Split(args[1]));

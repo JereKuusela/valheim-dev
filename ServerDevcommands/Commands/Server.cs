@@ -18,7 +18,7 @@ public class ServerCommand
   }
   public ServerCommand()
   {
-    new Terminal.ConsoleCommand("server", "[command] - Executes the given command on the server.", static (args) =>
+    new Terminal.ConsoleCommand("server", "[command] - Executes the given command on the server.", (args) =>
     {
       if (args.Length < 2) return;
       var command = string.Join(" ", args.Args.Skip(1));
@@ -35,7 +35,7 @@ public class ServerCommand
     AutoComplete.RegisterEmpty("stopevent");
     AutoComplete.RegisterEmpty("genloc");
     AutoComplete.RegisterEmpty("sleep");
-    AutoComplete.Register("skiptime", static (int index) =>
+    AutoComplete.Register("skiptime", (int index) =>
     {
       if (index == 0) return ParameterInfo.Create("Seconds", "a number (default 240.0)");
       return ParameterInfo.None;

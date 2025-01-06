@@ -51,16 +51,16 @@ public class PlayerInfo
   public static List<PlayerInfo> FindPlayers(string[] args)
   {
     List<PlayerInfo> players = ZNet.instance.IsServer()
-      ? ZNet.instance.GetPeers().Select(static peer => new PlayerInfo(peer)).ToList()
-      : ZNet.instance.m_players.Select(static player => new PlayerInfo(player)).ToList();
-    if (Player.m_localPlayer && players.All(static p => p.ZDOID != Player.m_localPlayer.GetZDOID()))
+      ? ZNet.instance.GetPeers().Select(peer => new PlayerInfo(peer)).ToList()
+      : ZNet.instance.m_players.Select(player => new PlayerInfo(player)).ToList();
+    if (Player.m_localPlayer && players.All(p => p.ZDOID != Player.m_localPlayer.GetZDOID()))
       players.Add(new(Player.m_localPlayer));
 
     Dictionary<ZDOID, PlayerInfo> foundPlayers = [];
     foreach (var argu in args)
     {
       if (argu == "*" || argu == "all") return players;
-      if (argu == "others") return players.Where(static p => p.ZDOID != Player.m_localPlayer.GetZDOID()).ToList();
+      if (argu == "others") return players.Where(p => p.ZDOID != Player.m_localPlayer.GetZDOID()).ToList();
       var arg = argu.ToLowerInvariant();
       foreach (var player in players)
       {

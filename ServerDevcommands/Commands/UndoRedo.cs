@@ -4,11 +4,11 @@ public class UndoRedoCommand
 {
   public UndoRedoCommand()
   {
-    new Terminal.ConsoleCommand("undo", "Reverts some commands.", static (args) =>
+    new Terminal.ConsoleCommand("undo", "Reverts some commands.", (args) =>
     {
       UndoManager.Undo(args.Context);
     });
-    new Terminal.ConsoleCommand("redo", "Restores reverted commands.", static (args) =>
+    new Terminal.ConsoleCommand("redo", "Restores reverted commands.", (args) =>
     {
       UndoManager.Redo(args.Context);
     });

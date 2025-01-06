@@ -53,7 +53,7 @@ public class DevcommandsCommand
 
   public DevcommandsCommand()
   {
-    new Terminal.ConsoleCommand("devcommands", "Toggles cheats", static (args) =>
+    new Terminal.ConsoleCommand("devcommands", "Toggles cheats", (args) =>
     {
       if (Terminal.m_cheat)
       {

@@ -35,7 +35,7 @@ public class BindManager
       if (split[0] == "keys")
         data.modifiers = split[1];
     }
-    var cmd = args.Skip(1).Where(static arg => !arg.StartsWith("keys=", StringComparison.OrdinalIgnoreCase));
+    var cmd = args.Skip(1).Where(arg => !arg.StartsWith("keys=", StringComparison.OrdinalIgnoreCase));
     data.command = string.Join(" ", cmd);
     return data;
   }
@@ -66,7 +66,7 @@ public class BindManager
     try
     {
       var data = Yaml.Read(FilePath, Yaml.Deserialize<List<BindData>>);
-      Terminal.m_bindList = data.Select(FromData).Where(static s => s != "").ToList();
+      Terminal.m_bindList = data.Select(FromData).Where(s => s != "").ToList();
       ServerDevcommands.Log.LogInfo($"Reloading {Terminal.m_bindList.Count} bind data.");
       Terminal.updateBinds();
     }

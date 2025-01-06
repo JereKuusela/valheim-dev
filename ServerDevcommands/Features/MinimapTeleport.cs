@@ -11,7 +11,7 @@ public class MinimapTeleport
   private static bool TryTeleport(Minimap map, KeyCode mainKey)
   {
     if (!Console.instance || !Console.instance.IsCheatsEnabled()) return false;
-    if (mainKey == Settings.MapTeleport.MainKey && Settings.MapTeleport.Modifiers.All(static k => ZInput.GetKey(k)))
+    if (mainKey == Settings.MapTeleport.MainKey && Settings.MapTeleport.Modifiers.All(k => ZInput.GetKey(k)))
     {
       var target = map.ScreenToWorldPoint(ZInput.mousePosition);
       target.y = Player.m_localPlayer.transform.position.y;

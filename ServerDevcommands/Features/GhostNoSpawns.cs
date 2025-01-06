@@ -12,7 +12,7 @@ public class GhostIgnorePlayers
   private static List<Player> Players()
   {
     if (!Settings.GhostNoSpawns) return Player.s_players;
-    return Player.s_players.Where(static p => !Ghost.IsGhost(p)).ToList();
+    return Player.s_players.Where(p => !Ghost.IsGhost(p)).ToList();
   }
 
   static IEnumerable<CodeInstruction> ReplacePlayers(IEnumerable<CodeInstruction> instructions)

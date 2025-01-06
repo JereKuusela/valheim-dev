@@ -92,11 +92,11 @@ public class NoCameraCapping
          .MatchForward(
              useEnd: false,
              new CodeMatch(OpCodes.Ldfld, AccessTools.Field(typeof(GameCamera), nameof(GameCamera.m_minWaterDistance))))
-         .Repeat(static matcher => matcher
+         .Repeat(matcher => matcher
            .SetAndAdvance( // Replace the m_offset3 value with a custom function.
              OpCodes.Call,
              Transpilers.EmitDelegate(
-                 static (GameCamera instance) => NoClip.CameraEnabled() ? float.MinValue : instance.m_minWaterDistance).operand)
+                 (GameCamera instance) => NoClip.CameraEnabled() ? float.MinValue : instance.m_minWaterDistance).operand)
          )
          .InstructionEnumeration();
   }

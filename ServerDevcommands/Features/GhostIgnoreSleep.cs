@@ -11,9 +11,9 @@ public class GhostIgnoreSleep
     if (result) return result;
     var zdos = ZNet.instance.GetAllCharacterZDOS();
     if (zdos.Count == 0) return false;
-    var someoneSleeping = zdos.Any(static zdo => zdo.GetBool(ZDOVars.s_inBed));
+    var someoneSleeping = zdos.Any(zdo => zdo.GetBool(ZDOVars.s_inBed));
     if (!someoneSleeping) return false;
-    return zdos.All(static zdo => zdo.GetBool(ZDOVars.s_inBed) || zdo.GetBool(Ghost.HashIgnoreSleep));
+    return zdos.All(zdo => zdo.GetBool(ZDOVars.s_inBed) || zdo.GetBool(Ghost.HashIgnoreSleep));
   }
 }
 

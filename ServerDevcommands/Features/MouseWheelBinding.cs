@@ -62,7 +62,7 @@ public class ComfyGizmoPatcher
     ServerDevcommands.Log.LogInfo("\"ComfyGizmo\" detected. Patching \"Rotate\" for mouse wheel binding.");
     Harmony harmony = new("valheim.jerekuusela.server_devcommand.comfygizmo");
     var mOriginal = AccessTools.Method(assembly.GetType("ComfyGizmo.RotationManager"), "Rotate");
-    var mPrefix = SymbolExtensions.GetMethodInfo(static () => Prefix());
+    var mPrefix = SymbolExtensions.GetMethodInfo(() => Prefix());
     harmony.Patch(mOriginal, new(mPrefix));
   }
 
@@ -77,7 +77,7 @@ public class GizmoReloadedPatcher
     ServerDevcommands.Log.LogInfo("\"GizmoReloaded\" detected. Patching \"HandleAxisInput\" for mouse wheel binding.");
     Harmony harmony = new("valheim.jerekuusela.server_devcommand.m3to.mods.GizmoReloaded");
     var mOriginal = AccessTools.Method(assembly.GetType("GizmoReloaded.Plugin"), "HandleAxisInput");
-    var mPrefix = SymbolExtensions.GetMethodInfo(static () => Prefix());
+    var mPrefix = SymbolExtensions.GetMethodInfo(() => Prefix());
     harmony.Patch(mOriginal, new(mPrefix));
   }
 

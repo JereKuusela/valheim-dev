@@ -42,7 +42,7 @@ public class MappingCommand
   }
   private static void Register(string command)
   {
-    AutoComplete.Register(command, static (int index) =>
+    AutoComplete.Register(command, (int index) =>
     {
       if (index == 0) return ParameterInfo.Create("X coordinate.");
       if (index == 1) return ParameterInfo.Create("Z coordinate.");
@@ -85,7 +85,7 @@ public class MappingCommand
   public MappingCommand()
   {
     Register("resetpins");
-    new Terminal.ConsoleCommand("resetpins", "[x] [z] [radius=0] - Removes pins from the map at a given position with a given radius.", static (args) =>
+    new Terminal.ConsoleCommand("resetpins", "[x] [z] [radius=0] - Removes pins from the map at a given position with a given radius.", (args) =>
     {
       if (!ParseArgs(args, out var x, out var z, out var radius)) return;
       Vector3 position = new(x, 0, z);
@@ -95,7 +95,7 @@ public class MappingCommand
       Helper.AddMessage(args.Context, removed + " pins removed.");
     });
     Register("exploremap");
-    new Terminal.ConsoleCommand("exploremap", "[x] [z] [radius=0] - Reveals part of the map. Without parameters, reveals the whole map.", static (args) =>
+    new Terminal.ConsoleCommand("exploremap", "[x] [z] [radius=0] - Reveals part of the map. Without parameters, reveals the whole map.", (args) =>
     {
       if (args.Length == 1)
       {
@@ -107,7 +107,7 @@ public class MappingCommand
       ExploreRadius(args.Context, position, radius, true);
     }, isCheat: true);
     Register("resetmap");
-    new Terminal.ConsoleCommand("resetmap", "[x] [z] [radius=0] - Hides part of the map. Without parameters, hides the whole map.", static (args) =>
+    new Terminal.ConsoleCommand("resetmap", "[x] [z] [radius=0] - Hides part of the map. Without parameters, hides the whole map.", (args) =>
     {
       if (args.Length == 1)
       {

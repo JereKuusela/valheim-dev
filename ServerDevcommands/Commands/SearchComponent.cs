@@ -102,7 +102,7 @@ public class SearchItemCommand
 
   }
   readonly static HashSet<Type> validTypes = [typeof(bool), typeof(int), typeof(float), typeof(string)];
-  private static List<string> GenerateAutocomplete() => typeof(ItemDrop.ItemData.SharedData).GetFields(BindingFlags.Instance | BindingFlags.Public).Where(static f => validTypes.Contains(f.FieldType) || f.FieldType.IsEnum).Select(static p => p.Name).ToList();
+  private static List<string> GenerateAutocomplete() => typeof(ItemDrop.ItemData.SharedData).GetFields(BindingFlags.Instance | BindingFlags.Public).Where(f => validTypes.Contains(f.FieldType) || f.FieldType.IsEnum).Select(p => p.Name).ToList();
   private static List<GameObject> ItemDropsByField(List<GameObject> items, string field, string value) => items.Where(item =>
   {
     var drop = item.GetComponent<ItemDrop>();

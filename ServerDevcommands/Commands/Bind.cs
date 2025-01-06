@@ -131,20 +131,20 @@ public class BindCommand
   {
     if (!command.Contains("keys=")) return 0;
     var args = command.Split(' ');
-    var arg = args.First(static arg => arg.StartsWith("keys=")).Split('=');
+    var arg = args.First(arg => arg.StartsWith("keys=")).Split('=');
     if (arg.Length < 2) return 0;
     var keys = Parse.Split(arg[1]);
     // If a specific mode is set, commmands for that mode should have the highest priority.
     var modeMultiplier = keys.Contains(Mode) ? 100 : 1;
     return modeMultiplier * CountKeys(keys);
   }
-  public static int CountKeys(string[] keys) => keys.Count(static key => !key.StartsWith("-", StringComparison.Ordinal) && Enum.TryParse<KeyCode>(key, true, out var _));
+  public static int CountKeys(string[] keys) => keys.Count(key => !key.StartsWith("-", StringComparison.Ordinal) && Enum.TryParse<KeyCode>(key, true, out var _));
 
   public static bool Valid(string command)
   {
     if (!command.Contains("keys=")) return true;
     var args = command.Split(' ');
-    var arg = args.First(static arg => arg.StartsWith("keys=")).Split('=');
+    var arg = args.First(arg => arg.StartsWith("keys=")).Split('=');
     if (arg.Length < 2) return true;
     var keys = Parse.Split(arg[1]);
     return Valid(keys);
@@ -198,8 +198,8 @@ public class BindCommand
   {
     // The command itself may contain multiple commands with key checks.
     // This is not really intended usage but this should give some basic support for it.
-    if (command.Split(' ').Count(static arg => arg.StartsWith("keys=", StringComparison.OrdinalIgnoreCase)) < 2)
-      command = string.Join(" ", command.Split(' ').Where(static arg => !arg.StartsWith("keys=", StringComparison.OrdinalIgnoreCase)));
+    if (command.Split(' ').Count(arg => arg.StartsWith("keys=", StringComparison.OrdinalIgnoreCase)) < 2)
+      command = string.Join(" ", command.Split(' ').Where(arg => !arg.StartsWith("keys=", StringComparison.OrdinalIgnoreCase)));
     return command;
   }
 }

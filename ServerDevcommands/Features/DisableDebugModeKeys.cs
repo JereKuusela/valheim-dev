@@ -14,7 +14,7 @@ public class DisableDebugModeKeys
              new CodeMatch(OpCodes.Ldsfld, AccessTools.Field(typeof(Player), nameof(Player.m_debugMode))))
          .SetAndAdvance( // Replace the debugmode check with a custome one.
               OpCodes.Call, Transpilers.EmitDelegate<Func<bool>>(
-                 static () => Player.m_debugMode && !Settings.DisableDebugModeKeys).operand)
+                 () => Player.m_debugMode && !Settings.DisableDebugModeKeys).operand)
          .InstructionEnumeration();
   }
 }

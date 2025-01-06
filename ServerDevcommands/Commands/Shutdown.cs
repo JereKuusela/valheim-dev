@@ -4,7 +4,7 @@ public class ShutdownCommand
 {
   public ShutdownCommand()
   {
-    Helper.Command("shutdown", "- Closes the game.", static (args) =>
+    Helper.Command("shutdown", "- Closes the game.", (args) =>
     {
       Helper.AddMessage(args.Context, "Shutting down...");
       Menu.instance.OnQuitYes();

@@ -6,7 +6,7 @@ namespace ServerDevcommands;
 
 public class MultiCommands(Terminal terminal, string[] commands)
 {
-  public static string[] Split(string text) => Settings.MultiCommand ? text.Split(';').Select(static s => s.Trim()).ToArray() : [text];
+  public static string[] Split(string text) => Settings.MultiCommand ? text.Split(';').Select(s => s.Trim()).ToArray() : [text];
   private static readonly List<MultiCommands> Groups = [];
   public static void Handle(Terminal terminal, string[] commands)
   {

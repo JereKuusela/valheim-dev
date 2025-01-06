@@ -4,14 +4,14 @@ public class AddStatusCommand
 {
   public AddStatusCommand()
   {
-    AutoComplete.Register("addstatus", static (int index) =>
+    AutoComplete.Register("addstatus", (int index) =>
     {
       if (index == 0) return ParameterInfo.StatusEffects;
       if (index == 1) return ParameterInfo.Create("Effect duration in seconds.");
       if (index == 2) return ParameterInfo.Create("Effect intensity.");
       return ParameterInfo.None;
     });
-    Helper.Command("addstatus", "[name] [duration] [intensity] - Adds a status effect.", static (args) =>
+    Helper.Command("addstatus", "[name] [duration] [intensity] - Adds a status effect.", (args) =>
     {
       Helper.ArgsCheck(args, 2, "Missing status name");
       var player = Helper.GetPlayer();

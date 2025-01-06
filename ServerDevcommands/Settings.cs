@@ -128,9 +128,9 @@ public static class Settings
 
   private static void ParseAliases(string value)
   {
-    Aliases = value.Split('¤').Select(static str => str.Split(' ')).ToDictionary(static split => split[0], static split => string.Join(" ", split.Skip(1)));
-    Aliases = Aliases.Where(static kvp => kvp.Key != "").ToDictionary(static kvp => kvp.Key, static kvp => kvp.Value);
-    AliasKeys = Aliases.Keys.OrderBy(static key => key).ToArray();
+    Aliases = value.Split('¤').Select(str => str.Split(' ')).ToDictionary(split => split[0], static split => string.Join(" ", split.Skip(1)));
+    Aliases = Aliases.Where(kvp => kvp.Key != "").ToDictionary(kvp => kvp.Key, static kvp => kvp.Value);
+    AliasKeys = Aliases.Keys.OrderBy(key => key).ToArray();
   }
   public static string GetAliasValue(string key) => Aliases.ContainsKey(key) ? Aliases[key] : "_";
   public static void RegisterCommands()
@@ -144,7 +144,7 @@ public static class Settings
 
   private static void SaveAliases()
   {
-    var value = string.Join("¤", Aliases.Select(static kvp => kvp.Key + " " + kvp.Value));
+    var value = string.Join("¤", Aliases.Select(kvp => kvp.Key + " " + kvp.Value));
     configCommandAliases.Value = value;
   }
 
@@ -173,7 +173,7 @@ public static class Settings
     SaveAliases();
   }
 
-  private static HashSet<string> ParseList(string value) => Parse.Split(value).Select(static s => s.ToLower()).ToHashSet();
+  private static HashSet<string> ParseList(string value) => Parse.Split(value).Select(s => s.ToLower()).ToHashSet();
   public static ConfigEntry<string> configDisabledCommands;
   public static ConfigEntry<string> configRootUsers;
   public static ConfigEntry<string> configDisabledGlobalKeys;
@@ -222,14 +222,14 @@ public static class Settings
     configAutoGodMode = config.Bind(section, "Automatic god mode", false, "Automatically enables god mode when enabling devcommands.");
     configAutoGhostMode = config.Bind(section, "Automatic ghost mode", false, "Automatically enables ghost mode when enabling devcommands.");
     configAutomaticItemPickUp = config.Bind(section, "Automatic item pick up", true, "Sets the default value for the automatic item pick up feature.");
-    configAutomaticItemPickUp.SettingChanged += static (s, e) =>
+    configAutomaticItemPickUp.SettingChanged += (s, e) =>
     {
       if (Player.m_localPlayer) Player.m_enableAutoPickup = AutomaticItemPickUp;
     };
     configAutoDevcommands = config.Bind(section, "Automatic devcommands", true, "Automatically enables devcommands when joining servers.");
     configDebugModeFastTeleport = config.Bind(section, "Debug mode fast teleport", true, "All teleporting is much faster with the debug mode.");
     configDisableNoMap = config.Bind(section, "Disable no map", false, "Disables no map having effect.");
-    configDisableNoMap.SettingChanged += static (s, e) => Game.UpdateNoMap();
+    configDisableNoMap.SettingChanged += (s, e) => Game.UpdateNoMap();
     configGodModeNoStamina = config.Bind(section, "No stamina usage with god mode", true, "");
     configGodModeNoEitr = config.Bind(section, "No eitr usage with god mode", true, "");
     configGodModeNoUsage = config.Bind(section, "No item usage with god mode", false, "");
@@ -254,9 +254,9 @@ public static class Settings
     configDisableUnlockMessages = config.Bind(section, "Disable unlock messages", false, "Disables messages about new pieces and items.");
     configDisableDebugModeKeys = config.Bind(section, "Disable debug mode keys", false, "Removes debug mode key bindings for killall, removedrops, fly and no cost.");
     configDisabledGlobalKeys = config.Bind(section, "Disabled global keys", "", "Global keys separated by , that won't be set (server side setting).");
-    configDisabledGlobalKeys.SettingChanged += static (s, e) => DisableGlobalKeys.RemoveDisabled();
+    configDisabledGlobalKeys.SettingChanged += (s, e) => DisableGlobalKeys.RemoveDisabled();
     configUndoLimit = config.Bind(section, "Max undo steps", "50", "How many undo actions are stored.");
-    configUndoLimit.SettingChanged += static (s, e) => UndoManager.MaxSteps = UndoLimit;
+    configUndoLimit.SettingChanged += (s, e) => UndoManager.MaxSteps = UndoLimit;
     UndoManager.MaxSteps = UndoLimit;
     section = "2. Console";
     configDisableMessages = config.Bind(section, "Disable messages", false, "Prevents messages from commands.");
@@ -274,20 +274,20 @@ public static class Settings
     configImprovedChat = config.Bind(section, "Improved chat", true, "Enables alias and multicommands system for chat.");
     configSubstitution = config.Bind(section, "Substitution", "$$", "Enables the command parameter substitution system (substitution gets replaced with the next free parameter).");
     configWrapping = config.Bind(section, "Wrapping", "\"", "Allows using space bars in command parameters.");
-    configCommandAliases.SettingChanged += static (s, e) => ParseAliases(configCommandAliases.Value);
+    configCommandAliases.SettingChanged += (s, e) => ParseAliases(configCommandAliases.Value);
     configRootUsers = config.Bind(section, "Root users", "", "Steam IDs separated by , that can execute blacklisted commands. Server side setting.");
-    configRootUsers.SettingChanged += static (s, e) =>
+    configRootUsers.SettingChanged += (s, e) =>
     {
       DisableCommands.UpdateCommands(configRootUsers.Value, configDisabledCommands.Value);
       RootUsers.Update();
     };
     configDisabledCommands = config.Bind(section, "Disabled commands", "dev_config disable_command", "Command names separated by , that can't be executed.");
-    configDisabledCommands.SettingChanged += static (s, e) => DisableCommands.UpdateCommands(configRootUsers.Value, configDisabledCommands.Value);
+    configDisabledCommands.SettingChanged += (s, e) => DisableCommands.UpdateCommands(configRootUsers.Value, configDisabledCommands.Value);
     configFlyUpKeys = config.Bind(section, "Key for fly up", "Space", "Key codes separated by ,");
-    configFlyUpKeys.SettingChanged += static (s, e) => FlyUpKeys = Parse.Split(configFlyUpKeys.Value);
+    configFlyUpKeys.SettingChanged += (s, e) => FlyUpKeys = Parse.Split(configFlyUpKeys.Value);
     FlyUpKeys = Parse.Split(configFlyUpKeys.Value);
     configFlyDownKeys = config.Bind(section, "Key for fly down", "LeftControl", "Key codes separated by ,");
-    configFlyDownKeys.SettingChanged += static (s, e) => FlyDownKeys = Parse.Split(configFlyDownKeys.Value);
+    configFlyDownKeys.SettingChanged += (s, e) => FlyDownKeys = Parse.Split(configFlyDownKeys.Value);
     FlyDownKeys = Parse.Split(configFlyDownKeys.Value);
     configChatOutput = config.Bind(section, "Chat output", false, "Sends messages to the chat window from bound keys.");
     section = "3. Formatting";

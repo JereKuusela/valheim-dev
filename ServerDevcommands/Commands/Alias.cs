@@ -12,16 +12,16 @@ public class AliasCommand
     if (Terminal.commands.TryGetValue(baseCommand, out var command))
       new Terminal.ConsoleCommand(key, plain, command.action, command.IsCheat, command.IsNetwork, command.OnlyServer, command.IsSecret, command.AllowInDevBuild, command.m_tabOptionsFetcher);
     else
-      new Terminal.ConsoleCommand(key, plain, static (args) => { });
+      new Terminal.ConsoleCommand(key, plain, (args) => { });
   }
 
   public AliasCommand()
   {
-    new Terminal.ConsoleCommand("alias", "[name] [command] - Sets a command alias.", static (args) =>
+    new Terminal.ConsoleCommand("alias", "[name] [command] - Sets a command alias.", (args) =>
     {
       if (args.Length < 2)
       {
-        args.Context.AddString(string.Join("\n", Settings.AliasKeys.Select(static key => key + " -> " + Settings.GetAliasValue(key))));
+        args.Context.AddString(string.Join("\n", Settings.AliasKeys.Select(key => key + " -> " + Settings.GetAliasValue(key))));
       }
       else if (args.Length < 3)
       {
@@ -39,7 +39,7 @@ public class AliasCommand
         AliasManager.ToBeSaved = true;
       }
     });
-    AutoComplete.Register("alias", static (int index, int subIndex) =>
+    AutoComplete.Register("alias", (int index, int subIndex) =>
     {
       if (index == 0) return ParameterInfo.Create("Name of the alias.");
       return ParameterInfo.None;

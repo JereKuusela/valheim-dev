@@ -7,13 +7,13 @@ public class RPCCommand
 {
   public RPCCommand()
   {
-    AutoComplete.Register("rpc", static (int index) =>
+    AutoComplete.Register("rpc", (int index) =>
     {
       if (index == 0) return ParameterInfo.PlayerNames;
       if (index == 1) return ParameterInfo.Create("RPC name.");
       return ParameterInfo.Create("Parameters.");
     });
-    Helper.Command("rpc", "[id1,id2,...] [name] [arg1] [arg2] ... - Sends rpc.", static (args) =>
+    Helper.Command("rpc", "[id1,id2,...] [name] [arg1] [arg2] ... - Sends rpc.", (args) =>
     {
       Helper.ArgsCheck(args, 2, "Missing id.");
       Helper.ArgsCheck(args, 3, "Missing RPC name");
@@ -23,7 +23,7 @@ public class RPCCommand
       {
         ZRoutedRpc.instance.InvokeRoutedRPC(ZNet.GetUID(), player.ZDOID, args[2], args.Args.Skip(3).ToArray());
       }
-      var objects = ids.Select(static s =>
+      var objects = ids.Select(s =>
       {
         var split = s.Split(':');
         if (split.Length == 1) return null!;

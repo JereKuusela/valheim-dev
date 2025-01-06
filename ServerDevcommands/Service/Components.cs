@@ -49,17 +49,17 @@ public class ComponentInfo
       }
     }).Distinct().ToArray();
   }
-  private static Type[] GetTypes(HashSet<string> components) => components.Select(static c => NameToType.TryGetValue(c.ToLowerInvariant(), out var t) ? t : throw new InvalidOperationException($"Type {c} not recognized.")).ToArray();
+  private static Type[] GetTypes(HashSet<string> components) => components.Select(c => NameToType.TryGetValue(c.ToLowerInvariant(), out var t) ? t : throw new InvalidOperationException($"Type {c} not recognized.")).ToArray();
 
   private static Dictionary<string, HashSet<string>> PrefabComponents = [];
   private static void SearchComponents()
   {
-    PrefabComponents = ZNetScene.instance.m_namedPrefabs.Where(static kvp => kvp.Value).ToDictionary(
+    PrefabComponents = ZNetScene.instance.m_namedPrefabs.Where(kvp => kvp.Value).ToDictionary(
       static kvp => kvp.Value.name,
       static kvp =>
       {
         kvp.Value.GetComponentsInChildren(ZNetView.m_tempComponents);
-        return ZNetView.m_tempComponents.Select(static s => s.GetType().Name.ToLowerInvariant()).ToHashSet();
+        return ZNetView.m_tempComponents.Select(s => s.GetType().Name.ToLowerInvariant()).ToHashSet();
       }
     );
   }
@@ -87,7 +87,7 @@ public class ComponentInfo
   public static string[] Get(ZNetView view)
   {
     view.GetComponentsInChildren<MonoBehaviour>(ZNetView.m_tempComponents);
-    return ZNetView.m_tempComponents.Select(static s => s.GetType().Name).ToArray();
+    return ZNetView.m_tempComponents.Select(s => s.GetType().Name).ToArray();
   }
   public static bool HasType(ZNetView view, Type[] types)
   {
