@@ -48,7 +48,6 @@ public static class DefaultAutoComplete
       if (index == 1) return ParameterInfo.Create("Amount of skill levels gained or lost (if negative).");
       return ParameterInfo.None;
     });
-    AutoComplete.RegisterEmpty("resetbinds");
     AutoComplete.RegisterEmpty("resetsharedmap");
     AutoComplete.RegisterEmpty("resetspawn");
     AutoComplete.RegisterEmpty("respawn");

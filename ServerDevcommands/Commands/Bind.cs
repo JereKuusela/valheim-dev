@@ -102,6 +102,13 @@ public class BindCommand
       foreach (var text in Terminal.m_bindList) Print(args.Context, text);
     });
     AutoComplete.RegisterEmpty("printbinds");
+    new Terminal.ConsoleCommand("resetbinds", "Removes all custom key binds.", (args) =>
+    {
+      Terminal.m_bindList.Clear();
+      Terminal.updateBinds();
+      BindManager.ToBeSaved = true;
+    });
+    AutoComplete.RegisterEmpty("resetbinds");
   }
 
   [HarmonyPatch(typeof(Chat), nameof(Chat.Update)), HarmonyTranspiler]
