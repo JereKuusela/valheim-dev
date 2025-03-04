@@ -44,7 +44,7 @@ public class ServerExecution
     {
       return false;
     }
-    if (rpc != null && !zNet.IsAdmin(rpc.GetSocket().GetHostName()))
+    if (rpc != null && !zNet.IsAdmin(Helper.GetUserId(rpc)))
     {
       Console.instance.AddString("Unauthorized to use devcommands.");
       return false;

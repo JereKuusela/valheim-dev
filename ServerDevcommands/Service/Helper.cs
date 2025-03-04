@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using Splatform;
 using UnityEngine;
 
 namespace ServerDevcommands;
@@ -188,4 +189,12 @@ public abstract class Helper
       }
       return null;
     };
+
+
+  public static string GetUserId(string id)
+  {
+    if (id.Contains("_")) return id;
+    return PlatformUserID.GetPlatformPrefix(ZNet.instance.m_steamPlatform) + id;
+  }
+  public static string GetUserId(ZRpc rpc) => GetUserId(rpc.GetSocket().GetHostName());
 }

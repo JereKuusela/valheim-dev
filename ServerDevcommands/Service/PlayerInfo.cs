@@ -28,7 +28,7 @@ public class PlayerInfo
   }
   public PlayerInfo(ZNet.PlayerInfo info)
   {
-    HostId = info.m_host;
+    HostId = info.m_userInfo.m_id.ToString();
     Name = info.m_name;
     Pos = info.m_position;
     ZDOID = info.m_characterID;

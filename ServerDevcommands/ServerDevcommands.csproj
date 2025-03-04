@@ -54,6 +54,9 @@
     <Reference Include="SoftReferenceableAssets">
       <HintPath>..\..\Libs\SoftReferenceableAssets.dll</HintPath>
     </Reference>
+    <Reference Include="Splatform">
+      <HintPath>..\..\Libs\Splatform.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.34.2" />

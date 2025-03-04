@@ -14,7 +14,7 @@ public class PlayerListCommand
   {
     var pos = ZNet.instance.m_referencePosition;
     return string.Format(Settings.Format(Settings.PlayerListFormat),
-      Game.instance.GetPlayerProfile().GetName(), PrivilegeManager.GetNetworkUserId(), ZNet.instance.m_characterID, pos.x, pos.y, pos.z
+      Game.instance.GetPlayerProfile().GetName(), UserInfo.GetLocalUser().UserId, ZNet.instance.m_characterID, pos.x, pos.y, pos.z
     );
   }
   private void Execute(Terminal context)

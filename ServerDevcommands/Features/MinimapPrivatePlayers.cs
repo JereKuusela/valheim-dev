@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
+using Splatform;
 using UnityEngine;
 namespace ServerDevcommands;
 ///<summary>Server side code to include private player positions.</summary>
@@ -37,8 +38,10 @@ public class SendPrivatePositionsToAdmins
     foreach (var info in obj.m_players)
     {
       pkg.Write(info.m_name);
-      pkg.Write(info.m_host);
       pkg.Write(info.m_characterID);
+      pkg.Write(info.m_userInfo.m_id.ToString());
+      pkg.Write(info.m_userInfo.m_displayName);
+      pkg.Write(info.m_serverAssignedDisplayName);
       pkg.Write(info.m_publicPosition);
       pkg.Write(info.m_position);
     }
@@ -46,7 +49,7 @@ public class SendPrivatePositionsToAdmins
     {
       if (!peer.IsReady()) continue;
       var rpc = peer.m_rpc;
-      if (!obj.IsAdmin(rpc.GetSocket().GetHostName())) continue;
+      if (!obj.IsAdmin(Helper.GetUserId(rpc))) continue;
       rpc.Invoke("DEV_PrivatePlayerList", [pkg]);
     }
   }
@@ -74,15 +77,15 @@ public class RegisterRpcPrivatePositions
     var length = pkg.ReadInt();
     for (var i = 0; i < length; i++)
     {
-      ZNet.PlayerInfo playerInfo = new()
-      {
-        m_name = pkg.ReadString(),
-        m_host = pkg.ReadString(),
-        m_characterID = pkg.ReadZDOID(),
-        m_publicPosition = pkg.ReadBool(),
-        m_position = pkg.ReadVector3()
-      };
-      obj.m_players.Add(playerInfo);
+      ZNet.PlayerInfo info = default;
+      info.m_name = pkg.ReadString();
+      info.m_characterID = pkg.ReadZDOID();
+      info.m_userInfo.m_id = new PlatformUserID(pkg.ReadString());
+      info.m_userInfo.m_displayName = pkg.ReadString();
+      info.m_serverAssignedDisplayName = pkg.ReadString();
+      info.m_publicPosition = pkg.ReadBool();
+      info.m_position = pkg.ReadVector3();
+      obj.m_players.Add(info);
     }
   }
   static void Postfix(ZNet __instance, ZRpc rpc)

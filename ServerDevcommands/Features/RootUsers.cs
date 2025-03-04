@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Splatform;
 namespace ServerDevcommands;
 [HarmonyPatch(typeof(ZNet), nameof(ZNet.Start))]
 public class RootUsers
@@ -10,7 +11,10 @@ public class RootUsers
     try
     {
       var rootUsers = Parse.Split(Settings.configRootUsers.Value);
-      foreach (var user in rootUsers) ZNet.instance.m_adminList.Add(user);
+      foreach (var user in rootUsers)
+      {
+        ZNet.instance.m_adminList.Add(Helper.GetUserId(user));
+      }
     }
     catch
     {

@@ -68,8 +68,9 @@ public static class Selector
       if (!allowOtherPlayers && player) continue;
       if (types.Count > 0 && !ComponentInfo.HasComponent(netView, types)) continue;
       var index = -1;
-      var mineRock = netView.GetComponent<MineRock5>();
-      if (mineRock)
+      if (netView.TryGetComponent(out MineRock5 mineRock5))
+        index = mineRock5.GetAreaIndex(hit.collider);
+      if (netView.TryGetComponent(out MineRock mineRock))
         index = mineRock.GetAreaIndex(hit.collider);
       var room = hit.collider.GetComponentInParent<Room>();
       if (room)
