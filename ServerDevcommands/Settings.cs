@@ -93,6 +93,8 @@ public static class Settings
   public static bool GhostInvisibility => Cheats && configGhostInvisibility.Value;
   public static ConfigEntry<bool> configGhostNoSpawns;
   public static bool GhostNoSpawns => Cheats && configGhostNoSpawns.Value;
+  public static ConfigEntry<bool> configServerClient;
+  public static bool ServerClient => configServerClient.Value;
   public static ConfigEntry<bool> configGhostIgnoreSleep;
   public static bool GhostIgnoreSleep => Cheats && configGhostIgnoreSleep.Value;
   public static ConfigEntry<string> configFlyUpKeys;
@@ -211,6 +213,7 @@ public static class Settings
     configGhostInvisibility = config.Bind(section, "Invisible to other players with ghost mode", false, "");
     configGhostNoSpawns = config.Bind(section, "Disables spawns with ghost mode", false, "");
     configGhostIgnoreSleep = config.Bind(section, "Ignores sleep check with ghost mode", false, "");
+    configServerClient = config.Bind(section, "Server client", false, "Adds the server as a fake player to allow server to send chat messages.");
     configNoDrops = config.Bind(section, "No creature drops", false, "Disables drops from creatures (if you control the zone), intended to fix high star enemies crashing the game.");
     configNoClipView = config.Bind(section, "No clip view", false, "Removes collision check for the camera.");
     configAutoDebugMode = config.Bind(section, "Automatic debug mode", false, "Automatically enables debug mode when enabling devcommands.");
@@ -359,6 +362,7 @@ public static class Settings
     "minimap_format",
     "chat_output",
     "free_fly_camera_invert",
+    "server_client",
   ];
   private static string State(bool value) => value ? "enabled" : "disabled";
   private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -504,5 +508,6 @@ public static class Settings
     if (key == "minimap_format") SetValue(context, configMinimapFormat, key, value);
     if (key == "kill_destroys_spawners") Toggle(context, configKillDestroySpawners, "Kill commands destroy spawners", value);
     if (key == "free_fly_camera_invert") Toggle(context, configFreeFlyInvertCamera, "Free fly camera invert", value);
+    if (key == "server_client") Toggle(context, configServerClient, "Server client", value);
   }
 }

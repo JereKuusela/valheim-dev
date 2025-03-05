@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using HarmonyLib;
 using Splatform;
 using UnityEngine;
@@ -31,10 +32,14 @@ public class Server_UpdatePrivatePositions
 [HarmonyPatch(typeof(ZNet), nameof(ZNet.SendPlayerList))]
 public class SendPrivatePositionsToAdmins
 {
+
   private static void SendToAdmins(ZNet obj)
   {
     ZPackage pkg = new();
-    pkg.Write(obj.m_players.Count);
+    var count = Settings.ServerClient ? obj.m_players.Count + 1 : obj.m_players.Count;
+    pkg.Write(count);
+    if (Settings.ServerClient)
+      ServerChat.Write(pkg, true);
     foreach (var info in obj.m_players)
     {
       pkg.Write(info.m_name);
@@ -52,12 +57,6 @@ public class SendPrivatePositionsToAdmins
       if (!obj.IsAdmin(Helper.GetUserId(rpc))) continue;
       rpc.Invoke("DEV_PrivatePlayerList", [pkg]);
     }
-  }
-  static void Postfix(ZNet __instance)
-  {
-    if (!__instance.IsServer() || !Settings.ShowPrivatePlayers) return;
-    if (__instance.m_peers.Count == 0) return;
-    SendToAdmins(__instance);
   }
 }
 ///<summary>Client side code to receive private players.</summary>

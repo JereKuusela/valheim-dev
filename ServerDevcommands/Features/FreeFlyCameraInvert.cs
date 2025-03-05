@@ -27,7 +27,7 @@ public class FreeFlyCameraInvert
      .Advance(-2)
      .InsertAndAdvance(
          new CodeInstruction(OpCodes.Ldloc_0),
-         new CodeInstruction(OpCodes.Call, Transpilers.EmitDelegate(CheckInvert).operand),
+         new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(FreeFlyCameraInvert), nameof(CheckInvert))),
          new CodeInstruction(OpCodes.Stloc_0))
      .InstructionEnumeration();
   }
