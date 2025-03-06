@@ -33,6 +33,8 @@ public class ServerChat
   static void Postfix(Talker.Type type, string text)
   {
     if (Player.m_localPlayer) return;
+    if (!Settings.ServerClient)
+      ServerDevcommands.Log.LogWarning("Server Client feature is disabled, this message will probably be rejected by the clients.");
     UserInfo info = new() { Name = ServerClient.m_userInfo.m_displayName, UserId = ServerClient.m_userInfo.m_id };
     ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, "ChatMessage", [
       Vector3.zero,

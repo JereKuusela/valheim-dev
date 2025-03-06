@@ -189,12 +189,4 @@ public abstract class Helper
       }
       return null;
     };
-
-
-  public static string GetUserId(string id)
-  {
-    if (id.Contains("_")) return id;
-    return PlatformUserID.GetPlatformPrefix(ZNet.instance.m_steamPlatform) + id;
-  }
-  public static string GetUserId(ZRpc rpc) => GetUserId(rpc.GetSocket().GetHostName());
 }

@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Splatform;
 namespace ServerDevcommands;
 ///<summary>Static accessors for easier usage.</summary>
 public static class Admin
@@ -111,5 +112,16 @@ public class AdminCheck
   static void Postfix()
   {
     if (!Admin.Checking) Admin.AutomaticCheck();
+  }
+}
+
+
+[HarmonyPatch(typeof(ZNet), nameof(ZNet.ListContainsId))]
+public class ListContainsId
+{
+  static void Prefix(ref string idString)
+  {
+    if (idString.Contains("_")) return;
+    idString = PlatformUserID.GetPlatformPrefix(ZNet.instance.m_steamPlatform) + idString;
   }
 }
