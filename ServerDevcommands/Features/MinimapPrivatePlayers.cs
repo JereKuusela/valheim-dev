@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
 using HarmonyLib;
 using Splatform;
 using UnityEngine;
@@ -32,7 +31,12 @@ public class Server_UpdatePrivatePositions
 [HarmonyPatch(typeof(ZNet), nameof(ZNet.SendPlayerList))]
 public class SendPrivatePositionsToAdmins
 {
-
+  static void Postfix(ZNet __instance)
+  {
+    if (!__instance.IsServer() || !Settings.ShowPrivatePlayers) return;
+    if (__instance.m_peers.Count == 0) return;
+    SendToAdmins(__instance);
+  }
   private static void SendToAdmins(ZNet obj)
   {
     ZPackage pkg = new();

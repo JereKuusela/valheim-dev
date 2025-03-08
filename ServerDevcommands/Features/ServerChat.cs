@@ -8,10 +8,14 @@ namespace ServerDevcommands;
 [HarmonyPatch(typeof(Chat), nameof(Chat.SendText))]
 public class ServerChat
 {
-  public static ZNet.PlayerInfo ServerClient = new()
+  public static ZNet.PlayerInfo ServerClient => serverClient ??= CreatePlayerInfo();
+  private static ZNet.PlayerInfo? serverClient;
+
+  private static ZNet.PlayerInfo CreatePlayerInfo() => new()
   {
     m_name = "Server",
-    m_characterID = ZDOID.None,
+    // Receiving chat messages requires a valid character ID.
+    m_characterID = new ZDOID(ZDOMan.GetSessionID(), uint.MaxValue),
     m_userInfo = new() { m_id = new("Steam_0"), m_displayName = "Server" },
     m_serverAssignedDisplayName = "Server",
     m_publicPosition = false,
@@ -76,11 +80,18 @@ public class AddExtraPlayer
   {
     if (!Settings.ServerClient) return;
     // This is needed in case multiple mods are adding extra players.
+    var prev = pkg.GetPos();
     pkg.SetPos(0);
-    if (IsExtraPlayerAdded(net, pkg.ReadInt())) return;
-    pkg.SetPos(0);
-    pkg.Write(net.m_players.Count + 1);
-    ServerChat.Write(pkg, false);
+    if (IsExtraPlayerAdded(net, pkg.ReadInt()))
+    {
+      pkg.SetPos(prev);
+    }
+    else
+    {
+      pkg.SetPos(0);
+      pkg.Write(net.m_players.Count + 1);
+      ServerChat.Write(pkg, false);
+    }
   }
   static bool IsExtraPlayerAdded(ZNet net, int count) => count >= net.m_players.Count + 1;
 }
