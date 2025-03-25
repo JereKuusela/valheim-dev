@@ -1,3 +1,9 @@
+- v1.93
+  - Changes the setting "Server client" to "Server chat".
+  - Changes the setting "Server chat" to disable server chat when not enabled (previously only printed a warning).
+  - Fixes private player feature affecting the server chat.
+  - Improves compatiblity with Discord Control mod.
+
 - v1.92
   - Fixes private player feature not working.
 
@@ -9,6 +15,3 @@
 
 - v1.89
   - Fixes the command `resetbinds` not clearing the binds.yaml file.
-
-- v1.88
-  - Internal change: Fixes player objects not being selectable.

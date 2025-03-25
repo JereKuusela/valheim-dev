@@ -220,7 +220,7 @@ Three ways to edit the settings:
 - Show map coordinates (default: `true`, key: `map_coordinates`): Shows cursor coordinates when hovering the map.
 - Show minimap coordinates (default: `false`, key: `minimap_coordinates`): Shows player coordinates on the minimap.
 - Show private players (default: `false`, key: `private_players`): Shows players on the map even if they have set their position as private. Must be enabled both client and server side to work (admins can individually keep the feature off even when enabled from the server).
-- Server client (default: `false`, key: `server_client`): Adds a dummy client to the server. This is required for the server to send chat messages.
+- Server chat (default: `false`, key: `server_chat`): Adds a dummy client to the server. This is required for the server to send chat messages.
   - Note: Enabling this feature causes bosses to drop one extra item.
 
 ## Console

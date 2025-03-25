@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 using HarmonyLib;
 using Splatform;
+using Steamworks;
 using UnityEngine;
 
 namespace ServerDevcommands;
@@ -10,20 +12,31 @@ public class ServerChat
 {
   public static ZNet.PlayerInfo ServerClient => serverClient ??= CreatePlayerInfo();
   private static ZNet.PlayerInfo? serverClient;
+  public static UserInfo UserInfo => userInfo ??= new UserInfo { Name = ServerClient.m_userInfo.m_displayName, UserId = ServerClient.m_userInfo.m_id };
+  private static UserInfo? userInfo;
 
   private static ZNet.PlayerInfo CreatePlayerInfo() => new()
   {
     m_name = "Server",
     // Receiving chat messages requires a valid character ID.
     m_characterID = new ZDOID(ZDOMan.GetSessionID(), uint.MaxValue),
-    m_userInfo = new() { m_id = new("Steam_0"), m_displayName = "Server" },
+    m_userInfo = new() { m_id = new(ZNet.instance.m_steamPlatform, GetId()), m_displayName = "Server" },
     m_serverAssignedDisplayName = "Server",
     m_publicPosition = false,
     m_position = Vector3.zero,
   };
-  // "Send private player" feature always sends the position.
-  // forcePos is not needed for other mods copying this code.
-  public static void Write(ZPackage pkg, bool forcePos)
+  private static string GetId()
+  {
+    try
+    {
+      return SteamGameServer.GetSteamID().ToString();
+    }
+    catch (InvalidOperationException)
+    {
+      return "0";
+    }
+  }
+  public static void Write(ZPackage pkg)
   {
     pkg.Write(ServerClient.m_name);
     pkg.Write(ServerClient.m_characterID);
@@ -32,18 +45,15 @@ public class ServerChat
     pkg.Write(ServerClient.m_serverAssignedDisplayName);
     // Server position is never public.
     pkg.Write(false);
-    if (forcePos) pkg.Write(ServerClient.m_position);
   }
   static void Postfix(Talker.Type type, string text)
   {
     if (Player.m_localPlayer) return;
-    if (!Settings.ServerClient)
-      ServerDevcommands.Log.LogWarning("Server Client feature is disabled, this message will probably be rejected by the clients.");
-    UserInfo info = new() { Name = ServerClient.m_userInfo.m_displayName, UserId = ServerClient.m_userInfo.m_id };
+    if (!Settings.ServerChat) return;
     ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, "ChatMessage", [
       Vector3.zero,
       (int)type,
-      info,
+      UserInfo,
       text,
     ]);
   }
@@ -56,7 +66,7 @@ public class RecognizeServerClient
   static bool Postfix(bool result, PlatformUserID platformUserID, ref ZNet.PlayerInfo playerInfo)
   {
     if (result) return result;
-    if (platformUserID.ToString() != "Steam_0") return result;
+    if (platformUserID != ServerChat.ServerClient.m_userInfo.m_id) return result;
 
     playerInfo = ServerChat.ServerClient;
     return true;
@@ -78,7 +88,7 @@ public class AddExtraPlayer
 
   static void AddServer(ZNet net, ZPackage pkg)
   {
-    if (!Settings.ServerClient) return;
+    if (!Settings.ServerChat) return;
     // This is needed in case multiple mods are adding extra players.
     var prev = pkg.GetPos();
     pkg.SetPos(0);
@@ -90,7 +100,7 @@ public class AddExtraPlayer
     {
       pkg.SetPos(0);
       pkg.Write(net.m_players.Count + 1);
-      ServerChat.Write(pkg, false);
+      ServerChat.Write(pkg);
     }
   }
   static bool IsExtraPlayerAdded(ZNet net, int count) => count >= net.m_players.Count + 1;

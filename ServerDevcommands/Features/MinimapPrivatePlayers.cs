@@ -39,71 +39,51 @@ public class SendPrivatePositionsToAdmins
   }
   private static void SendToAdmins(ZNet obj)
   {
+    var count = obj.m_players.Where(p => !p.m_publicPosition).Count();
+    if (count == 0) return;
+    var peers = obj.m_peers.Where(peer => peer.IsReady() && obj.IsAdmin(peer.m_rpc.GetSocket().GetHostName())).ToList();
+    if (peers.Count == 0) return;
     ZPackage pkg = new();
-    var count = Settings.ServerClient ? obj.m_players.Count + 1 : obj.m_players.Count;
     pkg.Write(count);
-    if (Settings.ServerClient)
-      ServerChat.Write(pkg, true);
     foreach (var info in obj.m_players)
     {
-      pkg.Write(info.m_name);
+      if (info.m_publicPosition) continue;
       pkg.Write(info.m_characterID);
-      pkg.Write(info.m_userInfo.m_id.ToString());
-      pkg.Write(info.m_userInfo.m_displayName);
-      pkg.Write(info.m_serverAssignedDisplayName);
-      pkg.Write(info.m_publicPosition);
       pkg.Write(info.m_position);
     }
-    foreach (var peer in obj.m_peers)
-    {
-      if (!peer.IsReady()) continue;
-      var rpc = peer.m_rpc;
-      if (!obj.IsAdmin(rpc.GetSocket().GetHostName())) continue;
-      rpc.Invoke("DEV_PrivatePlayerList", [pkg]);
-    }
+    foreach (var peer in peers)
+      peer.m_rpc.Invoke("DEV_PrivatePlayerList2", [pkg]);
   }
 }
 ///<summary>Client side code to receive private players.</summary>
 [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_PeerInfo))]
 public class RegisterRpcPrivatePositions
 {
+  public static readonly Dictionary<ZDOID, Vector3> PrivatePositions = [];
   private static void RPC_PrivatePlayerList(ZRpc rpc, ZPackage pkg)
   {
-    if (!Settings.ShowPrivatePlayers)
-    {
-      IgnoreDefaultList.Active = false;
-      return;
-    }
-    IgnoreDefaultList.Active = true;
-    var obj = ZNet.instance;
-    obj.m_players.Clear();
+    if (!Settings.ShowPrivatePlayers) return;
     var length = pkg.ReadInt();
     for (var i = 0; i < length; i++)
     {
-      ZNet.PlayerInfo info = default;
-      info.m_name = pkg.ReadString();
-      info.m_characterID = pkg.ReadZDOID();
-      info.m_userInfo.m_id = new PlatformUserID(pkg.ReadString());
-      info.m_userInfo.m_displayName = pkg.ReadString();
-      info.m_serverAssignedDisplayName = pkg.ReadString();
-      info.m_publicPosition = pkg.ReadBool();
-      info.m_position = pkg.ReadVector3();
-      obj.m_players.Add(info);
+      var id = pkg.ReadZDOID();
+      var pos = pkg.ReadVector3();
+      PrivatePositions[id] = pos;
+    }
+    for (var i = 0; i < ZNet.instance.m_players.Count; i++)
+    {
+      if (ZNet.instance.m_players[i].m_publicPosition) continue;
+      if (PrivatePositions.TryGetValue(ZNet.instance.m_players[i].m_characterID, out var pos))
+        ZNet.instance.m_players[i] = ZNet.instance.m_players[i] with { m_position = pos };
     }
   }
   static void Postfix(ZNet __instance, ZRpc rpc)
   {
     if (__instance.IsServer()) return;
-    rpc.Register<ZPackage>("DEV_PrivatePlayerList", new(RPC_PrivatePlayerList));
+    rpc.Register<ZPackage>("DEV_PrivatePlayerList2", new(RPC_PrivatePlayerList));
   }
 }
-///<summary>Two RPC calls modifying the player list may lead to glitches (especially with poor network conditions).</summary>
-[HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_PlayerList))]
-public class IgnoreDefaultList
-{
-  public static bool Active = false;
-  static bool Prefix() => !Active;
-}
+
 ///<summary>Remove filtering from the map.</summary>
 [HarmonyPatch(typeof(ZNet), nameof(ZNet.GetOtherPublicPlayers))]
 public class IncludePrivatePlayersInTheMap
@@ -114,11 +94,11 @@ public class IncludePrivatePlayersInTheMap
     foreach (var playerInfo in __instance.m_players)
     {
       if (playerInfo.m_publicPosition) continue;
-      var characterID = playerInfo.m_characterID;
-      if (!characterID.IsNone() && !(playerInfo.m_characterID == __instance.m_characterID) && playerInfo.m_position != Vector3.zero)
-      {
-        playerList.Add(playerInfo);
-      }
+      var id = playerInfo.m_characterID;
+      if (id.IsNone()) continue;
+      if (playerInfo.m_characterID == __instance.m_characterID) continue;
+      if (playerInfo.m_position == Vector3.zero) continue;
+      playerList.Add(playerInfo);
     }
   }
 }
