@@ -17,14 +17,19 @@ public class ServerChat
 
   private static ZNet.PlayerInfo CreatePlayerInfo() => new()
   {
-    m_name = "Server",
+    m_name = Settings.ServerChatName,
     // Receiving chat messages requires a valid character ID.
     m_characterID = new ZDOID(ZDOMan.GetSessionID(), uint.MaxValue),
-    m_userInfo = new() { m_id = new(ZNet.instance.m_steamPlatform, GetId()), m_displayName = "Server" },
-    m_serverAssignedDisplayName = "Server",
+    m_userInfo = new() { m_id = new(ZNet.instance.m_steamPlatform, GetId()), m_displayName = Settings.ServerChatName },
+    m_serverAssignedDisplayName = Settings.ServerChatName,
     m_publicPosition = false,
     m_position = Vector3.zero,
   };
+  public static void RefreshPlayerInfo()
+  {
+    serverClient = null;
+    userInfo = null;
+  }
   private static string GetId()
   {
     try
@@ -49,7 +54,7 @@ public class ServerChat
   static void Postfix(Talker.Type type, string text)
   {
     if (Player.m_localPlayer) return;
-    if (!Settings.ServerChat) return;
+    if (!Settings.IsServerChat) return;
     ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, "ChatMessage", [
       Vector3.zero,
       (int)type,
@@ -79,6 +84,7 @@ public class AddExtraPlayer
   static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
   {
     return new CodeMatcher(instructions).MatchForward(false, new CodeMatch(OpCodes.Callvirt, AccessTools.Method(typeof(ZPackage), nameof(ZPackage.Write), [typeof(int)])))
+    .MatchForward(false, new CodeMatch(OpCodes.Ldfld, AccessTools.Method(typeof(ZPackage), nameof(ZPackage.ReadInt))))
       .Advance(1)
       .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
       .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_0))
@@ -88,7 +94,7 @@ public class AddExtraPlayer
 
   static void AddServer(ZNet net, ZPackage pkg)
   {
-    if (!Settings.ServerChat) return;
+    if (!Settings.IsServerChat) return;
     // This is needed in case multiple mods are adding extra players.
     var prev = pkg.GetPos();
     pkg.SetPos(0);
