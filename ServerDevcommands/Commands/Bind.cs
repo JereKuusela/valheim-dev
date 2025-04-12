@@ -115,9 +115,7 @@ public class BindCommand
   static IEnumerable<CodeInstruction> DisableDefaultBindExecution(IEnumerable<CodeInstruction> instructions)
   {
     return new CodeMatcher(instructions)
-         .MatchForward(
-             useEnd: false,
-             new CodeMatch(OpCodes.Stfld, AccessTools.Field(typeof(Chat), nameof(Chat.m_wasFocused))))
+         .MatchStartForward(new CodeMatch(OpCodes.Stfld, AccessTools.Field(typeof(Chat), nameof(Chat.m_wasFocused))))
         .Advance(4)
         .Insert(new CodeInstruction(OpCodes.Pop), new CodeInstruction(OpCodes.Ldc_I4_1))
         .InstructionEnumeration();

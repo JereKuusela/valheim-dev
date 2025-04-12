@@ -18,8 +18,7 @@ public class GhostIgnorePlayers
   static IEnumerable<CodeInstruction> ReplacePlayers(IEnumerable<CodeInstruction> instructions)
   {
     return new CodeMatcher(instructions)
-         .MatchForward(
-             useEnd: false,
+         .MatchStartForward(
              new CodeMatch(OpCodes.Ldsfld, AccessTools.Field(typeof(Player), nameof(Player.s_players))))
          .SetAndAdvance(
               OpCodes.Call, Transpilers.EmitDelegate(Players).operand)

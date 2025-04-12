@@ -23,7 +23,7 @@ public class FreeFlyCameraInvert
   static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
   {
     return new CodeMatcher(instructions)
-     .MatchForward(useEnd: false, new CodeMatch(OpCodes.Ldfld, AccessTools.Field(typeof(GameCamera), nameof(GameCamera.m_freeFlyYaw))))
+     .MatchStartForward(new CodeMatch(OpCodes.Ldfld, AccessTools.Field(typeof(GameCamera), nameof(GameCamera.m_freeFlyYaw))))
      .Advance(-2)
      .InsertAndAdvance(
          new CodeInstruction(OpCodes.Ldloc_0),

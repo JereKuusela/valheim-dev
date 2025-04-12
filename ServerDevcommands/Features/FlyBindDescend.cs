@@ -24,13 +24,12 @@ public class FlyBindDescend
   static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
   {
     return new CodeMatcher(instructions)
-      .MatchForward(useEnd: false, new CodeMatch(OpCodes.Ldstr, "Jump"))
+      .MatchStartForward(new CodeMatch(OpCodes.Ldstr, "Jump"))
       .SetOpcodeAndAdvance(OpCodes.Nop) // Remove the "Jump" value.
       .Set( // Replace the keycode check with a custom function.
           OpCodes.Call,
           Transpilers.EmitDelegate(IsFlyUp).operand)
-      .MatchForward(
-          useEnd: false,
+      .MatchStartForward(
           new CodeMatch(
               OpCodes.Ldc_I4,
               (int)KeyCode.LeftControl))

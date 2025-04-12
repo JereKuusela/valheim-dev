@@ -1,3 +1,6 @@
+- v1.94
+  - Adds a new setting "Server chat name" to change the name of the server chat.
+
 - v1.93
   - Changes the setting "Server client" to "Server chat".
   - Changes the setting "Server chat" to disable server chat when not enabled (previously only printed a warning).

@@ -89,8 +89,7 @@ public class NoCameraCapping
   static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
   {
     return new CodeMatcher(instructions)
-         .MatchForward(
-             useEnd: false,
+         .MatchStartForward(
              new CodeMatch(OpCodes.Ldfld, AccessTools.Field(typeof(GameCamera), nameof(GameCamera.m_minWaterDistance))))
          .Repeat(matcher => matcher
            .SetAndAdvance( // Replace the m_offset3 value with a custom function.

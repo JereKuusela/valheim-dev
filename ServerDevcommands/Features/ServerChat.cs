@@ -83,7 +83,7 @@ public class AddExtraPlayer
 {
   static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
   {
-    return new CodeMatcher(instructions).MatchForward(false, new CodeMatch(OpCodes.Callvirt, AccessTools.Method(typeof(ZPackage), nameof(ZPackage.Write), [typeof(int)])))
+    return new CodeMatcher(instructions).MatchStartForward(new CodeMatch(OpCodes.Callvirt, AccessTools.Method(typeof(ZPackage), nameof(ZPackage.Write), [typeof(int)])))
       .Advance(1)
       .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
       .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_0))
