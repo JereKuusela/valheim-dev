@@ -73,7 +73,6 @@ Examples:
 - `alias dm debugmode`: Adds a new command `dm` as a shorter version of `debugmode`.
 - `alias spawn5 spawn $$ 5 $$`: Adds a new command `spawn5` with the spawn amount fixed at 5.
 - `alias maxskill raiseskill $$ 100`: Adds a new command `skill_max` that raises the given skill to max level.
-- `alias resetskill raiseskill $$ -100`: Adds a new command `skill_reset` that resets the given skill.
 - `alias cheat debugmode;nocost;fly`: Adds a new command `cheat` to quickly toggle cheats (if you don't want to use the config).
 
 ## Enhanced commands
@@ -124,7 +123,6 @@ Examples:
   - `pos 1` returns your position with 1 decimal precision.
   - `pos jay` returns the position of a player named Jay,Heyjay or whatever is the closest match.
 - `pull [radius]` pulls nearby items.
-- `resetskill all` allows reseting all skills.
 - `redo` restores an action added to the undo/redo manager.
 - `repair [radius=20]` repairs nearby structures.
 - `resetdungeon` resets the nearest camp or dungeon within 20 meters.

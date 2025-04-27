@@ -100,9 +100,11 @@ public static class Settings
   public static ConfigEntry<bool> configGhostIgnoreSleep;
   public static bool GhostIgnoreSleep => Cheats && configGhostIgnoreSleep.Value;
   public static ConfigEntry<string> configFlyUpKeys;
-  public static string[] FlyUpKeys = [];
+  public static List<KeyCode> FlyUpRequiredKeys = [];
+  public static List<KeyCode> FlyUpBannedKeys = [];
   public static ConfigEntry<string> configFlyDownKeys;
-  public static string[] FlyDownKeys = [];
+  public static List<KeyCode> FlyDownRequiredKeys = [];
+  public static List<KeyCode> FlyDownBannedKeys = [];
   public static ConfigEntry<bool> configFreeFlyInvertCamera;
   public static bool FreeFlyCameraInvert => configFreeFlyInvertCamera.Value;
   public static ConfigEntry<bool> configNoDrops;
@@ -110,8 +112,6 @@ public static class Settings
   public static ConfigEntry<bool> configNoClipView;
   public static bool NoClipView => Cheats && configNoClipView.Value;
   public static ConfigEntry<string> configCommandAliases;
-  public static ConfigEntry<KeyboardShortcut> configMouseWheelBindKey;
-  public static KeyCode MouseWheelBindKey => configMouseWheelBindKey.Value.MainKey;
   public static ConfigEntry<bool> configImprovedChat;
   public static bool ImprovedChat => configImprovedChat.Value;
 
@@ -267,7 +267,6 @@ public static class Settings
     UndoManager.MaxSteps = UndoLimit;
     section = "2. Console";
     configDisableMessages = config.Bind(section, "Disable messages", false, "Prevents messages from commands.");
-    configMouseWheelBindKey = config.Bind(section, "Mouse wheel bind key", new KeyboardShortcut(KeyCode.None), "The simulated key code when scrolling the wheel.");
     configMapTeleport = config.Bind(section, "Map teleport bind key", new KeyboardShortcut(KeyCode.Mouse2, KeyCode.LeftControl), "Key bind for map teleport.");
     configAutoExecBoot = config.Bind(section, "Auto exec boot", "", "Executes the given command when starting the game.");
     configAutoExecDevOn = config.Bind(section, "Auto exec dev on", "", "Executes the given command when enabling devcommands.");
@@ -291,11 +290,11 @@ public static class Settings
     configDisabledCommands = config.Bind(section, "Disabled commands", "dev_config disable_command", "Command names separated by , that can't be executed.");
     configDisabledCommands.SettingChanged += (s, e) => DisableCommands.UpdateCommands(configRootUsers.Value, configDisabledCommands.Value);
     configFlyUpKeys = config.Bind(section, "Key for fly up", "Space", "Key codes separated by ,");
-    configFlyUpKeys.SettingChanged += (s, e) => FlyUpKeys = Parse.Split(configFlyUpKeys.Value);
-    FlyUpKeys = Parse.Split(configFlyUpKeys.Value);
+    configFlyUpKeys.SettingChanged += (s, e) => ParseFlyUp();
+    ParseFlyUp();
     configFlyDownKeys = config.Bind(section, "Key for fly down", "LeftControl", "Key codes separated by ,");
-    configFlyDownKeys.SettingChanged += (s, e) => FlyDownKeys = Parse.Split(configFlyDownKeys.Value);
-    FlyDownKeys = Parse.Split(configFlyDownKeys.Value);
+    configFlyDownKeys.SettingChanged += (s, e) => ParseFlyDown();
+    ParseFlyDown();
     configChatOutput = config.Bind(section, "Chat output", false, "Sends messages to the chat window from bound keys.");
     section = "3. Formatting";
     ParseAliases(configCommandAliases.Value);
@@ -304,7 +303,38 @@ public static class Settings
     configFindFormat = config.Bind(section, "Find format", "{pos_x:F0}, {pos_z:F0}, {pos_y:F0}, distance {distance:F0} ({name})", "Format for the find command. Server side setting.");
     configMinimapFormat = config.Bind(section, "Minimap format", "x: {pos_x:F0}, z: {pos_z:F0}, y: {pos_y:F0}", "Format for minimap coordinates.");
   }
-
+  private static void ParseFlyUp()
+  {
+    FlyUpRequiredKeys.Clear();
+    FlyUpBannedKeys.Clear();
+    var split = Parse.Split(configFlyUpKeys.Value);
+    foreach (var key in split)
+    {
+      if (key.StartsWith("-"))
+      {
+        if (Enum.TryParse<KeyCode>(key.Substring(1), true, out var keyCode))
+          FlyUpBannedKeys.Add(keyCode);
+      }
+      else if (Enum.TryParse<KeyCode>(key, true, out var keyCode))
+        FlyUpRequiredKeys.Add(keyCode);
+    }
+  }
+  private static void ParseFlyDown()
+  {
+    FlyDownRequiredKeys.Clear();
+    FlyDownBannedKeys.Clear();
+    var split = Parse.Split(configFlyDownKeys.Value);
+    foreach (var key in split)
+    {
+      if (key.StartsWith("-"))
+      {
+        if (Enum.TryParse<KeyCode>(key.Substring(1), true, out var keyCode))
+          FlyDownBannedKeys.Add(keyCode);
+      }
+      else if (Enum.TryParse<KeyCode>(key, true, out var keyCode))
+        FlyDownRequiredKeys.Add(keyCode);
+    }
+  }
 
   public static List<string> Options = [
     "access_private_chests",
@@ -462,7 +492,6 @@ public static class Settings
     if (key == "wrapping") SetValue(context, configWrapping, key, value);
     if (key == "auto_tod") SetValue(context, configAutoTod, key, value);
     if (key == "auto_env") SetValue(context, configAutoEnv, key, value);
-    if (key == "mouse_wheel_bind_key") SetKey(context, configMouseWheelBindKey, "Mouse wheel bind key", value);
     if (key == "debug_fast_teleport") Toggle(context, configDebugModeFastTeleport, key, value);
     if (key == "improved_chat") Toggle(context, configImprovedChat, key, value);
     if (key == "access_private_chests") Toggle(context, configAccessPrivateChests, key, value);

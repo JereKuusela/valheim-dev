@@ -9,36 +9,12 @@ namespace ServerDevcommands;
 [HarmonyPatch]
 public class BindCommand
 {
-  private void Print(Terminal terminal, string command)
-  {
-    // Mouse wheel hack.
-    var key = Settings.MouseWheelBindKey.ToString();
-    if (command.StartsWith(key, StringComparison.OrdinalIgnoreCase))
-      command = "wheel" + command.Substring(key.Length);
-    terminal.AddString(command);
-  }
   public BindCommand()
   {
     new Terminal.ConsoleCommand("bind", "[keycode,modifier1,modifier2,...] [command] [parameters] - Binds a key (with modifier keys) to a command.", (args) =>
     {
       if (args.Length < 2) return;
-      var keys = Parse.Split(args[1]).Select(key => key.ToLower()).ToArray();
-      // Mouse wheel hack.
-      if (keys[0] == "wheel") keys[0] = Settings.MouseWheelBindKey.ToString().ToLower();
-      if (!Enum.TryParse<KeyCode>(keys[0], true, out var keyCode))
-      {
-        args.Context.AddString("'" + keys[0] + "' is not a valid UnityEngine.KeyCode.");
-        return;
-      }
-      var keysStr = keys[0];
-      if (keys.Length > 1)
-      {
-        keysStr += $" keys={string.Join(",", keys.Skip(1))}";
-      }
-      var item = $"{keysStr} {string.Join(" ", args.Args.Skip(2))}";
-      Terminal.m_bindList.Add(item);
-      Terminal.updateBinds();
-      BindManager.ToBeSaved = true;
+      BindManager.AddBind(args[1], string.Join(" ", args.Args.Skip(2)));
     }, optionsFetcher: () => ParameterInfo.KeyCodes);
     AutoComplete.Register("bind", (int index, int subIndex) =>
     {
@@ -50,63 +26,25 @@ public class BindCommand
     });
     AutoComplete.Offsets["bind"] = 1;
 
-    new Terminal.ConsoleCommand("rebind", "[keycode,modifier1,modifier2,...] [command] [parameters] - Binds a key (with modifier keys) to a command.", (args) =>
+    new Terminal.ConsoleCommand("unbind", "[keycode] - Clears binds from a key.", (args) =>
     {
       if (args.Length < 2) return;
-      Terminal.m_bindList = Terminal.m_bindList.Where(cmd =>
-      {
-        var split = CleanUp(cmd).Split(' ');
-        if (split.Length < 2) return true;
-        return split[1] != args[2];
-      }).ToList();
-      args.Context.TryRunCommand($"bind {string.Join(" ", args.Args.Skip(1))}");
-    }, optionsFetcher: () => ParameterInfo.KeyCodes);
-    AutoComplete.Register("rebind", (int index, int subIndex) =>
-    {
-      if (index == 0 && subIndex == 0) return ParameterInfo.KeyCodes;
-      if (index == 0 && subIndex == 1) return ParameterInfo.KeyCodesWithNegative;
-      return ParameterInfo.Create("The command to bind.");
-    }, new() {
-      { "keys", (int index) => ParameterInfo.KeyCodesWithNegative }
+      BindManager.RemoveBind(args[1]);
     });
-    new Terminal.ConsoleCommand("unbind", "[keycode] [amount = 0] [silent] - Clears binds from a key. Optional parameter can be used to specify amount of removed binds.", (args) =>
-    {
-      if (args.Length < 2) return;
-      // Mouse wheel hack.
-      if (args[1] == "wheel") args.Args[1] = Settings.MouseWheelBindKey.ToString().ToLower();
-      var key = args.Args[1].ToLower();
-      if (Enum.TryParse<KeyCode>(args.Args[1], true, out var _))
-      {
-        var silent = args.Length > 3;
-        var amount = Parse.Int(args.Args, 2, 0);
-        if (amount == 0) amount = int.MaxValue;
-        for (var i = Terminal.m_bindList.Count - 1; i >= 0 && amount > 0; i--)
-        {
-          if (Terminal.m_bindList[i].Split(' ')[0].ToLower() != key) continue;
-          if (!silent) Print(args.Context, Terminal.m_bindList[i]);
-          Terminal.m_bindList.RemoveAt(i);
-          amount--;
-        }
-      }
-      Terminal.updateBinds();
-      BindManager.ToBeSaved = true;
-    });
+
     AutoComplete.Register("unbind", (int index) =>
     {
       if (index == 0) return ParameterInfo.KeyCodes;
-      if (index == 1) return ParameterInfo.Create("Amount of binds to remove from the key.");
       return ParameterInfo.None;
     });
     new Terminal.ConsoleCommand("printbinds", "Prints all key binds.", (args) =>
     {
-      foreach (var text in Terminal.m_bindList) Print(args.Context, text);
+      BindManager.PrintBinds(args.Context);
     });
     AutoComplete.RegisterEmpty("printbinds");
     new Terminal.ConsoleCommand("resetbinds", "Removes all custom key binds.", (args) =>
     {
-      Terminal.m_bindList.Clear();
-      Terminal.updateBinds();
-      BindManager.ToBeSaved = true;
+      BindManager.ClearBinds();
     });
     AutoComplete.RegisterEmpty("resetbinds");
   }
@@ -125,86 +63,25 @@ public class BindCommand
   {
     if (__instance.m_input.isFocused) return;
     if (Console.instance && Console.instance.m_chatWindow.gameObject.activeInHierarchy) return;
-    var commands = Terminal.m_binds.Where(kvp => Input.GetKeyDown(kvp.Key)).SelectMany(kvp => kvp.Value).Where(Valid).ToArray();
-    if (commands.Length == 0) return;
-    var max = commands.Max(CountKeys);
-    commands = commands.Where(cmd => CountKeys(cmd) == max).ToArray();
-    commands = commands.Select(CleanUp).ToArray();
-    foreach (var cmd in commands) __instance.TryRunCommand(cmd, true, true);
+    var binds = BindManager.GetBestKeyCommands();
+    foreach (var bind in binds)
+    {
+      bind.Executed = true;
+      if (bind.WasExecuted) continue;
+      if (bind.Command == "") continue;
+      __instance.TryRunCommand(bind.Command, true, true);
+    }
+    var offBinds = BindManager.GetOffBinds();
+    foreach (var bind in offBinds)
+    {
+      bind.WasExecuted = false;
+      if (bind.OffCommand == "") continue;
+      __instance.TryRunCommand(bind.OffCommand, true, true);
+    }
   }
-  public static int CountKeys(string command)
-  {
-    if (!command.Contains("keys=")) return 0;
-    var args = command.Split(' ');
-    var arg = args.First(arg => arg.StartsWith("keys=")).Split('=');
-    if (arg.Length < 2) return 0;
-    var keys = Parse.Split(arg[1]);
-    // If a specific mode is set, commmands for that mode should have the highest priority.
-    var modeMultiplier = keys.Contains(Mode) ? 100 : 1;
-    return modeMultiplier * CountKeys(keys);
-  }
-  public static int CountKeys(string[] keys) => keys.Count(key => !key.StartsWith("-", StringComparison.Ordinal) && Enum.TryParse<KeyCode>(key, true, out var _));
 
-  public static bool Valid(string command)
-  {
-    if (!command.Contains("keys=")) return true;
-    var args = command.Split(' ');
-    var arg = args.First(arg => arg.StartsWith("keys=")).Split('=');
-    if (arg.Length < 2) return true;
-    var keys = Parse.Split(arg[1]);
-    return Valid(keys);
-  }
-  private static string Mode = "";
   public static void SetMode(string mode)
   {
-    Mode = mode;
-  }
-  public static bool Valid(string[] keys)
-  {
-    var modeRequired = false;
-    var hasMode = false;
-    var inBuildMode = Player.m_localPlayer?.InPlaceMode() ?? false;
-    foreach (var key in keys)
-    {
-      if (key.StartsWith("-"))
-      {
-        var sub = key.Substring(1);
-        if (Enum.TryParse<KeyCode>(sub, true, out var keyCode))
-        {
-          if (Input.GetKey(keyCode)) return false;
-        }
-        else if (sub == "build")
-        {
-          if (inBuildMode) return false;
-        }
-        else if (sub == Mode) return false;
-      }
-      else
-      {
-        if (Enum.TryParse<KeyCode>(key, true, out var keyCode))
-        {
-          if (!Input.GetKey(keyCode)) return false;
-        }
-        else if (key == "build")
-        {
-          if (!inBuildMode) return false;
-        }
-        else
-        {
-          modeRequired = true;
-          if (key == Mode) hasMode = true;
-        }
-      }
-    }
-    if (modeRequired && !hasMode) return false;
-    return true;
-  }
-  public static string CleanUp(string command)
-  {
-    // The command itself may contain multiple commands with key checks.
-    // This is not really intended usage but this should give some basic support for it.
-    if (command.Split(' ').Count(arg => arg.StartsWith("keys=", StringComparison.OrdinalIgnoreCase)) < 2)
-      command = string.Join(" ", command.Split(' ').Where(arg => !arg.StartsWith("keys=", StringComparison.OrdinalIgnoreCase)));
-    return command;
+    BindManager.SetMode(mode);
   }
 }

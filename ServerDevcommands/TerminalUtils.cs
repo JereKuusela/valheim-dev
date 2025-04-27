@@ -91,8 +91,6 @@ public class TryRunCommand
       return false;
     }
     text = commands[0];
-    if (!BindCommand.Valid(text)) return false;
-    text = BindCommand.CleanUp(text);
     text = CheckLogic(text);
     // Server side checks this already at the server side execution.
     if (Player.m_localPlayer && !DisableCommands.CanRun(text)) return false;

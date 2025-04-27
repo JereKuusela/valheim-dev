@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection.Emit;
 using HarmonyLib;
 using UnityEngine;
@@ -7,20 +8,11 @@ namespace ServerDevcommands;
 public class FlyBindDescend
 {
 
-  static bool IsFlyUp()
-  {
-    if (MouseWheelBinding.ExecuteCount() > BindCommand.CountKeys(Settings.FlyUpKeys)) return false;
-    if (!BindCommand.Valid(Settings.FlyUpKeys)) return false;
-    if (!BindCommand.Valid(Settings.FlyDownKeys)) return true;
-    return BindCommand.CountKeys(Settings.FlyUpKeys) >= BindCommand.CountKeys(Settings.FlyDownKeys);
-  }
-  static bool IsFlyDown()
-  {
-    if (MouseWheelBinding.ExecuteCount() > BindCommand.CountKeys(Settings.FlyDownKeys)) return false;
-    if (!BindCommand.Valid(Settings.FlyDownKeys)) return false;
-    if (!BindCommand.Valid(Settings.FlyUpKeys)) return true;
-    return BindCommand.CountKeys(Settings.FlyDownKeys) >= BindCommand.CountKeys(Settings.FlyUpKeys);
-  }
+  static bool IsFlyUp() => CheckKeys(Settings.FlyUpRequiredKeys, Settings.FlyUpBannedKeys) && !CheckKeys(Settings.FlyDownRequiredKeys, Settings.FlyDownBannedKeys);
+
+  static bool IsFlyDown() => CheckKeys(Settings.FlyDownRequiredKeys, Settings.FlyDownBannedKeys) && !CheckKeys(Settings.FlyUpRequiredKeys, Settings.FlyUpBannedKeys);
+
+  private static bool CheckKeys(List<KeyCode> required, List<KeyCode> banned) => required.All(k => ZInput.GetKey(k)) && !banned.Any(k => ZInput.GetKey(k));
   static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
   {
     return new CodeMatcher(instructions)

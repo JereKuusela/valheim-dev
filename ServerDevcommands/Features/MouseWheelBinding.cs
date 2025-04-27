@@ -1,42 +1,26 @@
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
 using HarmonyLib;
 namespace ServerDevcommands;
 public class MouseWheelBinding
 {
-  ///<summary>Runs any bound commands.</summary>
   public static void Execute(float ticks)
   {
     if (ticks == 0f) return;
     if (!Chat.instance) return;
-    if (!Terminal.m_binds.TryGetValue(Settings.MouseWheelBindKey, out var commands)) return;
-    commands = commands.Where(BindCommand.Valid).ToList();
-    if (commands.Count == 0) return;
-    var max = commands.Max(BindCommand.CountKeys);
-    commands = commands.Where(cmd => BindCommand.CountKeys(cmd) == max).ToList();
+    var binds = BindManager.GetBestWheelCommands();
+    if (binds.Count == 0) return;
     var ticksStr = ticks.ToString(CultureInfo.InvariantCulture);
-    commands = commands.Select(BindCommand.CleanUp).Select(cmd => TerminalUtils.Substitute(cmd, ticksStr)).ToList();
-    foreach (var cmd in commands) Chat.instance.TryRunCommand(cmd, true, true);
+    foreach (var bind in binds) Chat.instance.TryRunCommand(TerminalUtils.Substitute(bind.Command, ticksStr), true, true);
   }
-  ///<summary>Returns whether any commands could run with the current modifier keys.</summary>
   public static bool CouldExecute()
   {
     if (ZInput.GetMouseScrollWheel() == 0f) return false;
-    if (Terminal.m_binds.TryGetValue(Settings.MouseWheelBindKey, out var commands))
-      return commands.Any(BindCommand.Valid);
-    return false;
+    return BindManager.CouldWheelExecute();
   }
-  ///<summary>Returns the highest key count.</summary>
   public static int ExecuteCount()
   {
-    if (Terminal.m_binds.TryGetValue(Settings.MouseWheelBindKey, out var commands))
-    {
-      var valid = commands.Where(BindCommand.Valid).ToArray();
-      if (valid.Length == 0) return 0;
-      return valid.Max(BindCommand.CountKeys);
-    }
-    return 0;
+    return BindManager.GetBestWheelCount();
   }
 }
 
