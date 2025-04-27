@@ -50,7 +50,7 @@ public static class AutoComplete
   ///<summary>Registers a new custom options fetcher.</summary>
   public static void Register(string command, SimpleOptionsFetcher fetcher, NamedOptionsFetchers namedFetchers)
   {
-    OptionsFetchers[command.ToLower()] = (int index, int subIndex) => fetcher(index);
+    OptionsFetchers[command.ToLower()] = (index, subIndex) => fetcher(index);
     OptionsNamedFetchers[command.ToLower()] = namedFetchers.ToDictionary(kvp => kvp.Key.ToLower(), kvp => kvp.Value);
   }
   ///<summary>Registers a new custom options fetcher.</summary>
@@ -61,18 +61,18 @@ public static class AutoComplete
   ///<summary>Registers a new custom options fetcher.</summary>
   public static void Register(string command, SimpleOptionsFetcher fetcher)
   {
-    OptionsFetchers[command] = (int index, int subIndex) => fetcher(index);
+    OptionsFetchers[command] = (index, subIndex) => fetcher(index);
   }
 
   ///<summary>Registers an options fetcher without parameters.</summary>
   public static void RegisterEmpty(string command)
   {
-    Register(command, (int index) => ParameterInfo.None);
+    Register(command, index => ParameterInfo.None);
   }
   ///<summary>Registers an options fetcher for an admion action.</summary>
   public static void RegisterAdmin(string command)
   {
-    Register(command, (int index) =>
+    Register(command, index =>
     {
       if (index == 0) return ParameterInfo.Create("Name / IP / UserId");
       return ParameterInfo.None;
@@ -81,7 +81,7 @@ public static class AutoComplete
   ///<summary>Registers an options fetcher with only the default fetcher.</summary>
   public static void RegisterDefault(string command)
   {
-    Register(command, (int index) =>
+    Register(command, index =>
     {
       if (index == 0) return Terminal.commands[command].m_tabOptionsFetcher();
       return ParameterInfo.None;

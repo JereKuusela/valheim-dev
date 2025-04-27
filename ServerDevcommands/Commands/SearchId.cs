@@ -37,7 +37,7 @@ public class SearchIdCommand
         args.Context.AddString(string.Join(", ", buffer));
       }
     });
-    AutoComplete.Register("search_id", (int index) =>
+    AutoComplete.Register("search_id", index =>
     {
       if (index == 0) return ParameterInfo.Create("Search term");
       if (index == 1) return ParameterInfo.Create("Max lines", "number (default 5)");

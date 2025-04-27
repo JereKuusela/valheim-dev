@@ -16,13 +16,13 @@ public class BindCommand
       if (args.Length < 2) return;
       BindManager.AddBind(args[1], string.Join(" ", args.Args.Skip(2)));
     }, optionsFetcher: () => ParameterInfo.KeyCodes);
-    AutoComplete.Register("bind", (int index, int subIndex) =>
+    AutoComplete.Register("bind", (index, subIndex) =>
     {
       if (index == 0 && subIndex == 0) return ParameterInfo.KeyCodes;
       if (index == 0 && subIndex == 1) return ParameterInfo.KeyCodesWithNegative;
       return ParameterInfo.None;
     }, new() {
-      { "keys", (int index) => ParameterInfo.KeyCodesWithNegative }
+      { "keys", index => ParameterInfo.KeyCodesWithNegative }
     });
     AutoComplete.Offsets["bind"] = 1;
 
@@ -32,7 +32,7 @@ public class BindCommand
       BindManager.RemoveBind(args[1]);
     });
 
-    AutoComplete.Register("unbind", (int index) =>
+    AutoComplete.Register("unbind", index =>
     {
       if (index == 0) return ParameterInfo.KeyCodes;
       return ParameterInfo.None;

@@ -35,7 +35,7 @@ public class FindCommand
       var list = locations.Select(l => Tuple.Create(l.m_location.m_prefab.Name, l.m_position)).ToList();
       var zdos = ZDOMan.instance.m_objectsByID.Values.Where(zdo => zdo.IsValid() && prefabs.Contains(zdo.GetPrefab()));
       list.AddRange(zdos.Select(zdo => Tuple.Create(ZNetScene.instance.GetPrefab(zdo.m_prefab).name, zdo.GetPosition())));
-      list.Sort((Tuple<string, Vector3> a, Tuple<string, Vector3> b) => Vector3.Distance(a.Item2, pos).CompareTo(Vector3.Distance(b.Item2, pos)));
+      list.Sort((a, b) => Vector3.Distance(a.Item2, pos).CompareTo(Vector3.Distance(b.Item2, pos)));
       var count = list.Count;
       list = list.Take(Parse.Int(args.Args, 2, 10)).ToList();
       var text = list.Select(p => Format(pos, p.Item2, p.Item1)).ToList();
@@ -46,7 +46,7 @@ public class FindCommand
       else
         RedirectOutput.Target.Invoke(ServerExecution.RPC_Pins, string.Join("|", list.Select(item => Helper.PrintVectorXZY(item.Item2))));
     });
-    AutoComplete.Register("find", (int index) =>
+    AutoComplete.Register("find", index =>
     {
       if (index == 0) return ParameterInfo.Ids;
       if (index == 1) return ParameterInfo.Create("Max amount", "a positive integer (default 10)");

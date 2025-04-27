@@ -4,7 +4,7 @@ public class RecallCommand
 {
   public RecallCommand()
   {
-    AutoComplete.Register("recall", (int index) =>
+    AutoComplete.Register("recall", index =>
     {
       if (index == 0) return ParameterInfo.PublicPlayerNames; ;
       return ParameterInfo.None;

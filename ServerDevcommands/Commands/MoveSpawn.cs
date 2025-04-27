@@ -23,7 +23,7 @@ public class MoveSpawn
       }
       else ServerExecution.Send(parameters);
     }, true, true);
-    AutoComplete.Register("move_spawn", (int index, int subIndex) =>
+    AutoComplete.Register("move_spawn", (index, subIndex) =>
     {
       if (index == 0) return ParameterInfo.XZY("Coordinates (player's current coordinates if not given).", subIndex);
       return ParameterInfo.None;

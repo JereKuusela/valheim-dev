@@ -8,6 +8,6 @@ public class WaitCommand
     {
       // Not intended to be executed.
     });
-    AutoComplete.Register("wait", (int index) => index == 0 ? ParameterInfo.Create("Duration in milliseconds.") : ParameterInfo.None);
+    AutoComplete.Register("wait", index => index == 0 ? ParameterInfo.Create("Duration in milliseconds.") : ParameterInfo.None);
   }
 }

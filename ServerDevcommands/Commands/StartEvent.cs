@@ -26,7 +26,7 @@ public class StartEventCommand
       if (ZNet.instance.IsServer()) DoStartEvent(parameters, args.Context);
       else ServerExecution.Send(parameters);
     });
-    AutoComplete.Register("event", (int index) =>
+    AutoComplete.Register("event", index =>
     {
       if (index == 0) return RandEventSystem.instance.m_events.Select(ev => ev.m_name).ToList();
       if (index == 1) return ParameterInfo.Create("X coordinate", "number (default is the current position)");

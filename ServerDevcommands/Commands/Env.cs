@@ -21,6 +21,6 @@ public class EnvCommand
       Helper.AddMessage(args.Context, $"Setting debug environment: {text}");
       em.m_debugEnv = text;
     });
-    AutoComplete.Register("env", (int index) => index == 0 ? ParameterInfo.Environments : ParameterInfo.None);
+    AutoComplete.Register("env", index => index == 0 ? ParameterInfo.Environments : ParameterInfo.None);
   }
 }

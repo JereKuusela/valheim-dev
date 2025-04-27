@@ -43,7 +43,7 @@ public class ResolutionCommand
       if (args.Length == 1) PrintResolution(args.Context);
       else SetResolution(args.Context, args.Args);
     });
-    AutoComplete.Register("resolution", (int index) =>
+    AutoComplete.Register("resolution", index =>
     {
       if (index == 0) return ["exclusive", "full", "max", "window"];
       if (index == 1) return ParameterInfo.Create("Width", "a positive integer (max supported if not given)");

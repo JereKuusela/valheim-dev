@@ -7,7 +7,7 @@ public class RPCCommand
 {
   public RPCCommand()
   {
-    AutoComplete.Register("rpc", (int index) =>
+    AutoComplete.Register("rpc", index =>
     {
       if (index == 0) return ParameterInfo.PlayerNames;
       if (index == 1) return ParameterInfo.Create("RPC name.");

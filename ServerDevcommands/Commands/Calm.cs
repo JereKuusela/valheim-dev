@@ -6,7 +6,7 @@ public class CalmCommand
 {
   public CalmCommand()
   {
-    AutoComplete.Register("calm", (int index) =>
+    AutoComplete.Register("calm", index =>
     {
       if (index == 0) return ParameterInfo.Create("Radius", "a positive integer");
       return ParameterInfo.None;

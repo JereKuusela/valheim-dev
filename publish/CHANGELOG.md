@@ -1,4 +1,5 @@
 - v1.95
+  - Adds a new command `message` to broadcast a message to specific players.
   - Overhauls the bind system to support more features (and simplify implementation).
   - Removes the setting "Mouse wheel bind key" as obsolete.
   - Removes the custom `resetskill` command as obsolete.

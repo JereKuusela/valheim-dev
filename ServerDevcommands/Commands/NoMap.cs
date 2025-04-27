@@ -5,7 +5,7 @@ public class NoMapCommand
 {
   public NoMapCommand()
   {
-    AutoComplete.Register("nomap", (int index) =>
+    AutoComplete.Register("nomap", index =>
     {
       return index == 0 ? ParameterInfo.Create("1 = disable map, 0 = enable map, no value = toggle") : ParameterInfo.None;
     });
@@ -32,12 +32,14 @@ public class NoMapCommand
           ZoneSystem.instance.SetGlobalKey(GlobalKeys.NoMap);
         else
           ZoneSystem.instance.RemoveGlobalKey(GlobalKeys.NoMap);
-      };
+      }
+      ;
       if (player)
       {
         string key = "mapenabled_" + Player.m_localPlayer.GetPlayerName();
         PlayerPrefs.SetFloat(key, disableMap ? 0f : 1f);
-      };
+      }
+      ;
       var target = "client and server";
       if (player && !isServer) target = "client";
       if (!player && isServer) target = "server";

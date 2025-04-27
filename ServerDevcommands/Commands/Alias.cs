@@ -39,7 +39,7 @@ public class AliasCommand
         AliasManager.ToBeSaved = true;
       }
     });
-    AutoComplete.Register("alias", (int index, int subIndex) =>
+    AutoComplete.Register("alias", (index, subIndex) =>
     {
       if (index == 0) return ParameterInfo.Create("Name of the alias.");
       return ParameterInfo.None;

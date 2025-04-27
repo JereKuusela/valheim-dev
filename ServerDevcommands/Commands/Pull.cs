@@ -21,7 +21,7 @@ public class PullCommand
       }
       Helper.AddMessage(args.Context, $"Pulled items within {range:F0} meters.");
     });
-    AutoComplete.Register("pull", (int index) =>
+    AutoComplete.Register("pull", index =>
     {
       if (index == 0) return ParameterInfo.Create("Radius", "a positive integer");
       return ParameterInfo.None;

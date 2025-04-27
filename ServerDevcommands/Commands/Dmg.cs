@@ -41,7 +41,7 @@ public class DmgCommand
             var msg = $"{absDmg}{action} applied to: {string.Join(", ", targets.Select(p => p.Name))}";
             args.Context.AddString(msg);
         });
-        AutoComplete.Register("dmg", (int index) =>
+        AutoComplete.Register("dmg", index =>
         {
             if (index == 0) return ["others", "all", .. ParameterInfo.PlayerNames];
             if (index == 1) return ParameterInfo.Create("Value", "Positive = damage / Negative = healing");

@@ -17,7 +17,7 @@ public class WindCommand
       var intensity = Parse.Float(args[2], 0f);
       EnvMan.instance.SetDebugWind(angle, intensity);
     }, true, true);
-    AutoComplete.Register("wind", (int index) =>
+    AutoComplete.Register("wind", index =>
     {
       if (index == 0) return ParameterInfo.Create("Angle", "a number (from -360.0 to 360.0)");
       if (index == 1) return ParameterInfo.Create("Intensity", "a positive number (from 0.0 to 1.0)");

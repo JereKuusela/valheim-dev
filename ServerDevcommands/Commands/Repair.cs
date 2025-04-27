@@ -7,7 +7,7 @@ public class RepairCommand
 {
   public RepairCommand()
   {
-    AutoComplete.Register("repair", (int index) =>
+    AutoComplete.Register("repair", index =>
     {
       if (index == 0) return ParameterInfo.Create("Radius", "a positive integer");
       return ParameterInfo.None;

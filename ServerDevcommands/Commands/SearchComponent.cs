@@ -50,7 +50,7 @@ public class SearchComponentCommand
         args.Context.AddString(string.Join(", ", buffer));
       }
     });
-    AutoComplete.Register("search_component", (int index) =>
+    AutoComplete.Register("search_component", index =>
     {
       if (index == 0) return ["object", "location"];
       if (index == 1) return ParameterInfo.Create("Search component");
@@ -92,7 +92,7 @@ public class SearchItemCommand
       foreach (var item in names) args.Context.AddString(item);
     });
     List<string> itemFields = [];
-    AutoComplete.Register("search_item", (int index, int subIndex) =>
+    AutoComplete.Register("search_item", (index, subIndex) =>
     {
       if (itemFields.Count == 0) itemFields = GenerateAutocomplete();
       if (subIndex == 0) return itemFields;

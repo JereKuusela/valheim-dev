@@ -5,7 +5,7 @@ public class ConfigCommand
 {
   private void RegisterAutoComplete(string command)
   {
-    AutoComplete.Register(command, (int index) =>
+    AutoComplete.Register(command, index =>
     {
       if (index == 0) return Settings.Options;
       return ParameterInfo.Create("Value");

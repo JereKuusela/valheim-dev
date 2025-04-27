@@ -8,7 +8,7 @@ public class TeleportCommand
 {
   public TeleportCommand()
   {
-    AutoComplete.Register("tp", (int index, int subIndex) =>
+    AutoComplete.Register("tp", (index, subIndex) =>
     {
       if (index == 0) return ParameterInfo.PlayerNames;
       if (index == 1) return subIndex == 0 ? ParameterInfo.PublicPlayerNames : ParameterInfo.XZYR("Coordinates", subIndex);

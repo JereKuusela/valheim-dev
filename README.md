@@ -81,6 +81,7 @@ Examples:
 - `bind [key,modifier1,modifier2,...] [command]` allows specifying modifier keys (see Improved key bindings section).
 - `broadcast [center/side] [message]` allows broadcasting custom messages to all players.
   - `broadcast center <color=red><size=20><i><b>Hello!</b></i></size></color>` broadcasts a small red message with bolding and italics.
+  - Use `message` command to send messages to specific players.
 - `calm [radius=20]` calms nearby aggravated creatures.
 - `devcommands` includes an admin check to allow using on servers.
 - `dev_config [name] [value]` toggles settings.
@@ -116,6 +117,8 @@ Examples:
   - `inventory upgrade` upgrades all items to the max level.
   - `inventory upgrade 5` upgrades all items by given 5 levels (over the max limit).
   - `inventory level worn 2` sets equipped items to level 2.
+- `message [players] [center/side] [message]` allows broadcasting custom messages to specific players.
+  - Use `broadcast` command to send messages to all players.
 - `move_spawn [x,z,y = player's coordinates]` allows moving the default spawn point.
 - `nomap [value]` allows directly setting the nomap mode and works with `server` command.
 - `playerlist` prints online players and their ids.

@@ -42,7 +42,7 @@ public class MappingCommand
   }
   private static void Register(string command)
   {
-    AutoComplete.Register(command, (int index) =>
+    AutoComplete.Register(command, index =>
     {
       if (index == 0) return ParameterInfo.Create("X coordinate.");
       if (index == 1) return ParameterInfo.Create("Z coordinate.");

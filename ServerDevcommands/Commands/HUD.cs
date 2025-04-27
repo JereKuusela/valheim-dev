@@ -16,7 +16,7 @@ public class HUDCommand
       var str = Hud.m_instance.m_userHidden ? "disabled" : "enabled";
       Helper.AddMessage(args.Context, $"Hud {str}.");
     });
-    AutoComplete.Register("hud", (int index) =>
+    AutoComplete.Register("hud", index =>
     {
       if (index == 0) return ParameterInfo.Create("1 = enable, 0 = disable, no value = toggle");
       return ParameterInfo.None;

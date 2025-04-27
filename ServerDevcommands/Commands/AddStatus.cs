@@ -4,7 +4,7 @@ public class AddStatusCommand
 {
   public AddStatusCommand()
   {
-    AutoComplete.Register("addstatus", (int index) =>
+    AutoComplete.Register("addstatus", index =>
     {
       if (index == 0) return ParameterInfo.StatusEffects;
       if (index == 1) return ParameterInfo.Create("Effect duration in seconds.");

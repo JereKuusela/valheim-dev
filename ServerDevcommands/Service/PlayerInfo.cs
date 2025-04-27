@@ -12,6 +12,7 @@ public class PlayerInfo
   public Vector3 Pos;
   public Quaternion Rot;
   public string HostId;
+  public long PeerId;
   public ZDOID ZDOID;
   public PlayerInfo(ZNetPeer peer)
   {
@@ -19,6 +20,7 @@ public class PlayerInfo
     Name = peer.m_playerName;
     Pos = peer.m_refPos;
     ZDOID = peer.m_characterID;
+    PeerId = ZDOID.UserID;
     var zdo = ZDOMan.instance.GetZDO(peer.m_characterID);
     if (zdo != null)
     {
@@ -32,6 +34,7 @@ public class PlayerInfo
     Name = info.m_name;
     Pos = info.m_position;
     ZDOID = info.m_characterID;
+    PeerId = ZDOID.UserID;
     var zdo = ZDOMan.instance.GetZDO(info.m_characterID);
     if (zdo != null)
     {
@@ -44,6 +47,7 @@ public class PlayerInfo
     HostId = "self";
     Name = player.GetPlayerName();
     ZDOID = player.GetZDOID();
+    PeerId = ZDOID.UserID;
     Pos = player.transform.position;
     Rot = player.transform.rotation;
   }
@@ -60,7 +64,7 @@ public class PlayerInfo
     foreach (var argu in args)
     {
       if (argu == "*" || argu == "all") return players;
-      if (argu == "others") return players.Where(p => p.ZDOID != Player.m_localPlayer.GetZDOID()).ToList();
+      if (argu == "others") return [.. players.Where(p => p.ZDOID != Player.m_localPlayer.GetZDOID())];
       var arg = argu.ToLowerInvariant();
       foreach (var player in players)
       {

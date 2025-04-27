@@ -35,7 +35,7 @@ public class ServerCommand
     AutoComplete.RegisterEmpty("stopevent");
     AutoComplete.RegisterEmpty("genloc");
     AutoComplete.RegisterEmpty("sleep");
-    AutoComplete.Register("skiptime", (int index) =>
+    AutoComplete.Register("skiptime", index =>
     {
       if (index == 0) return ParameterInfo.Create("Seconds", "a number (default 240.0)");
       return ParameterInfo.None;
