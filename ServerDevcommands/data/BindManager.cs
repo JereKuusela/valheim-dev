@@ -54,11 +54,8 @@ public class BindManager
     WheelBinds = [.. WheelBinds.Where(b => b.Command != command)];
     Binds = [.. Binds.Where(b => b.Command != command)];
     var bind = FromData(data);
-    if (bind.Required.Count > 0)
-    {
-      if (bind.MouseWheel) WheelBinds.Add(bind);
-      else Binds.Add(bind);
-    }
+    if (bind.MouseWheel) WheelBinds.Add(bind);
+    else if (bind.Required.Count > 0) Binds.Add(bind);
     ToBeSaved = true;
   }
   public static void ClearBinds()
@@ -288,7 +285,7 @@ public class BindManager
       Terminal.m_bindList.Clear();
       Terminal.m_binds.Clear();
       var data = Yaml.Read(FilePath, Yaml.Deserialize<List<BindData>>);
-      var binds = data.Select(FromData).Where(b => b.Required.Count > 0).ToList();
+      var binds = data.Select(FromData).Where(b => b.MouseWheel || b.Required.Count > 0).ToList();
       Binds = [.. binds.Where(bind => !bind.MouseWheel)];
       WheelBinds = [.. binds.Where(bind => bind.MouseWheel)];
       ServerDevcommands.Log.LogInfo($"Reloading {binds.Count} bind data.");
@@ -310,16 +307,14 @@ public class BindManager
   private static List<CommandBind> GetBestCommands(List<CommandBind> binds)
   {
     var maxKeys = 0;
-    var commands = new List<CommandBind>();
+    List<CommandBind> commands = [];
     foreach (var bind in binds)
     {
       if (!IsValid(bind)) continue;
-      var keys = bind.Required == null ? 0 : bind.Required.Count;
-      if (keys > maxKeys)
-      {
-        maxKeys = keys;
-        commands.Clear();
-      }
+      var keys = bind.Required.Count;
+      if (keys < maxKeys) continue;
+      if (keys > maxKeys) commands.Clear();
+      maxKeys = keys;
       commands.Add(bind);
     }
     return commands;
@@ -348,9 +343,7 @@ public class BindManager
   {
     foreach (var bind in binds)
     {
-      if (!IsValid(bind)) continue;
-      var keys = bind.Required == null ? 0 : bind.Required.Count;
-      if (keys > 0) return true;
+      if (IsValid(bind)) return true;
     }
     return false;
   }
@@ -362,29 +355,14 @@ public class BindManager
   }
   private static bool IsValid(CommandBind bind)
   {
-    var inBuildMode = Player.m_localPlayer?.InPlaceMode() ?? false;
-    if (bind.Required == null || bind.Required.Count == 0) return false;
+    var mode = Mode == "" ? Player.m_localPlayer?.InPlaceMode() == true ? "build" : "" : Mode;
+
+    if (!bind.MouseWheel && (bind.Required == null || bind.Required.Count == 0)) return false;
+
     if (bind.Required.Any(key => !ZInput.GetKey(key))) return false;
-    if (bind.Banned != null && bind.Banned.Count > 0)
-    {
-      if (bind.Banned.Any(key => ZInput.GetKey(key))) return false;
-    }
-    if (bind.RequiredState != null && bind.RequiredState.Count > 0)
-    {
-      foreach (var state in bind.RequiredState)
-      {
-        if (state == "build" && !inBuildMode) continue;
-        else if (state != Mode) continue;
-      }
-    }
-    if (bind.BannedState != null && bind.BannedState.Count > 0)
-    {
-      foreach (var state in bind.BannedState)
-      {
-        if (state == "build" && inBuildMode) continue;
-        else if (state == Mode) continue;
-      }
-    }
+    if (bind.Banned != null && bind.Banned.Any(key => ZInput.GetKey(key))) return false;
+    if (bind.RequiredState != null && bind.RequiredState.Any(state => state != mode)) return false;
+    if (bind.BannedState != null && bind.BannedState.Any(state => state == mode)) return false;
     return true;
   }
 
