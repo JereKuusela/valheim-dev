@@ -1,3 +1,7 @@
+- v1.96
+  - Adds a workaround for the game swapping Mouse4 and Mouse5 keys.
+  - Fixes fly down not working if keys overlap with fly up keys.
+
 - v1.95
   - Adds a new command `message` to broadcast a message to specific players.
   - Overhauls the bind system to support more features (and simplify implementation).

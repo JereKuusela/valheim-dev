@@ -359,13 +359,22 @@ public class BindManager
 
     if (!bind.MouseWheel && (bind.Required == null || bind.Required.Count == 0)) return false;
 
-    if (bind.Required.Any(key => !ZInput.GetKey(key))) return false;
-    if (bind.Banned != null && bind.Banned.Any(key => ZInput.GetKey(key))) return false;
-    if (bind.RequiredState != null && bind.RequiredState.Any(state => state != mode)) return false;
+    if (bind.Required.Any(key => !GetKey(key))) return false;
+    if (bind.Banned != null && bind.Banned.Any(GetKey)) return false;
+    if (bind.RequiredState != null && bind.RequiredState.All(state => state != mode)) return false;
     if (bind.BannedState != null && bind.BannedState.Any(state => state == mode)) return false;
     return true;
   }
-
+  public static bool GetKey(KeyCode key)
+  {
+    // Mouse 5+ are not supported by Valheim.
+    // Mouse 3 and 4 are swapped in the game.
+    if (key == KeyCode.Mouse3) return ZInput.GetKey(KeyCode.Mouse4);
+    if (key == KeyCode.Mouse4) return ZInput.GetKey(KeyCode.Mouse3);
+    if (key == KeyCode.Mouse5) return Input.GetKey(KeyCode.Mouse5);
+    if (key == KeyCode.Mouse6) return Input.GetKey(KeyCode.Mouse6);
+    return ZInput.GetKey(key);
+  }
   public static void PrintBinds(Terminal terminal)
   {
     if (Binds.Count == 0 && WheelBinds.Count == 0)

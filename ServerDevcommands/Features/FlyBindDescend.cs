@@ -8,11 +8,20 @@ namespace ServerDevcommands;
 public class FlyBindDescend
 {
 
-  static bool IsFlyUp() => CheckKeys(Settings.FlyUpRequiredKeys, Settings.FlyUpBannedKeys) && !CheckKeys(Settings.FlyDownRequiredKeys, Settings.FlyDownBannedKeys);
+  static bool IsFlyUp()
+  {
+    if (!CheckKeys(Settings.FlyUpRequiredKeys, Settings.FlyUpBannedKeys)) return false;
+    if (Settings.FlyUpRequiredKeys.Count > Settings.FlyDownRequiredKeys.Count) return true;
+    return !CheckKeys(Settings.FlyDownRequiredKeys, Settings.FlyDownBannedKeys);
+  }
+  static bool IsFlyDown()
+  {
+    if (!CheckKeys(Settings.FlyDownRequiredKeys, Settings.FlyDownBannedKeys)) return false;
+    if (Settings.FlyDownRequiredKeys.Count > Settings.FlyUpRequiredKeys.Count) return true;
+    return !CheckKeys(Settings.FlyUpRequiredKeys, Settings.FlyUpBannedKeys);
+  }
 
-  static bool IsFlyDown() => CheckKeys(Settings.FlyDownRequiredKeys, Settings.FlyDownBannedKeys) && !CheckKeys(Settings.FlyUpRequiredKeys, Settings.FlyUpBannedKeys);
-
-  private static bool CheckKeys(List<KeyCode> required, List<KeyCode> banned) => required.All(k => ZInput.GetKey(k)) && !banned.Any(k => ZInput.GetKey(k));
+  private static bool CheckKeys(List<KeyCode> required, List<KeyCode> banned) => required.All(BindManager.GetKey) && !banned.Any(BindManager.GetKey);
   static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
   {
     return new CodeMatcher(instructions)
