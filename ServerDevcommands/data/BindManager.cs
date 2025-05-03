@@ -17,6 +17,7 @@ public class BindManager
 
   private static List<CommandBind> Binds = [];
   private static List<CommandBind> WheelBinds = [];
+  private static readonly List<CommandBind> TemporaryBinds = [];
   public static void AddBind(string keys, string command)
   {
     BindData data = new()
@@ -24,7 +25,7 @@ public class BindManager
       key = keys,
       command = command,
     };
-    var bind = FromData(data);
+    var bind = FromData(data, false);
     if (bind.MouseWheel) WheelBinds.Add(bind);
     else Binds.Add(bind);
     ToBeSaved = true;
@@ -39,7 +40,7 @@ public class BindManager
     }
     ToBeSaved = true;
   }
-  public static void UpdateBind(string keys, string mode, string command, string offCommand)
+  public static void SetTemporaryBind(string keys, string mode, string command, string offCommand)
   {
     BindData data = new()
     {
@@ -48,15 +49,14 @@ public class BindManager
       command = command,
       offCommand = offCommand,
     };
-    // Simply needed to avoid unnecessary updates.
-    if (WheelBinds.Any(b => b.Command == command && b.Keys == keys)) return;
-    if (Binds.Any(b => b.Command == command && b.Keys == keys)) return;
-    WheelBinds = [.. WheelBinds.Where(b => b.Command != command)];
-    Binds = [.. Binds.Where(b => b.Command != command)];
-    var bind = FromData(data);
+    TemporaryBinds.RemoveAll(b => b.Command == command);
+    WheelBinds.RemoveAll(b => b.Command == command);
+    Binds.RemoveAll(b => b.Command == command);
+    var bind = FromData(data, true);
+    if (!bind.MouseWheel && bind.Required.Count == 0) return;
+    TemporaryBinds.Add(bind);
     if (bind.MouseWheel) WheelBinds.Add(bind);
     else if (bind.Required.Count > 0) Binds.Add(bind);
-    ToBeSaved = true;
   }
   public static void ClearBinds()
   {
@@ -64,13 +64,14 @@ public class BindManager
     WheelBinds.Clear();
     ToBeSaved = true;
   }
-  public static CommandBind FromData(BindData data)
+  public static CommandBind FromData(BindData data, bool temporary)
   {
     CommandBind bind = new()
     {
       Command = data.command,
       OffCommand = data.offCommand,
-      Keys = data.key
+      Keys = data.key,
+      Temporary = temporary,
     };
     // Quite long to support old format too.
     if (data.keys != null)
@@ -198,6 +199,17 @@ public class BindManager
         }
       }
     }
+    // Infinity Hammer has added binds with underscore, these should be temporary to not remain when the mod is removed.
+    if (!temporary && bind.Command.StartsWith("_"))
+      bind.Temporary = true;
+    // Some old commands have "unbound" as state to indicate that they are not bound to anything.
+    // These should be cleaned up.
+    if (bind.RequiredState?.Contains("unbound") == true)
+    {
+      bind.MouseWheel = false;
+      bind.Required = [];
+      ToBeSaved = true;
+    }
     return bind;
   }
   private static bool TryParse(string str, out KeyCode keyCode)
@@ -230,16 +242,16 @@ public class BindManager
   {
     List<string> keys = [];
     if (commandBind.Required != null)
-      keys.AddRange(commandBind.Required.Select(key => key.ToString()));
+      keys.AddRange(commandBind.Required.Select(key => key.ToString().ToLower()));
     if (commandBind.Banned != null)
-      keys.AddRange(commandBind.Banned.Select(key => "-" + key.ToString()));
+      keys.AddRange(commandBind.Banned.Select(key => "-" + key.ToString().ToLower()));
     if (commandBind.MouseWheel)
       keys.Add("wheel");
     List<string> states = [];
     if (commandBind.RequiredState != null)
-      states.AddRange(commandBind.RequiredState.Select(state => state.ToString()));
+      states.AddRange(commandBind.RequiredState.Select(state => state.ToString().ToLower()));
     if (commandBind.BannedState != null)
-      states.AddRange(commandBind.BannedState.Select(state => "-" + state.ToString()));
+      states.AddRange(commandBind.BannedState.Select(state => "-" + state.ToString().ToLower()));
     BindData data = new()
     {
       keys = string.Join(", ", keys),
@@ -269,7 +281,7 @@ public class BindManager
   public static void ToFile()
   {
     ToBeSaved = false;
-    List<BindData> data = [.. Binds.Select(ToData), .. WheelBinds.Select(ToData)];
+    List<BindData> data = [.. Binds.Where(b => !b.Temporary).Select(ToData), .. WheelBinds.Where(b => !b.Temporary).Select(ToData)];
     if (data.Count == 0)
     {
       if (File.Exists(FilePath)) File.Delete(FilePath);
@@ -285,7 +297,8 @@ public class BindManager
       Terminal.m_bindList.Clear();
       Terminal.m_binds.Clear();
       var data = Yaml.Read(FilePath, Yaml.Deserialize<List<BindData>>);
-      var binds = data.Select(FromData).Where(b => b.MouseWheel || b.Required.Count > 0).ToList();
+      var binds = data.Select(d => FromData(d, false)).Where(b => b.MouseWheel || b.Required.Count > 0).ToList();
+      binds.AddRange(TemporaryBinds);
       Binds = [.. binds.Where(bind => !bind.MouseWheel)];
       WheelBinds = [.. binds.Where(bind => bind.MouseWheel)];
       ServerDevcommands.Log.LogInfo($"Reloading {binds.Count} bind data.");

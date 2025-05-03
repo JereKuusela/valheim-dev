@@ -30,4 +30,5 @@ public class CommandBind
   public bool Executed = false;
   public bool WasExecuted = false;
   public string? Keys;
+  public bool Temporary = false;
 }

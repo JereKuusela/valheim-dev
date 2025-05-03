@@ -1,3 +1,6 @@
+- v1.97
+  - Adds automatic clean up for old unused Infinity Hammer binds.
+
 - v1.96
   - Adds a workaround for the game swapping Mouse4 and Mouse5 keys.
   - Fixes fly down not working if keys overlap with fly up keys.
@@ -16,9 +19,3 @@
   - Changes the setting "Server chat" to disable server chat when not enabled (previously only printed a warning).
   - Fixes private player feature affecting the server chat.
   - Improves compatiblity with Discord Control mod.
-
-- v1.92
-  - Fixes private player feature not working.
-
-- v1.91
-  - Adds a new setting "Server client" which adds a dummy client to the server. This is required for the server to send chat messages.
