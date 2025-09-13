@@ -40,5 +40,4 @@ public class GhostIgnorePlayers
 
   [HarmonyPatch(typeof(Player), nameof(Player.IsPlayerInRange), typeof(Vector3), typeof(float), typeof(float)), HarmonyTranspiler]
   static IEnumerable<CodeInstruction> IsPlayerInRange2(IEnumerable<CodeInstruction> i) => ReplacePlayers(i);
-
 }

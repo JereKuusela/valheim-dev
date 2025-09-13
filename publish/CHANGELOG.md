@@ -1,3 +1,6 @@
+- v1.98
+  - Recompiled to fix any potential issues with the latest game update.
+
 - v1.97
   - Adds automatic clean up for old unused Infinity Hammer binds.
 
@@ -13,9 +16,3 @@
 
 - v1.94
   - Adds a new setting "Server chat name" to change the name of the server chat.
-
-- v1.93
-  - Changes the setting "Server client" to "Server chat".
-  - Changes the setting "Server chat" to disable server chat when not enabled (previously only printed a warning).
-  - Fixes private player feature affecting the server chat.
-  - Improves compatiblity with Discord Control mod.

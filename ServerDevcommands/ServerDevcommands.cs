@@ -5,6 +5,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 using UnityEngine;
 namespace ServerDevcommands;
+
 [BepInDependency(COMFY_GIZMO_GUID, BepInDependency.DependencyFlags.SoftDependency)]
 [BepInDependency(RELOADED_GIZMO_GUID, BepInDependency.DependencyFlags.SoftDependency)]
 [BepInPlugin(GUID, NAME, VERSION)]
@@ -12,7 +13,7 @@ public class ServerDevcommands : BaseUnityPlugin
 {
   public const string GUID = "server_devcommands";
   public const string NAME = "Server Devcommands";
-  public const string VERSION = "1.97";
+  public const string VERSION = "1.98";
   public const string COMFY_GIZMO_GUID = "bruce.valheim.comfymods.gizmo";
   public const string RELOADED_GIZMO_GUID = "m3to.mods.GizmoReloaded";
   private static ManualLogSource? Logs;
