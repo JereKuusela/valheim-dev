@@ -4,6 +4,7 @@ using BepInEx.Bootstrap;
 using BepInEx.Logging;
 using HarmonyLib;
 using UnityEngine;
+using YamlDotNet.Core.Tokens;
 namespace ServerDevcommands;
 
 [BepInDependency(COMFY_GIZMO_GUID, BepInDependency.DependencyFlags.SoftDependency)]
@@ -13,7 +14,7 @@ public class ServerDevcommands : BaseUnityPlugin
 {
   public const string GUID = "server_devcommands";
   public const string NAME = "Server Devcommands";
-  public const string VERSION = "1.98";
+  public const string VERSION = "1.99";
   public const string COMFY_GIZMO_GUID = "bruce.valheim.comfymods.gizmo";
   public const string RELOADED_GIZMO_GUID = "m3to.mods.GizmoReloaded";
   private static ManualLogSource? Logs;
@@ -26,6 +27,7 @@ public class ServerDevcommands : BaseUnityPlugin
     Admin.Instance = new DevCommandsAdmin();
     Settings.Init(Config);
     Console.SetConsoleEnabled(true);
+
     try
     {
       SetupWatcher();

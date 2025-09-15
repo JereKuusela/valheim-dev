@@ -64,7 +64,7 @@ public class PlayerInfo
     foreach (var argu in args)
     {
       if (argu == "*" || argu == "all") return players;
-      if (argu == "others") return [.. players.Where(p => p.ZDOID != Player.m_localPlayer.GetZDOID())];
+      if (argu == "others") return [.. players.Where(p => p.ZDOID != Player.m_localPlayer?.GetZDOID())];
       var arg = argu.ToLowerInvariant();
       foreach (var player in players)
       {

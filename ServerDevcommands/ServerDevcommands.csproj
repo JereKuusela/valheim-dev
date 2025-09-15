@@ -24,6 +24,9 @@
     <Reference Include="UnityEngine.UI">
       <HintPath>..\..\Libs\UnityEngine.UI.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.InputSystem">
+      <HintPath>..\..\Libs\Unity.InputSystem.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>..\..\Libs\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>

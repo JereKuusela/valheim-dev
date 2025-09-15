@@ -310,6 +310,19 @@ public class BindManager
   }
   public static void SetupWatcher()
   {
+    // Valheim doesn't have these keys mapped by default.
+    ZInput.s_keyCodeToKeyMap[KeyCode.F13] = UnityEngine.InputSystem.Key.F13;
+    ZInput.s_keyCodeToKeyMap[KeyCode.F14] = UnityEngine.InputSystem.Key.F14;
+    ZInput.s_keyCodeToKeyMap[KeyCode.F15] = UnityEngine.InputSystem.Key.F15;
+    ZInput.s_keyCodeToKeyMap[KeyCode.F16] = UnityEngine.InputSystem.Key.F16;
+    ZInput.s_keyCodeToKeyMap[KeyCode.F17] = UnityEngine.InputSystem.Key.F17;
+    ZInput.s_keyCodeToKeyMap[KeyCode.F18] = UnityEngine.InputSystem.Key.F18;
+    ZInput.s_keyCodeToKeyMap[KeyCode.F19] = UnityEngine.InputSystem.Key.F19;
+    ZInput.s_keyCodeToKeyMap[KeyCode.F20] = UnityEngine.InputSystem.Key.F20;
+    ZInput.s_keyCodeToKeyMap[KeyCode.F21] = UnityEngine.InputSystem.Key.F21;
+    ZInput.s_keyCodeToKeyMap[KeyCode.F22] = UnityEngine.InputSystem.Key.F22;
+    ZInput.s_keyCodeToKeyMap[KeyCode.F23] = UnityEngine.InputSystem.Key.F23;
+    ZInput.s_keyCodeToKeyMap[KeyCode.F24] = UnityEngine.InputSystem.Key.F24;
     Yaml.SetupWatcher(FileName, FromFile);
   }
 
@@ -402,7 +415,11 @@ public class BindManager
       terminal.AddString("Wheel binds:");
     foreach (var bind in WheelBinds) terminal.AddString(PrintBind(bind));
   }
-  private static string PrintBind(CommandBind bind)
+  public static Tuple<string, string>[] GetBinds() => [.. Binds.Select(bind => new Tuple<string, string>(GetInput(bind), bind.Command))];
+  public static Tuple<string, string>[] GetWheelBinds() => [.. WheelBinds.Select(bind => new Tuple<string, string>(GetInput(bind), bind.Command))];
+
+  private static string PrintBind(CommandBind bind) => $"{GetInput(bind)}: {bind.Command}";
+  private static string GetInput(CommandBind bind)
   {
     List<string> keys = [];
     if (bind.Required != null)
@@ -413,8 +430,7 @@ public class BindManager
       keys.AddRange(bind.RequiredState.Select(state => state.ToString()));
     if (bind.BannedState != null)
       keys.AddRange(bind.BannedState.Select(state => "-" + state.ToString()));
-    var input = string.Join(",", keys);
-    return $"{input}: {bind.Command}";
+    return string.Join(",", keys);
   }
 
   public static List<CommandBind> GetOffBinds()

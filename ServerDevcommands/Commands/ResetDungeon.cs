@@ -2,6 +2,7 @@ using System.Linq;
 using UnityEngine;
 
 namespace ServerDevcommands;
+
 public class ResetDungeonCommand
 {
   private static readonly int ProxyHash = "LocationProxy".GetStableHashCode();
@@ -10,7 +11,7 @@ public class ResetDungeonCommand
   {
     Helper.Command("resetdungeon", "- Resets the nearest camp or dungeon within 20 meters.", (args) =>
     {
-      var dgs = Object.FindObjectsOfType<DungeonGenerator>();
+      var dgs = Object.FindObjectsByType<DungeonGenerator>(FindObjectsSortMode.None);
       var player = Helper.GetPlayer();
       var dg = dgs.OrderBy(dg => Utils.DistanceXZ(dg.transform.position, player.transform.position)).FirstOrDefault();
       if (!dg) throw new System.Exception("No dungeon found.");
@@ -27,9 +28,12 @@ public class ResetDungeonCommand
         {
           zoneLoc.m_prefab.Load();
           var loc = zoneLoc.m_prefab.Asset.GetComponent<Location>();
-          var hasOffset = loc && loc.m_useCustomInteriorTransform && loc.m_interiorTransform && loc.m_generator;
-          if (hasOffset)
-            dg.m_originalPosition = loc.m_generator.transform.localPosition;
+          if (loc && loc.m_generator)
+          {
+            var hasOffset = loc.m_useCustomInteriorTransform && loc.m_interiorTransform;
+            if (hasOffset)
+              dg.m_originalPosition = loc.m_generator.transform.localPosition;
+          }
           zoneLoc.m_prefab.Release();
         }
       }

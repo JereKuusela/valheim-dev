@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 using HarmonyLib;
+using UnityEngine;
 namespace ServerDevcommands;
 
 public class NoClip
@@ -54,13 +55,13 @@ public class NoObjectCollision
         Ship.GetLocalShip()?.OnTriggerExit(__instance.m_collider);
         // Water surfaces keep track of the entered player, must be manually removed.
         var obj = __instance.GetComponent<IWaterInteractable>();
-        var surfaces = UnityEngine.Object.FindObjectsOfType<LiquidSurface>(true);
+        var surfaces = UnityEngine.Object.FindObjectsByType<LiquidSurface>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         foreach (var surface in surfaces)
         {
           if (surface.m_inWater == null || !surface.m_inWater.Contains(obj)) continue;
           surface.OnTriggerExit(__instance.m_collider);
         }
-        var volumes = UnityEngine.Object.FindObjectsOfType<WaterVolume>(true);
+        var volumes = UnityEngine.Object.FindObjectsByType<WaterVolume>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         foreach (var volume in volumes)
         {
           if (volume.m_inWater == null || !volume.m_inWater.Contains(obj)) continue;

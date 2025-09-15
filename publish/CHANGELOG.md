@@ -1,3 +1,6 @@
+- v1.99
+  - Fixes keys F13-F24 not being bindable.
+
 - v1.98
   - Recompiled to fix any potential issues with the latest game update.
 
