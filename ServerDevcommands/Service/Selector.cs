@@ -37,7 +37,7 @@ public static class Selector
     allowOtherPlayers |= included.Contains("Player");
     var includedPrefabs = GetAllPrefabs(included);
     if (included.Length > 0 && includedPrefabs.Count == 0) throw new InvalidOperationException("No valid prefabs found.");
-    var excludedPrefabs = GetExcludedPrefabs(excluded);
+    var excludedPrefabs = GetAllPrefabs(excluded);
     var raycast = Math.Max(maxDistance + 5f, 50f);
     var mask = LayerMask.GetMask(
     [
@@ -124,22 +124,7 @@ public static class Selector
     if (id.EndsWith("*", StringComparison.Ordinal)) return name.StartsWith(id.Substring(0, id.Length - 2), StringComparison.Ordinal);
     return id == name;
   }
-  public static HashSet<int> GetExcludedPrefabs(string[] ids)
-  {
-    HashSet<int> prefabs = [];
-    foreach (var id in ids)
-      prefabs.UnionWith(GetExcludedPrefabs(id));
-    return prefabs;
-  }
-  private static HashSet<int> GetExcludedPrefabs(string id)
-  {
-    if (id == "") return [];
-    id = id.ToLower();
-    return ZNetScene.instance.m_namedPrefabs.Values
-      .Where(prefab => IsIncluded(id, prefab.name.ToLower()))
-      .Select(prefab => prefab.name.GetStableHashCode())
-      .ToHashSet();
-  }
+
   public static HashSet<int> GetPrefabs(string[] ids)
   {
     if (ids.Length == 0) return GetSafePrefabs("");
@@ -169,7 +154,7 @@ public static class Selector
       values = values.Where(prefab => IsIncluded(id, prefab.name.ToLower()));
     else
       values = values.Where(prefab => prefab.name.ToLower() == id);
-    return values.Select(prefab => prefab.name.GetStableHashCode()).ToHashSet();
+    return [.. values.Select(prefab => prefab.name.GetStableHashCode())];
   }
   private static HashSet<int> GetAllPrefabs(string id)
   {
@@ -183,13 +168,13 @@ public static class Selector
       values = values.Where(prefab => IsIncluded(id, prefab.name.ToLower()));
     else
       values = values.Where(prefab => prefab.name.ToLower() == id);
-    return values.Select(prefab => prefab.name.GetStableHashCode()).ToHashSet();
+    return [.. values.Select(prefab => prefab.name.GetStableHashCode())];
   }
   public static ZNetView[] GetNearby(string[] included, HashSet<string> types, string[] excluded, Vector3 center, Range<float> radius, float height)
   {
     var includedPrefabs = GetPrefabs(included);
     if (included.Length > 0 && includedPrefabs.Count == 0) throw new InvalidOperationException("No valid prefabs found.");
-    var excludedPrefabs = GetExcludedPrefabs(excluded);
+    var excludedPrefabs = GetAllPrefabs(excluded);
     bool checker(Vector3 pos) => Within(pos, center, radius, height);
     return GetNearby(includedPrefabs, types, excludedPrefabs, checker);
   }
@@ -197,7 +182,7 @@ public static class Selector
   {
     var includedPrefabs = GetPrefabs(included);
     if (included.Length > 0 && includedPrefabs.Count == 0) throw new InvalidOperationException("No valid prefabs found.");
-    var excludedPrefabs = GetExcludedPrefabs(excluded);
+    var excludedPrefabs = GetAllPrefabs(excluded);
     bool checker(Vector3 pos) => Within(pos, center, angle, width, depth, height);
     return GetNearby(includedPrefabs, types, excludedPrefabs, checker);
   }
@@ -229,16 +214,30 @@ public static class Selector
     if (excluded.Count > 0)
       linq = linq.Where(view => !excluded.Contains(view.GetZDO().GetPrefab()));
     linq = linq.Where(view => view.GetZDO().m_uid == id || view.GetZDO().GetZDOID(RaftParent) == id);
-    return linq.ToArray();
+    return [.. linq];
   }
   ///<summary>Returns connected WearNTear objects.</summary>
-  public static ZNetView[] GetConnected(ZNetView baseView, string[] included, string[] excluded)
+  /// <param name="baseView">The base object to start from.</param>
+  /// <param name="take">Only return these prefabs (empty to return all).</param>
+  /// <param name="include">Include these prefabs when connecting (empty to include all).</param>
+  /// <param name="exclude">Exclude these prefabs when connecting.</param>
+  public static ZNetView[] GetConnected(ZNetView baseView, string[] take, string[] include, string[] exclude)
   {
-    var includedPrefabs = GetPrefabs(included);
-    var excludedPrefabs = GetExcludedPrefabs(excluded);
+    // All prefabs is good as only WearNTear objects are connected.
+    var returnedPrefabs = GetAllPrefabs(take);
+    var includedPrefabs = GetAllPrefabs(include);
+    var excludedPrefabs = GetAllPrefabs(exclude);
+
     if (baseView.GetZDO().GetZDOID(RaftParent) != ZDOID.None) return GetConnectedRaft(baseView, includedPrefabs, excludedPrefabs);
     var baseWear = baseView.GetComponent<WearNTear>() ?? throw new InvalidOperationException("Connected doesn't work for this object.");
-    HashSet<ZNetView> views = [baseView];
+    List<ZNetView> returnedViews = [];
+    var prefab = baseView.GetZDO().GetPrefab();
+    if (returnedPrefabs.Contains(prefab))
+      returnedViews.Add(baseView);
+    else if (returnedPrefabs.Count == 0 && !excludedPrefabs.Contains(prefab) && (includedPrefabs.Count == 0 || includedPrefabs.Contains(prefab)))
+      returnedViews.Add(baseView);
+
+    HashSet<ZNetView> handledViews = [baseView];
     Queue<WearNTear> todo = new();
     todo.Enqueue(baseWear);
     while (todo.Count > 0)
@@ -254,16 +253,24 @@ public static class Selector
           if (collider.isTrigger || collider.attachedRigidbody != null || wear.m_colliders.Contains(collider)) continue;
           var wear2 = collider.GetComponentInParent<WearNTear>();
           if (!wear2 || !IsValid(wear2.m_nview)) continue;
-          if (views.Contains(wear2.m_nview)) continue;
-          if (excludedPrefabs.Contains(wear2.m_nview.GetZDO().GetPrefab())) continue;
-          views.Add(wear2.m_nview);
+          if (handledViews.Contains(wear2.m_nview)) continue;
+          handledViews.Add(wear2.m_nview);
+
+          prefab = wear2.m_nview.GetZDO().GetPrefab();
+          // If returned is set, it can be different from connections.
+          if (returnedPrefabs.Contains(prefab))
+            returnedViews.Add(wear2.m_nview);
+          if (includedPrefabs.Count > 0 && !includedPrefabs.Contains(prefab)) continue;
+          if (excludedPrefabs.Contains(prefab)) continue;
+          // If returned is not set, it is the same as connections.
+          if (returnedPrefabs.Count == 0)
+            returnedViews.Add(wear2.m_nview);
           todo.Enqueue(wear2);
         }
       }
     }
-    IEnumerable<ZNetView> linq = views;
-    if (includedPrefabs.Count > 0)
-      linq = linq.Where(view => includedPrefabs.Contains(view.GetZDO().GetPrefab()));
-    return linq.ToArray();
+    return [.. returnedViews];
   }
+  // Old behavior for compatibility.
+  public static ZNetView[] GetConnected(ZNetView baseView, string[] included, string[] excluded) => GetConnected(baseView, [], included, excluded);
 }
