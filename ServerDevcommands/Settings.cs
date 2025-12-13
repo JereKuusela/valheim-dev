@@ -64,6 +64,8 @@ public static class Settings
   public static ConfigEntry<bool> configHideShoutPings;
   public static bool HideShoutPings => Cheats && configHideShoutPings.Value;
   public static ConfigEntry<bool> configGodModeNoEdgeOfWorld;
+  public static ConfigEntry<bool> configNoCostLimitRecipesToStation;
+  public static ConfigEntry<bool> configNoCostRespectStationLevel;
   public static bool GodModeNoEdgeOfWorld => Cheats && configGodModeNoEdgeOfWorld.Value;
   public static ConfigEntry<bool> configDisableStartShout;
   public static bool DisableStartShout => configDisableStartShout.Value;
@@ -245,6 +247,8 @@ public static class Settings
     configGodModeAlwaysParry = config.Bind(section, "Always parry with god mode (when not blocking)", false, "");
     configGodModeNoStagger = config.Bind(section, "No staggering with god mode", true, "");
     configHideShoutPings = config.Bind(section, "Hide shout pings", false, "Forces shout pings at the world center.");
+    configNoCostLimitRecipesToStation = config.Bind(section, "Limit recipes to station with nocost mode", false, "When nocost mode is active, only show recipes craftable at your current crafting station.");
+    configNoCostRespectStationLevel = config.Bind(section, "Respect station level with nocost mode", false, "When limiting recipes to station, also require the station's upgrade level.");
     configGodModeNoEdgeOfWorld = config.Bind(section, "No edge of world pull with god mode", true, "");
     configDisableStartShout = config.Bind(section, "Disable start shout", false, "Removes the initial shout message when joining the server.");
     configAccessPrivateChests = config.Bind(section, "Access private chests", true, "Allows opening private chests.");
