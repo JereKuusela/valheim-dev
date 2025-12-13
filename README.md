@@ -202,6 +202,8 @@ Three ways to edit the settings:
 - Ignores sleep check with ghost mode (default: `false`, key: `ghost_ignore_sleep`): If enabled, other players can sleep if you are in ghost mode.
 - Invisible to players with ghost mode (default: `false`, key: `ghost_invisibility`): Invisible to other players with ghost mode.
 - Kill destroys spawners (default: `true`, key: `kill_destroys_spawners`): Destroys spawners when using kill commands.
+- Limit recipes to station with nocost mode (default: `true`, key: `limit_recipes_to_station`): When nocost mode is active, only show recipes craftable at your current crafting station.
+- Respect station level with nocost mode (default: `false`, key: `respect_station_level`): When limiting recipes to station, also require the station's upgrade level.
 - Map teleport bind key: Key bind for map teleport.
 - Max undo steps (default: `50`, key: `max_undo_steps`): How many undo actions are stored.
 - No clip clear environment (default: `true`, key: `no_clip_clear_environment`): Removes any forced environments when the noclip is enabled. This disables any dark dungeon environments and prevents them from staying on when exiting the dungeon.

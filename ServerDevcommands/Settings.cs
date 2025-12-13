@@ -247,7 +247,7 @@ public static class Settings
     configGodModeAlwaysParry = config.Bind(section, "Always parry with god mode (when not blocking)", false, "");
     configGodModeNoStagger = config.Bind(section, "No staggering with god mode", true, "");
     configHideShoutPings = config.Bind(section, "Hide shout pings", false, "Forces shout pings at the world center.");
-    configNoCostLimitRecipesToStation = config.Bind(section, "Limit recipes to station with nocost mode", false, "When nocost mode is active, only show recipes craftable at your current crafting station.");
+    configNoCostLimitRecipesToStation = config.Bind(section, "Limit recipes to station with nocost mode", true, "When nocost mode is active, only show recipes craftable at your current crafting station.");
     configNoCostRespectStationLevel = config.Bind(section, "Respect station level with nocost mode", false, "When limiting recipes to station, also require the station's upgrade level.");
     configGodModeNoEdgeOfWorld = config.Bind(section, "No edge of world pull with god mode", true, "");
     configDisableStartShout = config.Bind(section, "Disable start shout", false, "Removes the initial shout message when joining the server.");
@@ -402,6 +402,8 @@ public static class Settings
     "free_fly_camera_invert",
     "server_chat",
     "server_chat_name",
+    "limit_recipes_to_station",
+    "respect_station_level"
   ];
   private static string State(bool value) => value ? "enabled" : "disabled";
   private static string Flag(bool value) => value ? "Removed" : "Added";
@@ -548,5 +550,7 @@ public static class Settings
     if (key == "free_fly_camera_invert") Toggle(context, configFreeFlyInvertCamera, "Free fly camera invert", value);
     if (key == "server_chat") Toggle(context, configServerChat, "Server chat", value);
     if (key == "server_chat_name") SetValue(context, configServerChatName, "Server chat name", value);
+    if (key == "limit_recipes_to_station") Toggle(context, configNoCostLimitRecipesToStation, "Limit recipes to station with nocost mode", value);
+    if (key == "respect_station_level") Toggle(context, configNoCostRespectStationLevel, "Respect station level with nocost mode", value);
   }
 }

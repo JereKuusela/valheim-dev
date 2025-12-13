@@ -1,6 +1,6 @@
 {
   "name": "Server_devcommands",
-  "version_number": "1.100.0",
+  "version_number": "1.101.0",
   "website_url": "https://discord.gg/VFRJcPwUdm",
   "description": "Enables devcommands and utilities for server admins.",
   "dependencies": [

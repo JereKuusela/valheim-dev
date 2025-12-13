@@ -1,3 +1,6 @@
+- v1.101
+  - Adds settings to limit recipes to station (default: `true`) and respect station level (default: `false`) when using nocost mode. Thanks Azumatt!
+
 - v1.100
   - Internal change to support improved connected object selection.
 
@@ -9,7 +12,3 @@
 
 - v1.97
   - Adds automatic clean up for old unused Infinity Hammer binds.
-
-- v1.96
-  - Adds a workaround for the game swapping Mouse4 and Mouse5 keys.
-  - Fixes fly down not working if keys overlap with fly up keys.
