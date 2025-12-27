@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
+using static ZRpc;
 
 namespace ServerDevcommands;
 
@@ -37,6 +38,9 @@ public class ServerExecution
 
   public static string RPC_Command = "DEV_Command";
   public static string RPC_Pins = "DEV_Pins";
+  public static string RPC_RequestIds = "EW_RequestIds";
+  public static string RPC_SyncLocationIds = "EW_SyncLocationIds";
+  public static string RPC_SyncVegetationIds = "EW_SyncVegetationIds";
   private static bool IsAllowed(ZRpc rpc, string command)
   {
     var zNet = ZNet.instance;
@@ -78,6 +82,23 @@ public class ServerExecution
     }
   }
 
+  public static void RequestIds()
+  {
+    var server = ZNet.instance.GetServerRPC();
+    if (server == null)
+      return;
+    server.Invoke(RPC_RequestIds);
+  }
+
+  public static void ReceiveLocationIds(ZRpc rpc, string locationIds)
+  {
+    ParameterInfo.SetServerLocationIds([.. locationIds.Split('|').Where(s => !string.IsNullOrEmpty(s))]);
+  }
+  public static void ReceiveVegetationIds(ZRpc rpc, string vegetationIds)
+  {
+    ParameterInfo.SetServerVegetationIds([.. vegetationIds.Split('|').Where(s => !string.IsNullOrEmpty(s))]);
+  }
+
   static void Postfix(ZNet __instance, ZRpc rpc)
   {
     if (__instance.IsServer())
@@ -87,6 +108,8 @@ public class ServerExecution
     else
     {
       rpc.Register<string>(RPC_Pins, new(RPC_Do_Pins));
+      rpc.Register<string>(RPC_SyncLocationIds, new(ReceiveLocationIds));
+      rpc.Register<string>(RPC_SyncVegetationIds, new(ReceiveVegetationIds));
     }
   }
 }

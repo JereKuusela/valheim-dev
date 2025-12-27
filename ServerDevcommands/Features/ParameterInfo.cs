@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using UnityEngine;
 namespace ServerDevcommands;
 ///<summary>Helper class for parameter options/info. The main purpose is to provide some caching to avoid performance issues.</summary>
@@ -12,11 +13,11 @@ public partial class ParameterInfo
     get
     {
       if (components.Count == 0)
-        components = ComponentInfo.Types.Select(t => t.Name).ToList();
+        components = [.. ComponentInfo.Types.Select(t => t.Name)];
       return components;
     }
   }
-  private static readonly List<string> globalKeys = Enum.GetNames(typeof(GlobalKeys)).Select(s => s.ToLowerInvariant()).ToList();
+  private static readonly List<string> globalKeys = [.. Enum.GetNames(typeof(GlobalKeys)).Select(s => s.ToLowerInvariant())];
   public static List<string> GlobalKeys
   {
     get
@@ -44,7 +45,7 @@ public partial class ParameterInfo
     {
       if (EnvMan.instance && EnvMan.instance.m_environments.Count != environments.Count)
       {
-        environments = EnvMan.instance.m_environments.Select(env => env.m_name.Replace(" ", "_")).ToList();
+        environments = [.. EnvMan.instance.m_environments.Select(env => env.m_name.Replace(" ", "_"))];
         environments.Sort();
       }
       return environments;
@@ -98,7 +99,7 @@ public partial class ParameterInfo
     get
     {
       if (DungeonDB.instance && DungeonDB.instance.m_rooms.Count != roomIds.Count)
-        roomIds = DungeonDB.instance.m_rooms.Select(room => room.m_prefab.Name).ToList();
+        roomIds = [.. DungeonDB.instance.m_rooms.Select(room => room.m_prefab.Name)];
       return roomIds;
     }
   }
@@ -106,16 +107,56 @@ public partial class ParameterInfo
   {
     get
     {
-      // No caching to make Expand World easier to use.
-      return ZoneSystem.instance.m_locations.Where(Helper.IsValid).Select(l => l.m_prefab.Name).Distinct().ToList();
+      if (ServerLocationIdsCache != null)
+        return ServerLocationIdsCache;
+      if (!ZoneSystem.instance) return [];
+      if (LocationDataCache != ZoneSystem.instance.m_locations)
+        LocationIdsCache = null;
+      if (LocationIdsCache == null)
+        LocationIdsCache = [.. ZoneSystem.instance.m_locations.Where(Helper.IsValid).Select(l => l.m_prefab.Name).Distinct()];
+      LocationDataCache = ZoneSystem.instance.m_locations;
+      return LocationIdsCache;
     }
   }
+  // Needed to track changes by Expand World.
+  private static List<ZoneSystem.ZoneLocation>? LocationDataCache = null;
+  private static List<string>? LocationIdsCache = null;
+  private static List<string>? ServerLocationIdsCache = null;
+  public static void SetServerLocationIds(List<string>? data)
+  {
+    ServerLocationIdsCache = data;
+  }
+  public static List<string> VegetationIds
+  {
+    get
+    {
+      if (ServerVegetationIdsCache != null)
+        return ServerVegetationIdsCache;
+
+      if (!ZoneSystem.instance) return [];
+      if (VegetationDataCache != ZoneSystem.instance.m_vegetation)
+        VegetationIdsCache = null;
+      if (VegetationIdsCache == null)
+        VegetationIdsCache = [.. ZoneSystem.instance.m_vegetation.Where(veg => veg != null && veg.m_prefab != null).Select(l => l.m_name).Distinct()];
+      VegetationDataCache = ZoneSystem.instance.m_vegetation;
+      return VegetationIdsCache;
+    }
+  }
+  // Needed to track changes by Expand World.
+  private static List<ZoneSystem.ZoneVegetation>? VegetationDataCache = null;
+  private static List<string>? VegetationIdsCache = null;
+  private static List<string>? ServerVegetationIdsCache = null;
+  public static void SetServerVegetationIds(List<string>? data)
+  {
+    ServerVegetationIdsCache = data;
+  }
+
   public static List<string> Events
   {
     get
     {
       // No caching to make Expand World easier to use.
-      return RandEventSystem.instance.m_events.Select(ev => ev.m_name).ToList();
+      return [.. RandEventSystem.instance.m_events.Select(ev => ev.m_name)];
     }
   }
   private static List<string> statusEffects = [];
@@ -124,7 +165,7 @@ public partial class ParameterInfo
     get
     {
       if (ObjectDB.instance && ObjectDB.instance.m_StatusEffects.Count != statusEffects.Count)
-        statusEffects = ObjectDB.instance.m_StatusEffects.Select(se => se.name).ToList();
+        statusEffects = [.. ObjectDB.instance.m_StatusEffects.Select(se => se.name)];
       return statusEffects;
     }
   }
@@ -132,7 +173,7 @@ public partial class ParameterInfo
   {
     get
     {
-      return Enum.GetNames(typeof(EffectArea.Type)).ToList();
+      return [.. Enum.GetNames(typeof(EffectArea.Type))];
     }
   }
   private static List<string> itemIds = [];
@@ -141,7 +182,7 @@ public partial class ParameterInfo
     get
     {
       if (ObjectDB.instance && ObjectDB.instance.m_items.Count != itemIds.Count)
-        itemIds = ObjectDB.instance.m_items.Select(item => item.name).ToList();
+        itemIds = [.. ObjectDB.instance.m_items.Select(item => item.name)];
       return itemIds;
     }
   }
@@ -160,7 +201,7 @@ public partial class ParameterInfo
     {
       // Missing proper caching.
       if (ObjectDB.instance)
-        hairs = ObjectDB.instance.GetAllItems(ItemDrop.ItemData.ItemType.Customization, "Hair").Select(item => item.name).ToList();
+        hairs = [.. ObjectDB.instance.GetAllItems(ItemDrop.ItemData.ItemType.Customization, "Hair").Select(item => item.name)];
       return hairs;
     }
   }
@@ -171,7 +212,7 @@ public partial class ParameterInfo
     {
       // Missing proper caching.
       if (ObjectDB.instance)
-        beards = ObjectDB.instance.GetAllItems(ItemDrop.ItemData.ItemType.Customization, "Beard").Select(item => item.name).ToList();
+        beards = [.. ObjectDB.instance.GetAllItems(ItemDrop.ItemData.ItemType.Customization, "Beard").Select(item => item.name)];
       return beards;
     }
   }
@@ -183,7 +224,7 @@ public partial class ParameterInfo
       if (keyCodes.Count == 0)
       {
         var values = Enum.GetNames(typeof(KeyCode));
-        keyCodes = values.Select(value => value.ToLower()).ToList();
+        keyCodes = [.. values.Select(value => value.ToLower())];
         keyCodes.Add("wheel");
       }
       return keyCodes;
@@ -197,7 +238,7 @@ public partial class ParameterInfo
       if (keyCodesWithNegative.Count == 0)
       {
         var values = Enum.GetNames(typeof(KeyCode));
-        keyCodesWithNegative = values.Select(value => value.ToLower()).ToList();
+        keyCodesWithNegative = [.. values.Select(value => value.ToLower())];
         keyCodesWithNegative.AddRange(keyCodesWithNegative.Select(value => "-" + value).ToList());
       }
       return keyCodesWithNegative;
@@ -207,7 +248,7 @@ public partial class ParameterInfo
   {
     get
     {
-      return Terminal.commands.Keys.ToList();
+      return [.. Terminal.commands.Keys];
     }
   }
 

@@ -80,6 +80,7 @@ public class DevCommandsAdmin : DefaultAdmin
     base.OnSuccess();
     DevcommandsCommand.Set(true);
     Console.instance.AddString("Authorized to use devcommands.");
+    ServerExecution.RequestIds();
   }
   protected override void OnFail()
   {

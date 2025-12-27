@@ -13,7 +13,7 @@ public class ServerDevcommands : BaseUnityPlugin
 {
   public const string GUID = "server_devcommands";
   public const string NAME = "Server Devcommands";
-  public const string VERSION = "1.101";
+  public const string VERSION = "1.102";
   public const string COMFY_GIZMO_GUID = "bruce.valheim.comfymods.gizmo";
   public const string RELOADED_GIZMO_GUID = "m3to.mods.GizmoReloaded";
   private static ManualLogSource? Logs;
@@ -52,6 +52,12 @@ public class ServerDevcommands : BaseUnityPlugin
     MouseWheelBinding.Execute(ZInput.GetMouseScrollWheel() * 20f);
     if (AliasManager.ToBeSaved) AliasManager.ToFile();
     if (BindManager.ToBeSaved) BindManager.ToFile();
+
+    if (!ZNet.instance)
+    {
+      ParameterInfo.SetServerLocationIds(null);
+      ParameterInfo.SetServerVegetationIds(null);
+    }
   }
 
 #pragma warning disable IDE0051
@@ -76,7 +82,6 @@ public class ServerDevcommands : BaseUnityPlugin
     if (!File.Exists(Config.ConfigFilePath)) return;
     try
     {
-      Log.LogDebug("ReadConfigValues called");
       Config.Reload();
     }
     catch
