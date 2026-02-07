@@ -123,10 +123,10 @@ public class RunAction
       if (options == null) continue;
       foreach (var option in options)
       {
-        if (option.Equals(args.Args[i], StringComparison.OrdinalIgnoreCase))
+        if (option != null && option.Equals(args.Args[i], StringComparison.OrdinalIgnoreCase)) //there was collection validation but not element validation.
         {
-          args.Args[i] = option;
-          break;
+            args.Args[i] = option;
+            break;
         }
       }
     }
