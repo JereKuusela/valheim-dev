@@ -101,15 +101,18 @@ public class ServerExecution
 
   static void Postfix(ZNet __instance, ZRpc rpc)
   {
+    ZNetPeer peer = __instance.GetPeer(rpc);
+    if (peer.m_uid == 0)
+      return;
     if (__instance.IsServer())
     {
-      rpc.Register<string>(RPC_Command, new(RPC_Do_Command));
+      rpc.Register<string>(RPC_Command, RPC_Do_Command);
     }
     else
     {
-      rpc.Register<string>(RPC_Pins, new(RPC_Do_Pins));
-      rpc.Register<string>(RPC_SyncLocationIds, new(ReceiveLocationIds));
-      rpc.Register<string>(RPC_SyncVegetationIds, new(ReceiveVegetationIds));
+      rpc.Register<string>(RPC_Pins, RPC_Do_Pins);
+      rpc.Register<string>(RPC_SyncLocationIds, ReceiveLocationIds);
+      rpc.Register<string>(RPC_SyncVegetationIds, ReceiveVegetationIds);
     }
   }
 }

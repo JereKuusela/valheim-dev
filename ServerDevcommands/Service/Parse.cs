@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using UnityEngine;
 namespace ServerDevcommands;
+
 public class Range<T>
 {
   public T Min;
@@ -382,8 +383,9 @@ public static class Parse
   }
   public static KeyValuePair<string, string> Kvp(string str, char separator = ',')
   {
-    var split = str.Split([separator], 2);
-    return split.Length < 2 ? new("", "") : new(split[0], split[1].Trim());
+    var index = str.IndexOf(separator);
+    if (index < 0) return new(str, "");
+    return new(str.Substring(0, index), str.Substring(index + 1).Trim());
   }
   public static string[] SplitWithEmpty(string arg, char separator = ',') => arg.Split(separator).Select(s => s.Trim()).ToArray();
   public static string[] Split(string arg, char separator = ',') => arg.Split(separator).Select(s => s.Trim()).Where(s => s != "").ToArray();
