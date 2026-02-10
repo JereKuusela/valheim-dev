@@ -1,3 +1,6 @@
+- v1.103
+  - Fixes various autocomplete issues (especially with Better Continentds mod). Thanks Kurios.ZeuS!
+
 - v1.102
   - Adds support for receiving server side location and vegetation IDs from Expand World Data mod.
 
@@ -9,6 +12,3 @@
 
 - v1.99
   - Fixes keys F13-F24 not being bindable.
-
-- v1.98
-  - Recompiled to fix any potential issues with the latest game update.
