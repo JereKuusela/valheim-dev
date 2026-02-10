@@ -3,3 +3,5 @@ Libs
 bin
 obj
 .ionide/symbolCache.db
+/.vs
+/ServerDevcommands/ServerDevcommands.csproj

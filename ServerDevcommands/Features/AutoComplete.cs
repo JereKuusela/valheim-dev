@@ -220,56 +220,94 @@ public class GetTabOptionsWithImprovedAutoComplete
 }
 
 [HarmonyPatch(typeof(Terminal), nameof(Terminal.tabCycle))]
+// TabCycleWithImprovedAutoComplete.cs
 public class TabCycleWithImprovedAutoComplete
 {
-  static void Prefix(Terminal __instance, ref List<string> options, ref string word, bool usePrefix)
-  {
-    if (usePrefix)
+    static void Prefix(Terminal __instance, ref List<string> options, ref string word, bool usePrefix)
     {
-      if (word.StartsWith("_", StringComparison.OrdinalIgnoreCase))
-        options = options.Where(cmd => cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
-      else
-        options = options.Where(cmd => !cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
+        // Guard: Exit early if no options are provided by the game/mod
+        if (options == null) return;
+
+        // 1. Null-safe filtering for prefixes (Secret/Internal commands)
+        if (usePrefix)
+        {
+            if (word != null && word.StartsWith("_", StringComparison.OrdinalIgnoreCase))
+                options = options.Where(cmd => cmd != null && cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
+            else
+                options = options.Where(cmd => cmd != null && !cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
+        // Improved AutoComplete logic
+        if (!Settings.ImprovedAutoComplete || __instance == Chat.instance) return;
+
+        // 2. Identify the target word for parameter-specific completion
+        var lastWord = TerminalUtils.GetLastWord(__instance);
+        var inputText = __instance.m_input.text;
+
+        // FIX: Ensure 'word' correctly represents the token Unity should replace.
+        if (inputText.EndsWith(" "))
+        {
+            // If at a space, we tell Unity to replace an empty string at the cursor.
+            // This prevents Unity from 'finding' and replacing the previous word (e.g. 'hl' -> 'hadd').
+            word = "";
+        }
+        else if (!string.IsNullOrEmpty(lastWord))
+        {
+            // If mid-word, we tell Unity exactly which partial token to replace.
+            word = lastWord;
+        }
+
+        // 3. Null-safe filtering for help text... I am also removing the help because I found it confusing to be there mixed with suggestions for subcommands
+        options = options.Where(option => option != null && !option.Contains("?")).ToList();
     }
-    if (!Settings.ImprovedAutoComplete || __instance == Chat.instance) return;
-    // Auto complete is parameter specific, so need to use the current word instead of always using the first.
-    word = TerminalUtils.GetLastWord(__instance);
-    if (options == null) return;
-    // Cycling the help text wouldn't make any sense.
-    options = options.Where(option => !option.Contains("?")).ToList();
-  }
+}
+/*
+The game only calls updateSearch when the total input text length changes.
+When tabCycle swaps one word for another of the same length, 
+m_lastSearchLength still equals m_input.text.Length, 
+so updateSearch is never called and the hints stay stale from the previous state.
+ */
+[HarmonyPatch(typeof(Terminal), nameof(Terminal.tabCycle))]
+public class TabCycleForceSearchRefresh
+{
+    static void Postfix(Terminal __instance)
+    {
+        // Force updateSearch to fire on the next UpdateInput pass,
+        // even when tabCycle swaps to a word of equal length.
+        __instance.m_lastSearchLength = -1;
+    }
 }
 
 [HarmonyPatch(typeof(Terminal), nameof(Terminal.updateSearch))]
 public class UpdateSearchWithImprovedAutoComplete
 {
-  static void Prefix(Terminal __instance, ref string word)
-  {
-    if (!Settings.ImprovedAutoComplete || !__instance.m_search || __instance == Chat.instance) return;
-    // Auto complete is parameter specific, so need to use the current word instead of always using the first.
-    word = TerminalUtils.GetLastWord(__instance);
+    static void Prefix(Terminal __instance, ref string word)
+    {
+        if (!Settings.ImprovedAutoComplete || !__instance.m_search || __instance == Chat.instance) return;
+        // Auto complete is parameter specific, so need to use the current word instead of always using the first.
+        word = TerminalUtils.GetLastWord(__instance);
 
-  }
-  static void Postfix(Terminal __instance, List<string> options, ref string word, bool usePrefix)
-  {
-    if (usePrefix)
-    {
-      if (word.StartsWith("_", StringComparison.OrdinalIgnoreCase))
-        options = options.Where(cmd => cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
-      else
-        options = options.Where(cmd => !cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
     }
-    if (!Settings.ImprovedAutoComplete || options == null || !__instance.m_search || __instance == Chat.instance) return;
-    if (Settings.CommandDescriptions && options == __instance.m_commandList)
+    static void Postfix(Terminal __instance, List<string> options, ref string word, bool usePrefix)
     {
-      if (Terminal.commands.TryGetValue(word, out var command))
-        options = ParameterInfo.Create(command.Description);
+        if (usePrefix)
+        {
+            if (word.StartsWith("_", StringComparison.OrdinalIgnoreCase))
+                options = options.Where(cmd => cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
+            else
+                options = options.Where(cmd => !cmd.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+        if (!Settings.ImprovedAutoComplete || options == null || !__instance.m_search || __instance == Chat.instance) return;
+        if (Settings.CommandDescriptions && options == __instance.m_commandList)
+        {
+            if (Terminal.commands.TryGetValue(word, out var command))
+                options = ParameterInfo.Create(command.Description);
+        }
+        var helpText = options.All(option => option.StartsWith("?"));
+        // Always show the help text since there isn't any real search option.
+        if (helpText)
+            __instance.m_search.text = "<color=white>" + string.Join(", ", options.Select(option => option.Substring(1))) + "</color>";
     }
-    var helpText = options.All(option => option.StartsWith("?"));
-    // Always show the help text since there isn't any real search option.
-    if (helpText)
-      __instance.m_search.text = "<color=white>" + string.Join(", ", options.Select(option => option.Substring(1))) + "</color>";
-  }
 }
 
 [HarmonyPatch(typeof(Terminal), nameof(Terminal.UpdateInput))]
