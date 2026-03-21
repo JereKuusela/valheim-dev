@@ -9,21 +9,21 @@ namespace ServerDevcommands;
 ///<summary>Contains functions for parsing arguments, etc.</summary>
 public abstract class Helper
 {
-    // Replaced line 11 with this:
-    public static bool IsValid(ZoneSystem.ZoneLocation loc)
-    {
-        if (loc == null || loc.m_prefab == null) return false;
+  // Replaced line 11 with this:
+  public static bool IsValid(ZoneSystem.ZoneLocation loc)
+  {
+    if (loc == null || loc.m_prefab == null) return false;
 
-        // Check public property first
-        if (loc.m_prefab.IsValid) return true;
+    // Check public property first
+    if (loc.m_prefab.IsValid) return true;
 
-        // Use Reflection to check the private m_name field
-        var nameField = HarmonyLib.AccessTools.Field(typeof(SoftReference<UnityEngine.GameObject>), "m_name");
-        var nameValue = nameField?.GetValue(loc.m_prefab) as string;
+    // Use Reflection to check the private m_name field
+    var nameField = HarmonyLib.AccessTools.Field(typeof(SoftReference<UnityEngine.GameObject>), "m_name");
+    var nameValue = nameField?.GetValue(loc.m_prefab) as string;
 
-        return nameValue != null;
-    }
-    public static void AddMessage(Terminal context, string message, bool priority = false)
+    return nameValue != null;
+  }
+  public static void AddMessage(Terminal context, string message, bool priority = false)
   {
     if (context == Console.instance || Settings.ChatOutput)
       context.AddString(message);
@@ -203,4 +203,12 @@ public abstract class Helper
       }
       return null;
     };
+
+  public static bool IsServer() => ZNet.instance && ZNet.instance.IsServer();
+  // Note: Intended that is client when no Znet instance (so stuff isn't loaded in the main menu).
+  public static bool IsClient() => !IsServer();
+
+
+  public static string GetPlayerID() => Player.m_localPlayer?.GetPlayerID().ToString() ?? "";
+  public static string GetNetworkId() => PlatformManager.DistributionPlatform?.LocalUser?.PlatformUserID.ToString() ?? "0";
 }

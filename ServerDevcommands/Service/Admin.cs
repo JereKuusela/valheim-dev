@@ -1,57 +1,28 @@
 using HarmonyLib;
 using Splatform;
 namespace ServerDevcommands;
-///<summary>Static accessors for easier usage.</summary>
+///<summary>Admin checker for devcommands.</summary>
 public static class Admin
 {
-  public static IAdmin Instance = new DefaultAdmin();
-  ///<summary>Admin status.</summary>
-  public static bool Enabled
-  {
-    get => Instance.Enabled;
-    set => Instance.Enabled = value;
-  }
   ///<summary>Is admin status currently being checked.</summary>
-  public static bool Checking
-  {
-    get => Instance.Checking;
-    set => Instance.Checking = value;
-  }
-  ///<summary>Checks for admin status. Terminal is used for the output.</summary>
-  public static void ManualCheck() => Instance.ManualCheck();
-  ///<summary>Verifies the admin status with a given text. Shouldn't be called directly.</summary>
-  public static void Verify(string text) => Instance.Verify(text);
-  ///<summary>Automatic check at the start of joining servers. Shouldn't be called directly.</summary>
-  public static void AutomaticCheck() => Instance.AutomaticCheck();
-  ///<summary>Resets the admin status when joining servers. Shouldn't be called directly.</summary>
-  public static void Reset() => Instance.Reset();
-}
+  public static bool Checking { get; set; }
 
-public interface IAdmin
-{
-  bool Enabled { get; set; }
-  bool Checking { get; set; }
-  void ManualCheck();
-  void Verify(string text);
-  void AutomaticCheck();
-  void Reset();
-}
-
-///<summary>Admin checker. Can be extended by overloading OnSuccess and OnFail.</summary>
-public class DefaultAdmin : IAdmin
-{
-  public virtual bool Enabled { get; set; }
   ///<summary>Admin status is checked by issuing a dummy unban command.</summary>
-  protected void Check()
+  private static void Check()
   {
     if (!ZNet.instance) return;
     Checking = true;
     if (ZNet.instance.IsServer())
       OnSuccess();
     else
+    {
+      PermissionManager.Instance.ResetToDefaults();
       ZNet.instance.Unban("admintest");
+    }
   }
-  public void Verify(string text)
+
+  ///<summary>Verifies the admin status with a given text. Shouldn't be called directly.</summary>
+  public static void Verify(string text)
   {
     if (text == "Unbanning user admintest")
       OnSuccess();
@@ -59,30 +30,45 @@ public class DefaultAdmin : IAdmin
       OnFail();
   }
 
-  public virtual void AutomaticCheck()
+  ///<summary>Receives permissions from the server via RPC. Shouldn't be called directly.</summary>
+  public static void ReceivePermissions(ZRpc rpc, ZPackage pkg)
   {
-    Check();
-  }
-  public virtual bool Checking { get; set; }
-  protected virtual void OnSuccess()
-  {
-    Checking = false;
-    Enabled = true;
-  }
-  protected virtual void OnFail()
-  {
-    Checking = false;
-    Enabled = false;
+    PermissionManager.Instance.Read(pkg);
   }
 
-  public virtual void ManualCheck()
+  ///<summary>Automatic check at the start of joining servers. Shouldn't be called directly.</summary>
+  public static void AutomaticCheck()
+  {
+    if (!Settings.AutoDevcommands) return;
+    Check();
+  }
+
+  private static void OnSuccess()
+  {
+    Checking = false;
+    DevcommandsCommand.Set(true);
+    Console.instance.AddString("Authorized to use devcommands.");
+    ServerExecution.RequestIds();
+  }
+
+  private static void OnFail()
+  {
+    Checking = false;
+    DevcommandsCommand.Set(false);
+    Console.instance.AddString("Unauthorized to use devcommands.");
+  }
+
+  ///<summary>Checks for admin status. Terminal is used for the output.</summary>
+  public static void ManualCheck()
   {
     Check();
   }
-  public virtual void Reset()
+
+  ///<summary>Resets the admin status when joining servers. Shouldn't be called directly.</summary>
+  public static void Reset()
   {
     Checking = false;
-    Enabled = false;
+    DevcommandsCommand.Set(false);
   }
 }
 

@@ -7,14 +7,14 @@ namespace ServerDevcommands;
 #nullable disable
 public static class Settings
 {
-  public static bool Cheats => (ZNet.instance && ZNet.instance.IsServer()) || Console.instance.IsCheatsEnabled();
+  public static bool IsEnabled(int hash, bool localValue) => PermissionManager.Instance.IsFeatureEnabledByHash(PermissionHash.Section, hash, localValue);
 
   public static ConfigEntry<bool> configMapCoordinates;
-  public static bool MapCoordinates => Cheats && configMapCoordinates.Value;
+  public static bool MapCoordinates => IsEnabled(PermissionHash.MapCoordinates, configMapCoordinates.Value);
   public static ConfigEntry<bool> configMiniMapCoordinates;
-  public static bool MiniMapCoordinates => Cheats && configMiniMapCoordinates.Value;
+  public static bool MiniMapCoordinates => IsEnabled(PermissionHash.MiniMapCoordinates, configMiniMapCoordinates.Value);
   public static ConfigEntry<bool> configShowPrivatePlayers;
-  public static bool ShowPrivatePlayers => Cheats && configShowPrivatePlayers.Value;
+  public static bool ShowPrivatePlayers => IsEnabled(PermissionHash.ShowPrivatePlayers, configShowPrivatePlayers.Value);
   public static ConfigEntry<bool> configAutoDevcommands;
   public static bool AutoDevcommands => configAutoDevcommands.Value;
   public static ConfigEntry<bool> configDebugModeFastTeleport;
@@ -26,7 +26,7 @@ public static class Settings
   public static ConfigEntry<bool> configAutoGodMode;
   public static bool AutoGodMode => configAutoGodMode.Value;
   public static ConfigEntry<bool> configDisableNoMap;
-  public static bool DisableNoMap => Cheats && configDisableNoMap.Value;
+  public static bool DisableNoMap => IsEnabled(PermissionHash.DisableNoMap, configDisableNoMap.Value);
   public static ConfigEntry<bool> configAutoGhostMode;
   public static bool AutoGhostMode => configAutoGhostMode.Value;
   public static ConfigEntry<bool> configAutomaticItemPickUp;
@@ -34,7 +34,7 @@ public static class Settings
   public static ConfigEntry<bool> configAutoNoCost;
   public static bool AutoNoCost => configAutoNoCost.Value;
   public static ConfigEntry<bool> configDisableEvents;
-  public static bool DisableEvents => Cheats && configDisableEvents.Value;
+  public static bool DisableEvents => IsEnabled(PermissionHash.DisableEvents, configDisableEvents.Value);
   public static ConfigEntry<bool> configDisableUnlockMessages;
   public static bool DisableUnlockMessages => configDisableUnlockMessages.Value;
   public static ConfigEntry<bool> configDisableDebugModeKeys;
@@ -48,39 +48,41 @@ public static class Settings
   public static ConfigEntry<bool> configDisableMessages;
   public static bool DisableMessages => configDisableMessages.Value;
   public static ConfigEntry<bool> configGodModeNoWeightLimit;
-  public static bool GodModeNoWeightLimit => Cheats && configGodModeNoWeightLimit.Value;
+  public static bool GodModeNoWeightLimit => IsEnabled(PermissionHash.GodModeNoWeightLimit, configGodModeNoWeightLimit.Value);
   public static ConfigEntry<bool> configGodModeNoStamina;
-  public static bool GodModeNoStamina => Cheats && configGodModeNoStamina.Value;
+  public static bool GodModeNoStamina => IsEnabled(PermissionHash.GodModeNoStamina, configGodModeNoStamina.Value);
   public static ConfigEntry<bool> configGodModeNoEitr;
-  public static bool GodModeNoEitr => Cheats && configGodModeNoEitr.Value;
+  public static bool GodModeNoEitr => IsEnabled(PermissionHash.GodModeNoEitr, configGodModeNoEitr.Value);
   public static ConfigEntry<bool> configGodModeNoUsage;
-  public static bool GodModeNoUsage => Cheats && configGodModeNoUsage.Value;
+  public static bool GodModeNoUsage => IsEnabled(PermissionHash.GodModeNoUsage, configGodModeNoUsage.Value);
   public static ConfigEntry<bool> configGodModeAlwaysDodge;
-  public static bool GodModeAlwaysDodge => Cheats && configGodModeAlwaysDodge.Value;
+  public static bool GodModeAlwaysDodge => IsEnabled(PermissionHash.GodModeAlwaysDodge, configGodModeAlwaysDodge.Value);
   public static ConfigEntry<bool> configGodModeAlwaysParry;
-  public static bool GodModeAlwaysParry => Cheats && configGodModeAlwaysParry.Value;
+  public static bool GodModeAlwaysParry => IsEnabled(PermissionHash.GodModeAlwaysParry, configGodModeAlwaysParry.Value);
   public static ConfigEntry<bool> configGodModeNoStagger;
-  public static bool GodModeNoStagger => Cheats && configGodModeNoStagger.Value;
+  public static bool GodModeNoStagger => IsEnabled(PermissionHash.GodModeNoStagger, configGodModeNoStagger.Value);
   public static ConfigEntry<bool> configHideShoutPings;
-  public static bool HideShoutPings => Cheats && configHideShoutPings.Value;
+  public static bool HideShoutPings => IsEnabled(PermissionHash.HideShoutPings, configHideShoutPings.Value);
   public static ConfigEntry<bool> configGodModeNoEdgeOfWorld;
   public static ConfigEntry<bool> configNoCostLimitRecipesToStation;
+  public static bool NoCostLimitRecipesToStation => configNoCostLimitRecipesToStation.Value;
   public static ConfigEntry<bool> configNoCostRespectStationLevel;
-  public static bool GodModeNoEdgeOfWorld => Cheats && configGodModeNoEdgeOfWorld.Value;
+  public static bool NoCostRespectStationLevel => configNoCostRespectStationLevel.Value;
+  public static bool GodModeNoEdgeOfWorld => IsEnabled(PermissionHash.GodModeNoEdgeOfWorld, configGodModeNoEdgeOfWorld.Value);
   public static ConfigEntry<bool> configDisableStartShout;
   public static bool DisableStartShout => configDisableStartShout.Value;
   public static ConfigEntry<bool> configAccessPrivateChests;
-  public static bool AccessPrivateChests => Cheats && configAccessPrivateChests.Value;
+  public static bool AccessPrivateChests => IsEnabled(PermissionHash.AccessPrivateChests, configAccessPrivateChests.Value);
   public static ConfigEntry<bool> configAccessWardedAreas;
-  public static bool AccessWardedAreas => Cheats && configAccessWardedAreas.Value;
+  public static bool AccessWardedAreas => IsEnabled(PermissionHash.AccessWardedAreas, configAccessWardedAreas.Value);
   public static ConfigEntry<bool> configFlyNoClip;
-  public static bool FlyNoClip => Cheats && configFlyNoClip.Value;
+  public static bool FlyNoClip => IsEnabled(PermissionHash.FlyNoClip, configFlyNoClip.Value);
   public static ConfigEntry<bool> configNoClipClearEnvironment;
   public static bool NoClipClearEnvironment => configNoClipClearEnvironment.Value;
   public static ConfigEntry<bool> configGodModeNoKnockback;
-  public static bool GodModeNoKnockback => Cheats && configGodModeNoKnockback.Value;
+  public static bool GodModeNoKnockback => IsEnabled(PermissionHash.GodModeNoKnockback, configGodModeNoKnockback.Value);
   public static ConfigEntry<bool> configGodModeNoMist;
-  public static bool GodModeNoMist => Cheats && configGodModeNoMist.Value;
+  public static bool GodModeNoMist => IsEnabled(PermissionHash.GodModeNoMist, configGodModeNoMist.Value);
   public static ConfigEntry<bool> configAliasing;
   public static bool Aliasing => configAliasing.Value;
   public static ConfigEntry<string> configSubstitution;
@@ -92,15 +94,15 @@ public static class Settings
   public static ConfigEntry<bool> configMultiCommand;
   public static bool MultiCommand => configMultiCommand.Value;
   public static ConfigEntry<bool> configGhostInvisibility;
-  public static bool GhostInvisibility => Cheats && configGhostInvisibility.Value;
+  public static bool GhostInvisibility => IsEnabled(PermissionHash.GhostInvisibility, configGhostInvisibility.Value);
   public static ConfigEntry<bool> configGhostNoSpawns;
-  public static bool GhostNoSpawns => Cheats && configGhostNoSpawns.Value;
+  public static bool GhostNoSpawns => IsEnabled(PermissionHash.GhostNoSpawns, configGhostNoSpawns.Value);
   public static ConfigEntry<bool> configServerChat;
   public static bool IsServerChat => configServerChat.Value;
   public static ConfigEntry<string> configServerChatName;
   public static string ServerChatName => configServerChatName.Value;
   public static ConfigEntry<bool> configGhostIgnoreSleep;
-  public static bool GhostIgnoreSleep => Cheats && configGhostIgnoreSleep.Value;
+  public static bool GhostIgnoreSleep => IsEnabled(PermissionHash.GhostIgnoreSleep, configGhostIgnoreSleep.Value);
   public static ConfigEntry<string> configFlyUpKeys;
   public static List<KeyCode> FlyUpRequiredKeys = [];
   public static List<KeyCode> FlyUpBannedKeys = [];
@@ -110,9 +112,9 @@ public static class Settings
   public static ConfigEntry<bool> configFreeFlyInvertCamera;
   public static bool FreeFlyCameraInvert => configFreeFlyInvertCamera.Value;
   public static ConfigEntry<bool> configNoDrops;
-  public static bool NoDrops => Cheats && configNoDrops.Value;
+  public static bool NoDrops => IsEnabled(PermissionHash.NoDrops, configNoDrops.Value);
   public static ConfigEntry<bool> configNoClipView;
-  public static bool NoClipView => Cheats && configNoClipView.Value;
+  public static bool NoClipView => IsEnabled(PermissionHash.NoClipView, configNoClipView.Value);
   public static ConfigEntry<string> configCommandAliases;
   public static ConfigEntry<bool> configImprovedChat;
   public static bool ImprovedChat => configImprovedChat.Value;
@@ -136,7 +138,7 @@ public static class Settings
   {
     Aliases = value.Split('¤').Select(str => str.Split(' ')).ToDictionary(split => split[0], static split => string.Join(" ", split.Skip(1)));
     Aliases = Aliases.Where(kvp => kvp.Key != "").ToDictionary(kvp => kvp.Key, static kvp => kvp.Value);
-    AliasKeys = Aliases.Keys.OrderBy(key => key).ToArray();
+    AliasKeys = [.. Aliases.Keys.OrderBy(key => key)];
   }
   public static string GetAliasValue(string key) => Aliases.ContainsKey(key) ? Aliases[key] : "_";
   public static void RegisterCommands()

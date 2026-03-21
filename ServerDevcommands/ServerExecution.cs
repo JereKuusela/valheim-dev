@@ -113,6 +113,7 @@ public class ServerExecution
       rpc.Register<string>(RPC_Pins, RPC_Do_Pins);
       rpc.Register<string>(RPC_SyncLocationIds, ReceiveLocationIds);
       rpc.Register<string>(RPC_SyncVegetationIds, ReceiveVegetationIds);
+      rpc.Register<ZPackage>(RPC_Unban.RPC_Permissions, Admin.ReceivePermissions);
     }
   }
 }

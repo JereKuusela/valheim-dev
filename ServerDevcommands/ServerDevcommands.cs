@@ -23,7 +23,6 @@ public class ServerDevcommands : BaseUnityPlugin
     Logs = Logger;
     Harmony harmony = new(GUID);
     harmony.PatchAll();
-    Admin.Instance = new DevCommandsAdmin();
     Settings.Init(Config);
     Console.SetConsoleEnabled(true);
 

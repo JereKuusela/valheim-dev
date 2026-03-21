@@ -19,6 +19,9 @@ public class DevcommandsCommand
   public static void Set(bool value)
   {
     if (Terminal.m_cheat == value) return;
+    var player = Player.m_localPlayer;
+    if (!player || !player.m_nview.IsValid())
+      return;
     if (Settings.AutoTod != "" && !value)
       Console.instance.TryRunCommand("tod -1");
     if (Settings.AutoEnv != "" && !value)
@@ -30,23 +33,19 @@ public class DevcommandsCommand
       Console.instance.TryRunCommand("env " + Settings.AutoEnv);
     Console.instance.updateCommandList();
     Chat.instance.updateCommandList();
-    var player = Player.m_localPlayer;
     if (Settings.AutoDebugMode)
       Player.m_debugMode = value;
-    if (player)
+    if (Settings.AutoGodMode)
+      player.SetGodMode(value);
+    if (Settings.AutoGhostMode)
+      player.SetGhostMode(value);
+    if (Settings.AutoFly)
     {
-      if (Settings.AutoGodMode)
-        player.SetGodMode(value);
-      if (Settings.AutoGhostMode)
-        player.SetGhostMode(value);
-      if (Settings.AutoFly)
-      {
-        player.m_debugFly = value;
-        player.m_nview.GetZDO().Set(ZDOVars.s_debugFly, value);
-      }
-      if (Settings.AutoNoCost)
-        player.m_noPlacementCost = value;
+      player.m_debugFly = value;
+      player.m_nview.GetZDO().Set(ZDOVars.s_debugFly, value);
     }
+    if (Settings.AutoNoCost)
+      player.m_noPlacementCost = value;
     if (value && Settings.AutoExecDevOn != "") Console.instance.TryRunCommand(Settings.AutoExecDevOn);
     if (!value && Settings.AutoExecDevOff != "") Console.instance.TryRunCommand(Settings.AutoExecDevOff);
   }
@@ -70,33 +69,6 @@ public class DevcommandsCommand
       }
     });
     AutoComplete.RegisterEmpty("devcommands");
-  }
-}
-///<summary>Custom admin check to update devcommands.</summary>
-public class DevCommandsAdmin : DefaultAdmin
-{
-  protected override void OnSuccess()
-  {
-    base.OnSuccess();
-    DevcommandsCommand.Set(true);
-    Console.instance.AddString("Authorized to use devcommands.");
-    ServerExecution.RequestIds();
-  }
-  protected override void OnFail()
-  {
-    base.OnFail();
-    DevcommandsCommand.Set(false);
-    Console.instance.AddString("Unauthorized to use devcommands.");
-  }
-  public override void AutomaticCheck()
-  {
-    if (!Settings.AutoDevcommands) return;
-    base.AutomaticCheck();
-  }
-  public override void Reset()
-  {
-    base.Reset();
-    DevcommandsCommand.Set(false);
   }
 }
 
