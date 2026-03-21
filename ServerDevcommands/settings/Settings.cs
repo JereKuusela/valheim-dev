@@ -76,7 +76,7 @@ public static class Settings
   public static ConfigEntry<bool> configAccessWardedAreas;
   public static bool AccessWardedAreas => IsEnabled(PermissionHash.AccessWardedAreas, configAccessWardedAreas.Value);
   public static ConfigEntry<bool> configFlyNoClip;
-  public static bool FlyNoClip => IsEnabled(PermissionHash.FlyNoClip, configFlyNoClip.Value);
+  public static bool FlyNoClip => IsEnabled(PermissionHash.Fly, configFlyNoClip.Value);
   public static ConfigEntry<bool> configNoClipClearEnvironment;
   public static bool NoClipClearEnvironment => configNoClipClearEnvironment.Value;
   public static ConfigEntry<bool> configGodModeNoKnockback;
@@ -114,7 +114,7 @@ public static class Settings
   public static ConfigEntry<bool> configNoDrops;
   public static bool NoDrops => IsEnabled(PermissionHash.NoDrops, configNoDrops.Value);
   public static ConfigEntry<bool> configNoClipView;
-  public static bool NoClipView => IsEnabled(PermissionHash.NoClipView, configNoClipView.Value);
+  public static bool NoClipView => IsEnabled(PermissionHash.Fly, configNoClipView.Value);
   public static ConfigEntry<string> configCommandAliases;
   public static ConfigEntry<bool> configImprovedChat;
   public static bool ImprovedChat => configImprovedChat.Value;

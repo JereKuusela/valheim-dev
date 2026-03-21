@@ -32,8 +32,6 @@ public static class PermissionHash
 
   // Fly Mode Features
   public static readonly int Fly = "fly".GetStableHashCode();
-  public static readonly int FlyNoClip = "flynoclip".GetStableHashCode();
-  public static readonly int NoClipView = "noclipview".GetStableHashCode();
 
   // Access Features
   public static readonly int AccessPrivateChests = "accessprivatechests".GetStableHashCode();
