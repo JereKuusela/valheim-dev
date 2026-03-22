@@ -7,6 +7,9 @@ namespace ServerDevcommands;
 [HarmonyPatch]
 public class GodFeatures
 {
+  [HarmonyPatch(typeof(Player), nameof(Player.InGodMode)), HarmonyPostfix]
+  static bool InGodModePostfix(bool result, Player __instance) => __instance == Player.m_localPlayer ? Settings.IsEnabled(PermissionHash.God, result) : result;
+
   private static bool IsAttacking = false;
 
   [HarmonyPatch(typeof(Player), nameof(Player.IsDodgeInvincible)), HarmonyPostfix]
@@ -19,7 +22,7 @@ public class GodFeatures
   [HarmonyPatch(typeof(Character), nameof(Character.ApplyDamage)), HarmonyPostfix]
   static void ApplyDamagePostfix(Character __instance, HitData hit)
   {
-    if (!Settings.GodModeAlwaysParry || __instance != Player.m_localPlayer) return;
+    if (!Settings.GodModeAlwaysParry || __instance != Player.m_localPlayer || !__instance.InGodMode()) return;
     var attacker = hit.GetAttacker();
     if (!attacker || attacker == Player.m_localPlayer) return;
     if (Player.m_localPlayer.m_blockTimer < 0f)

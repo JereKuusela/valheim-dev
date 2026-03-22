@@ -138,8 +138,8 @@ public class FlyFeatures
     }
   }
 
-  [HarmonyPatch(typeof(Character), nameof(Character.IsDebugFlying)), HarmonyPostfix]
-  static bool IsDebugFlyingPostfix(bool result, Character __instance) => __instance == Player.m_localPlayer ? Settings.IsEnabled(PermissionHash.Fly, result) : result;
+  [HarmonyPatch(typeof(Player), nameof(Player.IsDebugFlying)), HarmonyPostfix]
+  static bool IsDebugFlyingPostfix(bool result, Player __instance) => __instance == Player.m_localPlayer ? Settings.IsEnabled(PermissionHash.Fly, result) : result;
 
 
   [HarmonyPatch(typeof(Player), nameof(Player.InDebugFlyMode)), HarmonyPostfix]

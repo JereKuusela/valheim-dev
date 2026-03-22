@@ -24,6 +24,7 @@ public class PermissionEntry
   public string group = "";
   // Feature has format "key: value" where key is the feature and value is yes/no/force (defaults to yes if omitted).
   public Dictionary<string, List<string>>? features = null;
+  // Command has format "command: value" where value is yes/no/force (defaults to yes if omitted).
   public List<string>? commands = null;
 }
 

@@ -17,6 +17,10 @@ public class GhostFeatures
 
   public static bool IsGhost(Player player) => player.InGhostMode() || player.m_nview?.GetZDO()?.GetBool(HashGhost) == true;
 
+  [HarmonyPatch(typeof(Player), nameof(Player.InGhostMode)), HarmonyPostfix]
+  static bool InGhostModePostfix(bool result, Player __instance) => __instance == Player.m_localPlayer ? Settings.IsEnabled(PermissionHash.Ghost, result) : result;
+
+
   private static List<Player> Players()
   {
     if (!Settings.GhostNoSpawns) return Player.s_players;

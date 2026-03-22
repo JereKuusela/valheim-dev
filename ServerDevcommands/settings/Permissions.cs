@@ -54,7 +54,6 @@ public class PermissionManager
     if (entry == null)
       return;
 
-    // Parse features from new format: Dictionary<string, List<string>>
     if (entry.features != null)
     {
       foreach (var section in entry.features)
@@ -76,15 +75,32 @@ public class PermissionManager
       }
     }
 
-    // Parse commands
-    if (entry.commands != null && entry.commands.Count > 0)
+    _allowedCommands.Clear();
+    _bannedCommands.Clear();
+
+    if (entry.commands != null)
     {
-      _allowedCommands = [.. entry.commands.Select(c => c.ToLower())];
+      Dictionary<string, FeaturePermission> commandPermissions = [];
+      foreach (var rawCommand in entry.commands)
+      {
+        ParseFeature(rawCommand, out var commandName, out var permission);
+        if (commandName == "")
+          continue;
+
+        commandPermissions[commandName.ToLower()] = permission;
+      }
+
+
+      foreach (var kvp in commandPermissions)
+      {
+        if (kvp.Value == FeaturePermission.No)
+          _bannedCommands.Add(kvp.Key);
+        else
+          _allowedCommands.Add(kvp.Key);
+      }
     }
-    else
-    {
-      _allowedCommands = null; // All commands allowed
-    }
+
+    HandleFeatureCommands();
   }
 
   /// <summary>
@@ -145,80 +161,17 @@ public class PermissionManager
   // Command Permissions
   // ====================
 
-  private HashSet<string> _allowedCommands = null; // null = all commands allowed
+  private HashSet<string> _allowedCommands = [];
+  private HashSet<string> _bannedCommands = [];
 
-  /// <summary>
-  /// Checks if a command is allowed to be executed.
-  /// </summary>
-  /// <param name="commandName">The name of the command (case-insensitive).</param>
-  /// <returns>True if the command is allowed, false otherwise.</returns>
   public bool IsCommandAllowed(string commandName)
   {
-    if (_allowedCommands == null)
-      return true; // null = all commands allowed
-
-    return _allowedCommands.Contains(commandName.ToLower());
-  }
-
-  /// <summary>
-  /// Sets the list of allowed commands. If null, all commands are allowed.
-  /// </summary>
-  /// <param name="commands">List of allowed command names, or null to allow all.</param>
-  public void SetAllowedCommands(HashSet<string> commands)
-  {
-    if (commands == null)
-    {
-      _allowedCommands = null;
-    }
-    else
-    {
-      _allowedCommands = new HashSet<string>();
-      foreach (var cmd in commands)
-        _allowedCommands.Add(cmd.ToLower());
-    }
-  }
-
-  /// <summary>
-  /// Adds a command to the allowed list.
-  /// </summary>
-  /// <param name="commandName">The name of the command to allow.</param>
-  public void AllowCommand(string commandName)
-  {
-    if (_allowedCommands == null)
-      _allowedCommands = new HashSet<string>();
-
-    _allowedCommands.Add(commandName.ToLower());
-  }
-
-  /// <summary>
-  /// Removes a command from the allowed list.
-  /// </summary>
-  /// <param name="commandName">The name of the command to disallow.</param>
-  public void DisallowCommand(string commandName)
-  {
-    if (_allowedCommands == null)
-      return;
-
-    _allowedCommands.Remove(commandName.ToLower());
-  }
-
-  /// <summary>
-  /// Gets a copy of the allowed commands set. Returns null if all commands are allowed.
-  /// </summary>
-  public HashSet<string> GetAllowedCommands()
-  {
-    if (_allowedCommands == null)
-      return null;
-
-    return new HashSet<string>(_allowedCommands);
-  }
-
-  /// <summary>
-  /// Clears all command restrictions (allows all commands).
-  /// </summary>
-  public void AllowAllCommands()
-  {
-    _allowedCommands = null;
+    var normalized = commandName.ToLower();
+    if (_bannedCommands.Contains(normalized))
+      return false;
+    if (_allowedCommands.Count == 0)
+      return true;
+    return _allowedCommands.Contains(normalized);
   }
 
   // ====================
@@ -227,7 +180,7 @@ public class PermissionManager
 
   /// <summary>
   /// Writes permissions to a ZPackage for network transmission.
-  /// Format: [section count] for each section: [section] [feature count] [feature hash] [feature permission int]... [command count] [command names...]
+  /// Format: [section count] for each section: [section] [feature count] [feature hash] [feature permission int]... [allowed command count] [allowed command names...] [banned command count] [banned command names...]
   /// Uses hash codes to minimize network traffic while maintaining compatibility.
   /// </summary>
   public void Write(ZPackage pkg)
@@ -245,17 +198,12 @@ public class PermissionManager
       }
     }
 
-    // Write allowed commands
-    if (_allowedCommands == null)
-    {
-      pkg.Write(-1); // -1 means all commands allowed
-    }
-    else
-    {
-      pkg.Write(_allowedCommands.Count);
-      foreach (var cmd in _allowedCommands)
-        pkg.Write(cmd);
-    }
+    pkg.Write(_allowedCommands.Count);
+    foreach (var cmd in _allowedCommands)
+      pkg.Write(cmd);
+    pkg.Write(_bannedCommands.Count);
+    foreach (var cmd in _bannedCommands)
+      pkg.Write(cmd);
   }
 
   /// <summary>
@@ -289,16 +237,42 @@ public class PermissionManager
 
     // Read allowed commands
     int commandCount = pkg.ReadInt();
-    if (commandCount == -1)
+    _allowedCommands.Clear();
+    for (int i = 0; i < commandCount; i++)
+      _allowedCommands.Add(pkg.ReadString());
+
+    int bannedCommandCount = pkg.ReadInt();
+    _bannedCommands.Clear();
+    for (int i = 0; i < bannedCommandCount; i++)
+      _bannedCommands.Add(pkg.ReadString());
+
+    HandleFeatureCommands();
+  }
+
+  // Some features have console command that is used to toggle them.
+  // To simplify configuring, features should also affect those commands.
+  private void HandleFeatureCommands()
+  {
+    Dictionary<int, string> hashes = Terminal.commands.Select(c => c.Key.ToLower()).ToDictionary(h => h.GetStableHashCode(), h => h);
+    foreach (var section in _featurePermissions)
     {
-      _allowedCommands = null; // All commands allowed
-    }
-    else
-    {
-      _allowedCommands = new HashSet<string>();
-      for (int i = 0; i < commandCount; i++)
+      foreach (var feature in section.Value)
       {
-        _allowedCommands.Add(pkg.ReadString());
+        if (!hashes.ContainsKey(feature.Key))
+          continue;
+        if (feature.Value == FeaturePermission.No)
+        {
+          // Removing allowed is not needed as banned has higher priority.
+          // Removing might also remove the last allowed, which would then allow all commands.
+          _bannedCommands.Add(hashes[feature.Key]);
+        }
+        else
+        {
+          // If all are allowed, adding anything would disallowed other commands.
+          if (_allowedCommands.Count > 0)
+            _allowedCommands.Add(hashes[feature.Key]);
+          _bannedCommands.Remove(hashes[feature.Key]);
+        }
       }
     }
   }
@@ -310,7 +284,8 @@ public class PermissionManager
   {
     _permissionsReceived = false;
     _featurePermissions.Clear();
-    _allowedCommands = null;
+    _allowedCommands.Clear();
+    _bannedCommands.Clear();
   }
 
   private static void ParseFeature(string rawFeature, out string featureName, out FeaturePermission permission)
