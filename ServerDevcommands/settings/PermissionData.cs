@@ -1,177 +1,247 @@
-
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
-using System.IO;
-using BepInEx;
-using HarmonyLib;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 
 namespace ServerDevcommands;
 
-public class PermissionEntry
-{
-
-  [DefaultValue("")]
-  public string id = "";
-  [DefaultValue("")]
-  public string name = "";
-  [DefaultValue("")]
-  public string character = "";
-  [DefaultValue("")]
-  public string group = "";
-  // Feature has format "key: value" where key is the feature and value is yes/no/force (defaults to yes if omitted).
-  public Dictionary<string, List<string>>? features = null;
-  // Command has format "command: value" where value is yes/no/force (defaults to yes if omitted).
-  public List<string>? commands = null;
-}
-
-
 public class PermissionData
 {
-  public static Dictionary<string, PermissionEntry> Data = [];
-  public static string FileName = "permissions.yaml";
-  public static string FilePath = Path.Combine(Paths.ConfigPath, FileName);
-  private static bool SkipReload = false;
+  private readonly List<PermissionEntry> _entries;
+  private readonly Dictionary<string, PermissionEntry> _entriesByKey;
 
-
-
-  public static void CreateFile()
+  public static string PeerKey(string hostname, string characterId)
   {
-    if (File.Exists(FilePath)) return;
-    File.WriteAllText(FilePath, "");
-  }
-  public static void ToFile()
-  {
-    if (Helper.IsClient()) return;
-    var yaml = Serializer().Serialize(Data);
-    File.WriteAllText(FilePath, yaml);
+    if (string.IsNullOrWhiteSpace(hostname) || string.IsNullOrWhiteSpace(characterId))
+      return "";
+    return $"{hostname}_{characterId}";
   }
 
-  public static void FromFile()
+  public PermissionData()
   {
-    if (Helper.IsClient()) return;
-    if (SkipReload) return;
-    string value = File.ReadAllText(FilePath);
-    Data = Deserialize<Dictionary<string, PermissionEntry>>(value, "Data") ?? [];
-    ServerDevcommands.Log.LogInfo($"Reloading {Data.Count} permission data.");
-  }
-  public static void SetupWatcher()
-  {
-    Yaml.SetupWatcher(FileName, FromFile);
+    _entries = [];
+    _entriesByKey = [];
   }
 
-  public static IDeserializer Deserializer() => new DeserializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance)
-    .WithYamlFormatter(formatter).Build();
-  public static IDeserializer DeserializerUnSafe() => new DeserializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance)
-  .WithYamlFormatter(formatter).IgnoreUnmatchedProperties().Build();
-  public static ISerializer Serializer() => new SerializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance).DisableAliases()
-    .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitDefaults).WithYamlFormatter(formatter).Build();
-
-  private static readonly YamlFormatter formatter = new() { NumberFormat = NumberFormatInfo.InvariantInfo };
-
-  public static T Deserialize<T>(string raw, string fileName) where T : new()
+  public PermissionData(List<PermissionEntry>? entries)
   {
-    try
-    {
-      return Deserializer().Deserialize<T>(raw);
-    }
-    catch (Exception ex1)
-    {
-      ServerDevcommands.Log.LogError($"{fileName}: {ex1.Message}");
-      try
-      {
-        return DeserializerUnSafe().Deserialize<T>(raw);
-      }
-      catch (Exception)
-      {
-        return new();
-      }
-    }
+    _entries = entries ?? [];
+    _entriesByKey = ToDictionary(_entries);
   }
 
-  public static Dictionary<long, T> Read<T>(string pattern)
+  public List<PermissionEntry> Entries => _entries;
+
+  public int Count => _entriesByKey.Count;
+
+  public bool TryGetValue(string key, out PermissionEntry entry) => _entriesByKey.TryGetValue(key, out entry!);
+
+  public PermissionEntry GetOrCreate(string key)
   {
-    Dictionary<long, T> ret = [];
-    foreach (var name in Directory.GetFiles(Paths.ConfigPath, pattern))
-    {
-      var data = Deserialize<Dictionary<long, T>>(File.ReadAllText(name), name);
-      if (data == null) continue;
-      foreach (var kvp in data)
-        ret[kvp.Key] = kvp.Value;
-    }
-    return ret;
+    if (_entriesByKey.TryGetValue(key, out var entry))
+      return entry;
+
+    entry = new PermissionEntry() { name = key };
+
+
+    _entries.Add(entry);
+    _entriesByKey[key] = entry;
+    return entry;
   }
-  private static bool UpdateName(string id, string name)
+
+
+  public bool UpdatePeer(string hostname, string characterId, string playerName)
   {
-    if (Data.TryGetValue(id, out var entry))
-    {
-      if (entry.name == name) return false;
-      entry.name = name;
-      return true;
-    }
-    Data[id] = new() { name = name };
-    return true;
-  }
-  private static bool UpdateNetworkId(string character, string id)
-  {
-    if (Data.TryGetValue(character, out var entry))
-    {
-      if (entry.id == id) return false;
-      entry.id = id;
-      return true;
-    }
-    Data[character] = new() { id = id };
-    return true;
-  }
-  public static void UpdatePeer(ZNetPeer peer)
-  {
-    var zm = ZDOMan.instance;
-    if (zm == null) return;
-    if (!ZNet.instance || !ZNet.instance.IsServer()) return;
+    var key = PeerKey(hostname, characterId);
+    if (key == "")
+      return false;
+
+    var entry = GetOrCreate(key);
     var updated = false;
-    updated |= UpdateName("Everyone", "Everyone");
-    var zdo = zm.GetZDO(peer.m_characterID);
-    if (zdo == null) return;
-    var id = zdo.GetLong(ZDOVars.s_playerID);
-    var name = zdo.GetString(ZDOVars.s_playerName);
-    if (id == 0 || name == "") return;
-    updated |= UpdateName(id.ToString(), name);
-    updated |= UpdateNetworkId(id.ToString(), peer.m_rpc.GetSocket().GetHostName());
-    SkipReload = true;
-    if (updated) ToFile();
-    SkipReload = false;
+    updated |= UpdateString(entry, e => e.name, (e, value) => e.name = value, playerName);
+    updated |= UpdateString(entry, e => e.id, (e, value) => e.id = value, hostname);
+    updated |= UpdateString(entry, e => e.character, (e, value) => e.character = value, characterId);
+    return updated;
   }
-}
 
-[HarmonyPatch(typeof(ZNet), nameof(ZNet.OnNewConnection))]
-public class OnNewConnection
-{
-  static void Postfix(ZNetPeer peer)
+  public PermissionManager Resolve(string hostname, string characterId)
   {
-    PermissionData.UpdatePeer(peer);
+    var key = PeerKey(hostname, characterId);
+    var resolved = new PermissionManager();
+
+    var chain = BuildResolutionChain(key);
+    for (int i = 0; i < chain.Count; ++i)
+      resolved.AddEntry(chain[i]);
+    resolved.SetAdmin(ZNet.instance == null || ZNet.instance.IsServer() || ZNet.instance.IsAdmin(hostname));
+    return resolved;
   }
-}
 
-// Clients use unban to test permissions.
-[HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_Unban))]
-public class RPC_Unban
-{
-  public static string RPC_Permissions = "DEV_Permissions";
-
-  static void Prefix(ZNet __instance, ZRpc rpc, string user)
+  private List<PermissionEntry> BuildResolutionChain(string playerKey)
   {
-    if (user != "admintest") return;
-    if (!__instance.IsServer()) return;
-    var hostname = rpc.m_socket.GetHostName();
-    if (!PermissionData.Data.TryGetValue(hostname, out var entry)) return;
-    if (entry.features == null && entry.commands == null) return;
+    List<PermissionEntry> result = [];
+    HashSet<string> visitedPath = [];
+    HashSet<string> addedEntries = [];
+    AddEntryWithParents("Everyone", result, visitedPath, addedEntries);
+    AddEntryWithParents(playerKey, result, visitedPath, addedEntries);
+    return result;
+  }
 
-    var permissions = new PermissionManager(entry);
-    var pkg = new ZPackage();
-    permissions.Write(pkg);
-    rpc.Invoke(RPC_Permissions, pkg);
+  private void AddEntryWithParents(string key, List<PermissionEntry> result, HashSet<string> visitedPath, HashSet<string> addedEntries)
+  {
+    if (!_entriesByKey.TryGetValue(key, out var entry))
+      return;
+
+    AddGroupChain(entry.group, result, visitedPath, addedEntries);
+
+    if (addedEntries.Contains(key))
+      return;
+
+    addedEntries.Add(key);
+    result.Add(entry);
+  }
+
+  private void AddGroupChain(string groupName, List<PermissionEntry> result, HashSet<string> visitedPath, HashSet<string> addedEntries)
+  {
+    if (string.IsNullOrWhiteSpace(groupName))
+      return;
+
+    if (visitedPath.Contains(groupName))
+      return;
+
+    if (!_entriesByKey.TryGetValue(groupName, out var groupEntry))
+      return;
+
+    visitedPath.Add(groupName);
+    AddGroupChain(groupEntry.group, result, visitedPath, addedEntries);
+
+    if (!addedEntries.Contains(groupName))
+    {
+      addedEntries.Add(groupName);
+      result.Add(groupEntry);
+    }
+
+    visitedPath.Remove(groupName);
+  }
+
+  private static bool UpdateString(PermissionEntry entry, Func<PermissionEntry, string> getter, Action<PermissionEntry, string> setter, string value)
+  {
+    if (getter(entry) == value)
+      return false;
+    setter(entry, value);
+    return true;
+  }
+
+  private static string EntryKey(PermissionEntry entry)
+  {
+    var key = PeerKey(entry.id, entry.character);
+    if (key != "")
+      return key;
+    return entry.name;
+  }
+
+  private static Dictionary<string, PermissionEntry> ToDictionary(List<PermissionEntry> entries)
+  {
+    Dictionary<string, PermissionEntry> result = [];
+    foreach (var entry in entries)
+    {
+      var key = EntryKey(entry);
+      if (string.IsNullOrWhiteSpace(key))
+        continue;
+      result[key] = entry;
+    }
+    return result;
+  }
+
+  private static bool IsNullOrEmpty(List<string>? value) => value == null || value.Count == 0;
+  private static bool IsNullOrEmpty(Dictionary<string, List<string>>? value) => value == null || value.Count == 0;
+
+  private static bool EqualStringList(List<string>? a, List<string>? b)
+  {
+    if (IsNullOrEmpty(a) && IsNullOrEmpty(b)) return true;
+    if (a == null || b == null) return false;
+    if (a.Count != b.Count) return false;
+    for (int i = 0; i < a.Count; ++i)
+    {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
+  }
+
+  private static bool EqualFeatures(Dictionary<string, List<string>>? a, Dictionary<string, List<string>>? b)
+  {
+    if (IsNullOrEmpty(a) && IsNullOrEmpty(b)) return true;
+    if (a == null || b == null) return false;
+    if (a.Count != b.Count) return false;
+    foreach (var kvp in a)
+    {
+      if (!b.TryGetValue(kvp.Key, out var other)) return false;
+      if (!EqualStringList(kvp.Value, other)) return false;
+    }
+    return true;
+  }
+
+  private static bool EqualEntry(PermissionEntry? a, PermissionEntry? b)
+  {
+    if (ReferenceEquals(a, b)) return true;
+    if (a == null || b == null) return false;
+    if (a.id != b.id) return false;
+    if (a.name != b.name) return false;
+    if (a.character != b.character) return false;
+    if (a.group != b.group) return false;
+    if (!EqualFeatures(a.features, b.features)) return false;
+    if (!EqualStringList(a.commands, b.commands)) return false;
+    return true;
+  }
+
+  public static HashSet<string> ChangedKeys(Dictionary<string, PermissionEntry> oldData, Dictionary<string, PermissionEntry> newData)
+  {
+    HashSet<string> changed = [];
+    foreach (var kvp in oldData)
+    {
+      if (!newData.TryGetValue(kvp.Key, out var next) || !EqualEntry(kvp.Value, next))
+        changed.Add(kvp.Key);
+    }
+    foreach (var key in newData.Keys)
+    {
+      if (!oldData.ContainsKey(key))
+        changed.Add(key);
+    }
+    return changed;
+  }
+
+  public static HashSet<string> ChangedKeys(PermissionData oldData, PermissionData newData)
+  {
+    return ChangedKeys(oldData._entriesByKey, newData._entriesByKey);
+  }
+
+  public static bool HasGroupChanges(HashSet<string> changedKeys, Dictionary<string, PermissionEntry> oldData, Dictionary<string, PermissionEntry> newData)
+  {
+    foreach (var key in changedKeys)
+    {
+      if (IsGroupEntry(SelectEntry(key, oldData, newData)))
+        return true;
+    }
+    return false;
+  }
+
+  public static bool HasGroupChanges(HashSet<string> changedKeys, PermissionData oldData, PermissionData newData)
+  {
+    return HasGroupChanges(changedKeys, oldData._entriesByKey, newData._entriesByKey);
+  }
+
+  private static PermissionEntry? SelectEntry(string key, Dictionary<string, PermissionEntry> oldData, Dictionary<string, PermissionEntry> newData)
+  {
+    if (newData.TryGetValue(key, out var next))
+      return next;
+    if (oldData.TryGetValue(key, out var previous))
+      return previous;
+    return null;
+  }
+
+  private static bool IsGroupEntry(PermissionEntry? entry)
+  {
+    if (entry == null)
+      return false;
+    var isPeer = !string.IsNullOrWhiteSpace(entry.id) && !string.IsNullOrWhiteSpace(entry.character);
+    if (isPeer)
+      return false;
+    return !string.IsNullOrWhiteSpace(entry.name);
   }
 }

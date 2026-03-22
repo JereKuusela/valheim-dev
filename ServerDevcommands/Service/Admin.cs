@@ -17,22 +17,30 @@ public static class Admin
     else
     {
       PermissionManager.Instance.ResetToDefaults();
-      ZNet.instance.Unban("admintest");
+      // Player ID is not sent on connection, so it must be sent here to avoid race condition.
+      ZNet.instance.Unban("admintest_" + GetPlayerId());
     }
   }
-
+  private static long GetPlayerId()
+  {
+    var id = Game.instance.GetPlayerProfile().GetPlayerID();
+    if (id != 0) return id;
+    id = Player.m_localPlayer?.GetPlayerID() ?? 0;
+    return id;
+  }
   ///<summary>Verifies the admin status with a given text. Shouldn't be called directly.</summary>
   public static void Verify(string text)
   {
-    if (text == "Unbanning user admintest")
+    if (text == "Unbanning user admintest_" + GetPlayerId())
       OnSuccess();
-    else
+    else if (text == "You are not admin")
       OnFail();
   }
 
   ///<summary>Receives permissions from the server via RPC. Shouldn't be called directly.</summary>
-  public static void ReceivePermissions(ZRpc rpc, ZPackage pkg)
+  public static void ReceivePermissions(long sender, ZPackage pkg)
   {
+    ServerDevcommands.Log.LogWarning("Received permissions from server.");
     PermissionManager.Instance.Read(pkg);
   }
 

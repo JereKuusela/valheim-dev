@@ -4,14 +4,6 @@ using System.Linq;
 
 namespace ServerDevcommands;
 
-#nullable disable
-
-/// <summary>
-/// Manages client-side permissions for features and commands.
-/// Permissions are synchronized from the server via RPC using ZPackage.
-/// By default, all features are disabled and all commands are allowed.
-/// Uses a generic string-based system for extensibility.
-/// </summary>
 public class PermissionManager
 {
   public enum FeaturePermission
@@ -21,8 +13,9 @@ public class PermissionManager
     No = 1,
     Force = 2,
   }
-
+#nullable disable
   private static PermissionManager _instance;
+#nullable enable
   public static PermissionManager Instance
   {
     get
@@ -33,24 +26,17 @@ public class PermissionManager
     }
   }
 
-  // ====================
-  // Feature Permissions
-  // ====================
-
-  // Maps section name -> feature hash -> permission mode
   private Dictionary<string, Dictionary<int, FeaturePermission>> _featurePermissions = [];
+  private bool _isAdmin = false;
 
-  // Tracks whether permissions were received from the server
-  private bool _permissionsReceived = false;
 
   public PermissionManager()
   {
     ResetToDefaults();
   }
 
-  public PermissionManager(PermissionEntry entry)
+  public void AddEntry(PermissionEntry entry)
   {
-    ResetToDefaults();
     if (entry == null)
       return;
 
@@ -75,32 +61,20 @@ public class PermissionManager
       }
     }
 
-    _allowedCommands.Clear();
-    _bannedCommands.Clear();
-
     if (entry.commands != null)
     {
-      Dictionary<string, FeaturePermission> commandPermissions = [];
       foreach (var rawCommand in entry.commands)
       {
         ParseFeature(rawCommand, out var commandName, out var permission);
         if (commandName == "")
           continue;
-
-        commandPermissions[commandName.ToLower()] = permission;
-      }
-
-
-      foreach (var kvp in commandPermissions)
-      {
-        if (kvp.Value == FeaturePermission.No)
-          _bannedCommands.Add(kvp.Key);
+        var cmd = NormalizeCommand(commandName);
+        if (permission == FeaturePermission.No)
+          _bannedCommands.Add(cmd);
         else
-          _allowedCommands.Add(kvp.Key);
+          _allowedCommands.Add(cmd);
       }
     }
-
-    HandleFeatureCommands();
   }
 
   /// <summary>
@@ -126,7 +100,7 @@ public class PermissionManager
       FeaturePermission.No => false,
       FeaturePermission.Force => true,
       FeaturePermission.Yes => localConfigValue,
-      _ => localConfigValue && Console.instance && Console.instance.IsCheatsEnabled(),
+      _ => localConfigValue && _isAdmin,
     };
   }
 
@@ -144,12 +118,7 @@ public class PermissionManager
 
   public FeaturePermission GetFeaturePermissionByHash(string section, int featureHash)
   {
-    if (section == null)
-      return FeaturePermission.Unknown;
-
     section = section.ToLower();
-    if (!_permissionsReceived)
-      return FeaturePermission.Unknown;
 
     if (!_featurePermissions.TryGetValue(section, out var features))
       return FeaturePermission.Unknown;
@@ -161,17 +130,40 @@ public class PermissionManager
   // Command Permissions
   // ====================
 
-  private HashSet<string> _allowedCommands = [];
-  private HashSet<string> _bannedCommands = [];
+  private List<string> _allowedCommands = [];
+  private List<string> _bannedCommands = [];
 
-  public bool IsCommandAllowed(string commandName)
+  private static string NormalizeCommand(string commandName) => commandName?.Trim().ToLowerInvariant() ?? "";
+
+
+  private static bool StartsWithAny(List<string> commands, string cmd)
+    => commands.Any(check => cmd.StartsWith(check, StringComparison.Ordinal));
+
+  public bool IsCommandAllowed(Terminal.ConsoleCommand cmd, string commandName)
   {
-    var normalized = commandName.ToLower();
-    if (_bannedCommands.Contains(normalized))
+    var normalized = NormalizeCommand(commandName);
+    if (normalized == "")
       return false;
-    if (_allowedCommands.Count == 0)
+
+    if (StartsWithAny(_bannedCommands, normalized))
+      return false;
+
+    // Reguar valid check to allow non-cheat commands or all commands for admins.
+    // Unless explicitly banned.
+    if (cmd.IsValid(Console.instance))
       return true;
-    return _allowedCommands.Contains(normalized);
+
+    if (StartsWithAny(_allowedCommands, normalized))
+      return true;
+
+    return _isAdmin;
+  }
+
+  public bool IsAdmin() => _isAdmin;
+
+  public void SetAdmin(bool isAdmin)
+  {
+    _isAdmin = isAdmin;
   }
 
   // ====================
@@ -185,6 +177,8 @@ public class PermissionManager
   /// </summary>
   public void Write(ZPackage pkg)
   {
+    pkg.Write(_isAdmin);
+
     // Write feature sections
     pkg.Write(_featurePermissions.Count);
     foreach (var section in _featurePermissions)
@@ -214,8 +208,8 @@ public class PermissionManager
   {
     // Reset all features to defaults first
     ResetToDefaults();
-    // Mark that permissions were received
-    _permissionsReceived = true;
+
+    _isAdmin = pkg.ReadBool();
 
     // Read feature sections
     int sectionCount = pkg.ReadInt();
@@ -239,19 +233,19 @@ public class PermissionManager
     int commandCount = pkg.ReadInt();
     _allowedCommands.Clear();
     for (int i = 0; i < commandCount; i++)
-      _allowedCommands.Add(pkg.ReadString());
+      _allowedCommands.Add(NormalizeCommand(pkg.ReadString()));
 
     int bannedCommandCount = pkg.ReadInt();
     _bannedCommands.Clear();
     for (int i = 0; i < bannedCommandCount; i++)
-      _bannedCommands.Add(pkg.ReadString());
+      _bannedCommands.Add(NormalizeCommand(pkg.ReadString()));
 
     HandleFeatureCommands();
   }
 
   // Some features have console command that is used to toggle them.
   // To simplify configuring, features should also affect those commands.
-  private void HandleFeatureCommands()
+  public void HandleFeatureCommands()
   {
     Dictionary<int, string> hashes = Terminal.commands.Select(c => c.Key.ToLower()).ToDictionary(h => h.GetStableHashCode(), h => h);
     foreach (var section in _featurePermissions)
@@ -260,29 +254,24 @@ public class PermissionManager
       {
         if (!hashes.ContainsKey(feature.Key))
           continue;
+        var cmd = NormalizeCommand(hashes[feature.Key]);
         if (feature.Value == FeaturePermission.No)
         {
-          // Removing allowed is not needed as banned has higher priority.
-          // Removing might also remove the last allowed, which would then allow all commands.
-          _bannedCommands.Add(hashes[feature.Key]);
+          _allowedCommands.Remove(cmd);
+          _bannedCommands.Add(cmd);
         }
         else
         {
-          // If all are allowed, adding anything would disallowed other commands.
-          if (_allowedCommands.Count > 0)
-            _allowedCommands.Add(hashes[feature.Key]);
-          _bannedCommands.Remove(hashes[feature.Key]);
+          _allowedCommands.Add(cmd);
+          _bannedCommands.Remove(cmd);
         }
       }
     }
   }
 
-  /// <summary>
-  /// Resets all permissions to default (all disabled for clients, enabled for servers).
-  /// </summary>
   public void ResetToDefaults()
   {
-    _permissionsReceived = false;
+    _isAdmin = false;
     _featurePermissions.Clear();
     _allowedCommands.Clear();
     _bannedCommands.Clear();
@@ -290,39 +279,19 @@ public class PermissionManager
 
   private static void ParseFeature(string rawFeature, out string featureName, out FeaturePermission permission)
   {
-    featureName = rawFeature?.Trim() ?? "";
-    permission = FeaturePermission.Yes;
-    if (featureName == "")
-      return;
-
-    int separator = featureName.LastIndexOf(':');
-    if (separator < 0)
-      return;
-
-    var suffix = featureName.Substring(separator + 1).Trim();
-    if (!TryParsePermission(suffix, out var parsedPermission))
-      return;
-
-    featureName = featureName.Substring(0, separator).Trim();
-    permission = parsedPermission;
+    var kvp = Parse.Kvp(rawFeature, ':');
+    featureName = kvp.Key.Trim();
+    permission = ParsePermission(kvp.Value);
   }
 
-  private static bool TryParsePermission(string value, out FeaturePermission permission)
+  private static FeaturePermission ParsePermission(string value)
   {
-    switch (value.ToLower())
+    return value.ToLower() switch
     {
-      case "yes":
-        permission = FeaturePermission.Yes;
-        return true;
-      case "no":
-        permission = FeaturePermission.No;
-        return true;
-      case "force":
-        permission = FeaturePermission.Force;
-        return true;
-      default:
-        permission = FeaturePermission.Yes;
-        return false;
-    }
+      "yes" => FeaturePermission.Yes,
+      "no" => FeaturePermission.No,
+      "force" => FeaturePermission.Force,
+      _ => FeaturePermission.Yes,
+    };
   }
 }

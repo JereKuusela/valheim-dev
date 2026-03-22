@@ -170,9 +170,9 @@ public abstract class Helper
   {
     if (args.Length < amount) throw new InvalidOperationException(message);
   }
-  public static void Command(string name, string description, Terminal.ConsoleEvent action)
+  public static void Command(string name, string description, Terminal.ConsoleEvent action, bool remote = false)
   {
-    new Terminal.ConsoleCommand(name, description, Catch(action), isCheat: true, isNetwork: true);
+    new Terminal.ConsoleCommand(name, description, Catch(action), isCheat: true, isNetwork: true, remoteCommand: remote);
   }
   public static Terminal.ConsoleEvent Catch(Terminal.ConsoleEvent action) =>
     (args) =>

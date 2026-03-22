@@ -92,9 +92,8 @@ public class TryRunCommand
     }
     text = commands[0];
     text = CheckLogic(text);
-    // Server side checks this already at the server side execution.
-    if (Player.m_localPlayer && !DisableCommands.CanRun(text)) return false;
-    return true;
+    RunCommand(__instance, text);
+    return false;
   }
   static string CheckLogic(string text)
   {
@@ -106,6 +105,28 @@ public class TryRunCommand
       return $"{split[0]}={Parse.Logic(split[1])}";
     });
     return string.Join(" ", args);
+  }
+
+  static void RunCommand(Terminal t, string text)
+  {
+    var name = text.Split(' ')[0];
+    if (!Terminal.commands.TryGetValue(name, out var cmd))
+    {
+      t.AddString($"Unknown command '{name}'. Type 'help' to see a list of valid commands");
+      return;
+    }
+    if (!PermissionManager.Instance.IsCommandAllowed(cmd, text))
+    {
+      t.AddString($"Unauthorized to use command '{name}'.");
+      return;
+    }
+    if (cmd.RemoteCommand && ZNet.instance && !ZNet.instance.IsServer())
+    {
+      t.AddString("Sending command: " + text);
+      ZNet.instance.RemoteCommand(text);
+      return;
+    }
+    cmd.RunAction(new Terminal.ConsoleEventArgs(text, t));
   }
 }
 

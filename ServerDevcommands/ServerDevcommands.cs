@@ -31,6 +31,7 @@ public class ServerDevcommands : BaseUnityPlugin
       SetupWatcher();
       AliasManager.SetupWatcher();
       BindManager.SetupWatcher();
+      PermissionLoader.SetupWatcher();
     }
     catch
     {
@@ -133,6 +134,7 @@ public class SetCommands
     new RPCCommand();
     new DmgCommand();
     new KillCommand();
+    new PermissionsCommand();
     new ShutdownCommand();
     DefaultAutoComplete.Register();
     AliasManager.Init();

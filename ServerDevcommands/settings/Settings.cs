@@ -147,7 +147,6 @@ public static class Settings
     {
       AliasCommand.AddCommand(alias.Key, alias.Value);
     }
-    DisableCommands.UpdateCommands(configRootUsers.Value, configDisabledCommands.Value);
   }
 
   private static void SaveAliases()
@@ -181,9 +180,7 @@ public static class Settings
     SaveAliases();
   }
 
-  private static HashSet<string> ParseList(string value) => Parse.Split(value).Select(s => s.ToLower()).ToHashSet();
-  public static ConfigEntry<string> configDisabledCommands;
-  public static ConfigEntry<string> configRootUsers;
+  private static HashSet<string> ParseList(string value) => [.. Parse.Split(value).Select(s => s.ToLower())];
   public static ConfigEntry<string> configDisabledGlobalKeys;
   public static ConfigEntry<string> configUndoLimit;
   public static int UndoLimit => Parse.Int(configUndoLimit.Value, 50);
@@ -287,14 +284,6 @@ public static class Settings
     configSubstitution = config.Bind(section, "Substitution", "$$", "Enables the command parameter substitution system (substitution gets replaced with the next free parameter).");
     configWrapping = config.Bind(section, "Wrapping", "\"", "Allows using space bars in command parameters.");
     configCommandAliases.SettingChanged += (s, e) => ParseAliases(configCommandAliases.Value);
-    configRootUsers = config.Bind(section, "Root users", "", "Steam IDs separated by , that can execute blacklisted commands. Server side setting.");
-    configRootUsers.SettingChanged += (s, e) =>
-    {
-      DisableCommands.UpdateCommands(configRootUsers.Value, configDisabledCommands.Value);
-      RootUsers.Update();
-    };
-    configDisabledCommands = config.Bind(section, "Disabled commands", "dev_config disable_command", "Command names separated by , that can't be executed.");
-    configDisabledCommands.SettingChanged += (s, e) => DisableCommands.UpdateCommands(configRootUsers.Value, configDisabledCommands.Value);
     configFlyUpKeys = config.Bind(section, "Key for fly up", "Space", "Key codes separated by ,");
     configFlyUpKeys.SettingChanged += (s, e) => ParseFlyUp();
     ParseFlyUp();
@@ -536,7 +525,6 @@ public static class Settings
     if (key == "ghost_invibisility") Toggle(context, configGhostInvisibility, "Invisibility with ghost mode", value);
     if (key == "ghost_no_spawns") Toggle(context, configGhostNoSpawns, "Spawns with ghost", value, true);
     if (key == "ghost_ignore_sleep") Toggle(context, configGhostIgnoreSleep, "Sleeping checked with ghost", value, true);
-    if (key == "disable_command") ToggleFlag(context, configDisabledCommands, "Disabled commands", value);
     if (key == "disable_global_key") ToggleFlag(context, configDisabledGlobalKeys, "Disabled global keys", value);
     if (key == "disable_debug_mode_keys") Toggle(context, configDisableDebugModeKeys, "Debug mode key bindings", value, true);
     if (key == "god_always_parry") Toggle(context, configGodModeAlwaysParry, "Always parry with god mode", value);
