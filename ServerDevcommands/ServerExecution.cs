@@ -60,7 +60,10 @@ public class ServerExecution
       return false;
 
     var hostname = rpc.GetSocket().GetHostName();
-    var characterId = peer.m_characterID.UserID.ToString();
+    var zdo = ZDOMan.instance.GetZDO(peer.m_characterID);
+    if (zdo == null)
+      return false;
+    var characterId = zdo.GetLong(ZDOVars.s_playerID).ToString();
     var permissions = PermissionLoader.Data.Resolve(hostname, characterId);
     return permissions.IsCommandAllowed(cmd, command);
   }
@@ -88,7 +91,7 @@ public class ServerExecution
   public static string RPC_SyncLocationIds = "EW_SyncLocationIds";
   public static string RPC_SyncVegetationIds = "EW_SyncVegetationIds";
 
-  public static void RPC_Do_Pins(long sender, string data)
+  public static void RPC_Do_Pins(ZRpc? rpc, string data)
   {
     var pins = Parse.Split(data, '|').Select(Parse.VectorXZY).ToArray();
     var findPins = Console.instance.m_findPins;
@@ -119,11 +122,11 @@ public class ServerExecution
     rpc.Invoke(RPC_SyncVegetationIds, vegetationIds);
   }
 
-  public static void ReceiveLocationIds(long sender, string locationIds)
+  public static void ReceiveLocationIds(ZRpc rpc, string locationIds)
   {
     ParameterInfo.SetServerLocationIds([.. locationIds.Split('|').Where(s => !string.IsNullOrEmpty(s))]);
   }
-  public static void ReceiveVegetationIds(long sender, string vegetationIds)
+  public static void ReceiveVegetationIds(ZRpc rpc, string vegetationIds)
   {
     ParameterInfo.SetServerVegetationIds([.. vegetationIds.Split('|').Where(s => !string.IsNullOrEmpty(s))]);
   }
@@ -131,26 +134,29 @@ public class ServerExecution
   [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_PeerInfo)), HarmonyPostfix]
   static void RegisterRPCs(ZNet __instance, ZRpc rpc)
   {
-    if (!__instance.IsServer())
-      return;
-    ZNetPeer peer = __instance.GetPeer(rpc);
-    rpc.Register(RPC_RequestIds, RPC_DoRequestIds);
+    if (__instance.IsServer())
+    {
+      // Server needs to listen for id request.
+      rpc.Register(RPC_RequestIds, RPC_DoRequestIds);
+    }
+    else
+    {
+      // Clients need to only listen for server messages.
+      ZNetPeer peer = __instance.GetPeer(rpc);
+      if (peer.m_server)
+      {
+        rpc.Register<string>(RPC_Pins, RPC_Do_Pins);
+        rpc.Register<string>(RPC_SyncLocationIds, ReceiveLocationIds);
+        rpc.Register<string>(RPC_SyncVegetationIds, ReceiveVegetationIds);
+        rpc.Register<ZPackage>(PermissionLoader.RPC_Permissions, Admin.ReceivePermissions);
+      }
+    }
   }
 
-  // Base game also registers RPCs on ZoneSystem. At least this ensures that ZNet is fully initialized.
   [HarmonyPatch(typeof(ZoneSystem), nameof(ZoneSystem.Start)), HarmonyPostfix]
   static void InitServer()
   {
     if (ZNet.instance.IsServer())
-    {
       PermissionLoader.FromFile();
-    }
-    else
-    {
-      ZRoutedRpc.instance.Register<string>(RPC_Pins, RPC_Do_Pins);
-      ZRoutedRpc.instance.Register<string>(RPC_SyncLocationIds, ReceiveLocationIds);
-      ZRoutedRpc.instance.Register<string>(RPC_SyncVegetationIds, ReceiveVegetationIds);
-      ZRoutedRpc.instance.Register<ZPackage>(RPC_Unban.RPC_Permissions, Admin.ReceivePermissions);
-    }
   }
 }

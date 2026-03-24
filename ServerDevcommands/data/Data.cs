@@ -13,6 +13,9 @@ namespace ServerDevcommands;
 
 public class Yaml
 {
+  // Keep watcher references alive for the plugin lifetime.
+  private static readonly List<FileSystemWatcher> Watchers = [];
+
   public static void SetupWatcher(string pattern, Action action) => SetupWatcher(Paths.ConfigPath, pattern, action);
   public static void SetupWatcher(string path, string pattern, Action action)
   {
@@ -24,6 +27,7 @@ public class Yaml
     watcher.IncludeSubdirectories = true;
     watcher.SynchronizingObject = ThreadingHelper.SynchronizingObject;
     watcher.EnableRaisingEvents = true;
+    Watchers.Add(watcher);
   }
   public static IDeserializer Deserializer() => new DeserializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance).Build();
   public static IDeserializer DeserializerUnSafe() => new DeserializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance)

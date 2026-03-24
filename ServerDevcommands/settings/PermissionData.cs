@@ -63,13 +63,13 @@ public class PermissionData
 
   public PermissionManager Resolve(string hostname, string characterId)
   {
+    bool isAdmin = ZNet.instance == null || ZNet.instance.IsServer() || ZNet.instance.IsAdmin(hostname);
+    var resolved = new PermissionManager(isAdmin);
     var key = PeerKey(hostname, characterId);
-    var resolved = new PermissionManager();
 
     var chain = BuildResolutionChain(key);
     for (int i = 0; i < chain.Count; ++i)
       resolved.AddEntry(chain[i]);
-    resolved.SetAdmin(ZNet.instance == null || ZNet.instance.IsServer() || ZNet.instance.IsAdmin(hostname));
     return resolved;
   }
 

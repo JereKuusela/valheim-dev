@@ -10,6 +10,7 @@ namespace ServerDevcommands;
 
 public class PermissionLoader
 {
+  public static string RPC_Permissions = "DEV_Permissions";
   public static PermissionData Data = new();
   public static string FileName = "permissions.yaml";
   public static string FilePath = Path.Combine(Paths.ConfigPath, FileName);
@@ -67,7 +68,7 @@ public class PermissionLoader
     var permissions = Data.Resolve(hostname, characterId);
     var pkg = new ZPackage();
     permissions.Write(pkg);
-    rpc.Invoke(RPC_Unban.RPC_Permissions, pkg);
+    rpc.Invoke(RPC_Permissions, pkg);
   }
 
   private static void SendChangedPermissions(HashSet<string> changedKeys, bool updateAllPlayers)
@@ -82,7 +83,9 @@ public class PermissionLoader
         continue;
 
       var hostname = peer.m_rpc.GetSocket().GetHostName();
-      var characterId = peer.m_characterID.UserID.ToString();
+      var zdo = ZDOMan.instance.GetZDO(peer.m_characterID);
+      if (zdo == null) continue;
+      var characterId = zdo.GetLong(ZDOVars.s_playerID).ToString();
       var key = PermissionData.PeerKey(hostname, characterId);
       if (key == "")
         continue;
@@ -133,7 +136,6 @@ public class PermissionLoader
 [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_Unban))]
 public class RPC_Unban
 {
-  public static string RPC_Permissions = "DEV_Permissions";
 
   static void Postfix(ZNet __instance, ZRpc rpc, string user)
   {
@@ -141,7 +143,6 @@ public class RPC_Unban
     if (!__instance.IsServer()) return;
     var kvp = Parse.Kvp(user, '_');
     var characterId = kvp.Value;
-    ServerDevcommands.Log.LogWarning($"Updating permissions for {user} with character ID {characterId}.");
     PermissionLoader.UpdatePeer(rpc, characterId);
     var hostname = rpc.GetSocket().GetHostName();
     PermissionLoader.SendPermissions(rpc, hostname, characterId);

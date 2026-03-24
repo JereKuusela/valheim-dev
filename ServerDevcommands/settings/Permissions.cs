@@ -21,7 +21,7 @@ public class PermissionManager
     get
     {
       if (_instance == null)
-        _instance = new PermissionManager();
+        _instance = new PermissionManager(false);
       return _instance;
     }
   }
@@ -30,9 +30,10 @@ public class PermissionManager
   private bool _isAdmin = false;
 
 
-  public PermissionManager()
+  public PermissionManager(bool isAdmin)
   {
-    ResetToDefaults();
+    _isAdmin = isAdmin;
+
   }
 
   public void AddEntry(PermissionEntry entry)
@@ -161,11 +162,6 @@ public class PermissionManager
 
   public bool IsAdmin() => _isAdmin;
 
-  public void SetAdmin(bool isAdmin)
-  {
-    _isAdmin = isAdmin;
-  }
-
   // ====================
   // Serialization for RPC
   // ====================
@@ -210,7 +206,6 @@ public class PermissionManager
     ResetToDefaults();
 
     _isAdmin = pkg.ReadBool();
-
     // Read feature sections
     int sectionCount = pkg.ReadInt();
     for (int i = 0; i < sectionCount; i++)
@@ -241,6 +236,7 @@ public class PermissionManager
       _bannedCommands.Add(NormalizeCommand(pkg.ReadString()));
 
     HandleFeatureCommands();
+
   }
 
   // Some features have console command that is used to toggle them.
@@ -286,7 +282,7 @@ public class PermissionManager
 
   private static FeaturePermission ParsePermission(string value)
   {
-    return value.ToLower() switch
+    return value.ToLowerInvariant() switch
     {
       "yes" => FeaturePermission.Yes,
       "no" => FeaturePermission.No,

@@ -42,7 +42,7 @@ public class FindCommand
       args.Context.AddString($"Found {count} of {args[1]}. Showing {list.Count} closest:");
       args.Context.AddString(string.Join("\n", text));
       if (RedirectOutput.Target == null)
-        ServerExecution.RPC_Do_Pins(0, string.Join("|", list.Select(item => Helper.PrintVectorXZY(item.Item2))));
+        ServerExecution.RPC_Do_Pins(null, string.Join("|", list.Select(item => Helper.PrintVectorXZY(item.Item2))));
       else
         RedirectOutput.Target.Invoke(ServerExecution.RPC_Pins, string.Join("|", list.Select(item => Helper.PrintVectorXZY(item.Item2))));
     });

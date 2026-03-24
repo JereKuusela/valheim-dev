@@ -15,10 +15,11 @@ public class PermissionEntry
   public string character = "";
   [DefaultValue("")]
   public string group = "";
-  // Runtime map for feature sections. In YAML this is stored as flat top-level keys,
-  // where each non-reserved key is treated as a feature section.
+  // Runtime map for feature sections. In YAML each non-reserved top-level key is a
+  // map of feature -> yes/no/force.
   public Dictionary<string, List<string>>? features = null;
-  // Command has format "command: value" where value is yes/no/force (defaults to yes if omitted).
+  // Runtime list where each item is "command" or "command: no/force".
+  // In YAML this is stored as a map of command -> yes/no/force.
   public List<string>? commands = null;
 }
 public static class PermissionYaml
@@ -63,12 +64,18 @@ public static class PermissionYaml
       {
         if (section.Value.Count == 0)
           continue;
-        mapped[section.Key] = section.Value;
+        var featureMap = ToPermissionMap(section.Value);
+        if (featureMap.Count > 0)
+          mapped[section.Key] = featureMap;
       }
     }
 
     if (entry.commands != null && entry.commands.Count > 0)
-      mapped["commands"] = entry.commands;
+    {
+      var commandMap = ToPermissionMap(entry.commands);
+      if (commandMap.Count > 0)
+        mapped["commands"] = commandMap;
+    }
 
     return mapped;
   }
@@ -81,7 +88,7 @@ public static class PermissionYaml
       name = ReadScalar(raw, "name"),
       character = ReadScalar(raw, "character"),
       group = ReadScalar(raw, "group"),
-      commands = ReadStringList(raw, "commands")
+      commands = ReadPermissionList(raw, "commands")
     };
 
     Dictionary<string, List<string>> features = [];
@@ -93,7 +100,7 @@ public static class PermissionYaml
       if (ReservedKeys.Contains(key.ToLowerInvariant()))
         continue;
 
-      var parsed = ToStringList(kvp.Value);
+      var parsed = ToPermissionList(kvp.Value);
       if (parsed.Count == 0)
         continue;
       features[key.ToLowerInvariant()] = parsed;
@@ -115,41 +122,69 @@ public static class PermissionYaml
     return value?.ToString()?.Trim() ?? "";
   }
 
-  private static List<string>? ReadStringList(Dictionary<string, object> raw, string key)
+  private static List<string>? ReadPermissionList(Dictionary<string, object> raw, string key)
   {
     if (!raw.TryGetValue(key, out var value))
       return null;
-    return ToStringList(value);
+    return ToPermissionList(value);
   }
 
-  private static List<string> ToStringList(object? value)
+  private static List<string> ToPermissionList(object? value)
   {
-    List<string> result = [];
-    if (value == null)
-      return result;
-
-    if (value is string str)
+    Dictionary<string, string> map = [];
+    if (value is IDictionary<object, object> objectMap)
     {
-      var trimmed = str.Trim();
-      if (trimmed != "")
-        result.Add(trimmed);
-      return result;
-    }
-
-    if (value is IEnumerable<object> list)
-    {
-      foreach (var item in list)
+      foreach (var kvp in objectMap)
       {
-        var itemValue = item?.ToString()?.Trim() ?? "";
-        if (itemValue != "")
-          result.Add(itemValue);
+        var key = kvp.Key?.ToString()?.Trim() ?? "";
+        if (key == "")
+          continue;
+        var permission = kvp.Value?.ToString()?.Trim() ?? "";
+        map[key] = permission;
       }
-      return result;
+    }
+    else if (value is IDictionary<string, object> stringMap)
+    {
+      foreach (var kvp in stringMap)
+      {
+        var key = kvp.Key?.Trim() ?? "";
+        if (key == "")
+          continue;
+        var permission = kvp.Value?.ToString()?.Trim() ?? "";
+        map[key] = permission;
+      }
     }
 
-    var single = value.ToString()?.Trim() ?? "";
-    if (single != "")
-      result.Add(single);
+    List<string> result = [];
+    foreach (var kvp in map)
+    {
+      var key = kvp.Key.Trim();
+      if (key == "")
+        continue;
+      var permission = kvp.Value.Trim();
+      if (permission == "" || permission.Equals("yes", StringComparison.OrdinalIgnoreCase))
+        result.Add(key);
+      else
+        result.Add($"{key}: {permission}");
+    }
     return result;
+  }
+
+  private static Dictionary<string, string> ToPermissionMap(List<string> values)
+  {
+    Dictionary<string, string> mapped = [];
+    foreach (var value in values)
+    {
+      var split = Parse.Kvp(value, ':');
+      var key = split.Key.Trim();
+      if (key == "")
+        continue;
+
+      var permission = split.Value.Trim().ToLowerInvariant();
+      if (permission == "")
+        permission = "yes";
+      mapped[key] = permission;
+    }
+    return mapped;
   }
 }

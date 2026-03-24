@@ -38,9 +38,8 @@ public static class Admin
   }
 
   ///<summary>Receives permissions from the server via RPC. Shouldn't be called directly.</summary>
-  public static void ReceivePermissions(long sender, ZPackage pkg)
+  public static void ReceivePermissions(ZRpc rpc, ZPackage pkg)
   {
-    ServerDevcommands.Log.LogWarning("Received permissions from server.");
     PermissionManager.Instance.Read(pkg);
   }
 
