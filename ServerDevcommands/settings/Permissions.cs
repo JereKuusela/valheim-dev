@@ -4,6 +4,32 @@ using System.Linq;
 
 namespace ServerDevcommands;
 
+public class PermissionApi
+{
+  public static event Action? PermissionsUpdated;
+
+  public static bool IsFeatureEnabled(string section, string feature, bool localConfigValue) => IsFeatureEnabledByHash(section, feature.ToLower().GetStableHashCode(), localConfigValue);
+  public static bool IsFeatureEnabledByHash(string section, int featureHash, bool localConfigValue)
+  {
+    return PermissionManager.Instance.IsFeatureEnabledByHash(section, featureHash, localConfigValue);
+  }
+
+  public static void Subscribe(Action handler)
+  {
+    PermissionsUpdated += handler;
+  }
+
+  public static void Unsubscribe(Action handler)
+  {
+    PermissionsUpdated -= handler;
+  }
+
+  internal static void Notify()
+  {
+    PermissionsUpdated?.Invoke();
+  }
+}
+
 public class PermissionManager
 {
   public enum FeaturePermission
@@ -28,6 +54,7 @@ public class PermissionManager
 
   private Dictionary<string, Dictionary<int, FeaturePermission>> _featurePermissions = [];
   private bool _isAdmin = false;
+  private bool CanCheat => _isAdmin || !Helper.IsClient();
 
 
   public PermissionManager(bool isAdmin)
@@ -79,14 +106,6 @@ public class PermissionManager
   }
 
   /// <summary>
-  /// Checks if a specific feature is enabled for a section.
-  /// </summary>
-  /// <param name="section">The section/mod name (e.g., "ServerDevcommands")</param>
-  /// <param name="feature">The feature name (e.g., "MapCoordinates")</param>
-  /// <returns>True if the feature is enabled, false otherwise.</returns>
-  public bool IsFeatureEnabled(string section, string feature) => IsFeatureEnabledByHash(section, feature.ToLower().GetStableHashCode());
-
-  /// <summary>
   /// Checks if a specific feature is active using pre-calculated hashes and a local config value.
   /// </summary>
   /// <param name="section">The section/mod name (e.g., "ServerDevcommands")</param>
@@ -101,20 +120,8 @@ public class PermissionManager
       FeaturePermission.No => false,
       FeaturePermission.Force => true,
       FeaturePermission.Yes => localConfigValue,
-      _ => localConfigValue && _isAdmin,
+      _ => localConfigValue && CanCheat,
     };
-  }
-
-  /// <summary>
-  /// Checks if a specific feature is enabled using pre-calculated hashes.
-  /// Fallback: If on server or (cheats enabled AND no permissions received), allow all features.
-  /// </summary>
-  /// <param name="sectionHash">The section hash code</param>
-  /// <param name="featureHash">The feature hash code</param>
-  /// <returns>True if the feature is enabled, false otherwise.</returns>
-  public bool IsFeatureEnabledByHash(string section, int featureHash)
-  {
-    return IsFeatureEnabledByHash(section, featureHash, true);
   }
 
   public FeaturePermission GetFeaturePermissionByHash(string section, int featureHash)
@@ -157,10 +164,9 @@ public class PermissionManager
     if (StartsWithAny(_allowedCommands, normalized))
       return true;
 
-    return _isAdmin;
+    return CanCheat;
   }
 
-  public bool IsAdmin() => _isAdmin;
 
   // ====================
   // Serialization for RPC
@@ -236,6 +242,7 @@ public class PermissionManager
       _bannedCommands.Add(NormalizeCommand(pkg.ReadString()));
 
     HandleFeatureCommands();
+    PermissionApi.Notify();
 
   }
 

@@ -174,6 +174,11 @@ public abstract class Helper
   {
     new Terminal.ConsoleCommand(name, description, Catch(action), isCheat: true, isNetwork: true, remoteCommand: remote);
   }
+  // Compatiblity for World Edit Commands.
+  public static void Command(string name, string description, Terminal.ConsoleEvent action)
+  {
+    new Terminal.ConsoleCommand(name, description, Catch(action), isCheat: true, isNetwork: true, remoteCommand: false);
+  }
   public static Terminal.ConsoleEvent Catch(Terminal.ConsoleEvent action) =>
     (args) =>
     {

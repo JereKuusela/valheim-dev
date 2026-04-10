@@ -131,6 +131,13 @@ public class PermissionsCommand
     }
   }
 
+  private static string JoinArgs(Terminal.ConsoleEventArgs args, int startIndex)
+  {
+    if (args.Length <= startIndex)
+      return "";
+    return string.Join(" ", args.Args.Skip(startIndex)).Trim();
+  }
+
   private static (string Hostname, string CharacterId, string DisplayName) ResolvePlayerTarget(string target)
   {
     var players = FindTargetPlayers(target);
@@ -139,7 +146,10 @@ public class PermissionsCommand
     if (players.Count == 1)
     {
       var player = players[0];
-      return (player.HostId, player.PeerId.ToString(), player.Name);
+      var characterId = ZDOMan.instance.GetZDO(player.ZDOID)?.GetLong(ZDOVars.s_playerID).ToString();
+      if (characterId == null)
+        throw new InvalidOperationException($"Unable to resolve character id for player '{player.Name}'.");
+      return (player.HostId, characterId, player.Name);
     }
 
     var matches = PermissionLoader.Data.Entries
@@ -159,20 +169,20 @@ public class PermissionsCommand
 
   private static void HandlePlayerEdit(Terminal.ConsoleEventArgs args, string target, Func<PermissionEntry, bool> update)
   {
-    var resolved = ResolvePlayerTarget(target);
-    var entry = PermissionLoader.GetOrCreatePeerEntry(resolved.Hostname, resolved.CharacterId, resolved.DisplayName)
+    var (Hostname, CharacterId, DisplayName) = ResolvePlayerTarget(target);
+    var entry = PermissionLoader.GetOrCreatePeerEntry(Hostname, CharacterId, DisplayName)
       ?? throw new InvalidOperationException("Unable to create permission entry.");
     var changed = update(entry);
     if (changed)
     {
       PermissionLoader.Save();
-      PermissionLoader.SendPeerPermissions(resolved.Hostname, resolved.CharacterId);
+      PermissionLoader.SendPeerPermissions(Hostname, CharacterId);
     }
 
-    var key = PermissionData.PeerKey(resolved.Hostname, resolved.CharacterId);
+    var key = PermissionData.PeerKey(Hostname, CharacterId);
     Helper.AddMessage(args.Context, changed
-      ? $"Permissions updated for {resolved.DisplayName} ({key})."
-      : $"No permission changes for {resolved.DisplayName} ({key}).");
+      ? $"Permissions updated for {DisplayName} ({key})."
+      : $"No permission changes for {DisplayName} ({key}).");
   }
 
   private static void Handle(Terminal.ConsoleEventArgs args)
@@ -191,9 +201,13 @@ public class PermissionsCommand
     {
       case "set_group":
         {
-          Helper.ArgsCheck(args, 4, "Usage: permissions set_group <character id or name> <group>");
-          var target = args[2];
-          var group = args[3].Trim();
+          Helper.ArgsCheck(args, 4, "Usage: permissions set_group <group> <character id or name>");
+          var group = args[2].Trim();
+          var target = JoinArgs(args, 3);
+          if (target == "")
+            throw new InvalidOperationException("Missing target character id or name.");
+          if (group == "")
+            throw new InvalidOperationException("Missing group name.");
           HandlePlayerEdit(args, target, entry =>
           {
             if (entry.group == group) return false;
@@ -205,7 +219,10 @@ public class PermissionsCommand
       case "clear_group":
         {
           Helper.ArgsCheck(args, 3, "Usage: permissions clear_group <character id or name>");
-          HandlePlayerEdit(args, args[2], entry =>
+          var target = JoinArgs(args, 2);
+          if (target == "")
+            throw new InvalidOperationException("Missing target character id or name.");
+          HandlePlayerEdit(args, target, entry =>
           {
             if (entry.group == "") return false;
             entry.group = "";
@@ -216,49 +233,57 @@ public class PermissionsCommand
       case "add_command":
         {
           Helper.ArgsCheck(args, 4, "Usage: permissions add_command <command> <character id or name>");
-          HandlePlayerEdit(args, args[3], entry => SetCommandPermission(entry, args[2], PermissionManager.FeaturePermission.Yes));
+          var target = JoinArgs(args, 3);
+          HandlePlayerEdit(args, target, entry => SetCommandPermission(entry, args[2], PermissionManager.FeaturePermission.Yes));
           return;
         }
       case "ban_command":
         {
           Helper.ArgsCheck(args, 4, "Usage: permissions ban_command <command> <character id or name>");
-          HandlePlayerEdit(args, args[3], entry => SetCommandPermission(entry, args[2], PermissionManager.FeaturePermission.No));
+          var target = JoinArgs(args, 3);
+          HandlePlayerEdit(args, target, entry => SetCommandPermission(entry, args[2], PermissionManager.FeaturePermission.No));
           return;
         }
       case "clear_command":
         {
           Helper.ArgsCheck(args, 4, "Usage: permissions clear_command <command> <character id or name>");
-          HandlePlayerEdit(args, args[3], entry => ClearCommand(entry, args[2]));
+          var target = JoinArgs(args, 3);
+          HandlePlayerEdit(args, target, entry => ClearCommand(entry, args[2]));
           return;
         }
       case "add_feature":
         {
           Helper.ArgsCheck(args, 5, "Usage: permissions add_feature <section> <feature> <character id or name>");
-          HandlePlayerEdit(args, args[4], entry => SetFeaturePermission(entry, args[2], args[3], PermissionManager.FeaturePermission.Yes));
+          var target = JoinArgs(args, 4);
+          HandlePlayerEdit(args, target, entry => SetFeaturePermission(entry, args[2], args[3], PermissionManager.FeaturePermission.Yes));
           return;
         }
       case "ban_feature":
         {
           Helper.ArgsCheck(args, 5, "Usage: permissions ban_feature <section> <feature> <character id or name>");
-          HandlePlayerEdit(args, args[4], entry => SetFeaturePermission(entry, args[2], args[3], PermissionManager.FeaturePermission.No));
+          var target = JoinArgs(args, 4);
+          HandlePlayerEdit(args, target, entry => SetFeaturePermission(entry, args[2], args[3], PermissionManager.FeaturePermission.No));
           return;
         }
       case "force_feature":
         {
           Helper.ArgsCheck(args, 5, "Usage: permissions force_feature <section> <feature> <character id or name>");
-          HandlePlayerEdit(args, args[4], entry => SetFeaturePermission(entry, args[2], args[3], PermissionManager.FeaturePermission.Force));
+          var target = JoinArgs(args, 4);
+          HandlePlayerEdit(args, target, entry => SetFeaturePermission(entry, args[2], args[3], PermissionManager.FeaturePermission.Force));
           return;
         }
       case "clear_feature":
         {
           Helper.ArgsCheck(args, 5, "Usage: permissions clear_feature <section> <feature> <character id or name>");
-          HandlePlayerEdit(args, args[4], entry => ClearFeature(entry, args[2], args[3]));
+          var target = JoinArgs(args, 4);
+          HandlePlayerEdit(args, target, entry => ClearFeature(entry, args[2], args[3]));
           return;
         }
       case "clear_all":
         {
           Helper.ArgsCheck(args, 3, "Usage: permissions clear_all <character id or name>");
-          HandlePlayerEdit(args, args[2], entry =>
+          var target = JoinArgs(args, 2);
+          HandlePlayerEdit(args, target, entry =>
           {
             if (entry.commands == null && entry.features == null)
               return false;
@@ -279,9 +304,10 @@ public class PermissionsCommand
     AutoComplete.Register("permissions", index =>
     {
       if (index == 0) return Operations;
-      if (index == 1) return ParameterInfo.Create("Target / Value");
-      if (index == 2) return ParameterInfo.Create("Value / Target");
-      if (index == 3) return ParameterInfo.Create("Target");
+      if (index == 1) return ParameterInfo.Create("Operation args: set_group <group> <target>; clear_group <target>; add/ban/clear_command <command> <target>; add/ban/force/clear_feature <section> <feature> <target>; clear_all <target>");
+      if (index == 2) return ParameterInfo.Create("Target player id/name (supports spaces) or command/section depending on operation");
+      if (index == 3) return ParameterInfo.Create("Group / target / feature depending on operation");
+      if (index == 4) return ParameterInfo.Create("Target player id/name (supports spaces)");
       return ParameterInfo.None;
     });
   }

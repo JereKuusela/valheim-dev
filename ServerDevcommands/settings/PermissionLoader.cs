@@ -55,7 +55,6 @@ public class PermissionLoader
   }
 
 
-
   public static void CreateFile()
   {
     if (File.Exists(FilePath)) return;
