@@ -8,61 +8,62 @@ namespace ServerDevcommands;
 
 using NamedOptionsFetchers = Dictionary<string, Func<int, List<string>>>;
 using OptionsFetcher = Func<int, int, List<string>>;
+using OptionsArgsFetcher = Func<int, int, string[], List<string>>;
 using SimpleOptionsFetcher = Func<int, List<string>>;
 ///<summary>Provides improved autocomplete (options/some info for each parameter, support for named parameters).</summary>
 public static class AutoComplete
 {
-  private static readonly Dictionary<string, OptionsFetcher> OptionsFetchers = [];
+  private static readonly Dictionary<string, OptionsArgsFetcher> OptionsFetchers = [];
   private static readonly Dictionary<string, NamedOptionsFetchers> OptionsNamedFetchers = [];
   ///<summary>Returns options, either from the custom or the default options fetcher.</summary>
   public static List<string>? GetOptions(string command, int index)
   {
     command = command.ToLower();
-    if (OptionsFetchers.ContainsKey(command)) return OptionsFetchers[command](index, 0);
+    if (OptionsFetchers.ContainsKey(command)) return OptionsFetchers[command](index, 0, []);
     if (index == 0 && Terminal.commands.TryGetValue(command, out var cmd) && cmd.m_tabOptionsFetcher != null)
       return cmd.m_tabOptionsFetcher();
     return null;
   }
-  private static List<string> GetOptions(string command, int index, int subIndex, string namedParameter)
+  private static List<string> GetOptions(string command, int index, int subIndex, string namedArg, string[] args)
   {
     command = command.ToLower();
-    if (namedParameter != "")
+    if (namedArg != "")
     {
       if (OptionsNamedFetchers.TryGetValue(command, out var namedOptions))
       {
-        if (namedOptions.TryGetValue(namedParameter.ToLower(), out var namedFetcher))
+        if (namedOptions.TryGetValue(namedArg.ToLower(), out var namedFetcher))
         {
           return namedFetcher(index) ?? ParameterInfo.None;
         }
       }
-      return ParameterInfo.InvalidNamed(namedParameter);
+      return ParameterInfo.InvalidNamed(namedArg);
     }
-    if (OptionsFetchers.ContainsKey(command)) return OptionsFetchers[command](index, subIndex) ?? ParameterInfo.None;
+    if (OptionsFetchers.ContainsKey(command)) return OptionsFetchers[command](index, subIndex, args) ?? ParameterInfo.None;
     if (Terminal.commands.TryGetValue(command, out var cmd) && cmd.m_tabOptionsFetcher != null)
       return cmd.m_tabOptionsFetcher() ?? ParameterInfo.Missing;
     return ParameterInfo.Missing;
   }
-  ///<summary>Registers a new custom options fetcher.</summary>
-  public static void Register(string command, OptionsFetcher fetcher, NamedOptionsFetchers namedFetchers)
+  public static void Register(string command, OptionsArgsFetcher fetcher, NamedOptionsFetchers namedFetchers)
   {
     OptionsFetchers[command.ToLower()] = fetcher;
     OptionsNamedFetchers[command.ToLower()] = namedFetchers.ToDictionary(kvp => kvp.Key.ToLower(), static kvp => kvp.Value);
   }
-  ///<summary>Registers a new custom options fetcher.</summary>
-  public static void Register(string command, SimpleOptionsFetcher fetcher, NamedOptionsFetchers namedFetchers)
-  {
-    OptionsFetchers[command.ToLower()] = (index, subIndex) => fetcher(index);
-    OptionsNamedFetchers[command.ToLower()] = namedFetchers.ToDictionary(kvp => kvp.Key.ToLower(), kvp => kvp.Value);
-  }
-  ///<summary>Registers a new custom options fetcher.</summary>
-  public static void Register(string command, OptionsFetcher fetcher)
+  public static void Register(string command, OptionsFetcher fetcher, NamedOptionsFetchers namedFetchers)
+  => Register(command, (index, subIndex, args) => fetcher(index, subIndex), namedFetchers);
+  public static void Register(string command, SimpleOptionsFetcher fetcher, NamedOptionsFetchers namedFetchers) =>
+    Register(command, (index, subIndex, args) => fetcher(index), namedFetchers);
+
+  public static void Register(string command, OptionsArgsFetcher fetcher)
   {
     OptionsFetchers[command] = fetcher;
   }
-  ///<summary>Registers a new custom options fetcher.</summary>
+  public static void Register(string command, OptionsFetcher fetcher)
+  {
+    OptionsFetchers[command] = (index, subIndex, args) => fetcher(index, subIndex);
+  }
   public static void Register(string command, SimpleOptionsFetcher fetcher)
   {
-    OptionsFetchers[command] = (index, subIndex) => fetcher(index);
+    OptionsFetchers[command] = (index, subIndex, args) => fetcher(index);
   }
 
   ///<summary>Registers an options fetcher without parameters.</summary>
@@ -89,18 +90,18 @@ public static class AutoComplete
     });
   }
   public static Dictionary<string, int> Offsets = [];
-  public static List<string> GetOptions(string[] parameters)
+  public static List<string> GetOptions(string[] args)
   {
-    var commandName = parameters.First();
-    if (Offsets.TryGetValue(commandName, out var offset) && parameters.Length - 1 > offset)
+    var commandName = args.First();
+    if (Offsets.TryGetValue(commandName, out var offset) && args.Length - 1 > offset)
     {
-      parameters = parameters.Skip(offset + 1).ToArray();
-      commandName = parameters.First();
+      args = [.. args.Skip(offset + 1)];
+      commandName = args.First();
     }
-    if (parameters.Length < 2)
+    if (args.Length < 2)
       return Console.instance.m_commandList;
-    parameters = parameters.Skip(1).ToArray();
-    var parameter = parameters.Last();
+    args = args.Skip(1).ToArray();
+    var parameter = args.Last();
     var name = GetName(parameter);
     var subIndex = GetSubIndex(parameter);
     int index;
@@ -112,14 +113,14 @@ public static class AutoComplete
     else
     {
       // Ignore named parameters for the index.
-      index = TerminalUtils.GetPositionalParameters(parameters).Count() - 1;
+      index = TerminalUtils.GetPositionalParameters(args).Count() - 1;
       if (Settings.Substitution != "")
       {
-        var substitutions = TerminalUtils.GetAmountOfSubstitutions(parameters);
-        for (var i = 0; i < parameters.Length; i++)
+        var substitutions = TerminalUtils.GetAmountOfSubstitutions(args);
+        for (var i = 0; i < args.Length; i++)
         {
           if (substitutions <= 0) break; // Early break if there are no substitutions.
-          var par = parameters[i];
+          var par = args[i];
           var count = CountSubstitution(par);
           // Ignore substituded parameters for the index.
           index -= count;
@@ -145,7 +146,7 @@ public static class AutoComplete
         }
       }
     }
-    return GetOptions(commandName, index, subIndex, name);
+    return GetOptions(commandName, index, subIndex, name, args);
   }
 
   private static string GetName(string parameter)

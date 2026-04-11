@@ -298,17 +298,47 @@ public class PermissionsCommand
     }
   }
 
+  private static List<string> GetOperationSpecificHints(int index, int _, string[] args)
+  {
+    if (index == 0)
+      return Operations;
+
+    var operation = args.Length > 0 ? args[0].Trim().ToLowerInvariant() : "";
+
+    if (operation == "set_group")
+    {
+      if (index == 1) return ParameterInfo.Create("Group name");
+      if (index >= 2) return ParameterInfo.PlayerNames;
+      return ParameterInfo.None;
+    }
+
+    if (operation == "clear_group" || operation == "clear_all")
+    {
+      if (index >= 1) return ParameterInfo.PlayerNames;
+      return ParameterInfo.None;
+    }
+
+    if (operation == "add_command" || operation == "ban_command" || operation == "clear_command")
+    {
+      if (index == 1) return ParameterInfo.Create("Command name");
+      if (index >= 2) return ParameterInfo.PlayerNames;
+      return ParameterInfo.None;
+    }
+
+    if (operation == "add_feature" || operation == "ban_feature" || operation == "force_feature" || operation == "clear_feature")
+    {
+      if (index == 1) return ParameterInfo.Create("Feature section");
+      if (index == 2) return ParameterInfo.Create("Feature name");
+      if (index >= 3) return ParameterInfo.PlayerNames;
+      return ParameterInfo.None;
+    }
+
+    return ParameterInfo.Create("Unknown operation. Use: set_group, clear_group, add_command, ban_command, clear_command, add_feature, ban_feature, force_feature, clear_feature, clear_all");
+  }
+
   public PermissionsCommand()
   {
     Helper.Command("permissions", "[operation] - Manage player permission overrides.", Handle);
-    AutoComplete.Register("permissions", index =>
-    {
-      if (index == 0) return Operations;
-      if (index == 1) return ParameterInfo.Create("Operation args: set_group <group> <target>; clear_group <target>; add/ban/clear_command <command> <target>; add/ban/force/clear_feature <section> <feature> <target>; clear_all <target>");
-      if (index == 2) return ParameterInfo.Create("Target player id/name (supports spaces) or command/section depending on operation");
-      if (index == 3) return ParameterInfo.Create("Group / target / feature depending on operation");
-      if (index == 4) return ParameterInfo.Create("Target player id/name (supports spaces)");
-      return ParameterInfo.None;
-    });
+    AutoComplete.Register("permissions", GetOperationSpecificHints);
   }
 }
