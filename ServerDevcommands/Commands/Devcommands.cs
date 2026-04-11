@@ -1,51 +1,82 @@
+using System.Runtime.Serialization.Json;
 using HarmonyLib;
+using UnityEngine;
 namespace ServerDevcommands;
 ///<summary>Replaces the default devcommands with an admin check.</summary>
 public class DevcommandsCommand
 {
-  public static void Toggle(Terminal terminal)
-  {
-    var value = !Terminal.m_cheat;
-    terminal?.AddString("Devcommands: " + value.ToString());
-    Gogan.LogEvent("Cheat", "CheatsEnabled", value.ToString(), 0L);
-    Set(value);
-  }
   public static void Set(Terminal terminal, bool value)
   {
-    terminal?.AddString("Devcommands: " + value.ToString());
-    Gogan.LogEvent("Cheat", "CheatsEnabled", value.ToString(), 0L);
+    terminal.AddString("Devcommands: " + value.ToString());
     Set(value);
+  }
+  public static void EnableAutoFeatures()
+  {
+    if (!Terminal.m_cheat)
+      return;
+    var player = Player.m_localPlayer;
+    if (player && player.m_nview.IsValid())
+    {
+      if (Settings.AutoGodMode && Settings.IsEnabled(PermissionHash.God, true))
+        player.SetGodMode(true);
+      if (Settings.AutoGhostMode && Settings.IsEnabled(PermissionHash.Ghost, true))
+        player.SetGhostMode(true);
+      if (Settings.AutoFly && Settings.IsEnabled(PermissionHash.Fly, true))
+      {
+        player.m_debugFly = true;
+        player.m_nview.GetZDO().Set(ZDOVars.s_debugFly, true);
+      }
+      if (Settings.AutoNoCost && Settings.IsEnabled(PermissionHash.NoCost, true))
+        player.m_noPlacementCost = true;
+      if (Settings.AutoDebugMode)
+        Player.m_debugMode = true;
+    }
+
+    if (EnvMan.instance)
+    {
+      if (Settings.AutoTod != "" && PermissionApi.IsCommandAllowed("tod"))
+      {
+        EnvMan.instance.m_debugTimeOfDay = true;
+        EnvMan.instance.m_debugTime = Mathf.Clamp01(Parse.Float(Settings.AutoTod));
+      }
+    }
+  }
+  public static void DisableAutoFeatures()
+  {
+    if (Terminal.m_cheat)
+      return;
+    var player = Player.m_localPlayer;
+    if (player && player.m_nview.IsValid())
+    {
+      if (Settings.AutoDebugMode)
+        Player.m_debugMode = false;
+      if (Settings.AutoGodMode)
+        player.SetGodMode(false);
+      if (Settings.AutoGhostMode)
+        player.SetGhostMode(false);
+      if (Settings.AutoFly)
+      {
+        player.m_debugFly = false;
+        player.m_nview.GetZDO().Set(ZDOVars.s_debugFly, false);
+      }
+      if (Settings.AutoNoCost) player.m_noPlacementCost = false;
+    }
+    if (EnvMan.instance)
+    {
+      if (Settings.AutoTod != "")
+        EnvMan.instance.m_debugTimeOfDay = false;
+    }
   }
   public static void Set(bool value)
   {
-    if (Terminal.m_cheat == value) return;
-    var player = Player.m_localPlayer;
-    if (!player || !player.m_nview.IsValid())
-      return;
-    if (Settings.AutoTod != "" && !value)
-      Console.instance.TryRunCommand("tod -1");
-    if (Settings.AutoEnv != "" && !value)
-      Console.instance.TryRunCommand("resetenv");
+    if (Terminal.m_cheat != value)
+      Gogan.LogEvent("Cheat", "CheatsEnabled", value.ToString(), 0L);
+
     Terminal.m_cheat = value;
-    if (Settings.AutoTod != "" && value)
-      Console.instance.TryRunCommand("tod " + Settings.AutoTod);
-    if (Settings.AutoEnv != "" && value)
-      Console.instance.TryRunCommand("env " + Settings.AutoEnv);
     Console.instance.updateCommandList();
     Chat.instance.updateCommandList();
-    if (Settings.AutoDebugMode)
-      Player.m_debugMode = value;
-    if (Settings.AutoGodMode)
-      player.SetGodMode(value);
-    if (Settings.AutoGhostMode)
-      player.SetGhostMode(value);
-    if (Settings.AutoFly)
-    {
-      player.m_debugFly = value;
-      player.m_nview.GetZDO().Set(ZDOVars.s_debugFly, value);
-    }
-    if (Settings.AutoNoCost)
-      player.m_noPlacementCost = value;
+    DisableAutoFeatures();
+    EnableAutoFeatures();
     if (value && Settings.AutoExecDevOn != "") Console.instance.TryRunCommand(Settings.AutoExecDevOn);
     if (!value && Settings.AutoExecDevOff != "") Console.instance.TryRunCommand(Settings.AutoExecDevOff);
   }
@@ -60,7 +91,7 @@ public class DevcommandsCommand
       }
       else if (ZNet.instance && ZNet.instance.IsServer())
       {
-        Toggle(args.Context);
+        Set(args.Context, true);
       }
       else
       {

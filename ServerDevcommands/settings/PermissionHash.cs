@@ -21,6 +21,7 @@ public static class PermissionHash
   public static readonly int Fly = "fly".GetStableHashCode();
   public static readonly int IgnoreWards = "ignorewards".GetStableHashCode();
   public static readonly int NoClipCamera = "noclipcamera".GetStableHashCode();
+  public static readonly int NoCost = "nocost".GetStableHashCode();
 
   // Disable Features
   public static readonly int IgnoreNoMap = "ignorenomap".GetStableHashCode();

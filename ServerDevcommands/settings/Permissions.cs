@@ -13,6 +13,15 @@ public class PermissionApi
   {
     return PermissionManager.Instance.IsFeatureEnabledByHash(section, featureHash, localConfigValue);
   }
+  public static bool IsCommandAllowed(string commandName)
+  {
+    var kvp = Parse.Kvp(commandName, ' ');
+    var cmdName = kvp.Key.ToLower();
+    var cmd = Terminal.commands.FirstOrDefault(c => c.Key.Equals(cmdName, StringComparison.OrdinalIgnoreCase)).Value;
+    if (cmd == null)
+      return false;
+    return PermissionManager.Instance.IsCommandAllowed(cmd, commandName);
+  }
 
   public static void Subscribe(Action handler)
   {
@@ -61,6 +70,11 @@ public class PermissionManager
   {
     _isAdmin = isAdmin;
 
+  }
+  public void SetAdmin(bool isAdmin)
+  {
+    _isAdmin = isAdmin;
+    PermissionApi.Notify();
   }
 
   public void AddEntry(PermissionEntry entry)

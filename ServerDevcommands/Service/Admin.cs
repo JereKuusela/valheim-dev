@@ -12,11 +12,11 @@ public static class Admin
   {
     if (!ZNet.instance) return;
     Checking = true;
+    PermissionManager.Instance.ResetToDefaults();
     if (ZNet.instance.IsServer())
       OnSuccess();
     else
     {
-      PermissionManager.Instance.ResetToDefaults();
       // Player ID is not sent on connection, so it must be sent here to avoid race condition.
       ZNet.instance.Unban("admintest_" + GetPlayerId());
     }
@@ -53,6 +53,7 @@ public static class Admin
   private static void OnSuccess()
   {
     Checking = false;
+    PermissionManager.Instance.SetAdmin(true);
     DevcommandsCommand.Set(true);
     Console.instance.AddString("Authorized to use devcommands.");
     ServerExecution.RequestIds();
@@ -61,7 +62,6 @@ public static class Admin
   private static void OnFail()
   {
     Checking = false;
-    DevcommandsCommand.Set(false);
     Console.instance.AddString("Unauthorized to use devcommands.");
   }
 
@@ -90,21 +90,24 @@ public class ZNet_RPC_RemotePrint
   }
 }
 
-///<summary>Check admin status on connect to ensure features are enabled/disabled when changing servers.</summary>
-[HarmonyPatch(typeof(Game), nameof(Game.Awake))]
+[HarmonyPatch(typeof(Game), nameof(Game.Start))]
 public class AdminReset
 {
   static void Postfix()
   {
     Admin.Reset();
   }
-}  ///<summary>Check admin status on connect to ensure features are enabled/disabled when changing servers.</summary>
+}
+
 [HarmonyPatch(typeof(Player), nameof(Player.OnSpawned))]
 public class AdminCheck
 {
   static void Postfix()
   {
-    if (!Admin.Checking) Admin.AutomaticCheck();
+    if (Game.instance.m_firstSpawn)
+      Admin.AutomaticCheck();
+    else
+      DevcommandsCommand.EnableAutoFeatures();
   }
 }
 
