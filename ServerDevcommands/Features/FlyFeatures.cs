@@ -138,6 +138,14 @@ public class FlyFeatures
     }
   }
 
+
+  // Prevents the rotation quaternion spam error while flying.
+  [HarmonyPatch(typeof(Character), nameof(Character.UpdateEyeRotation)), HarmonyPrefix]
+  static void UpdateEyeRotationPrefix(Character __instance)
+  {
+    __instance.m_lookDir = __instance.m_lookDir.normalized;
+  }
+
   [HarmonyPatch(typeof(Player), nameof(Player.IsDebugFlying)), HarmonyPostfix]
   static bool IsDebugFlyingPostfix(bool result, Player __instance) => __instance == Player.m_localPlayer ? Settings.IsEnabled(PermissionHash.Fly, result) : result;
 

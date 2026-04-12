@@ -96,10 +96,11 @@ public class ServerDevcommands : BaseUnityPlugin
 public class SetCommands
 {
   private static bool Initialized = false;
-  static void Postfix()
+  static void Postfix(Terminal __instance)
   {
     if (Initialized) return;
     Initialized = true;
+    __instance.m_search.text = "";
     new DevcommandsCommand();
     new ConfigCommand();
     new StartEventCommand();

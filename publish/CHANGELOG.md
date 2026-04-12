@@ -1,3 +1,8 @@
+- v1.104
+  - Adds granular permission system to allow features for non-admins and disable features for admins.
+  - Fixes vanilla bug that sometimes spams error about "view direction zero" when flying. Thanks Haloa!
+  - Improves console behavior. Thanks Haloa!
+
 - v1.103
   - Fixes various autocomplete issues (especially with Better Continentds mod). Thanks Kurios.ZeuS!
 
