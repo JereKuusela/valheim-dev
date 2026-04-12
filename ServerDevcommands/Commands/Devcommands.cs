@@ -39,6 +39,10 @@ public class DevcommandsCommand
         EnvMan.instance.m_debugTimeOfDay = true;
         EnvMan.instance.m_debugTime = Mathf.Clamp01(Parse.Float(Settings.AutoTod));
       }
+      if (Settings.AutoEnv != "" && PermissionApi.IsCommandAllowed("env"))
+      {
+        EnvMan.instance.m_debugEnv = Settings.AutoEnv;
+      }
     }
   }
   public static void DisableAutoFeatures()
@@ -65,6 +69,8 @@ public class DevcommandsCommand
     {
       if (Settings.AutoTod != "")
         EnvMan.instance.m_debugTimeOfDay = false;
+      if (Settings.AutoEnv != "")
+        EnvMan.instance.m_debugEnv = "";
     }
   }
   public static void Set(bool value)
