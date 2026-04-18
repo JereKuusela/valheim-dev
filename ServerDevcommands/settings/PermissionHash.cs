@@ -25,7 +25,6 @@ public static class PermissionHash
 
   // Disable Features
   public static readonly int IgnoreNoMap = "ignorenomap".GetStableHashCode();
-  public static readonly int DisableEvents = "disableevents".GetStableHashCode();
   public static readonly int DisableStartShout = "disablestartshout".GetStableHashCode();
 
   public static readonly int NoDrops = "nodrops".GetStableHashCode();

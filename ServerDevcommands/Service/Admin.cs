@@ -29,18 +29,25 @@ public static class Admin
     return id;
   }
   ///<summary>Verifies the admin status with a given text. Shouldn't be called directly.</summary>
-  public static void Verify(string text)
+  public static bool Verify(string text)
   {
     if (text == "Unbanning user admintest_" + GetPlayerId())
       OnSuccess();
     else if (text == "You are not admin")
       OnFail();
+    else
+      return false;
+    return true;
   }
 
   ///<summary>Receives permissions from the server via RPC. Shouldn't be called directly.</summary>
   public static void ReceivePermissions(ZRpc rpc, ZPackage pkg)
   {
     PermissionManager.Instance.Read(pkg);
+    if (PermissionManager.Instance.CanCheat)
+      OnSuccess();
+    else
+      OnFail();
   }
 
   ///<summary>Automatic check at the start of joining servers. Shouldn't be called directly.</summary>
@@ -85,8 +92,8 @@ public class ZNet_RPC_RemotePrint
   static bool Prefix(string text)
   {
     if (!Admin.Checking) return true;
-    Admin.Verify(text);
-    return false;
+    bool wasCheck = Admin.Verify(text);
+    return !wasCheck;
   }
 }
 

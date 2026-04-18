@@ -88,7 +88,7 @@ public class PermissionData
     if (!_entriesByKey.TryGetValue(key, out var entry))
       return;
 
-    AddGroupChain(entry.group, result, visitedPath, addedEntries);
+    AddGroupChains(entry.groups, result, visitedPath, addedEntries);
 
     if (addedEntries.Contains(key))
       return;
@@ -97,8 +97,18 @@ public class PermissionData
     result.Add(entry);
   }
 
+  private void AddGroupChains(List<string>? groupNames, List<PermissionEntry> result, HashSet<string> visitedPath, HashSet<string> addedEntries)
+  {
+    if (groupNames == null)
+      return;
+
+    foreach (var groupName in groupNames)
+      AddGroupChain(groupName, result, visitedPath, addedEntries);
+  }
+
   private void AddGroupChain(string groupName, List<PermissionEntry> result, HashSet<string> visitedPath, HashSet<string> addedEntries)
   {
+    groupName = groupName.Trim();
     if (string.IsNullOrWhiteSpace(groupName))
       return;
 
@@ -109,7 +119,7 @@ public class PermissionData
       return;
 
     visitedPath.Add(groupName);
-    AddGroupChain(groupEntry.group, result, visitedPath, addedEntries);
+    AddGroupChains(groupEntry.groups, result, visitedPath, addedEntries);
 
     if (!addedEntries.Contains(groupName))
     {
@@ -184,7 +194,7 @@ public class PermissionData
     if (a.id != b.id) return false;
     if (a.name != b.name) return false;
     if (a.character != b.character) return false;
-    if (a.group != b.group) return false;
+    if (!EqualStringList(a.groups, b.groups)) return false;
     if (!EqualFeatures(a.features, b.features)) return false;
     if (!EqualStringList(a.commands, b.commands)) return false;
     return true;

@@ -39,7 +39,7 @@ public class PermissionApi
   }
 }
 
-public class PermissionManager
+public class PermissionManager(bool isAdmin)
 {
   public enum FeaturePermission
   {
@@ -55,24 +55,19 @@ public class PermissionManager
   {
     get
     {
-      if (_instance == null)
-        _instance = new PermissionManager(false);
+      _instance ??= new PermissionManager(false);
       return _instance;
     }
   }
 
   private Dictionary<string, Dictionary<int, FeaturePermission>> _featurePermissions = [];
-  private bool _isAdmin = false;
-  private bool CanCheat => _isAdmin || !Helper.IsClient();
+  private bool _isAdmin = isAdmin;
+  public bool CanCheat => _isAdmin || !Helper.IsClient();
 
-
-  public PermissionManager(bool isAdmin)
-  {
-    _isAdmin = isAdmin;
-
-  }
   public void SetAdmin(bool isAdmin)
   {
+    // Must be checked to avoid unnecessary notification.
+    if (_isAdmin == isAdmin) return;
     _isAdmin = isAdmin;
     PermissionApi.Notify();
   }
@@ -119,6 +114,7 @@ public class PermissionManager
     }
   }
 
+  private static readonly int WildCardHash = "*".GetStableHashCode();
   /// <summary>
   /// Checks if a specific feature is active using pre-calculated hashes and a local config value.
   /// </summary>
@@ -134,7 +130,8 @@ public class PermissionManager
       FeaturePermission.No => false,
       FeaturePermission.Force => true,
       FeaturePermission.Yes => localConfigValue,
-      _ => localConfigValue && CanCheat,
+      // Wildcard can be used as fallback.
+      _ => featureHash == WildCardHash ? localConfigValue && CanCheat : IsFeatureEnabledByHash(section, WildCardHash, localConfigValue),
     };
   }
 
@@ -170,7 +167,7 @@ public class PermissionManager
     if (StartsWithAny(_bannedCommands, normalized))
       return false;
 
-    // Reguar valid check to allow non-cheat commands or all commands for admins.
+    // Default valid check to allow non-cheat commands or all commands for admins.
     // Unless explicitly banned.
     if (cmd.IsValid(Console.instance))
       return true;

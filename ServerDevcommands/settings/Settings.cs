@@ -34,7 +34,7 @@ public static class Settings
   public static ConfigEntry<bool> configAutoNoCost;
   public static bool AutoNoCost => configAutoNoCost.Value;
   public static ConfigEntry<bool> configDisableEvents;
-  public static bool DisableEvents => IsEnabled(PermissionHash.DisableEvents, configDisableEvents.Value);
+  public static bool DisableEvents => configDisableEvents.Value;
   public static ConfigEntry<bool> configDisableUnlockMessages;
   public static bool DisableUnlockMessages => configDisableUnlockMessages.Value;
   public static ConfigEntry<bool> configDisableDebugModeKeys;

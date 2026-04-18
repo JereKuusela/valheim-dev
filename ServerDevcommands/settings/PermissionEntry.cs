@@ -13,8 +13,9 @@ public class PermissionEntry
   public string name = "";
   [DefaultValue("")]
   public string character = "";
-  [DefaultValue("")]
-  public string group = "";
+  // Runtime list of inherited groups.
+  // In YAML this is stored as a list under the `groups` key.
+  public List<string>? groups = null;
   // Runtime map for feature sections. In YAML each non-reserved top-level key is a
   // map of feature -> yes/no/force.
   public Dictionary<string, List<string>>? features = null;
@@ -24,7 +25,7 @@ public class PermissionEntry
 }
 public static class PermissionYaml
 {
-  private static readonly HashSet<string> ReservedKeys = ["id", "name", "character", "group", "commands"];
+  private static readonly HashSet<string> ReservedKeys = ["id", "name", "character", "groups", "commands"];
 
   public static string SerializeEntries(List<PermissionEntry> entries)
   {
@@ -56,7 +57,8 @@ public static class PermissionYaml
     if (!string.IsNullOrWhiteSpace(entry.id)) mapped["id"] = entry.id;
     if (!string.IsNullOrWhiteSpace(entry.name)) mapped["name"] = entry.name;
     if (!string.IsNullOrWhiteSpace(entry.character)) mapped["character"] = entry.character;
-    if (!string.IsNullOrWhiteSpace(entry.group)) mapped["group"] = entry.group;
+    if (entry.groups != null && entry.groups.Count > 0)
+      mapped["groups"] = entry.groups;
 
     if (entry.features != null)
     {
@@ -87,7 +89,7 @@ public static class PermissionYaml
       id = ReadScalar(raw, "id"),
       name = ReadScalar(raw, "name"),
       character = ReadScalar(raw, "character"),
-      group = ReadScalar(raw, "group"),
+      groups = ReadStringList(raw, "groups"),
       commands = ReadPermissionList(raw, "commands")
     };
 
@@ -112,6 +114,9 @@ public static class PermissionYaml
     if (entry.commands != null && entry.commands.Count == 0)
       entry.commands = null;
 
+    if (entry.groups != null && entry.groups.Count == 0)
+      entry.groups = null;
+
     return entry;
   }
 
@@ -127,6 +132,44 @@ public static class PermissionYaml
     if (!raw.TryGetValue(key, out var value))
       return null;
     return ToPermissionList(value);
+  }
+
+  private static List<string>? ReadStringList(Dictionary<string, object> raw, string key)
+  {
+    if (!raw.TryGetValue(key, out var value))
+      return null;
+    return ToStringList(value);
+  }
+
+  private static List<string> ToStringList(object? value)
+  {
+    List<string> result = [];
+    if (value is IList<object> objectList)
+    {
+      foreach (var item in objectList)
+      {
+        var text = item?.ToString()?.Trim() ?? "";
+        if (text != "")
+          result.Add(text);
+      }
+      return result;
+    }
+
+    if (value is IList<string> stringList)
+    {
+      foreach (var item in stringList)
+      {
+        var text = item?.Trim() ?? "";
+        if (text != "")
+          result.Add(text);
+      }
+      return result;
+    }
+
+    var single = value?.ToString()?.Trim() ?? "";
+    if (single != "")
+      result.Add(single);
+    return result;
   }
 
   private static List<string> ToPermissionList(object? value)

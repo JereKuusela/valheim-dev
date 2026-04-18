@@ -58,7 +58,9 @@ public class PermissionLoader
   public static void CreateFile()
   {
     if (File.Exists(FilePath)) return;
-    Data.GetOrCreate("Everyone");
+    var entry = Data.GetOrCreate("Everyone");
+    // Permissions command can be dangerous by default, as it can be used to override any restrictions.
+    entry.commands = ["permissions: no"];
     ToFile();
   }
 
@@ -136,14 +138,17 @@ public class PermissionLoader
 public class RPC_Unban
 {
 
-  static void Postfix(ZNet __instance, ZRpc rpc, string user)
+  static bool Prefix(ZNet __instance, ZRpc rpc, string user)
   {
-    if (!user.StartsWith("admintest_", StringComparison.Ordinal)) return;
-    if (!__instance.IsServer()) return;
+    // Old clients only sent "admintest" and they should receive the regular message.
+    // New clients must not receive the regular message as it can conflict with the permissions.
+    if (!user.StartsWith("admintest_", StringComparison.Ordinal)) return true;
+    if (!__instance.IsServer()) return true;
     var kvp = Parse.Kvp(user, '_');
     var characterId = kvp.Value;
     PermissionLoader.UpdatePeer(rpc, characterId);
     var hostname = rpc.GetSocket().GetHostName();
     PermissionLoader.SendPermissions(rpc, hostname, characterId);
+    return false;
   }
 }

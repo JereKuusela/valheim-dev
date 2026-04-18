@@ -9,8 +9,9 @@ namespace ServerDevcommands;
 public class PermissionsCommand
 {
   private static readonly List<string> Operations = [
-    "set_group",
-    "clear_group",
+    "add_group",
+    "remove_group",
+    "clear_groups",
     "add_command",
     "ban_command",
     "clear_command",
@@ -41,6 +42,47 @@ public class PermissionsCommand
   {
     var split = Parse.Kvp(raw, ':');
     return split.Key.Trim().Equals(command.Trim(), StringComparison.OrdinalIgnoreCase);
+  }
+
+  private static bool IsMatchingGroup(string raw, string group)
+  {
+    return raw.Trim().Equals(group.Trim(), StringComparison.OrdinalIgnoreCase);
+  }
+
+  private static bool AddGroup(PermissionEntry entry, string group)
+  {
+    group = group.Trim();
+    if (group == "")
+      throw new InvalidOperationException("Missing group name.");
+
+    entry.groups ??= [];
+    if (entry.groups.Any(raw => IsMatchingGroup(raw, group)))
+      return false;
+    entry.groups.Add(group);
+    return true;
+  }
+
+  private static bool RemoveGroup(PermissionEntry entry, string group)
+  {
+    group = group.Trim();
+    if (group == "")
+      throw new InvalidOperationException("Missing group name.");
+    if (entry.groups == null)
+      return false;
+
+    var oldCount = entry.groups.Count;
+    entry.groups.RemoveAll(raw => IsMatchingGroup(raw, group));
+    if (entry.groups.Count == 0)
+      entry.groups = null;
+    return oldCount != (entry.groups?.Count ?? 0);
+  }
+
+  private static bool ClearGroups(PermissionEntry entry)
+  {
+    if (entry.groups == null || entry.groups.Count == 0)
+      return false;
+    entry.groups = null;
+    return true;
   }
 
   private static bool SetFeaturePermission(PermissionEntry entry, string section, string feature, PermissionManager.FeaturePermission permission)
@@ -188,7 +230,7 @@ public class PermissionsCommand
   private static void Handle(Terminal.ConsoleEventArgs args)
   {
     if (args.Length < 2)
-      throw new InvalidOperationException("Missing operation. Use set_group, clear_group, add_command, ban_command, clear_command, add_feature, ban_feature, force_feature, clear_feature, clear_all.");
+      throw new InvalidOperationException("Missing operation. Use add_group, remove_group, clear_groups, add_command, ban_command, clear_command, add_feature, ban_feature, force_feature, clear_feature, clear_all.");
 
     if (!ZNet.instance.IsServer())
     {
@@ -199,35 +241,33 @@ public class PermissionsCommand
     var operation = args[1].ToLowerInvariant();
     switch (operation)
     {
-      case "set_group":
+      case "add_group":
         {
-          Helper.ArgsCheck(args, 4, "Usage: permissions set_group <group> <character id or name>");
+          Helper.ArgsCheck(args, 4, "Usage: permissions add_group <group> <character id or name>");
           var group = args[2].Trim();
           var target = JoinArgs(args, 3);
           if (target == "")
             throw new InvalidOperationException("Missing target character id or name.");
-          if (group == "")
-            throw new InvalidOperationException("Missing group name.");
-          HandlePlayerEdit(args, target, entry =>
-          {
-            if (entry.group == group) return false;
-            entry.group = group;
-            return true;
-          });
+          HandlePlayerEdit(args, target, entry => AddGroup(entry, group));
           return;
         }
-      case "clear_group":
+      case "remove_group":
         {
-          Helper.ArgsCheck(args, 3, "Usage: permissions clear_group <character id or name>");
+          Helper.ArgsCheck(args, 4, "Usage: permissions remove_group <group> <character id or name>");
+          var group = args[2].Trim();
+          var target = JoinArgs(args, 3);
+          if (target == "")
+            throw new InvalidOperationException("Missing target character id or name.");
+          HandlePlayerEdit(args, target, entry => RemoveGroup(entry, group));
+          return;
+        }
+      case "clear_groups":
+        {
+          Helper.ArgsCheck(args, 3, "Usage: permissions clear_groups <character id or name>");
           var target = JoinArgs(args, 2);
           if (target == "")
             throw new InvalidOperationException("Missing target character id or name.");
-          HandlePlayerEdit(args, target, entry =>
-          {
-            if (entry.group == "") return false;
-            entry.group = "";
-            return true;
-          });
+          HandlePlayerEdit(args, target, ClearGroups);
           return;
         }
       case "add_command":
@@ -285,8 +325,9 @@ public class PermissionsCommand
           var target = JoinArgs(args, 2);
           HandlePlayerEdit(args, target, entry =>
           {
-            if (entry.commands == null && entry.features == null)
+            if (entry.groups == null && entry.commands == null && entry.features == null)
               return false;
+            entry.groups = null;
             entry.commands = null;
             entry.features = null;
             return true;
@@ -305,14 +346,14 @@ public class PermissionsCommand
 
     var operation = args.Length > 0 ? args[0].Trim().ToLowerInvariant() : "";
 
-    if (operation == "set_group")
+    if (operation == "add_group" || operation == "remove_group")
     {
       if (index == 1) return ParameterInfo.Create("Group name");
       if (index >= 2) return ParameterInfo.PlayerNames;
       return ParameterInfo.None;
     }
 
-    if (operation == "clear_group" || operation == "clear_all")
+    if (operation == "clear_groups" || operation == "clear_all")
     {
       if (index >= 1) return ParameterInfo.PlayerNames;
       return ParameterInfo.None;
@@ -333,7 +374,7 @@ public class PermissionsCommand
       return ParameterInfo.None;
     }
 
-    return ParameterInfo.Create("Unknown operation. Use: set_group, clear_group, add_command, ban_command, clear_command, add_feature, ban_feature, force_feature, clear_feature, clear_all");
+    return ParameterInfo.Create("Unknown operation. Use: add_group, remove_group, clear_groups, add_command, ban_command, clear_command, add_feature, ban_feature, force_feature, clear_feature, clear_all");
   }
 
   public PermissionsCommand()
