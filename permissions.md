@@ -33,7 +33,7 @@ Server Devcommands mod uses `serverdevcommands` section for its features. For ot
 Know mods:
 
 - Server Devcommands: `serverdevcommands`
-- ESP: `esp_stats` and `esp_visuals`
+- ESP: `esp_hud`, `esp_stats` and `esp_visuals`
 
 Server Devcommands supports these features inside its section:
 
