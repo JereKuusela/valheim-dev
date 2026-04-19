@@ -101,7 +101,6 @@ public class PermissionLoader
 
   public static void ToFile()
   {
-    if (Helper.IsClient()) return;
     File.WriteAllText(FilePath, PermissionYaml.SerializeEntries(Data.Entries));
   }
 

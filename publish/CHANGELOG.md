@@ -1,3 +1,6 @@
+- v1.104
+  - Fixes permissions.yaml not being created on start up.
+
 - v1.103
   - Adds granular permission system to allow features for non-admins and disable features for admins.
   - Fixes vanilla bug that sometimes spams error about "view direction zero" when flying. Thanks Haloa!
