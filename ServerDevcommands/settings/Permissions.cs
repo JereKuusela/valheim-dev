@@ -8,6 +8,8 @@ public class PermissionApi
 {
   public static event Action? PermissionsUpdated;
 
+  private const string EveryoneGroup = "Everyone";
+
   public static bool IsFeatureEnabled(string section, string feature, bool localConfigValue) => IsFeatureEnabledByHash(section, feature.ToLower().GetStableHashCode(), localConfigValue);
   public static bool IsFeatureEnabledByHash(string section, int featureHash, bool localConfigValue)
   {
@@ -21,6 +23,29 @@ public class PermissionApi
     if (cmd == null)
       return false;
     return PermissionManager.Instance.IsCommandAllowed(cmd, commandName);
+  }
+
+  /// <summary>
+  /// Expand World Prefabs group handler.
+  /// Resolves whether a player belongs to a permission group through direct or inherited membership.
+  /// </summary>
+  public static bool HasGroup(string playerId, long characterId, string group)
+  {
+    group = group?.Trim() ?? "";
+    if (group == "")
+      return false;
+
+    // Everyone is always treated as globally available.
+    if (group.Equals(EveryoneGroup, StringComparison.OrdinalIgnoreCase))
+      return true;
+
+    var data = PermissionLoader.Data;
+    var character = characterId.ToString();
+    var playerKey = PermissionData.PeerKey(playerId, character);
+    if (playerKey == "")
+      return false;
+
+    return data.HasGroup(playerKey, group);
   }
 
   public static void Subscribe(Action handler)

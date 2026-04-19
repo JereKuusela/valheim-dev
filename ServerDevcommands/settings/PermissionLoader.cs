@@ -51,6 +51,8 @@ public class PermissionLoader
     if (key == "")
       return;
     var peer = zNet.GetPeerByHostName(hostname);
+    if (peer == null)
+      return;
     SendPermissions(peer.m_rpc, hostname, characterId);
   }
 

@@ -22,145 +22,6 @@ public class PermissionsCommand
     "clear_all"
   ];
 
-  private static string PermissionToSuffix(PermissionManager.FeaturePermission permission)
-  {
-    return permission switch
-    {
-      PermissionManager.FeaturePermission.No => "no",
-      PermissionManager.FeaturePermission.Force => "force",
-      _ => "yes"
-    };
-  }
-
-  private static bool IsMatchingFeature(string raw, string feature)
-  {
-    var split = Parse.Kvp(raw, ':');
-    return split.Key.Trim().Equals(feature.Trim(), StringComparison.OrdinalIgnoreCase);
-  }
-
-  private static bool IsMatchingCommand(string raw, string command)
-  {
-    var split = Parse.Kvp(raw, ':');
-    return split.Key.Trim().Equals(command.Trim(), StringComparison.OrdinalIgnoreCase);
-  }
-
-  private static bool IsMatchingGroup(string raw, string group)
-  {
-    return raw.Trim().Equals(group.Trim(), StringComparison.OrdinalIgnoreCase);
-  }
-
-  private static bool AddGroup(PermissionEntry entry, string group)
-  {
-    group = group.Trim();
-    if (group == "")
-      throw new InvalidOperationException("Missing group name.");
-
-    entry.groups ??= [];
-    if (entry.groups.Any(raw => IsMatchingGroup(raw, group)))
-      return false;
-    entry.groups.Add(group);
-    return true;
-  }
-
-  private static bool RemoveGroup(PermissionEntry entry, string group)
-  {
-    group = group.Trim();
-    if (group == "")
-      throw new InvalidOperationException("Missing group name.");
-    if (entry.groups == null)
-      return false;
-
-    var oldCount = entry.groups.Count;
-    entry.groups.RemoveAll(raw => IsMatchingGroup(raw, group));
-    if (entry.groups.Count == 0)
-      entry.groups = null;
-    return oldCount != (entry.groups?.Count ?? 0);
-  }
-
-  private static bool ClearGroups(PermissionEntry entry)
-  {
-    if (entry.groups == null || entry.groups.Count == 0)
-      return false;
-    entry.groups = null;
-    return true;
-  }
-
-  private static bool SetFeaturePermission(PermissionEntry entry, string section, string feature, PermissionManager.FeaturePermission permission)
-  {
-    section = section.Trim().ToLowerInvariant();
-    feature = feature.Trim();
-    if (section == "" || feature == "")
-      throw new InvalidOperationException("Missing section or feature name.");
-
-    entry.features ??= [];
-    if (!entry.features.TryGetValue(section, out var features))
-    {
-      features = [];
-      entry.features[section] = features;
-    }
-
-    var suffix = PermissionToSuffix(permission);
-    var replacement = suffix == "yes" ? feature : $"{feature}: {suffix}";
-    var already = features.Any(raw => raw.Equals(replacement, StringComparison.OrdinalIgnoreCase));
-    var oldCount = features.Count;
-    features.RemoveAll(raw => IsMatchingFeature(raw, feature));
-    features.Add(replacement);
-    return !already || oldCount != features.Count;
-  }
-
-  private static bool ClearFeature(PermissionEntry entry, string section, string feature)
-  {
-    section = section.Trim().ToLowerInvariant();
-    feature = feature.Trim();
-    if (section == "" || feature == "")
-      throw new InvalidOperationException("Missing section or feature name.");
-    if (entry.features == null)
-      return false;
-    if (!entry.features.TryGetValue(section, out var features))
-      return false;
-
-    var oldCount = features.Count;
-    features.RemoveAll(raw => IsMatchingFeature(raw, feature));
-    if (features.Count == 0)
-      entry.features.Remove(section);
-    if (entry.features.Count == 0)
-      entry.features = null;
-
-    return oldCount != features.Count;
-  }
-
-  private static bool SetCommandPermission(PermissionEntry entry, string command, PermissionManager.FeaturePermission permission)
-  {
-    command = command.Trim();
-    if (command == "")
-      throw new InvalidOperationException("Missing command name.");
-
-    entry.commands ??= [];
-    var suffix = PermissionToSuffix(permission);
-    var replacement = suffix == "yes" ? command : $"{command}: {suffix}";
-    var already = entry.commands.Any(raw => raw.Equals(replacement, StringComparison.OrdinalIgnoreCase));
-    var oldCount = entry.commands.Count;
-    entry.commands.RemoveAll(raw => IsMatchingCommand(raw, command));
-    entry.commands.Add(replacement);
-    return !already || oldCount != entry.commands.Count;
-  }
-
-  private static bool ClearCommand(PermissionEntry entry, string command)
-  {
-    command = command.Trim();
-    if (command == "")
-      throw new InvalidOperationException("Missing command name.");
-    if (entry.commands == null)
-      return false;
-
-    var oldCount = entry.commands.Count;
-    entry.commands.RemoveAll(raw => IsMatchingCommand(raw, command));
-    var newCount = entry.commands.Count;
-    if (entry.commands.Count == 0)
-      entry.commands = null;
-    return oldCount != newCount;
-  }
-
   private static List<PlayerInfo> FindTargetPlayers(string target)
   {
     try
@@ -212,6 +73,7 @@ public class PermissionsCommand
   private static void HandlePlayerEdit(Terminal.ConsoleEventArgs args, string target, Func<PermissionEntry, bool> update)
   {
     var (Hostname, CharacterId, DisplayName) = ResolvePlayerTarget(target);
+    var key = PermissionData.PeerKey(Hostname, CharacterId);
     var entry = PermissionLoader.GetOrCreatePeerEntry(Hostname, CharacterId, DisplayName)
       ?? throw new InvalidOperationException("Unable to create permission entry.");
     var changed = update(entry);
@@ -221,7 +83,6 @@ public class PermissionsCommand
       PermissionLoader.SendPeerPermissions(Hostname, CharacterId);
     }
 
-    var key = PermissionData.PeerKey(Hostname, CharacterId);
     Helper.AddMessage(args.Context, changed
       ? $"Permissions updated for {DisplayName} ({key})."
       : $"No permission changes for {DisplayName} ({key}).");
@@ -248,7 +109,7 @@ public class PermissionsCommand
           var target = JoinArgs(args, 3);
           if (target == "")
             throw new InvalidOperationException("Missing target character id or name.");
-          HandlePlayerEdit(args, target, entry => AddGroup(entry, group));
+          HandlePlayerEdit(args, target, entry => PermissionLoader.Data.AddGroup(entry, group));
           return;
         }
       case "remove_group":
@@ -258,7 +119,7 @@ public class PermissionsCommand
           var target = JoinArgs(args, 3);
           if (target == "")
             throw new InvalidOperationException("Missing target character id or name.");
-          HandlePlayerEdit(args, target, entry => RemoveGroup(entry, group));
+          HandlePlayerEdit(args, target, entry => PermissionLoader.Data.RemoveGroup(entry, group));
           return;
         }
       case "clear_groups":
@@ -267,71 +128,63 @@ public class PermissionsCommand
           var target = JoinArgs(args, 2);
           if (target == "")
             throw new InvalidOperationException("Missing target character id or name.");
-          HandlePlayerEdit(args, target, ClearGroups);
+          HandlePlayerEdit(args, target, entry => PermissionLoader.Data.ClearGroups(entry));
           return;
         }
       case "add_command":
         {
           Helper.ArgsCheck(args, 4, "Usage: permissions add_command <command> <character id or name>");
           var target = JoinArgs(args, 3);
-          HandlePlayerEdit(args, target, entry => SetCommandPermission(entry, args[2], PermissionManager.FeaturePermission.Yes));
+          HandlePlayerEdit(args, target, entry => PermissionLoader.Data.SetCommandPermission(entry, args[2], PermissionManager.FeaturePermission.Yes));
           return;
         }
       case "ban_command":
         {
           Helper.ArgsCheck(args, 4, "Usage: permissions ban_command <command> <character id or name>");
           var target = JoinArgs(args, 3);
-          HandlePlayerEdit(args, target, entry => SetCommandPermission(entry, args[2], PermissionManager.FeaturePermission.No));
+          HandlePlayerEdit(args, target, entry => PermissionLoader.Data.SetCommandPermission(entry, args[2], PermissionManager.FeaturePermission.No));
           return;
         }
       case "clear_command":
         {
           Helper.ArgsCheck(args, 4, "Usage: permissions clear_command <command> <character id or name>");
           var target = JoinArgs(args, 3);
-          HandlePlayerEdit(args, target, entry => ClearCommand(entry, args[2]));
+          HandlePlayerEdit(args, target, entry => PermissionLoader.Data.ClearCommand(entry, args[2]));
           return;
         }
       case "add_feature":
         {
           Helper.ArgsCheck(args, 5, "Usage: permissions add_feature <section> <feature> <character id or name>");
           var target = JoinArgs(args, 4);
-          HandlePlayerEdit(args, target, entry => SetFeaturePermission(entry, args[2], args[3], PermissionManager.FeaturePermission.Yes));
+          HandlePlayerEdit(args, target, entry => PermissionLoader.Data.SetFeaturePermission(entry, args[2], args[3], PermissionManager.FeaturePermission.Yes));
           return;
         }
       case "ban_feature":
         {
           Helper.ArgsCheck(args, 5, "Usage: permissions ban_feature <section> <feature> <character id or name>");
           var target = JoinArgs(args, 4);
-          HandlePlayerEdit(args, target, entry => SetFeaturePermission(entry, args[2], args[3], PermissionManager.FeaturePermission.No));
+          HandlePlayerEdit(args, target, entry => PermissionLoader.Data.SetFeaturePermission(entry, args[2], args[3], PermissionManager.FeaturePermission.No));
           return;
         }
       case "force_feature":
         {
           Helper.ArgsCheck(args, 5, "Usage: permissions force_feature <section> <feature> <character id or name>");
           var target = JoinArgs(args, 4);
-          HandlePlayerEdit(args, target, entry => SetFeaturePermission(entry, args[2], args[3], PermissionManager.FeaturePermission.Force));
+          HandlePlayerEdit(args, target, entry => PermissionLoader.Data.SetFeaturePermission(entry, args[2], args[3], PermissionManager.FeaturePermission.Force));
           return;
         }
       case "clear_feature":
         {
           Helper.ArgsCheck(args, 5, "Usage: permissions clear_feature <section> <feature> <character id or name>");
           var target = JoinArgs(args, 4);
-          HandlePlayerEdit(args, target, entry => ClearFeature(entry, args[2], args[3]));
+          HandlePlayerEdit(args, target, entry => PermissionLoader.Data.ClearFeature(entry, args[2], args[3]));
           return;
         }
       case "clear_all":
         {
           Helper.ArgsCheck(args, 3, "Usage: permissions clear_all <character id or name>");
           var target = JoinArgs(args, 2);
-          HandlePlayerEdit(args, target, entry =>
-          {
-            if (entry.groups == null && entry.commands == null && entry.features == null)
-              return false;
-            entry.groups = null;
-            entry.commands = null;
-            entry.features = null;
-            return true;
-          });
+          HandlePlayerEdit(args, target, entry => PermissionLoader.Data.ClearAll(entry));
           return;
         }
       default:

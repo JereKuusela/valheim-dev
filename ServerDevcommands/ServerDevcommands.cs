@@ -13,7 +13,7 @@ public class ServerDevcommands : BaseUnityPlugin
 {
   public const string GUID = "server_devcommands";
   public const string NAME = "Server Devcommands";
-  public const string VERSION = "1.102.5";
+  public const string VERSION = "1.102.6";
   public const string COMFY_GIZMO_GUID = "bruce.valheim.comfymods.gizmo";
   public const string RELOADED_GIZMO_GUID = "m3to.mods.GizmoReloaded";
   private static ManualLogSource? Logs;
@@ -44,6 +44,7 @@ public class ServerDevcommands : BaseUnityPlugin
       ComfyGizmoPatcher.DoPatching(info.Instance.GetType().Assembly);
     if (Chainloader.PluginInfos.TryGetValue(RELOADED_GIZMO_GUID, out info))
       GizmoReloadedPatcher.DoPatching(info.Instance.GetType().Assembly);
+    EWP.Api.RegisterGroupHandler("serverdevcommands", PermissionApi.HasGroup);
   }
 
   public void LateUpdate()
