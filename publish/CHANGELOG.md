@@ -1,10 +1,8 @@
-- v1.104
+- v1.103
   - Adds granular permission system to allow features for non-admins and disable features for admins.
   - Fixes vanilla bug that sometimes spams error about "view direction zero" when flying. Thanks Haloa!
-  - Improves console behavior. Thanks Haloa!
-
-- v1.103
   - Fixes various autocomplete issues (especially with Better Continentds mod). Thanks Kurios.ZeuS!
+  - Improves console behavior. Thanks Haloa!
 
 - v1.102
   - Adds support for receiving server side location and vegetation IDs from Expand World Data mod.
