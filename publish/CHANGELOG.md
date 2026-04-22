@@ -1,3 +1,6 @@
+- v1.105
+  - Fixes major performance issue in the permission system.
+
 - v1.104
   - Fixes permissions.yaml not being created on start up.
 
@@ -12,9 +15,3 @@
 
 - v1.101
   - Adds settings to limit recipes to station (default: `true`) and respect station level (default: `false`) when using nocost mode. Thanks Azumatt!
-
-- v1.100
-  - Internal change to support improved connected object selection.
-
-- v1.99
-  - Fixes keys F13-F24 not being bindable.
