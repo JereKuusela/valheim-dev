@@ -1,8 +1,6 @@
 # Server Devcommands
 
-Allows devcommands and utilities for server admins.
-
-Some features and commands require also installing the mod on the server (event, find, randomevent, stopevent).
+Allows devcommands and utilities for server admins. Full features require server side installation.
 
 Install on the admin client and optionally on the server (modding [guide](https://youtu.be/L9ljm2eKLrk)).
 

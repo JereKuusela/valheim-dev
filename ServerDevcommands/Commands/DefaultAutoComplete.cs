@@ -117,6 +117,11 @@ public static class DefaultAutoComplete
     AutoComplete.RegisterEmpty("killenemycreatures");
     AutoComplete.RegisterEmpty("killtame");
     AutoComplete.RegisterEmpty("listkeys");
+
+    // Seems to work better locally, as the client knows global keys and also has player keys.
+    if (Terminal.commands.TryGetValue("listkeys", out var cmd))
+      cmd.RemoteCommand = false;
+
     AutoComplete.Register("location", index =>
     {
       if (index == 0) return ParameterInfo.LocationIds;

@@ -241,22 +241,12 @@ public class TabCycleWithImprovedAutoComplete
 
     if (!Settings.ImprovedAutoComplete || __instance == Chat.instance) return;
 
-    // Identify the target word for parameter-specific completion
-    var lastWord = TerminalUtils.GetLastWord(__instance);
-    var inputText = __instance.m_input.text;
+    // Identify the target word for parameter-specific completion.
+    word = TerminalUtils.GetLastWord(__instance);
 
-    // Ensure 'word' correctly represents the token Unity should replace.
-    if (inputText.EndsWith(" "))
-    {
-      // If at a space, we tell Unity to replace an empty string at the cursor.
-      // This prevents Unity from 'finding' and replacing the previous word (e.g. 'hl' -> 'hadd').
+    // Space at ends means that nothing to replace, as the options are for the next parameter.
+    if (word.EndsWith(" "))
       word = "";
-    }
-    else if (!string.IsNullOrEmpty(lastWord))
-    {
-      // If mid-word, we tell Unity exactly which partial token to replace.
-      word = lastWord;
-    }
   }
 }
 

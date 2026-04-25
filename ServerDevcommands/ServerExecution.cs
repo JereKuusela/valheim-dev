@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
-using static ZRpc;
 
 namespace ServerDevcommands;
 
@@ -14,6 +13,9 @@ public class RedirectOutput
   {
     if (ZNet.m_isServer && Target != null)
     {
+      // Dedicated server ZLogs also triggers this. These would clutter the console window with low value messages.
+      if (text.StartsWith("["))
+        return;
       ZNet.instance.RemotePrint(Target, text);
     }
   }
@@ -23,8 +25,8 @@ public class RedirectOutput
 [HarmonyPatch]
 public class ServerExecution
 {
-  [HarmonyPatch(typeof(ZNet), nameof(ZNet.InternalCommand)), HarmonyPrefix]
-  static bool InternalCommandPrefix(ZNet __instance, ZRpc rpc, string command)
+  [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_RemoteCommand)), HarmonyPrefix]
+  static bool ReplceAdminCheckWithCustomCheck(ZNet __instance, ZRpc rpc, string command)
   {
     if (!__instance.IsServer())
       return true;
@@ -36,11 +38,11 @@ public class ServerExecution
       return false;
     }
 
-    Console.instance.TryRunCommand(command);
+    __instance.InternalCommand(rpc, command);
     return false;
   }
-  [HarmonyPatch(typeof(ZNet), nameof(ZNet.InternalCommand)), HarmonyFinalizer]
-  static void InternalCommandFinalizer()
+  [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_RemoteCommand)), HarmonyFinalizer]
+  static void ClearTarget()
   {
     RedirectOutput.Target = null;
   }

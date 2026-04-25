@@ -1,3 +1,7 @@
+- v1.106
+  - Fixes server side remote commands returning excessive output.
+  - Fixes autocomplete issue.
+
 - v1.105
   - Fixes major performance issue in the permission system.
 
@@ -12,6 +16,3 @@
 
 - v1.102
   - Adds support for receiving server side location and vegetation IDs from Expand World Data mod.
-
-- v1.101
-  - Adds settings to limit recipes to station (default: `true`) and respect station level (default: `false`) when using nocost mode. Thanks Azumatt!

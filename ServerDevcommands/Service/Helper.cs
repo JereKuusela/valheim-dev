@@ -9,20 +9,7 @@ namespace ServerDevcommands;
 ///<summary>Contains functions for parsing arguments, etc.</summary>
 public abstract class Helper
 {
-  // Replaced line 11 with this:
-  public static bool IsValid(ZoneSystem.ZoneLocation loc)
-  {
-    if (loc == null || loc.m_prefab == null) return false;
-
-    // Check public property first
-    if (loc.m_prefab.IsValid) return true;
-
-    // Use Reflection to check the private m_name field
-    var nameField = HarmonyLib.AccessTools.Field(typeof(SoftReference<UnityEngine.GameObject>), "m_name");
-    var nameValue = nameField?.GetValue(loc.m_prefab) as string;
-
-    return nameValue != null;
-  }
+  public static bool IsValid(ZoneSystem.ZoneLocation loc) => loc != null && loc.m_prefab != null && (loc.m_prefab.IsValid || loc.m_prefab.m_name != null);
   public static void AddMessage(Terminal context, string message, bool priority = false)
   {
     if (context == Console.instance || Settings.ChatOutput)
