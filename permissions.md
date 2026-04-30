@@ -129,6 +129,10 @@ Note: The command works for offline players too, as long as they have an entry i
 
 Here are some advanced cases to use the permission system more efficiently.
 
+## Admin access
+
+Field `admin` can be used to set admin status for a character. Supported values are `yes` and `no`.
+
 ### Feature wildcards
 
 Feature name `*` can be used to set default value for all features of that section.

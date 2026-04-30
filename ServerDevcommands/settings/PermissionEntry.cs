@@ -13,6 +13,10 @@ public class PermissionEntry
   public string name = "";
   [DefaultValue("")]
   public string character = "";
+  [DefaultValue("")]
+  // Optional admin override. Empty keeps normal admin check,
+  // "yes" or "no" force admin on/off.
+  public string admin = "";
   // Runtime list of inherited groups.
   // In YAML this is stored as a list under the `groups` key.
   public List<string>? groups = null;
@@ -25,7 +29,7 @@ public class PermissionEntry
 }
 public static class PermissionYaml
 {
-  private static readonly HashSet<string> ReservedKeys = ["id", "name", "character", "groups", "commands"];
+  private static readonly HashSet<string> ReservedKeys = ["id", "name", "character", "admin", "groups", "commands"];
 
   public static string SerializeEntries(List<PermissionEntry> entries)
   {
@@ -57,6 +61,8 @@ public static class PermissionYaml
     if (!string.IsNullOrWhiteSpace(entry.id)) mapped["id"] = entry.id;
     if (!string.IsNullOrWhiteSpace(entry.name)) mapped["name"] = entry.name;
     if (!string.IsNullOrWhiteSpace(entry.character)) mapped["character"] = entry.character;
+    var admin = NormalizeAdmin(entry.admin);
+    if (admin != "") mapped["admin"] = admin;
     if (entry.groups != null && entry.groups.Count > 0)
       mapped["groups"] = entry.groups;
 
@@ -89,6 +95,7 @@ public static class PermissionYaml
       id = ReadScalar(raw, "id"),
       name = ReadScalar(raw, "name"),
       character = ReadScalar(raw, "character"),
+      admin = ReadAdmin(raw, "admin"),
       groups = ReadStringList(raw, "groups"),
       commands = ReadPermissionList(raw, "commands")
     };
@@ -139,6 +146,29 @@ public static class PermissionYaml
     if (!raw.TryGetValue(key, out var value))
       return null;
     return ToStringList(value);
+  }
+
+  private static string ReadAdmin(Dictionary<string, object> raw, string key)
+  {
+    if (!raw.TryGetValue(key, out var value))
+      return "";
+
+    return NormalizeAdmin(value?.ToString() ?? "");
+  }
+
+  private static string NormalizeAdmin(string value)
+  {
+    var parsed = value?.Trim().ToLowerInvariant() ?? "";
+    return parsed switch
+    {
+      "yes" => "yes",
+      "true" => "yes",
+      "1" => "yes",
+      "no" => "no",
+      "false" => "no",
+      "0" => "no",
+      _ => "",
+    };
   }
 
   private static List<string> ToStringList(object? value)

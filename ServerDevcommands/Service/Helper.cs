@@ -116,7 +116,7 @@ public abstract class Helper
     var pos = Player.m_localPlayer.transform.position;
     if (parameters.Count < count + 1)
       parameters.Add(pos.x.ToString(CultureInfo.InvariantCulture) + "," + pos.z.ToString(CultureInfo.InvariantCulture) + "," + pos.y.ToString(CultureInfo.InvariantCulture));
-    return parameters.ToArray();
+    return [.. parameters];
   }
   public static ZNet.PlayerInfo FindPlayer(string name, bool publicOnly = false)
   {
@@ -196,6 +196,7 @@ public abstract class Helper
       return null;
     };
 
+  public static bool IsDedicated() => !ZNet.instance || ZNet.instance.IsDedicated();
   public static bool IsServer() => ZNet.instance && ZNet.instance.IsServer();
   // Note: Intended that is client when no Znet instance (so stuff isn't loaded in the main menu).
   public static bool IsClient() => !IsServer();

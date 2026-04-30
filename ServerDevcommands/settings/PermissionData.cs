@@ -214,6 +214,11 @@ public class PermissionData
       tracked.features = null;
       changed = true;
     }
+    if (!string.IsNullOrWhiteSpace(tracked.admin))
+    {
+      tracked.admin = "";
+      changed = true;
+    }
 
     return changed;
   }

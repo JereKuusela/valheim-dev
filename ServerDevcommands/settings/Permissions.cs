@@ -87,20 +87,30 @@ public class PermissionManager(bool isAdmin)
 
   private Dictionary<string, Dictionary<int, FeaturePermission>> _featurePermissions = [];
   private bool _isAdmin = isAdmin;
-  public bool CanCheat => _isAdmin || !Helper.IsClient();
-
-  public void SetAdmin(bool isAdmin)
+  // Separate variable is needed to allow people turn off cheat access.
+  public bool CanCheat => (Terminal.m_cheat && _isAdmin) || Helper.IsDedicated();
+  public bool IsAdmin
   {
-    // Must be checked to avoid unnecessary notification.
-    if (_isAdmin == isAdmin) return;
-    _isAdmin = isAdmin;
-    PermissionApi.Notify();
+    get => _isAdmin;
+    set
+    {
+      // Must be checked to avoid extra notification.
+      if (_isAdmin == value) return;
+      _isAdmin = value;
+      PermissionApi.Notify();
+    }
   }
 
   public void AddEntry(PermissionEntry entry)
   {
     if (entry == null)
       return;
+
+    var admin = entry.admin?.Trim().ToLowerInvariant() ?? "";
+    if (admin == "yes")
+      _isAdmin = true;
+    else if (admin == "no")
+      _isAdmin = false;
 
     if (entry.features != null)
     {

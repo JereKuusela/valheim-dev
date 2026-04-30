@@ -44,7 +44,7 @@ public static class Admin
   public static void ReceivePermissions(ZRpc rpc, ZPackage pkg)
   {
     PermissionManager.Instance.Read(pkg);
-    if (PermissionManager.Instance.CanCheat)
+    if (PermissionManager.Instance.IsAdmin)
       OnSuccess();
     else
       OnFail();
@@ -60,7 +60,7 @@ public static class Admin
   private static void OnSuccess()
   {
     Checking = false;
-    PermissionManager.Instance.SetAdmin(true);
+    PermissionManager.Instance.IsAdmin = true;
     DevcommandsCommand.Set(true);
     Console.instance.AddString("Authorized to use devcommands.");
     ServerExecution.RequestIds();
