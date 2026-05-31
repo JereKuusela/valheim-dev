@@ -129,9 +129,17 @@ Note: The command works for offline players too, as long as they have an entry i
 
 Here are some advanced cases to use the permission system more efficiently.
 
-## Admin access
+### Admin access
 
 Field `admin` can be used to set admin status for a character. Supported values are `yes` and `no`.
+
+When set, this overrides the default admin list.
+
+### All characters
+
+Character id is optional. When missing, the permissions apply to all characters with the same host name.
+
+You can still have character specific entries if needed.
 
 ### Feature wildcards
 

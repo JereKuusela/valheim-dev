@@ -41,11 +41,7 @@ public class PermissionApi
 
     var data = PermissionLoader.Data;
     var character = characterId.ToString();
-    var playerKey = PermissionData.PeerKey(playerId, character);
-    if (playerKey == "")
-      return false;
-
-    return data.HasGroup(playerKey, group);
+    return data.HasGroup(playerId, character, group);
   }
 
   public static void Subscribe(Action handler)

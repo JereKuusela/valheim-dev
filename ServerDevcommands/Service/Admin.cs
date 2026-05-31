@@ -122,9 +122,18 @@ public class AdminCheck
 [HarmonyPatch(typeof(ZNet), nameof(ZNet.ListContainsId))]
 public class ListContainsId
 {
-  static void Prefix(ref string idString)
+  static bool Prefix(ZNet __instance, SyncedList list, string idString, ref bool __result)
   {
-    if (idString.Contains("_")) return;
-    idString = PlatformUserID.GetPlatformPrefix(ZNet.instance.m_steamPlatform) + idString;
+    if (!idString.Contains("_"))
+      idString = PlatformUserID.GetPlatformPrefix(ZNet.instance.m_steamPlatform) + idString;
+    if (list != __instance.m_adminList) return true;
+
+    // Only override admin status when an explicit permissions override exists.
+    var adminOverride = PermissionLoader.Data.ResolveAdminOverride(idString);
+    if (!adminOverride.HasValue)
+      return true;
+
+    __result = adminOverride.Value;
+    return false;
   }
 }

@@ -92,7 +92,7 @@ public class PermissionLoader
       var key = PermissionData.PeerKey(hostname, characterId);
       if (key == "")
         continue;
-      if (!updateAllPlayers && !changedKeys.Contains(key))
+      if (!updateAllPlayers && !PermissionData.IsPeerChanged(changedKeys, hostname, characterId))
         continue;
 
       SendPermissions(peer.m_rpc, hostname, characterId);
@@ -138,7 +138,6 @@ public class PermissionLoader
 [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_Unban))]
 public class RPC_Unban
 {
-
   static bool Prefix(ZNet __instance, ZRpc rpc, string user)
   {
     // Old clients only sent "admintest" and they should receive the regular message.

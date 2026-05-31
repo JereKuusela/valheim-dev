@@ -5,9 +5,12 @@ namespace ServerDevcommands;
 
 public class PermissionData
 {
+  // Might not be strictly needed but good that there is something to separate peer entries from group entries.
+  private const string AnyCharacter = "*";
   private readonly List<PermissionEntry> _entries;
   private readonly Dictionary<string, PermissionEntry> _entriesByKey;
   private readonly Dictionary<string, HashSet<string>> _groupsCache;
+  private readonly Dictionary<string, bool?> _adminOverrideCache;
 
   public static string PeerKey(string hostname, string characterId)
   {
@@ -16,11 +19,17 @@ public class PermissionData
     return $"{hostname}_{characterId}";
   }
 
+  public static string PeerWildcardKey(string hostname)
+  {
+    return PeerKey(hostname, AnyCharacter);
+  }
+
   public PermissionData()
   {
     _entries = [];
     _entriesByKey = [];
     _groupsCache = [];
+    _adminOverrideCache = [];
   }
 
   public PermissionData(List<PermissionEntry>? entries)
@@ -28,6 +37,7 @@ public class PermissionData
     _entries = entries ?? [];
     _entriesByKey = ToDictionary(_entries);
     _groupsCache = [];
+    _adminOverrideCache = [];
     RebuildGroupCache();
   }
 
@@ -66,6 +76,7 @@ public class PermissionData
 
     tracked.groups.Add(group);
     RefreshGroupCache(key);
+    _adminOverrideCache.Remove(key);
     return true;
   }
 
@@ -88,7 +99,10 @@ public class PermissionData
 
     var changed = oldCount != (tracked.groups?.Count ?? 0);
     if (changed)
+    {
       RefreshGroupCache(key);
+      _adminOverrideCache.Remove(key);
+    }
 
     return changed;
   }
@@ -103,12 +117,13 @@ public class PermissionData
 
     tracked.groups = null;
     RefreshGroupCache(key);
+    _adminOverrideCache.Remove(key);
     return true;
   }
 
   public bool SetFeaturePermission(PermissionEntry entry, string section, string feature, PermissionManager.FeaturePermission permission)
   {
-    if (!TryGetTrackedEntry(entry, out _, out var tracked))
+    if (!TryGetTrackedEntry(entry, out var _, out var tracked))
       return false;
 
     section = section?.Trim().ToLowerInvariant() ?? "";
@@ -217,9 +232,9 @@ public class PermissionData
     if (!string.IsNullOrWhiteSpace(tracked.admin))
     {
       tracked.admin = "";
+      _adminOverrideCache[EntryKey(tracked)] = null;
       changed = true;
     }
-
     return changed;
   }
 
@@ -232,6 +247,19 @@ public class PermissionData
       return false;
 
     return groups.Contains(group.Trim().ToLowerInvariant());
+  }
+
+  public bool HasGroup(string hostname, string characterId, string group)
+  {
+    var exactKey = PeerKey(hostname, characterId);
+    if (exactKey == "")
+      return false;
+
+    if (HasGroup(exactKey, group))
+      return true;
+
+    var wildcardKey = PeerWildcardKey(hostname);
+    return HasGroup(wildcardKey, group);
   }
 
   private static bool IsMatchingFeature(string raw, string feature)
@@ -323,20 +351,53 @@ public class PermissionData
   {
     bool isAdmin = ZNet.instance.IsAdmin(hostname);
     var resolved = new PermissionManager(isAdmin);
-    var key = PeerKey(hostname, characterId);
-
-    var chain = BuildResolutionChain(key);
+    var chain = BuildResolutionChain(hostname, characterId);
     for (int i = 0; i < chain.Count; ++i)
       resolved.AddEntry(chain[i]);
     return resolved;
   }
 
-  private List<PermissionEntry> BuildResolutionChain(string playerKey)
+  public bool? ResolveAdminOverride(string hostname, string characterId)
+  {
+    var cacheKey = PeerKey(hostname, characterId);
+    if (cacheKey == "")
+      return null;
+
+    if (_adminOverrideCache.TryGetValue(cacheKey, out var cached))
+      return cached;
+
+    var chain = BuildResolutionChain(hostname, characterId);
+    bool? isAdmin = null;
+    for (int i = 0; i < chain.Count; ++i)
+    {
+      var admin = chain[i].admin?.Trim().ToLowerInvariant() ?? "";
+      if (admin == "yes")
+        isAdmin = true;
+      else if (admin == "no")
+        isAdmin = false;
+    }
+
+    _adminOverrideCache[cacheKey] = isAdmin;
+    return isAdmin;
+  }
+
+  public bool? ResolveAdminOverride(string hostname)
+  {
+    return ResolveAdminOverride(hostname, AnyCharacter);
+  }
+
+  private List<PermissionEntry> BuildResolutionChain(string hostname, string characterId)
   {
     List<PermissionEntry> result = [];
     HashSet<string> visitedPath = [];
     HashSet<string> addedEntries = [];
     AddEntryWithParents("Everyone", result, visitedPath, addedEntries);
+
+    var wildcardKey = PeerWildcardKey(hostname);
+    if (wildcardKey != "")
+      AddEntryWithParents(wildcardKey, result, visitedPath, addedEntries);
+
+    var playerKey = PeerKey(hostname, characterId);
     AddEntryWithParents(playerKey, result, visitedPath, addedEntries);
     return result;
   }
@@ -401,7 +462,24 @@ public class PermissionData
     var key = PeerKey(entry.id, entry.character);
     if (key != "")
       return key;
+
+    if (!string.IsNullOrWhiteSpace(entry.id))
+      return PeerWildcardKey(entry.id);
+
     return entry.name;
+  }
+
+  public static bool IsPeerChanged(HashSet<string> changedKeys, string hostname, string characterId)
+  {
+    var key = PeerKey(hostname, characterId);
+    if (key == "")
+      return false;
+
+    if (changedKeys.Contains(key))
+      return true;
+
+    var wildcardKey = PeerWildcardKey(hostname);
+    return changedKeys.Contains(wildcardKey);
   }
 
   private bool TryGetTrackedEntry(PermissionEntry? entry, out string key, out PermissionEntry tracked)
@@ -524,7 +602,7 @@ public class PermissionData
   {
     if (entry == null)
       return false;
-    var isPeer = !string.IsNullOrWhiteSpace(entry.id) && !string.IsNullOrWhiteSpace(entry.character);
+    var isPeer = !string.IsNullOrWhiteSpace(entry.id);
     if (isPeer)
       return false;
     return !string.IsNullOrWhiteSpace(entry.name);
