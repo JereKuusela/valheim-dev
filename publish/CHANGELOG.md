@@ -20,6 +20,3 @@
   - Fixes vanilla bug that sometimes spams error about "view direction zero" when flying. Thanks Haloa!
   - Fixes various autocomplete issues (especially with Better Continentds mod). Thanks Kurios.ZeuS!
   - Improves console behavior. Thanks Haloa!
-
-- v1.102
-  - Adds support for receiving server side location and vegetation IDs from Expand World Data mod.
