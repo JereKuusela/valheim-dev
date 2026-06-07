@@ -67,7 +67,7 @@ public class ServerExecution
       return false;
     var characterId = zdo.GetLong(ZDOVars.s_playerID).ToString();
     var permissions = PermissionLoader.Data.Resolve(hostname, characterId);
-    return permissions.IsCommandAllowed(cmd, command);
+    return permissions.IsCommandAllowed(cmd, command, true);
   }
 
   private static string GetCommandName(string command)

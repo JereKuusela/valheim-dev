@@ -1,3 +1,6 @@
+- v1.108
+  - Fixes server side commands checking admin status of the server, instead of the player executing the command.
+
 - v1.107
   - Adds new field `admin` to the permissions.yaml to support character specific admin status.
   - Adds support for permissions for all characters with the same host name (character id is optional).
@@ -14,9 +17,3 @@
 
 - v1.104
   - Fixes permissions.yaml not being created on start up.
-
-- v1.103
-  - Adds granular permission system to allow features for non-admins and disable features for admins.
-  - Fixes vanilla bug that sometimes spams error about "view direction zero" when flying. Thanks Haloa!
-  - Fixes various autocomplete issues (especially with Better Continentds mod). Thanks Kurios.ZeuS!
-  - Improves console behavior. Thanks Haloa!

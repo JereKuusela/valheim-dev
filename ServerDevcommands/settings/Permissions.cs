@@ -22,7 +22,7 @@ public class PermissionApi
     var cmd = Terminal.commands.FirstOrDefault(c => c.Key.Equals(cmdName, StringComparison.OrdinalIgnoreCase)).Value;
     if (cmd == null)
       return false;
-    return PermissionManager.Instance.IsCommandAllowed(cmd, commandName);
+    return PermissionManager.Instance.IsCommandAllowed(cmd, commandName, false);
   }
 
   /// <summary>
@@ -189,7 +189,7 @@ public class PermissionManager(bool isAdmin)
   private static bool StartsWithAny(List<string> commands, string cmd)
     => commands.Any(check => cmd.StartsWith(check, StringComparison.Ordinal));
 
-  public bool IsCommandAllowed(Terminal.ConsoleCommand cmd, string commandName)
+  public bool IsCommandAllowed(Terminal.ConsoleCommand cmd, string commandName, bool remote)
   {
     var normalized = NormalizeCommand(commandName);
     if (normalized == "")
@@ -198,9 +198,11 @@ public class PermissionManager(bool isAdmin)
     if (StartsWithAny(_bannedCommands, normalized))
       return false;
 
+    if (remote && !IsAdmin)
+      return false;
     // Default valid check to allow non-cheat commands or all commands for admins.
     // Unless explicitly banned.
-    if (cmd.IsValid(Console.instance))
+    if (!remote && cmd.IsValid(Console.instance))
       return true;
 
     if (StartsWithAny(_allowedCommands, normalized))

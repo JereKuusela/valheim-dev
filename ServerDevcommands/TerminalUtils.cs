@@ -117,7 +117,7 @@ public class TryRunCommand
       t.AddString($"Unknown command '{name}'. Type 'help' to see a list of valid commands");
       return;
     }
-    if (!PermissionManager.Instance.IsCommandAllowed(cmd, text))
+    if (!PermissionManager.Instance.IsCommandAllowed(cmd, text, false))
     {
       t.AddString($"Unauthorized to use command '{name}'.");
       return;
