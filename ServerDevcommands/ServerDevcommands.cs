@@ -13,7 +13,7 @@ public class ServerDevcommands : BaseUnityPlugin
 {
   public const string GUID = "server_devcommands";
   public const string NAME = "Server Devcommands";
-  public const string VERSION = "1.108";
+  public const string VERSION = "1.109";
   public const string COMFY_GIZMO_GUID = "bruce.valheim.comfymods.gizmo";
   public const string RELOADED_GIZMO_GUID = "m3to.mods.GizmoReloaded";
   private static ManualLogSource? Logs;
@@ -24,7 +24,6 @@ public class ServerDevcommands : BaseUnityPlugin
     Harmony harmony = new(GUID);
     harmony.PatchAll();
     Settings.Init(Config);
-    Console.SetConsoleEnabled(true);
 
     try
     {
@@ -140,5 +139,14 @@ public class SetCommands
     DefaultAutoComplete.Register();
     AliasManager.Init();
     Settings.RegisterCommands();
+  }
+}
+
+[HarmonyPatch(typeof(Console), nameof(Console.IsConsoleEnabled))]
+public class IsConsoleEnabled
+{
+  static void Postfix(ref bool __result)
+  {
+    __result = true;
   }
 }

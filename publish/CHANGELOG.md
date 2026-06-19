@@ -1,3 +1,7 @@
+- v1.109
+  - Fixes console not being force enabled.
+  - Fixes permission check failing if done when the player spawns (affects latest Infinity Hammer).
+
 - v1.108
   - Fixes server side commands checking admin status of the server, instead of the player executing the command.
 
@@ -14,6 +18,3 @@
 
 - v1.105
   - Fixes major performance issue in the permission system.
-
-- v1.104
-  - Fixes permissions.yaml not being created on start up.

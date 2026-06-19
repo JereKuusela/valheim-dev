@@ -73,12 +73,16 @@ public class DevcommandsCommand
         EnvMan.instance.m_debugEnv = "";
     }
   }
-  public static void Set(bool value)
+  public static void SetCheats(bool value)
   {
     if (Terminal.m_cheat != value)
       Gogan.LogEvent("Cheat", "CheatsEnabled", value.ToString(), 0L);
 
     Terminal.m_cheat = value;
+  }
+  public static void Set(bool value)
+  {
+    SetCheats(value);
     Console.instance.updateCommandList();
     Chat.instance.updateCommandList();
     DisableAutoFeatures();

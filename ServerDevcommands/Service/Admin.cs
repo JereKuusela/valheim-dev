@@ -60,6 +60,8 @@ public static class Admin
   private static void OnSuccess()
   {
     Checking = false;
+    // Duplicate but must be set before IsAdmin so that proper status is notified.
+    DevcommandsCommand.SetCheats(true);
     PermissionManager.Instance.IsAdmin = true;
     DevcommandsCommand.Set(true);
     Console.instance.AddString("Authorized to use devcommands.");
