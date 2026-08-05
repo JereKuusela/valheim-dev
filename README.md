@@ -25,53 +25,15 @@ Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available com
 
 ## Improved key bindings
 
-Key binds are stored to `binds.yaml` file in the config folder. It will be generated with the current key binds and can be directly modified.
+Server Devcommands fully replaces the original key binding system to support for example mouse wheel and modifier keys.
 
-### Modifier keys
+See [binds.md](binds.md) for more info.
 
-Keybindings work with modifier keys ([key codes](https://docs.unity3d.com/ScriptReference/KeyCode.html)).
+## Improve commands
 
-- `bind [keycode,modifier1,modifier2,...] [command] [parameter]`: Adds a new key binding with modifier keys.
-  - `bind j god`: Toggles god mode when pressing J.
-  - `bind j,leftalt,h debugmode`: Toggles debug mode when pressing J while both left alt and h are down.
-  - `bind j keys=leftalt,h`: Alternative way.
+Server Devcommands significatly improves the existing command system.
 
-The best match is used. Which means that with above binds, toggling debugmode won't also toggle the god mode.
-
-It's also possible to use negative modifiers. For example `bind j,-leftalt god` won't toggle god mode while left alt is pressed. However using these is not usually needed.
-
-### Mouse wheel
-
-Mouse wheel allows binding too with custom keycode `wheel` (by default simulates the keycode `none`). It's important to use modifier keys because the binding will block build rotation.
-
-The mouse wheel appends the wheel direction and amount to the command. For example `bind wheel,o say` would say 0.1 or -0.1 in the chat when scrolling the mouse wheel while pressing the O key.
-
-Note: After removing this mod, these binds very likely stop working or lead to unexpected behavior. Recommended to clear all binds with the `resetbinds` command.
-
-### Debug flying
-
-The same system also works for rebinding the debug flying. For example:
-
-- `devconfig fly_down_key space,leftcontrol`: Changes to fly down when both left control and space are pressed.
-
-## Command aliasing
-
-New commands can be created to shorten command names or to set parameter values.
-
-This is intended to be used with other mods that add more complex commands than in the base game.
-
-- `alias [name] [value]`: Adds a new command alias.
-- `alias`: Prints all aliases.
-- `alias [name]`: Removes the given alias.
-
-Aliases are stored to `alias.yaml` file in the config folder. It will be generated with the current aliases and can be directly modified.
-
-Examples:
-
-- `alias dm debugmode`: Adds a new command `dm` as a shorter version of `debugmode`.
-- `alias spawn5 spawn $$ 5 $$`: Adds a new command `spawn5` with the spawn amount fixed at 5.
-- `alias maxskill raiseskill $$ 100`: Adds a new command `skill_max` that raises the given skill to max level.
-- `alias cheat debugmode;nocost;fly`: Adds a new command `cheat` to quickly toggle cheats (if you don't want to use the config).
+See [commands.md](commands.md) for more info.
 
 ## Enhanced commands
 
@@ -150,11 +112,6 @@ Examples:
   - Target y coordinate is optional. If not given, teleports to the ground level.
   - For close teleports, you can put `true` at end of command to teleport instantly.
   - For longer teleports using fast teleport may cause issues because the world is not loaded yet.
-- `unbind [keycode] [amount=0] [silent]` allows specifying how many binds are removed. Also prints removed binds, unless the third parameter is given.
-  - `unbind wheel` removes all binds from the mouse wheel.
-  - `unbind wheel 0` removes all binds from the mouse wheel.
-  - `unbind wheel 1` removes the last bind from the mouse wheel.
-  - `unbind wheel 3` removes the last 3 binds from the mouse wheel.
 - `undo` reverts an action added to the undo/redo manager.
 - `wait [milliseconds]`delays the execution of the next commands.
 - `wind` prints the current wind strength.

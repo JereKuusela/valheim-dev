@@ -2,12 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
+using Service;
 using TMPro;
 using UnityEngine;
 namespace ServerDevcommands;
-#pragma warning disable IDE0046
+
 public static class TerminalUtils
 {
+  public static bool TryResolveInputPlaceholders(string command, Action<string> onResolved) => CommandInputResolver.TryResolve(command, onResolved);
+
   public static string GetLastWord(Terminal obj) => obj.m_input.text.Split(' ').Last().Split('=').Last().Split(',').Last();
   public static IEnumerable<string> GetPositionalParameters(string[] parameters)
   {
@@ -41,7 +44,7 @@ public static class TerminalUtils
       if (parameters[i].Contains(Settings.Substitution)) start = i + 1;
     }
     if (start == -1) return 0;
-    return parameters.Skip(start).Where(par => !par.Contains("=")).Count();
+    return parameters.Skip(start).Count(par => !par.Contains("="));
   }
 
   private static string ReplaceValues(string text, string search, Queue<string> replace)
@@ -86,6 +89,10 @@ public class TryRunCommand
     if (!Settings.ImprovedChat && __instance == Chat.instance) return true;
     // Some commands (like alias or bind) are expected to be executed as they are.
     if (TerminalUtils.SkipProcessing(text)) return true;
+
+    if (TerminalUtils.TryResolveInputPlaceholders(text, resolved => __instance.TryRunCommand(resolved)))
+      return false;
+
     var commands = MultiCommands.Split(text).Select(Aliasing.Plain).SelectMany(MultiCommands.Split).ToArray();
     if (commands.Length > 1)
     {

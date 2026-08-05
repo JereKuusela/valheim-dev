@@ -1,6 +1,8 @@
 - v1.109
+  - Adds support for showing text input when `<value_title>` is used in the command.
   - Fixes console not being force enabled.
   - Fixes permission check failing if done when the player spawns (affects latest Infinity Hammer).
+  - Removes dependency from Steamworks so should now work on non-Steam hosts.
 
 - v1.108
   - Fixes server side commands checking admin status of the server, instead of the player executing the command.

@@ -1,12 +1,12 @@
-using System;
 using System.Collections.Generic;
+using System;
 using System.Reflection.Emit;
 using HarmonyLib;
 using Splatform;
-using Steamworks;
 using UnityEngine;
 
 namespace ServerDevcommands;
+
 [HarmonyPatch(typeof(Chat), nameof(Chat.SendText))]
 public class ServerChat
 {
@@ -20,7 +20,7 @@ public class ServerChat
     m_name = Settings.ServerChatName,
     // Receiving chat messages requires a valid character ID.
     m_characterID = new ZDOID(ZDOMan.GetSessionID(), uint.MaxValue),
-    m_userInfo = new() { m_id = new(ZNet.instance.m_steamPlatform, GetId()), m_displayName = Settings.ServerChatName },
+    m_userInfo = new() { m_id = GetServerUserId(), m_displayName = Settings.ServerChatName },
     m_serverAssignedDisplayName = Settings.ServerChatName,
     m_publicPosition = false,
     m_position = Vector3.zero,
@@ -30,16 +30,23 @@ public class ServerChat
     serverClient = null;
     userInfo = null;
   }
-  private static string GetId()
+  private static PlatformUserID GetServerUserId()
   {
     try
     {
-      return SteamGameServer.GetSteamID().ToString();
+      // Steamworks is not available for Microsoft clients.
+      var steamGameServer = Type.GetType("Steamworks.SteamGameServer, com.rlabrecque.steamworks.net", false);
+      var getSteamId = steamGameServer?.GetMethod("GetSteamID");
+      var steamId = getSteamId?.Invoke(null, null)?.ToString();
+      if (!string.IsNullOrEmpty(steamId))
+        return new PlatformUserID(ZNet.instance.m_steamPlatform, steamId);
     }
-    catch (InvalidOperationException)
+    catch
     {
-      return "0";
     }
+    if (ZNet.m_onlineBackend == OnlineBackendType.Steamworks)
+      return new PlatformUserID(ZNet.instance.m_steamPlatform, ZNet.instance.m_hostSocket.GetHostName());
+    return new PlatformUserID("playfab", ZPlayFabMatchmaking.m_instance.m_serverData.remotePlayerId);
   }
   public static void Write(ZPackage pkg)
   {
