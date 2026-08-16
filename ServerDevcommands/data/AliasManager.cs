@@ -21,6 +21,8 @@ public class AliasManager
       FromFile();
     else
       ToFile();
+
+    Yaml.SetupWatcher(FileName, FromFile);
   }
   public static bool ToBeSaved = false;
   public static void ToFile()
@@ -65,12 +67,6 @@ public class AliasManager
     RemoveCommand(alias);
     ToBeSaved = true;
   }
-
-  public static void SetupWatcher()
-  {
-    Yaml.SetupWatcher(FileName, FromFile);
-  }
-
 
   ///<summary>Adds an alias as an actual command so it works with autocomplete, etc.</summary>
   public static void AddCommand(string key, string value)

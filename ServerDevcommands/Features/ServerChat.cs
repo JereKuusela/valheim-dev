@@ -44,9 +44,13 @@ public class ServerChat
     catch
     {
     }
-    if (ZNet.m_onlineBackend == OnlineBackendType.Steamworks)
+
+    if (ZNet.m_onlineBackend == OnlineBackendType.PlayFab)
+      return new PlatformUserID("playfab", ZPlayFabMatchmaking.m_instance.m_serverData.remotePlayerId);
+    else if (ZNet.instance.m_hostSocket == null)
+      return new PlatformUserID(ZNet.instance.m_steamPlatform, "Server");
+    else
       return new PlatformUserID(ZNet.instance.m_steamPlatform, ZNet.instance.m_hostSocket.GetHostName());
-    return new PlatformUserID("playfab", ZPlayFabMatchmaking.m_instance.m_serverData.remotePlayerId);
   }
   public static void Write(ZPackage pkg)
   {

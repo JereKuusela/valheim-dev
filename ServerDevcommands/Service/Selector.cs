@@ -27,7 +27,7 @@ public static class Selector
     if (hovered == null) return null;
     return hovered.Obj;
   }
-
+  private static readonly int PlayerHash = "Player".GetStableHashCode();
 
   public static int GetPrefabFromHit(RaycastHit hit) => hit.collider.GetComponentInParent<ZNetView>().GetZDO().GetPrefab();
 
@@ -60,12 +60,14 @@ public static class Selector
       if (Vector3.Distance(hit.point, obj.m_eye.position) >= maxDistance) continue;
       var netView = hit.collider.GetComponentInParent<ZNetView>();
       if (!IsValid(netView)) continue;
-      if (includedPrefabs.Count > 0 && !includedPrefabs.Contains(netView.GetZDO().GetPrefab())) continue;
-      if (excludedPrefabs.Contains(netView.GetZDO().GetPrefab())) continue;
+      var prefab = netView.GetZDO().GetPrefab();
+      if (includedPrefabs.Count > 0 && !includedPrefabs.Contains(prefab)) continue;
+      if (excludedPrefabs.Contains(prefab)) continue;
       if (hit.collider.GetComponent<EffectArea>()) continue;
+      if (netView.gameObject == obj.gameObject) continue;
       var player = netView.GetComponentInChildren<Player>();
       if (player == obj) continue;
-      if (!allowOtherPlayers && player) continue;
+      if (!allowOtherPlayers && prefab == PlayerHash && !netView.m_persistent) continue;
       if (types.Count > 0 && !ComponentInfo.HasComponent(netView, types)) continue;
       var index = -1;
       if (netView.TryGetComponent(out MineRock5 mineRock5))

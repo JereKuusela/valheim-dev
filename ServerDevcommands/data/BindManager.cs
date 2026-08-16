@@ -270,13 +270,35 @@ public class BindManager
     File.WriteAllText(FilePath, yaml);
     Log.Info($"Importing {binds.Length} bind data.");
   }
-  [HarmonyPatch(typeof(Chat), nameof(Chat.Awake)), HarmonyPostfix]
-  public static void ChatAwake()
+  public static void Init()
   {
+    // Valheim doesn't have these keys mapped by default.
+    ZInput.s_keyCodeToKeyMap[KeyCode.F13] = UnityEngine.InputSystem.Key.F13;
+    ZInput.s_keyCodeToKeyMap[KeyCode.F14] = UnityEngine.InputSystem.Key.F14;
+    ZInput.s_keyCodeToKeyMap[KeyCode.F15] = UnityEngine.InputSystem.Key.F15;
+    ZInput.s_keyCodeToKeyMap[KeyCode.F16] = UnityEngine.InputSystem.Key.F16;
+    ZInput.s_keyCodeToKeyMap[KeyCode.F17] = UnityEngine.InputSystem.Key.F17;
+    ZInput.s_keyCodeToKeyMap[KeyCode.F18] = UnityEngine.InputSystem.Key.F18;
+    ZInput.s_keyCodeToKeyMap[KeyCode.F19] = UnityEngine.InputSystem.Key.F19;
+    ZInput.s_keyCodeToKeyMap[KeyCode.F20] = UnityEngine.InputSystem.Key.F20;
+    ZInput.s_keyCodeToKeyMap[KeyCode.F21] = UnityEngine.InputSystem.Key.F21;
+    ZInput.s_keyCodeToKeyMap[KeyCode.F22] = UnityEngine.InputSystem.Key.F22;
+    ZInput.s_keyCodeToKeyMap[KeyCode.F23] = UnityEngine.InputSystem.Key.F23;
+    ZInput.s_keyCodeToKeyMap[KeyCode.F24] = UnityEngine.InputSystem.Key.F24;
+
     if (File.Exists(FilePath))
       FromFile();
-    else
+    Yaml.SetupWatcher(FileName, FromFile);
+  }
+
+
+  public static void Load()
+  {
+    if (!File.Exists(FilePath))
       ImportBinds();
+
+    Terminal.m_bindList.Clear();
+    Terminal.m_binds.Clear();
   }
   public static bool ToBeSaved = false;
   public static void ToFile()
@@ -293,17 +315,8 @@ public class BindManager
   }
   public static void FromFile()
   {
-    try
-    {
-      Terminal.m_bindList.Clear();
-      Terminal.m_binds.Clear();
-      Yaml.LoadListsFromDirectory<BindData>("binds", "binds*.yaml", LoadBind);
-      Log.Info($"Reloading {WheelBinds.Count + Binds.Count} bind data.");
-    }
-    catch (Exception e)
-    {
-      Log.Error(e.StackTrace);
-    }
+    Yaml.LoadListsFromDirectory<BindData>(Paths.ConfigPath, "binds*.yaml", LoadBind);
+    Log.Info($"Reloading {WheelBinds.Count + Binds.Count} bind data.");
   }
 
   private static void LoadBind(string file, BindData data)
@@ -313,25 +326,6 @@ public class BindManager
     TemporaryBinds.Add(bind);
     if (bind.MouseWheel) WheelBinds.Add(bind);
     else Binds.Add(bind);
-  }
-
-
-  public static void SetupWatcher()
-  {
-    // Valheim doesn't have these keys mapped by default.
-    ZInput.s_keyCodeToKeyMap[KeyCode.F13] = UnityEngine.InputSystem.Key.F13;
-    ZInput.s_keyCodeToKeyMap[KeyCode.F14] = UnityEngine.InputSystem.Key.F14;
-    ZInput.s_keyCodeToKeyMap[KeyCode.F15] = UnityEngine.InputSystem.Key.F15;
-    ZInput.s_keyCodeToKeyMap[KeyCode.F16] = UnityEngine.InputSystem.Key.F16;
-    ZInput.s_keyCodeToKeyMap[KeyCode.F17] = UnityEngine.InputSystem.Key.F17;
-    ZInput.s_keyCodeToKeyMap[KeyCode.F18] = UnityEngine.InputSystem.Key.F18;
-    ZInput.s_keyCodeToKeyMap[KeyCode.F19] = UnityEngine.InputSystem.Key.F19;
-    ZInput.s_keyCodeToKeyMap[KeyCode.F20] = UnityEngine.InputSystem.Key.F20;
-    ZInput.s_keyCodeToKeyMap[KeyCode.F21] = UnityEngine.InputSystem.Key.F21;
-    ZInput.s_keyCodeToKeyMap[KeyCode.F22] = UnityEngine.InputSystem.Key.F22;
-    ZInput.s_keyCodeToKeyMap[KeyCode.F23] = UnityEngine.InputSystem.Key.F23;
-    ZInput.s_keyCodeToKeyMap[KeyCode.F24] = UnityEngine.InputSystem.Key.F24;
-    Yaml.SetupWatcher(FileName, FromFile);
   }
 
   public static List<CommandBind> GetBestKeyCommands() =>

@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using BepInEx;
 using BepInEx.Bootstrap;
-using BepInEx.Logging;
 using HarmonyLib;
 using Service;
 using UnityEngine;
@@ -14,7 +13,7 @@ public class ServerDevcommands : BaseUnityPlugin
 {
   public const string GUID = "server_devcommands";
   public const string NAME = "Server Devcommands";
-  public const string VERSION = "1.108.3";
+  public const string VERSION = "1.108.4";
   public const string COMFY_GIZMO_GUID = "bruce.valheim.comfymods.gizmo";
   public const string RELOADED_GIZMO_GUID = "m3to.mods.GizmoReloaded";
   public void Awake()
@@ -27,8 +26,6 @@ public class ServerDevcommands : BaseUnityPlugin
     try
     {
       SetupWatcher();
-      AliasManager.SetupWatcher();
-      BindManager.SetupWatcher();
       PermissionLoader.SetupWatcher();
     }
     catch
@@ -92,7 +89,7 @@ public class ServerDevcommands : BaseUnityPlugin
 }
 
 [HarmonyPatch(typeof(Terminal), nameof(Terminal.InitTerminal)), HarmonyPriority(Priority.HigherThanNormal)]
-public class Initialize
+public class InitializeTerminal
 {
   private static bool Initialized = false;
   static void Postfix()
@@ -137,6 +134,17 @@ public class Initialize
     new ShutdownCommand();
     DefaultAutoComplete.Register();
     AliasManager.Init();
+    BindManager.Init();
+  }
+}
+
+[HarmonyPatch(typeof(Chat), nameof(Chat.Awake))]
+public class InitializeChat
+{
+  static void Postfix()
+  {
+    // Chat.Awake loads binds from player profile, so need to handle them after that.
+    BindManager.Load();
   }
 }
 

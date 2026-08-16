@@ -39,28 +39,27 @@ public static class CommandInputResolver
   {
     if (ActiveRequest != null || PendingRequests.Count == 0) return;
     ActiveRequest = PendingRequests.Dequeue();
-    ContinueActiveRequest();
+    ContinueActiveRequest(ActiveRequest);
   }
 
-  private static void ContinueActiveRequest()
+  private static void ContinueActiveRequest(InputRequest request)
   {
-    if (ActiveRequest == null) return;
+    if (!ReferenceEquals(ActiveRequest, request)) return;
 
-    if (ActiveRequest.NextIndex >= ActiveRequest.Matches.Count)
+    if (request.NextIndex >= request.Matches.Count)
     {
-      var completed = ActiveRequest;
       ActiveRequest = null;
-      completed.OnResolved(completed.Command);
+      request.OnResolved(request.Command);
       StartNextRequest();
       return;
     }
 
-    var match = ActiveRequest.Matches[ActiveRequest.NextIndex++];
-    ActiveRequest.Input.Ask(match.Topic, value =>
+    var match = request.Matches[request.NextIndex++];
+    request.Input.Ask(match.Topic, value =>
     {
-      if (ActiveRequest == null) return;
-      ActiveRequest.Command = ReplaceFirst(ActiveRequest.Command, match.Token, value);
-      ContinueActiveRequest();
+      if (!ReferenceEquals(ActiveRequest, request)) return;
+      request.Command = ReplaceFirst(request.Command, match.Token, value);
+      ContinueActiveRequest(request);
     });
   }
 
