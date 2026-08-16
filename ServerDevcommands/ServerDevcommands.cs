@@ -92,7 +92,7 @@ public class ServerDevcommands : BaseUnityPlugin
 }
 
 [HarmonyPatch(typeof(Terminal), nameof(Terminal.InitTerminal)), HarmonyPriority(Priority.HigherThanNormal)]
-public class SetCommands
+public class Initialize
 {
   private static bool Initialized = false;
   static void Postfix()

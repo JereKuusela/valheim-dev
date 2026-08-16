@@ -59,9 +59,10 @@ public class Yaml
     // Full search on top config directory could be really slow if some mod adds lots of files.
     // So just use it when operating inside some other folder.
     var search = dictionary == Paths.ConfigPath ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories;
-    foreach (var file in Directory.GetFiles(dictionary, pattern, search))
+    foreach (var path in Directory.GetFiles(dictionary, pattern, search))
     {
-      var data = Deserialize<Dictionary<string, T>>(File.ReadAllText(file), file);
+      var file = Path.GetFileName(path);
+      var data = Deserialize<Dictionary<string, T>>(File.ReadAllText(path), file);
       foreach (var kvp in data)
         action(file, kvp.Key, kvp.Value);
     }
@@ -73,9 +74,10 @@ public class Yaml
     // Full search on top config directory could be really slow if some mod adds lots of files.
     // So just use it when operating inside some other folder.
     var search = dictionary == Paths.ConfigPath ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories;
-    foreach (var file in Directory.GetFiles(dictionary, pattern, search))
+    foreach (var path in Directory.GetFiles(dictionary, pattern, search))
     {
-      var data = Deserialize<List<T>>(File.ReadAllText(file), file);
+      var file = Path.GetFileName(path);
+      var data = Deserialize<List<T>>(File.ReadAllText(path), file);
       foreach (var item in data)
         action(file, item);
     }

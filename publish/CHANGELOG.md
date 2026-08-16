@@ -1,5 +1,6 @@
 - v1.109
   - Adds support for showing text input when `<value_title>` is used in the command.
+  - Adds support for not adding commands to the console history if they start with a whitespace character (space or tab).
   - Fixes console not being force enabled.
   - Fixes permission check failing if done when the player spawns (affects latest Infinity Hammer).
   - Improves file loading system to support sub-folders and patterns.

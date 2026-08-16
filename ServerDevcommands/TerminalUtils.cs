@@ -87,6 +87,7 @@ public class TryRunCommand
   static bool Prefix(Terminal __instance, ref string text)
   {
     if (!Settings.ImprovedChat && __instance == Chat.instance) return true;
+    RemoveWhitespacedFromHistory(__instance);
     // Some commands (like alias or bind) are expected to be executed as they are.
     if (TerminalUtils.SkipProcessing(text)) return true;
 
@@ -103,6 +104,14 @@ public class TryRunCommand
     text = CheckLogic(text);
     RunCommand(__instance, text);
     return false;
+  }
+  static void RemoveWhitespacedFromHistory(Terminal terminal)
+  {
+    var history = terminal.m_history;
+    if (history.Count == 0) return;
+    var last = history[history.Count - 1];
+    if (last[0] == ' ' || last[0] == '\t')
+      history.RemoveAt(history.Count - 1);
   }
   static string CheckLogic(string text)
   {
