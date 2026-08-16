@@ -115,7 +115,6 @@ public static class Settings
   public static bool NoDrops => IsEnabled(PermissionHash.NoDrops, configNoDrops.Value);
   public static ConfigEntry<bool> configNoClipView;
   public static bool NoClipView => IsEnabled(PermissionHash.NoClipCamera, configNoClipView.Value);
-  public static ConfigEntry<string> configCommandAliases;
   public static ConfigEntry<bool> configImprovedChat;
   public static bool ImprovedChat => configImprovedChat.Value;
 
@@ -131,54 +130,6 @@ public static class Settings
   public static string AutoExecDevOff => configAutoExecDevOff.Value;
   public static ConfigEntry<bool> configCommandDescriptions;
   public static bool CommandDescriptions => configCommandDescriptions.Value;
-  private static Dictionary<string, string> Aliases = [];
-  public static string[] AliasKeys = [];
-
-  private static void ParseAliases(string value)
-  {
-    Aliases = value.Split('¤').Select(str => str.Split(' ')).ToDictionary(split => split[0], static split => string.Join(" ", split.Skip(1)));
-    Aliases = Aliases.Where(kvp => kvp.Key != "").ToDictionary(kvp => kvp.Key, static kvp => kvp.Value);
-    AliasKeys = [.. Aliases.Keys.OrderBy(key => key)];
-  }
-  public static string GetAliasValue(string key) => Aliases.ContainsKey(key) ? Aliases[key] : "_";
-  public static void RegisterCommands()
-  {
-    foreach (var alias in Aliases)
-    {
-      AliasCommand.AddCommand(alias.Key, alias.Value);
-    }
-  }
-
-  private static void SaveAliases()
-  {
-    var value = string.Join("¤", Aliases.Select(kvp => kvp.Key + " " + kvp.Value));
-    configCommandAliases.Value = value;
-  }
-
-  public static void AddAlias(string alias, string value)
-  {
-    if (value == "")
-    {
-      RemoveAlias(alias);
-    }
-    else
-    {
-      Aliases[alias] = value;
-      SaveAliases();
-    }
-  }
-
-  public static void AddAlias(Dictionary<string, string> dict)
-  {
-    Aliases = dict;
-    SaveAliases();
-  }
-  public static void RemoveAlias(string alias)
-  {
-    if (!Aliases.ContainsKey(alias)) return;
-    Aliases.Remove(alias);
-    SaveAliases();
-  }
 
   private static HashSet<string> ParseList(string value) => [.. Parse.Split(value).Select(s => s.ToLower())];
   public static ConfigEntry<string> configDisabledGlobalKeys;
@@ -278,12 +229,10 @@ public static class Settings
     configCommandDescriptions = config.Bind(section, "Command descriptions", true, "Shows command descriptions as autocomplete.");
     configAliasing = config.Bind(section, "Alias system", true, "Enables the command aliasing system (allows creating new commands).");
     configImprovedAutoComplete = config.Bind(section, "Improved autocomplete", true, "Enables parameter info or options for every parameter.");
-    configCommandAliases = config.Bind(section, "Command aliases", "", "Internal data for aliases.");
     configMultiCommand = config.Bind(section, "Multiple commands per line", true, "Enables multiple commands when separated with ;.");
     configImprovedChat = config.Bind(section, "Improved chat", true, "Enables alias and multicommands system for chat.");
     configSubstitution = config.Bind(section, "Substitution", "$$", "Enables the command parameter substitution system (substitution gets replaced with the next free parameter).");
     configWrapping = config.Bind(section, "Wrapping", "\"", "Allows using space bars in command parameters.");
-    configCommandAliases.SettingChanged += (s, e) => ParseAliases(configCommandAliases.Value);
     configFlyUpKeys = config.Bind(section, "Key for fly up", "Space", "Key codes separated by ,");
     configFlyUpKeys.SettingChanged += (s, e) => ParseFlyUp();
     ParseFlyUp();
@@ -292,7 +241,6 @@ public static class Settings
     ParseFlyDown();
     configChatOutput = config.Bind(section, "Chat output", false, "Sends messages to the chat window from bound keys.");
     section = "3. Formatting";
-    ParseAliases(configCommandAliases.Value);
     configPlayerListFormat = config.Bind(section, "Player list format", "{player_id}/{character_name}/{character_id} ({pos_x:F0}, {pos_z:F0}, {pos_y:F0})", "Format of playerlist command.");
     configCommandLogFormat = config.Bind(section, "Command log format", "{player_id}/{character_name} ({pos_x:F0}, {pos_z:F0}, {pos_y:F0}): {command}", "Format for the command log.");
     configFindFormat = config.Bind(section, "Find format", "{pos_x:F0}, {pos_z:F0}, {pos_y:F0}, distance {distance:F0} ({name})", "Format for the find command. Server side setting.");

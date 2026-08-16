@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using BepInEx;
 using HarmonyLib;
+using Service;
 namespace ServerDevcommands;
 
 [HarmonyPatch]
@@ -11,6 +12,8 @@ public class AliasManager
 {
   public static string FileName = "alias.yaml";
   public static string FilePath = Path.Combine(Paths.ConfigPath, FileName);
+  private static Dictionary<string, string> Aliases = [];
+  public static string[] AliasKeys => [.. Aliases.Keys.OrderBy(key => key)];
 
   public static void Init()
   {
@@ -23,30 +26,66 @@ public class AliasManager
   public static void ToFile()
   {
     ToBeSaved = false;
-    var data = Settings.AliasKeys.ToDictionary(key => key, static key => Settings.GetAliasValue(key));
-    if (data.Count == 0)
+    if (Aliases.Count == 0)
     {
       if (File.Exists(FilePath)) File.Delete(FilePath);
       return;
     }
-    var yaml = Yaml.Serializer().Serialize(data);
+    var yaml = Yaml.Serializer().Serialize(Aliases);
     File.WriteAllText(FilePath, yaml);
   }
   public static void FromFile()
   {
-    try
-    {
-      var data = Yaml.Read(FilePath, Yaml.Deserialize<Dictionary<string, string>>);
-      Settings.AddAlias(data);
-      ServerDevcommands.Log.LogInfo($"Reloading {data.Count} alias data.");
-    }
-    catch (Exception e)
-    {
-      ServerDevcommands.Log.LogError(e.StackTrace);
-    }
+    foreach (var alias in Aliases.Keys)
+      RemoveCommand(alias);
+    Aliases.Clear();
+    Yaml.LoadDictFromDirectory<string>(Paths.ConfigPath, "alias*.yaml", LoadAlias);
+    Log.Info($"Reloading {Aliases.Count} alias data.");
   }
+
+  public static string GetAliasValue(string key) => Aliases.TryGetValue(key, out var value) ? value : "_";
+
+  public static void LoadAlias(string file, string alias, string value)
+  {
+    if (Aliases.ContainsKey(alias))
+      Log.Warning($"Duplicate alias '{alias}' in {file}. Overwriting previous value.");
+    AddCommand(alias, value);
+    Aliases[alias] = value;
+  }
+  public static void AddAlias(string alias, string value)
+  {
+    Aliases[alias] = value;
+    AddCommand(alias, value);
+    ToBeSaved = true;
+  }
+
+  public static void RemoveAlias(string alias)
+  {
+    Aliases.Remove(alias);
+    RemoveCommand(alias);
+    ToBeSaved = true;
+  }
+
   public static void SetupWatcher()
   {
     Yaml.SetupWatcher(FileName, FromFile);
   }
+
+
+  ///<summary>Adds an alias as an actual command so it works with autocomplete, etc.</summary>
+  public static void AddCommand(string key, string value)
+  {
+    var plain = Aliasing.Plain(value);
+    var baseCommand = plain.Split(' ').First();
+    if (Terminal.commands.TryGetValue(baseCommand, out var command))
+      new Terminal.ConsoleCommand(key, plain, command.action, command.IsCheat, command.IsNetwork, command.OnlyServer, command.IsSecret, command.AllowInDevBuild, command.m_tabOptionsFetcher);
+    else
+      new Terminal.ConsoleCommand(key, plain, (args) => { });
+  }
+  public static void RemoveCommand(string key)
+  {
+    if (Terminal.commands.ContainsKey(key))
+      Terminal.commands.Remove(key);
+  }
+
 }

@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using Service;
+using System.Linq;
 using BepInEx;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
@@ -39,7 +41,7 @@ public class Yaml
     }
     catch (Exception ex1)
     {
-      ServerDevcommands.Log.LogError($"{fileName}: {ex1.Message}");
+      Log.Error($"{fileName}: {ex1.Message}");
       try
       {
         return DeserializerUnSafe().Deserialize<T>(raw);
@@ -50,41 +52,35 @@ public class Yaml
       }
     }
   }
-  public static List<T> LoadList<T>(string file) where T : new()
+
+  public static void LoadDictFromDirectory<T>(string dictionary, string pattern, Action<string, string, T> action)
   {
-    if (!File.Exists(file)) return [];
-    return Deserialize<List<T>>(File.ReadAllText(file), file);
-  }
-  public static T Load<T>(string file) where T : new()
-  {
-    if (!File.Exists(file)) return new T();
-    return Deserialize<T>(File.ReadAllText(file), file);
-  }
-  public static T Read<T>(string file, Func<string, string, T> action) where T : new()
-  {
-    if (!File.Exists(file)) return new T();
-    return action(File.ReadAllText(file), file);
-  }
-  public static Dictionary<string, List<T>> Read<T>(string pattern, Func<string, string, Dictionary<string, T[]>> action)
-  {
-    Dictionary<string, List<T>> result = [];
-    foreach (var name in Directory.GetFiles(Paths.ConfigPath, pattern))
+    if (!Directory.Exists(dictionary)) return;
+    // Full search on top config directory could be really slow if some mod adds lots of files.
+    // So just use it when operating inside some other folder.
+    var search = dictionary == Paths.ConfigPath ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories;
+    foreach (var file in Directory.GetFiles(dictionary, pattern, search))
     {
-      var data = action(File.ReadAllText(name), name);
+      var data = Deserialize<Dictionary<string, T>>(File.ReadAllText(file), file);
       foreach (var kvp in data)
-      {
-        if (!result.TryGetValue(kvp.Key, out var list))
-        {
-          list = [];
-          result[kvp.Key] = list;
-        }
-        list.AddRange(kvp.Value);
-      }
+        action(file, kvp.Key, kvp.Value);
     }
-    return result;
+  }
+
+  public static void LoadListsFromDirectory<T>(string dictionary, string pattern, Action<string, T> action) where T : new()
+  {
+    if (!Directory.Exists(dictionary)) return;
+    // Full search on top config directory could be really slow if some mod adds lots of files.
+    // So just use it when operating inside some other folder.
+    var search = dictionary == Paths.ConfigPath ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories;
+    foreach (var file in Directory.GetFiles(dictionary, pattern, search))
+    {
+      var data = Deserialize<List<T>>(File.ReadAllText(file), file);
+      foreach (var item in data)
+        action(file, item);
+    }
   }
 }
-
 
 #nullable disable
 public class FloatConverter : IYamlTypeConverter

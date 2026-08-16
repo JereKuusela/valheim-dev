@@ -29,20 +29,27 @@ public static class Parse
   {
     var range = arg.Split(';').ToList();
     if (range.Count == 2) return new(range[0], range[1]);
-    range = arg.Split('-').ToList();
-    if (range.Count > 1 && range[0] == "")
-    {
-      range[0] = "-" + range[1];
-      range.RemoveAt(1);
-    }
-    if (range.Count > 2 && range[1] == "")
-    {
-      range[1] = "-" + range[2];
-      range.RemoveAt(2);
-    }
-    if (range.Count == 1) return new(range[0]);
-    else return new(range[0], range[1]);
 
+    var parts = arg.Split('-').ToList();
+    var values = new List<string>();
+    for (var i = 0; i < parts.Count; i++)
+    {
+      var part = parts[i];
+      if (part == "")
+      {
+        if (i + 1 < parts.Count && parts[i + 1] != "")
+        {
+          values.Add("-" + parts[i + 1]);
+          i++;
+        }
+        continue;
+      }
+      values.Add(part);
+    }
+
+    if (values.Count == 1) return new(values[0]);
+    if (values.Count >= 2) return new(values[0], values[1]);
+    return new(arg);
   }
   public static int Int(string arg, int defaultValue = 0)
   {

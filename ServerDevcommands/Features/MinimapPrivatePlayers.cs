@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
-using Splatform;
+using Service;
 using UnityEngine;
 namespace ServerDevcommands;
 ///<summary>Server side code to include private player positions.</summary>
@@ -18,7 +18,7 @@ public class Server_UpdatePrivatePositions
       if (player.m_characterID == __instance.m_characterID) continue;
       if (!idToPeer.TryGetValue(player.m_characterID, out var peer))
       {
-        ServerDevcommands.Log.LogError("Unable to find the peer to set private position.");
+        Log.Error("Unable to find the peer to set private position.");
         continue;
       }
       if (peer.m_publicRefPos) continue;
@@ -39,7 +39,7 @@ public class SendPrivatePositionsToAdmins
   }
   private static void SendToAdmins(ZNet obj)
   {
-    var count = obj.m_players.Where(p => !p.m_publicPosition).Count();
+    var count = obj.m_players.Count(p => !p.m_publicPosition);
     if (count == 0) return;
     var peers = obj.m_peers.Where(peer => peer.IsReady() && obj.IsAdmin(peer.m_rpc.GetSocket().GetHostName())).ToList();
     if (peers.Count == 0) return;

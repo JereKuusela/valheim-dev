@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using BepInEx;
 using HarmonyLib;
+using Service;
 
 namespace ServerDevcommands;
 
@@ -115,7 +116,7 @@ public class PermissionLoader
     var updateAllPlayers = PermissionData.HasGroupChanges(changedKeys, Data, loadedData);
     Data = loadedData;
     SendChangedPermissions(changedKeys, updateAllPlayers);
-    ServerDevcommands.Log.LogInfo($"Reloading {Data.Count} permission data.");
+    Log.Info($"Reloading {Data.Count} permission data.");
   }
   public static void SetupWatcher()
   {

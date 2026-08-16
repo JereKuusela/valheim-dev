@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Reflection;
 using HarmonyLib;
+using Service;
 namespace ServerDevcommands;
 
 public class MouseWheelBinding
@@ -44,7 +45,7 @@ public class ComfyGizmoPatcher
   public static void DoPatching(Assembly assembly)
   {
     if (assembly == null) return;
-    ServerDevcommands.Log.LogInfo("\"ComfyGizmo\" detected. Patching \"Rotate\" for mouse wheel binding.");
+    Log.Info("\"ComfyGizmo\" detected. Patching \"Rotate\" for mouse wheel binding.");
     Harmony harmony = new("valheim.jerekuusela.server_devcommand.comfygizmo");
     var mOriginal = AccessTools.Method(assembly.GetType("ComfyGizmo.RotationManager"), "Rotate");
     var mPrefix = SymbolExtensions.GetMethodInfo(() => Prefix());
@@ -59,7 +60,7 @@ public class GizmoReloadedPatcher
   public static void DoPatching(Assembly assembly)
   {
     if (assembly == null) return;
-    ServerDevcommands.Log.LogInfo("\"GizmoReloaded\" detected. Patching \"HandleAxisInput\" for mouse wheel binding.");
+    Log.Info("\"GizmoReloaded\" detected. Patching \"HandleAxisInput\" for mouse wheel binding.");
     Harmony harmony = new("valheim.jerekuusela.server_devcommand.m3to.mods.GizmoReloaded");
     var mOriginal = AccessTools.Method(assembly.GetType("GizmoReloaded.Plugin"), "HandleAxisInput");
     var mPrefix = SymbolExtensions.GetMethodInfo(() => Prefix());

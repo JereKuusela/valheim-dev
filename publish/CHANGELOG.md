@@ -2,6 +2,7 @@
   - Adds support for showing text input when `<value_title>` is used in the command.
   - Fixes console not being force enabled.
   - Fixes permission check failing if done when the player spawns (affects latest Infinity Hammer).
+  - Improves file loading system to support sub-folders and patterns.
   - Removes dependency from Steamworks so should now work on non-Steam hosts.
 
 - v1.108

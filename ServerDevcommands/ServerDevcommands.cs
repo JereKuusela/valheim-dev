@@ -3,6 +3,7 @@ using BepInEx;
 using BepInEx.Bootstrap;
 using BepInEx.Logging;
 using HarmonyLib;
+using Service;
 using UnityEngine;
 namespace ServerDevcommands;
 
@@ -13,14 +14,12 @@ public class ServerDevcommands : BaseUnityPlugin
 {
   public const string GUID = "server_devcommands";
   public const string NAME = "Server Devcommands";
-  public const string VERSION = "1.109";
+  public const string VERSION = "1.108.3";
   public const string COMFY_GIZMO_GUID = "bruce.valheim.comfymods.gizmo";
   public const string RELOADED_GIZMO_GUID = "m3to.mods.GizmoReloaded";
-  private static ManualLogSource? Logs;
-  public static ManualLogSource Log => Logs!;
   public void Awake()
   {
-    Logs = Logger;
+    Log.Init(Logger);
     Harmony harmony = new(GUID);
     harmony.PatchAll();
     Settings.Init(Config);
@@ -86,8 +85,8 @@ public class ServerDevcommands : BaseUnityPlugin
     }
     catch
     {
-      Log.LogError($"There was an issue loading your {Config.ConfigFilePath}");
-      Log.LogError("Please check your config entries for spelling and format!");
+      Log.Error($"There was an issue loading your {Config.ConfigFilePath}");
+      Log.Error("Please check your config entries for spelling and format!");
     }
   }
 }
@@ -138,7 +137,6 @@ public class SetCommands
     new ShutdownCommand();
     DefaultAutoComplete.Register();
     AliasManager.Init();
-    Settings.RegisterCommands();
   }
 }
 

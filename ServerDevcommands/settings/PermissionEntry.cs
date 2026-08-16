@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Service;
 
 namespace ServerDevcommands;
 
@@ -49,7 +50,7 @@ public static class PermissionYaml
     }
     catch (Exception ex)
     {
-      ServerDevcommands.Log.LogError($"permissions: {ex.Message}");
+      Log.Error($"permissions: {ex.Message}");
       return [];
     }
   }

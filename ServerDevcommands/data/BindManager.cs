@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using BepInEx;
 using HarmonyLib;
+using Service;
 using UnityEngine;
 namespace ServerDevcommands;
 
@@ -215,7 +216,7 @@ public class BindManager
   private static bool TryParse(string str, out KeyCode keyCode)
   {
     if (Enum.TryParse(str, true, out keyCode)) return true;
-    ServerDevcommands.Log.LogWarning($"Failed to parse {str} as KeyCode.");
+    Log.Warning($"Failed to parse {str} as KeyCode.");
     return false;
   }
   public static BindData ToData(string command)
@@ -267,7 +268,7 @@ public class BindManager
     if (binds.Length == 0) return;
     var yaml = Yaml.Serializer().Serialize(binds);
     File.WriteAllText(FilePath, yaml);
-    ServerDevcommands.Log.LogInfo($"Importing {binds.Length} bind data.");
+    Log.Info($"Importing {binds.Length} bind data.");
   }
   [HarmonyPatch(typeof(Chat), nameof(Chat.Awake)), HarmonyPostfix]
   public static void ChatAwake()
@@ -296,18 +297,25 @@ public class BindManager
     {
       Terminal.m_bindList.Clear();
       Terminal.m_binds.Clear();
-      var data = Yaml.Read(FilePath, Yaml.Deserialize<List<BindData>>);
-      var binds = data.Select(d => FromData(d, false)).Where(b => b.MouseWheel || b.Required.Count > 0).ToList();
-      binds.AddRange(TemporaryBinds);
-      Binds = [.. binds.Where(bind => !bind.MouseWheel)];
-      WheelBinds = [.. binds.Where(bind => bind.MouseWheel)];
-      ServerDevcommands.Log.LogInfo($"Reloading {binds.Count} bind data.");
+      Yaml.LoadListsFromDirectory<BindData>("binds", "binds*.yaml", LoadBind);
+      Log.Info($"Reloading {WheelBinds.Count + Binds.Count} bind data.");
     }
     catch (Exception e)
     {
-      ServerDevcommands.Log.LogError(e.StackTrace);
+      Log.Error(e.StackTrace);
     }
   }
+
+  private static void LoadBind(string file, BindData data)
+  {
+    var bind = FromData(data, false);
+    if (!bind.MouseWheel && bind.Required.Count == 0) return;
+    TemporaryBinds.Add(bind);
+    if (bind.MouseWheel) WheelBinds.Add(bind);
+    else Binds.Add(bind);
+  }
+
+
   public static void SetupWatcher()
   {
     // Valheim doesn't have these keys mapped by default.

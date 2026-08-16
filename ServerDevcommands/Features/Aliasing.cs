@@ -40,17 +40,17 @@ public static class Aliasing
     if (command == "") return "";
     if (TerminalUtils.SkipProcessing(command)) return command;
     if (rounds == 0) return command;
-    foreach (var key in Settings.AliasKeys)
+    foreach (var key in AliasManager.AliasKeys)
     {
       if (command.Length < key.Length) continue;
-      if (command == key) return Plain(Settings.GetAliasValue(key), rounds - 1);
+      if (command == key) return Plain(AliasManager.GetAliasValue(key), rounds - 1);
       if (command != key)
       {
         if (!command.StartsWith(key)) continue;
         var nextChar = command[key.Length];
         if (nextChar != ' ' && nextChar != ',' && nextChar != '=' && nextChar != ';') continue;
       }
-      var alias = Settings.GetAliasValue(key);
+      var alias = AliasManager.GetAliasValue(key);
       command = TerminalUtils.Substitute(alias, command.Substring(key.Length + 1));
       return Plain(command, rounds - 1);
 
@@ -63,7 +63,7 @@ public static class Aliasing
     // This functions gets constantly called so this can help with the performance.
     if (command == "") return "";
     if (TerminalUtils.SkipProcessing(command)) return command;
-    foreach (var key in Settings.AliasKeys)
+    foreach (var key in AliasManager.AliasKeys)
     {
       if (command.Length < key.Length) continue;
       if (command != key)

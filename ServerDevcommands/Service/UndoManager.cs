@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Service;
 namespace ServerDevcommands;
+
 public interface IUndoAction
 {
   string Undo();
@@ -48,7 +50,7 @@ public class UndoManager
         message = obj.GetType().GetMethod("UndoMessage", Binding).Invoke(obj, null);
       Helper.AddMessage(terminal, (string)message);
     }
-    catch (Exception e) { ServerDevcommands.Log.LogWarning(e); }
+    catch (Exception e) { Log.Warning(e.ToString()); }
     Index--;
     Executing = false;
     return true;
@@ -67,7 +69,7 @@ public class UndoManager
           message = obj.GetType().GetMethod("RedoMessage", Binding).Invoke(obj, null);
         Helper.AddMessage(terminal, (string)message);
       }
-      catch (Exception e) { ServerDevcommands.Log.LogWarning(e); }
+      catch (Exception e) { Log.Warning(e.ToString()); }
       Executing = false;
       return true;
     }
