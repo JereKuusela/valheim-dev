@@ -14,7 +14,7 @@ public static class CommandInputResolver
   {
     public readonly List<InputMatch> Matches = matches;
     public readonly Action<string> OnResolved = onResolved;
-    public readonly CommandInput Input = new();
+    public readonly CommandInput Input = new(HandleInput, CancelActiveRequest);
     public int Index = 0;
     public string Command = command;
   }
@@ -23,6 +23,12 @@ public static class CommandInputResolver
   {
     public readonly string Token = token;
     public readonly string Topic = topic;
+  }
+
+  public static void CheckActiveRequest()
+  {
+    if (ActiveRequest == null) return;
+    ActiveRequest.Input.ShowIfHidden();
   }
 
   public static bool TryResolve(string command, Action<string> onResolved)
@@ -47,19 +53,20 @@ public static class CommandInputResolver
     if (ActiveRequest == null) return;
 
     var match = ActiveRequest.Matches[ActiveRequest.Index];
-    ActiveRequest.Input.Ask(match.Topic, HandleInput, CancelActiveRequest);
+    ActiveRequest.Input.Ask(match.Topic);
   }
 
   private static void HandleInput(string value)
   {
     if (ActiveRequest == null) return;
-    var match = ActiveRequest.Matches[ActiveRequest.Index];
-    ActiveRequest.Command = ReplaceFirst(ActiveRequest.Command, match.Token, value);
-    ActiveRequest.Index += 1;
-    if (ActiveRequest.Index >= ActiveRequest.Matches.Count)
+    var req = ActiveRequest;
+    var match = req.Matches[req.Index];
+    req.Command = ReplaceFirst(req.Command, match.Token, value);
+    req.Index += 1;
+    if (req.Index >= req.Matches.Count)
     {
-      ActiveRequest.OnResolved(ActiveRequest.Command);
       CancelActiveRequest();
+      req.OnResolved(req.Command);
     }
     else
       ContinueRequest();

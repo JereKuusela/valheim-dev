@@ -13,7 +13,7 @@ public class ServerDevcommands : BaseUnityPlugin
 {
   public const string GUID = "server_devcommands";
   public const string NAME = "Server Devcommands";
-  public const string VERSION = "1.108.5";
+  public const string VERSION = "1.108.6";
   public const string COMFY_GIZMO_GUID = "bruce.valheim.comfymods.gizmo";
   public const string RELOADED_GIZMO_GUID = "m3to.mods.GizmoReloaded";
   public void Awake()
@@ -54,6 +54,7 @@ public class ServerDevcommands : BaseUnityPlugin
       ParameterInfo.SetServerLocationIds(null);
       ParameterInfo.SetServerVegetationIds(null);
     }
+    CommandInputResolver.CheckActiveRequest();
   }
 
 #pragma warning disable IDE0051

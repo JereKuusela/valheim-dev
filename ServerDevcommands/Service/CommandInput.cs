@@ -3,18 +3,13 @@ using HarmonyLib;
 
 namespace Service;
 
-public class CommandInput : TextReceiver
+public class CommandInput(Action<string> onTextReceived, Action onCancelled) : TextReceiver
 {
   public string Topic = "text";
-  public Action<string>? OnTextReceived;
-  public Action? OnCancelled;
-  public string Text = "";
 
-  public void Ask(string topic, Action<string> onTextReceived, Action onCancelled)
+  public void Ask(string topic)
   {
     Topic = topic;
-    OnTextReceived = onTextReceived;
-    OnCancelled = onCancelled;
     Show();
   }
 
@@ -23,26 +18,28 @@ public class CommandInput : TextReceiver
     if (TextInput.instance)
       TextInput.instance.RequestText(this, Topic, 1000);
   }
-  public string GetText() => Text;
+
+  public void ShowIfHidden()
+  {
+    if (TextInput.instance && !TextInput.IsVisible())
+      Show();
+  }
+
+  public string GetText() => "";
 
   public void SetText(string text)
   {
-    Text = text;
-    OnTextReceived?.Invoke(text);
-    OnTextReceived = null;
-    OnCancelled = null;
+    onTextReceived.Invoke(text);
   }
 
   public void Hide()
   {
-    OnCancelled?.Invoke();
-    OnTextReceived = null;
-    OnCancelled = null;
+    onCancelled.Invoke();
   }
 }
 
 [HarmonyPatch(typeof(TextInput), nameof(TextInput.Hide))]
-public class TextInput_Hide_Patch
+public class TextInput_OnCancel_Patch
 {
   public static void Postfix()
   {
