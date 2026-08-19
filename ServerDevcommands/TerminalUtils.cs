@@ -9,7 +9,7 @@ namespace ServerDevcommands;
 
 public static class TerminalUtils
 {
-  public static bool TryResolveInputPlaceholders(string command, Action<string> onResolved) => CommandInputResolver.TryResolve(command, onResolved);
+  public static bool TryResolveInputPlaceholders(Terminal t, string command) => CommandInputResolver.TryResolve(command, resolved => t.TryRunCommand(resolved));
 
   public static string GetLastWord(Terminal obj) => obj.m_input.text.Split(' ').Last().Split('=').Last().Split(',').Last();
   public static IEnumerable<string> GetPositionalParameters(string[] parameters)
@@ -91,7 +91,7 @@ public class TryRunCommand
     // Some commands (like alias or bind) are expected to be executed as they are.
     if (TerminalUtils.SkipProcessing(text)) return true;
 
-    if (TerminalUtils.TryResolveInputPlaceholders(text, resolved => __instance.TryRunCommand(resolved)))
+    if (TerminalUtils.TryResolveInputPlaceholders(__instance, text))
       return false;
 
     var commands = MultiCommands.Split(text).Select(Aliasing.Plain).SelectMany(MultiCommands.Split).ToArray();

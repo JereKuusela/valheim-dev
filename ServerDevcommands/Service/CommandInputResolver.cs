@@ -15,7 +15,7 @@ public static class CommandInputResolver
     public readonly List<InputMatch> Matches = matches;
     public readonly Action<string> OnResolved = onResolved;
     public readonly CommandInput Input = new();
-    public int NextIndex = 0;
+    public int Index = 0;
     public string Command = command;
   }
 
@@ -31,36 +31,44 @@ public static class CommandInputResolver
     if (matches.Count == 0) return false;
 
     PendingRequests.Enqueue(new InputRequest(command, matches, onResolved));
-    StartNextRequest();
+    StartNext();
     return true;
   }
 
-  private static void StartNextRequest()
+  private static void StartNext()
   {
     if (ActiveRequest != null || PendingRequests.Count == 0) return;
     ActiveRequest = PendingRequests.Dequeue();
-    ContinueActiveRequest(ActiveRequest);
+    ContinueRequest();
   }
 
-  private static void ContinueActiveRequest(InputRequest request)
+  private static void ContinueRequest()
   {
-    if (!ReferenceEquals(ActiveRequest, request)) return;
+    if (ActiveRequest == null) return;
 
-    if (request.NextIndex >= request.Matches.Count)
+    var match = ActiveRequest.Matches[ActiveRequest.Index];
+    ActiveRequest.Input.Ask(match.Topic, HandleInput, CancelActiveRequest);
+  }
+
+  private static void HandleInput(string value)
+  {
+    if (ActiveRequest == null) return;
+    var match = ActiveRequest.Matches[ActiveRequest.Index];
+    ActiveRequest.Command = ReplaceFirst(ActiveRequest.Command, match.Token, value);
+    ActiveRequest.Index += 1;
+    if (ActiveRequest.Index >= ActiveRequest.Matches.Count)
     {
-      ActiveRequest = null;
-      request.OnResolved(request.Command);
-      StartNextRequest();
-      return;
+      ActiveRequest.OnResolved(ActiveRequest.Command);
+      CancelActiveRequest();
     }
+    else
+      ContinueRequest();
+  }
 
-    var match = request.Matches[request.NextIndex++];
-    request.Input.Ask(match.Topic, value =>
-    {
-      if (!ReferenceEquals(ActiveRequest, request)) return;
-      request.Command = ReplaceFirst(request.Command, match.Token, value);
-      ContinueActiveRequest(request);
-    });
+  private static void CancelActiveRequest()
+  {
+    ActiveRequest = null;
+    StartNext();
   }
 
   private static List<InputMatch> FindMatches(string command)
