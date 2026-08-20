@@ -315,15 +315,18 @@ public class BindManager
   }
   public static void FromFile()
   {
+    Binds.Clear();
+    WheelBinds.Clear();
     Yaml.LoadListsFromDirectory<BindData>(Paths.ConfigPath, "binds*.yaml", LoadBind);
     Log.Info($"Reloading {WheelBinds.Count + Binds.Count} bind data.");
+    Binds.AddRange(TemporaryBinds.Where(b => !b.MouseWheel && b.Required.Count > 0));
+    WheelBinds.AddRange(TemporaryBinds.Where(b => b.MouseWheel));
   }
 
   private static void LoadBind(string file, BindData data)
   {
     var bind = FromData(data, false);
     if (!bind.MouseWheel && bind.Required.Count == 0) return;
-    TemporaryBinds.Add(bind);
     if (bind.MouseWheel) WheelBinds.Add(bind);
     else Binds.Add(bind);
   }
