@@ -31,4 +31,8 @@ public class CommandBind
   public bool WasExecuted = false;
   public string? Keys;
   public bool Temporary = false;
+  ///<summary>True if loaded from (or added to) the default file, so saving only affects the default file.</summary>
+  public bool IsDefault;
+  ///<summary>Filename this bind was loaded from, used to scope saving to the default file.</summary>
+  public string Source = "";
 }

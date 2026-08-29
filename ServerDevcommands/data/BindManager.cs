@@ -13,11 +13,17 @@ public class BindManager
 {
   public static string Pattern = "binds*.yaml";
   public static string Folder = "binds";
-  public static string DefaultFile = Path.Combine(Paths.ConfigPath, "binds.yaml");
+  public const string DefaultFile = "binds.yaml";
 
   private static List<CommandBind> Binds = [];
   private static List<CommandBind> WheelBinds = [];
   private static readonly List<CommandBind> TemporaryBinds = [];
+
+  private static string GetFolderPath()
+  {
+    var folderPath = Path.Combine(Paths.ConfigPath, Folder);
+    return Directory.Exists(folderPath) ? folderPath : Paths.ConfigPath;
+  }
   public static void AddBind(string keys, string command)
   {
     BindData data = new()
@@ -26,6 +32,7 @@ public class BindManager
       command = command,
     };
     var bind = FromData(data, false);
+    bind.IsDefault = true;
     if (bind.MouseWheel) WheelBinds.Add(bind);
     else Binds.Add(bind);
     ToBeSaved = true;
@@ -53,6 +60,7 @@ public class BindManager
     WheelBinds.RemoveAll(b => b.Command == command);
     Binds.RemoveAll(b => b.Command == command);
     var bind = FromData(data, true);
+    bind.IsDefault = true;
     if (!bind.MouseWheel && bind.Required.Count == 0) return;
     TemporaryBinds.Add(bind);
     if (bind.MouseWheel) WheelBinds.Add(bind);
@@ -266,7 +274,7 @@ public class BindManager
     var binds = Terminal.m_bindList.Select(ToData).ToArray();
     if (binds.Length == 0) return;
     var yaml = Yaml.Serializer().Serialize(binds);
-    File.WriteAllText(DefaultFile, yaml);
+    File.WriteAllText(Path.Combine(GetFolderPath(), DefaultFile), yaml);
     Log.Info($"Importing {binds.Length} bind data.");
   }
   public static void Init()
@@ -285,15 +293,17 @@ public class BindManager
     ZInput.s_keyCodeToKeyMap[KeyCode.F23] = UnityEngine.InputSystem.Key.F23;
     ZInput.s_keyCodeToKeyMap[KeyCode.F24] = UnityEngine.InputSystem.Key.F24;
 
-    if (File.Exists(DefaultFile))
-      FromFile();
-    Yaml.SetupWatcher(Paths.ConfigPath, Pattern, Folder, FromFile);
+    Yaml.ConsolidateDefaultFile(Paths.ConfigPath, Folder, DefaultFile);
+    FromFiles();
+    Yaml.SetupWatcher(Paths.ConfigPath, Pattern, Folder, FromFiles);
   }
 
 
   public static void Load()
   {
-    if (!File.Exists(DefaultFile))
+    FromFiles();
+    // Only import vanilla binds when there's truly nothing on disk, not just because parsing yielded nothing (e.g. a corrupted file).
+    if (Binds.Count == 0 && WheelBinds.Count == 0 && !Yaml.AnyFileExists(Paths.ConfigPath, Pattern, Folder))
       ImportBinds();
 
     Terminal.m_bindList.Clear();
@@ -303,16 +313,11 @@ public class BindManager
   public static void ToFile()
   {
     ToBeSaved = false;
-    List<BindData> data = [.. Binds.Where(b => !b.Temporary).Select(ToData), .. WheelBinds.Where(b => !b.Temporary).Select(ToData)];
-    if (data.Count == 0)
-    {
-      if (File.Exists(DefaultFile)) File.Delete(DefaultFile);
-      return;
-    }
+    List<BindData> data = [.. Binds.Where(b => !b.Temporary && b.IsDefault).Select(ToData), .. WheelBinds.Where(b => !b.Temporary && b.IsDefault).Select(ToData)];
     var yaml = Yaml.Serializer().Serialize(data);
-    File.WriteAllText(DefaultFile, yaml);
+    File.WriteAllText(Path.Combine(GetFolderPath(), DefaultFile), yaml);
   }
-  public static void FromFile()
+  public static void FromFiles()
   {
     Binds.Clear();
     WheelBinds.Clear();
@@ -325,6 +330,7 @@ public class BindManager
   private static void LoadBind(string file, BindData data)
   {
     var bind = FromData(data, false);
+    bind.IsDefault = Yaml.IsDefaultFile(file, Folder, DefaultFile);
     if (!bind.MouseWheel && bind.Required.Count == 0) return;
     if (bind.MouseWheel) WheelBinds.Add(bind);
     else Binds.Add(bind);

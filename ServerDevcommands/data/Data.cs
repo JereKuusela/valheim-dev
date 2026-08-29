@@ -61,12 +61,9 @@ public class Yaml
     }
   }
 
-  public static void LoadDictFromDirectory<T>(string directory, string pattern, Action<string, string, T> action) =>
-    LoadDictFromDirectory(directory, pattern, "", action);
-
-  public static void LoadDictFromDirectory<T>(string directory, string pattern, string folder, Action<string, string, T> action)
+  private static IEnumerable<string> GetPaths(string directory, string pattern, string folder)
   {
-    if (!Directory.Exists(directory)) return;
+    if (!Directory.Exists(directory)) return [];
     // Full search on top config directory could be really slow if some mod adds lots of files.
     // So just use it when operating inside some other folder.
     var search = directory == Paths.ConfigPath ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories;
@@ -77,10 +74,27 @@ public class Yaml
       if (Directory.Exists(folderPath))
         paths = paths.Concat(Directory.GetFiles(folderPath, "*", SearchOption.AllDirectories)).Distinct();
     }
-    foreach (var path in paths)
+    return paths;
+  }
+
+  ///<summary>Path relative to directory, since the folder is searched recursively and a nested file could otherwise share a filename with the top-level one.</summary>
+  private static string GetRelativePath(string directory, string path) =>
+    path.StartsWith(directory, StringComparison.OrdinalIgnoreCase) ? path.Substring(directory.Length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) : Path.GetFileName(path);
+
+  ///<summary>True if any matching file has actual content, ignoring empty placeholder files created by ConsolidateDefaultFile.</summary>
+  public static bool AnyFileExists(string directory, string pattern, string folder) =>
+    GetPaths(directory, pattern, folder).Any(path => File.ReadAllText(path).Trim().Length > 0);
+
+  public static void LoadDictFromDirectory<T>(string directory, string pattern, Action<string, string, T> action) =>
+    LoadDictFromDirectory(directory, pattern, "", action);
+
+  public static void LoadDictFromDirectory<T>(string directory, string pattern, string folder, Action<string, string, T> action)
+  {
+    foreach (var path in GetPaths(directory, pattern, folder))
     {
-      var file = Path.GetFileName(path);
-      var data = Deserialize<Dictionary<string, T>>(File.ReadAllText(path), file);
+      var file = GetRelativePath(directory, path);
+      var data = Deserialize<Dictionary<string, T>>(File.ReadAllText(path), Path.GetFileName(path));
+      if (data == null) continue;
       foreach (var kvp in data)
         action(file, kvp.Key, kvp.Value);
     }
@@ -91,24 +105,44 @@ public class Yaml
 
   public static void LoadListsFromDirectory<T>(string directory, string pattern, string folder, Action<string, T> action) where T : new()
   {
-    if (!Directory.Exists(directory)) return;
-    // Full search on top config directory could be really slow if some mod adds lots of files.
-    // So just use it when operating inside some other folder.
-    var search = directory == Paths.ConfigPath ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories;
-    var paths = Directory.GetFiles(directory, pattern, search).AsEnumerable();
-    if (!string.IsNullOrEmpty(folder))
+    foreach (var path in GetPaths(directory, pattern, folder))
     {
-      var folderPath = Path.Combine(directory, folder);
-      if (Directory.Exists(folderPath))
-        paths = paths.Concat(Directory.GetFiles(folderPath, "*", SearchOption.AllDirectories)).Distinct();
-    }
-    foreach (var path in paths)
-    {
-      var file = Path.GetFileName(path);
-      var data = Deserialize<List<T>>(File.ReadAllText(path), file);
+      var file = GetRelativePath(directory, path);
+      var data = Deserialize<List<T>>(File.ReadAllText(path), Path.GetFileName(path));
+      if (data == null) continue;
       foreach (var item in data)
         action(file, item);
     }
+  }
+
+  ///<summary>True if the relative path is the default file, at the config root or directly inside the folder.</summary>
+  public static bool IsDefaultFile(string file, string folder, string fileName) =>
+    file == fileName || file == Path.Combine(folder, fileName);
+
+  ///<summary>Moves a stray default file from the config root into the folder (so only one default file remains), creating an empty one if missing entirely.</summary>
+  public static void ConsolidateDefaultFile(string directory, string folder, string fileName)
+  {
+    var folderPath = Path.Combine(directory, folder);
+    var useFolder = Directory.Exists(folderPath);
+    var innerPath = Path.Combine(folderPath, fileName);
+    var outerPath = Path.Combine(directory, fileName);
+    if (!useFolder)
+    {
+      if (!File.Exists(outerPath)) File.WriteAllText(outerPath, "");
+      return;
+    }
+    if (!File.Exists(outerPath))
+    {
+      if (!File.Exists(innerPath)) File.WriteAllText(innerPath, "");
+      return;
+    }
+    if (File.Exists(innerPath))
+    {
+      Log.Warning($"Both {outerPath} and {innerPath} exist, keeping the one in the folder.");
+      File.Delete(outerPath);
+      return;
+    }
+    File.Move(outerPath, innerPath);
   }
 }
 

@@ -12,32 +12,37 @@ public class AliasManager
 {
   public static string Pattern = "alias*.yaml";
   public static string Folder = "alias";
-  public static string DefaultFile = Path.Combine(Paths.ConfigPath, "alias.yaml");
-  private static readonly Dictionary<string, string> Aliases = [];
+  public const string DefaultFile = "alias.yaml";
+  ///<summary>Tracks whether an alias came from the default file, so saving only affects the default file.</summary>
+  private class AliasEntry
+  {
+    public string Value = "";
+    public bool IsDefault;
+  }
+  private static readonly Dictionary<string, AliasEntry> Aliases = [];
   public static string[] AliasKeys => [.. Aliases.Keys.OrderBy(key => key)];
+
+  private static string GetFolderPath()
+  {
+    var folderPath = Path.Combine(Paths.ConfigPath, Folder);
+    return Directory.Exists(folderPath) ? folderPath : Paths.ConfigPath;
+  }
 
   public static void Init()
   {
-    if (File.Exists(DefaultFile))
-      FromFile();
-    else
-      ToFile();
-
-    Yaml.SetupWatcher(Paths.ConfigPath, Pattern, Folder, FromFile);
+    Yaml.ConsolidateDefaultFile(Paths.ConfigPath, Folder, DefaultFile);
+    FromFiles();
+    Yaml.SetupWatcher(Paths.ConfigPath, Pattern, Folder, FromFiles);
   }
   public static bool ToBeSaved = false;
   public static void ToFile()
   {
     ToBeSaved = false;
-    if (Aliases.Count == 0)
-    {
-      if (File.Exists(DefaultFile)) File.Delete(DefaultFile);
-      return;
-    }
-    var yaml = Yaml.Serializer().Serialize(Aliases);
-    File.WriteAllText(DefaultFile, yaml);
+    var data = Aliases.Where(kvp => kvp.Value.IsDefault).ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Value);
+    var yaml = Yaml.Serializer().Serialize(data);
+    File.WriteAllText(Path.Combine(GetFolderPath(), DefaultFile), yaml);
   }
-  public static void FromFile()
+  public static void FromFiles()
   {
     foreach (var alias in Aliases.Keys)
       RemoveCommand(alias);
@@ -46,18 +51,18 @@ public class AliasManager
     Log.Info($"Reloading {Aliases.Count} alias data.");
   }
 
-  public static string GetAliasValue(string key) => Aliases.TryGetValue(key, out var value) ? value : "_";
+  public static string GetAliasValue(string key) => Aliases.TryGetValue(key, out var entry) ? entry.Value : "_";
 
   public static void LoadAlias(string file, string alias, string value)
   {
     if (Aliases.ContainsKey(alias))
       Log.Warning($"Duplicate alias '{alias}' in {file}. Overwriting previous value.");
     AddCommand(alias, value);
-    Aliases[alias] = value;
+    Aliases[alias] = new AliasEntry { Value = value, IsDefault = Yaml.IsDefaultFile(file, Folder, DefaultFile) };
   }
   public static void AddAlias(string alias, string value)
   {
-    Aliases[alias] = value;
+    Aliases[alias] = new AliasEntry { Value = value, IsDefault = true };
     AddCommand(alias, value);
     ToBeSaved = true;
   }
