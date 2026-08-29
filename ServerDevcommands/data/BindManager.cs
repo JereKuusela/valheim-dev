@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using BepInEx;
 using HarmonyLib;
 using Service;
@@ -13,8 +11,9 @@ namespace ServerDevcommands;
 [HarmonyPatch]
 public class BindManager
 {
-  public static string FileName = "binds.yaml";
-  public static string FilePath = Path.Combine(Paths.ConfigPath, FileName);
+  public static string Pattern = "binds*.yaml";
+  public static string Folder = "binds";
+  public static string DefaultFile = Path.Combine(Paths.ConfigPath, "binds.yaml");
 
   private static List<CommandBind> Binds = [];
   private static List<CommandBind> WheelBinds = [];
@@ -267,7 +266,7 @@ public class BindManager
     var binds = Terminal.m_bindList.Select(ToData).ToArray();
     if (binds.Length == 0) return;
     var yaml = Yaml.Serializer().Serialize(binds);
-    File.WriteAllText(FilePath, yaml);
+    File.WriteAllText(DefaultFile, yaml);
     Log.Info($"Importing {binds.Length} bind data.");
   }
   public static void Init()
@@ -286,15 +285,15 @@ public class BindManager
     ZInput.s_keyCodeToKeyMap[KeyCode.F23] = UnityEngine.InputSystem.Key.F23;
     ZInput.s_keyCodeToKeyMap[KeyCode.F24] = UnityEngine.InputSystem.Key.F24;
 
-    if (File.Exists(FilePath))
+    if (File.Exists(DefaultFile))
       FromFile();
-    Yaml.SetupWatcher(FileName, FromFile);
+    Yaml.SetupWatcher(Paths.ConfigPath, Pattern, Folder, FromFile);
   }
 
 
   public static void Load()
   {
-    if (!File.Exists(FilePath))
+    if (!File.Exists(DefaultFile))
       ImportBinds();
 
     Terminal.m_bindList.Clear();
@@ -307,17 +306,17 @@ public class BindManager
     List<BindData> data = [.. Binds.Where(b => !b.Temporary).Select(ToData), .. WheelBinds.Where(b => !b.Temporary).Select(ToData)];
     if (data.Count == 0)
     {
-      if (File.Exists(FilePath)) File.Delete(FilePath);
+      if (File.Exists(DefaultFile)) File.Delete(DefaultFile);
       return;
     }
     var yaml = Yaml.Serializer().Serialize(data);
-    File.WriteAllText(FilePath, yaml);
+    File.WriteAllText(DefaultFile, yaml);
   }
   public static void FromFile()
   {
     Binds.Clear();
     WheelBinds.Clear();
-    Yaml.LoadListsFromDirectory<BindData>(Paths.ConfigPath, "binds*.yaml", LoadBind);
+    Yaml.LoadListsFromDirectory<BindData>(Paths.ConfigPath, Pattern, Folder, LoadBind);
     Log.Info($"Reloading {WheelBinds.Count + Binds.Count} bind data.");
     Binds.AddRange(TemporaryBinds.Where(b => !b.MouseWheel && b.Required.Count > 0));
     WheelBinds.AddRange(TemporaryBinds.Where(b => b.MouseWheel));

@@ -10,19 +10,20 @@ namespace ServerDevcommands;
 [HarmonyPatch]
 public class AliasManager
 {
-  public static string FileName = "alias.yaml";
-  public static string FilePath = Path.Combine(Paths.ConfigPath, FileName);
-  private static Dictionary<string, string> Aliases = [];
+  public static string Pattern = "alias*.yaml";
+  public static string Folder = "alias";
+  public static string DefaultFile = Path.Combine(Paths.ConfigPath, "alias.yaml");
+  private static readonly Dictionary<string, string> Aliases = [];
   public static string[] AliasKeys => [.. Aliases.Keys.OrderBy(key => key)];
 
   public static void Init()
   {
-    if (File.Exists(FilePath))
+    if (File.Exists(DefaultFile))
       FromFile();
     else
       ToFile();
 
-    Yaml.SetupWatcher(FileName, FromFile);
+    Yaml.SetupWatcher(Paths.ConfigPath, Pattern, Folder, FromFile);
   }
   public static bool ToBeSaved = false;
   public static void ToFile()
@@ -30,18 +31,18 @@ public class AliasManager
     ToBeSaved = false;
     if (Aliases.Count == 0)
     {
-      if (File.Exists(FilePath)) File.Delete(FilePath);
+      if (File.Exists(DefaultFile)) File.Delete(DefaultFile);
       return;
     }
     var yaml = Yaml.Serializer().Serialize(Aliases);
-    File.WriteAllText(FilePath, yaml);
+    File.WriteAllText(DefaultFile, yaml);
   }
   public static void FromFile()
   {
     foreach (var alias in Aliases.Keys)
       RemoveCommand(alias);
     Aliases.Clear();
-    Yaml.LoadDictFromDirectory<string>(Paths.ConfigPath, "alias*.yaml", LoadAlias);
+    Yaml.LoadDictFromDirectory<string>(Paths.ConfigPath, Pattern, Folder, LoadAlias);
     Log.Info($"Reloading {Aliases.Count} alias data.");
   }
 

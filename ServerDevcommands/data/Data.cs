@@ -16,6 +16,14 @@ namespace ServerDevcommands;
 public class Yaml
 {
   public static void SetupWatcher(string pattern, Action action) => SetupWatcher(Paths.ConfigPath, pattern, action);
+  public static void SetupWatcher(string path, string pattern, string folder, Action action)
+  {
+    SetupWatcher(path, pattern, action);
+    if (string.IsNullOrEmpty(folder)) return;
+    var folderPath = Path.Combine(path, folder);
+    if (Directory.Exists(folderPath))
+      SetupWatcher(folderPath, "*", action);
+  }
   public static void SetupWatcher(string path, string pattern, Action action)
   {
     FileSystemWatcher watcher = new(path, pattern);
@@ -53,13 +61,23 @@ public class Yaml
     }
   }
 
-  public static void LoadDictFromDirectory<T>(string dictionary, string pattern, Action<string, string, T> action)
+  public static void LoadDictFromDirectory<T>(string directory, string pattern, Action<string, string, T> action) =>
+    LoadDictFromDirectory(directory, pattern, "", action);
+
+  public static void LoadDictFromDirectory<T>(string directory, string pattern, string folder, Action<string, string, T> action)
   {
-    if (!Directory.Exists(dictionary)) return;
+    if (!Directory.Exists(directory)) return;
     // Full search on top config directory could be really slow if some mod adds lots of files.
     // So just use it when operating inside some other folder.
-    var search = dictionary == Paths.ConfigPath ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories;
-    foreach (var path in Directory.GetFiles(dictionary, pattern, search))
+    var search = directory == Paths.ConfigPath ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories;
+    var paths = Directory.GetFiles(directory, pattern, search).AsEnumerable();
+    if (!string.IsNullOrEmpty(folder))
+    {
+      var folderPath = Path.Combine(directory, folder);
+      if (Directory.Exists(folderPath))
+        paths = paths.Concat(Directory.GetFiles(folderPath, "*", SearchOption.AllDirectories)).Distinct();
+    }
+    foreach (var path in paths)
     {
       var file = Path.GetFileName(path);
       var data = Deserialize<Dictionary<string, T>>(File.ReadAllText(path), file);
@@ -68,13 +86,23 @@ public class Yaml
     }
   }
 
-  public static void LoadListsFromDirectory<T>(string dictionary, string pattern, Action<string, T> action) where T : new()
+  public static void LoadListsFromDirectory<T>(string directory, string pattern, Action<string, T> action) where T : new() =>
+    LoadListsFromDirectory(directory, pattern, "", action);
+
+  public static void LoadListsFromDirectory<T>(string directory, string pattern, string folder, Action<string, T> action) where T : new()
   {
-    if (!Directory.Exists(dictionary)) return;
+    if (!Directory.Exists(directory)) return;
     // Full search on top config directory could be really slow if some mod adds lots of files.
     // So just use it when operating inside some other folder.
-    var search = dictionary == Paths.ConfigPath ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories;
-    foreach (var path in Directory.GetFiles(dictionary, pattern, search))
+    var search = directory == Paths.ConfigPath ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories;
+    var paths = Directory.GetFiles(directory, pattern, search).AsEnumerable();
+    if (!string.IsNullOrEmpty(folder))
+    {
+      var folderPath = Path.Combine(directory, folder);
+      if (Directory.Exists(folderPath))
+        paths = paths.Concat(Directory.GetFiles(folderPath, "*", SearchOption.AllDirectories)).Distinct();
+    }
+    foreach (var path in paths)
     {
       var file = Path.GetFileName(path);
       var data = Deserialize<List<T>>(File.ReadAllText(path), file);
