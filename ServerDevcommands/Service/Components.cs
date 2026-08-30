@@ -28,7 +28,7 @@ public class ComponentInfo
   {
     List<Assembly> assemblies = [Assembly.GetAssembly(typeof(ZNetView)), .. Chainloader.PluginInfos.Values.Where(p => p.Instance != null).Select(p => p.Instance.GetType().Assembly)];
     var baseType = typeof(MonoBehaviour);
-    return assemblies.SelectMany(s =>
+    return [.. assemblies.SelectMany(s =>
     {
       try
       {
@@ -48,7 +48,7 @@ public class ComponentInfo
       {
         return false;
       }
-    }).Distinct().ToArray();
+    }).Distinct()];
   }
   private static Type[] GetTypes(HashSet<string> components) => components.Select(c => NameToType.TryGetValue(c.ToLowerInvariant(), out var t) ? t : throw new InvalidOperationException($"Type {c} not recognized.")).ToArray();
 
@@ -59,15 +59,8 @@ public class ComponentInfo
     foreach (var kvp in ZNetScene.instance.m_namedPrefabs)
     {
       if (!kvp.Value) continue;
-      try
-      {
-        kvp.Value.GetComponentsInChildren(ZNetView.m_tempComponents);
-        result[kvp.Value.name] = [.. ZNetView.m_tempComponents.Where(s => s).Select(s => s.GetType().Name.ToLowerInvariant())];
-      }
-      catch (Exception e)
-      {
-        Log.Warning($"Failed to search components for prefab {kvp.Key}: {e.Message}");
-      }
+      kvp.Value.GetComponentsInChildren(ZNetView.m_tempComponents);
+      result[kvp.Value.name] = [.. ZNetView.m_tempComponents.Where(s => s).Select(s => s.GetType().Name.ToLowerInvariant())];
     }
     PrefabComponents = result;
   }
@@ -82,25 +75,17 @@ public class ComponentInfo
     var prefabs = PrefabsByComponent(component);
     var type = Types.FirstOrDefault(t => t.Name.ToLowerInvariant() == component);
     if (type == null) return [];
-    return prefabs.Where(prefab =>
+    return [.. prefabs.Where(prefab =>
     {
-      try
-      {
-        var prefabObject = ZNetScene.instance.GetPrefab(prefab);
-        if (!prefabObject) return false;
-        var component = prefabObject.GetComponentInChildren(type);
-        if (!component) return false;
-        var fieldInfo = component.GetType().GetField(field);
-        if (fieldInfo == null) return false;
-        var fieldValue = fieldInfo.GetValue(component);
-        return fieldValue?.ToString() == value;
-      }
-      catch (Exception e)
-      {
-        Log.Warning($"Failed to read field {field} on prefab {prefab}: {e.Message}");
-        return false;
-      }
-    }).ToArray();
+      var prefabObject = ZNetScene.instance.GetPrefab(prefab);
+      if (!prefabObject) return false;
+      var component = prefabObject.GetComponentInChildren(type);
+      if (!component) return false;
+      var fieldInfo = component.GetType().GetField(field);
+      if (fieldInfo == null) return false;
+      var fieldValue = fieldInfo.GetValue(component);
+      return fieldValue?.ToString() == value;
+    })];
   }
   public static string[] Get(ZNetView view)
   {
