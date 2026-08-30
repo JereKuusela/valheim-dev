@@ -96,7 +96,10 @@ public class Yaml
       var data = Deserialize<Dictionary<string, T>>(File.ReadAllText(path), Path.GetFileName(path));
       if (data == null) continue;
       foreach (var kvp in data)
+      {
+        if (kvp.Key == null || kvp.Value == null) continue;
         action(file, kvp.Key, kvp.Value);
+      }
     }
   }
 
@@ -111,7 +114,10 @@ public class Yaml
       var data = Deserialize<List<T>>(File.ReadAllText(path), Path.GetFileName(path));
       if (data == null) continue;
       foreach (var item in data)
+      {
+        if (item == null) continue;
         action(file, item);
+      }
     }
   }
 

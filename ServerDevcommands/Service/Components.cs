@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using BepInEx.Bootstrap;
+using Service;
 using UnityEngine;
 
 namespace ServerDevcommands;
@@ -54,14 +55,21 @@ public class ComponentInfo
   private static Dictionary<string, HashSet<string>> PrefabComponents = [];
   private static void SearchComponents()
   {
-    PrefabComponents = ZNetScene.instance.m_namedPrefabs.Where(kvp => kvp.Value).ToDictionary(
-      static kvp => kvp.Value.name,
-      static kvp =>
+    var result = new Dictionary<string, HashSet<string>>();
+    foreach (var kvp in ZNetScene.instance.m_namedPrefabs)
+    {
+      if (!kvp.Value) continue;
+      try
       {
         kvp.Value.GetComponentsInChildren(ZNetView.m_tempComponents);
-        return ZNetView.m_tempComponents.Select(s => s.GetType().Name.ToLowerInvariant()).ToHashSet();
+        result[kvp.Value.name] = [.. ZNetView.m_tempComponents.Where(s => s).Select(s => s.GetType().Name.ToLowerInvariant())];
       }
-    );
+      catch (Exception e)
+      {
+        Log.Warning($"Failed to search components for prefab {kvp.Key}: {e.Message}");
+      }
+    }
+    PrefabComponents = result;
   }
   public static string[] PrefabsByComponent(string component)
   {
@@ -76,23 +84,33 @@ public class ComponentInfo
     if (type == null) return [];
     return prefabs.Where(prefab =>
     {
-      var component = ZNetScene.instance.GetPrefab(prefab).GetComponentInChildren(type);
-      if (!component) return false;
-      var fieldInfo = component.GetType().GetField(field);
-      if (fieldInfo == null) return false;
-      var fieldValue = fieldInfo.GetValue(component);
-      return fieldValue.ToString() == value;
+      try
+      {
+        var prefabObject = ZNetScene.instance.GetPrefab(prefab);
+        if (!prefabObject) return false;
+        var component = prefabObject.GetComponentInChildren(type);
+        if (!component) return false;
+        var fieldInfo = component.GetType().GetField(field);
+        if (fieldInfo == null) return false;
+        var fieldValue = fieldInfo.GetValue(component);
+        return fieldValue?.ToString() == value;
+      }
+      catch (Exception e)
+      {
+        Log.Warning($"Failed to read field {field} on prefab {prefab}: {e.Message}");
+        return false;
+      }
     }).ToArray();
   }
   public static string[] Get(ZNetView view)
   {
-    view.GetComponentsInChildren<MonoBehaviour>(ZNetView.m_tempComponents);
-    return ZNetView.m_tempComponents.Select(s => s.GetType().Name).ToArray();
+    view.GetComponentsInChildren(ZNetView.m_tempComponents);
+    return ZNetView.m_tempComponents.Where(s => s).Select(s => s.GetType().Name).ToArray();
   }
   public static bool HasType(ZNetView view, Type[] types)
   {
-    view.GetComponentsInChildren<MonoBehaviour>(ZNetView.m_tempComponents);
-    return ZNetView.m_tempComponents.Any(s => types.Contains(s.GetType()));
+    view.GetComponentsInChildren(ZNetView.m_tempComponents);
+    return ZNetView.m_tempComponents.Any(s => s && types.Contains(s.GetType()));
   }
   public static IEnumerable<ZNetView> HaveComponent(IEnumerable<ZNetView> views, HashSet<string> components)
   {

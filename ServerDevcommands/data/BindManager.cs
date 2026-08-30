@@ -39,11 +39,12 @@ public class BindManager
   }
   public static void RemoveBind(string key)
   {
-    if (key == "wheel") WheelBinds.Clear();
+    // Only default can be saved, so no point to touch other files.
+    if (key == "wheel") WheelBinds.RemoveAll(bind => bind.IsDefault);
     else if (TryParse(key, out var keyCode))
     {
-      Binds.RemoveAll(bind => bind.Required != null && bind.Required.Contains(keyCode));
-      WheelBinds.RemoveAll(bind => bind.Required != null && bind.Required.Contains(keyCode));
+      Binds.RemoveAll(bind => bind.Required != null && bind.Required.Contains(keyCode) && bind.IsDefault);
+      WheelBinds.RemoveAll(bind => bind.Required != null && bind.Required.Contains(keyCode) && bind.IsDefault);
     }
     ToBeSaved = true;
   }

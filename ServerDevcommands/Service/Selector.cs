@@ -60,14 +60,15 @@ public static class Selector
       if (Vector3.Distance(hit.point, obj.m_eye.position) >= maxDistance) continue;
       var netView = hit.collider.GetComponentInParent<ZNetView>();
       if (!IsValid(netView)) continue;
-      var prefab = netView.GetZDO().GetPrefab();
+      var zdo = netView.GetZDO();
+      var prefab = zdo.GetPrefab();
       if (includedPrefabs.Count > 0 && !includedPrefabs.Contains(prefab)) continue;
       if (excludedPrefabs.Contains(prefab)) continue;
       if (hit.collider.GetComponent<EffectArea>()) continue;
       if (netView.gameObject == obj.gameObject) continue;
       var player = netView.GetComponentInChildren<Player>();
       if (player == obj) continue;
-      if (!allowOtherPlayers && prefab == PlayerHash && !netView.m_persistent) continue;
+      if (!allowOtherPlayers && prefab == PlayerHash && !zdo.Persistent) continue;
       if (types.Count > 0 && !ComponentInfo.HasComponent(netView, types)) continue;
       var index = -1;
       if (netView.TryGetComponent(out MineRock5 mineRock5))
