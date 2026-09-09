@@ -84,7 +84,7 @@ public static class TerminalUtils
 [HarmonyPatch(typeof(Terminal), nameof(Terminal.TryRunCommand))]
 public class TryRunCommand
 {
-  static bool Prefix(Terminal __instance, ref string text)
+  static bool Prefix(Terminal __instance, ref string text, bool silentFail = false, bool skipAllowedCheck = false)
   {
     if (!Settings.ImprovedChat && __instance == Chat.instance) return true;
     RemoveWhitespacedFromHistory(__instance);
@@ -144,7 +144,7 @@ public class TryRunCommand
       ZNet.instance.RemoteCommand(text);
       return;
     }
-    cmd.RunAction(new Terminal.ConsoleEventArgs(text, t));
+    cmd.RunAction(new Terminal.ConsoleEventArgs(text, t, cmd));
   }
 }
 
@@ -181,7 +181,7 @@ public class UnlockCharacterLimit
     if (__instance.m_input) __instance.m_input.characterLimit = 0;
   }
 }
-[HarmonyPatch(typeof(Terminal.ConsoleEventArgs), MethodType.Constructor, typeof(string), typeof(Terminal))]
+[HarmonyPatch(typeof(Terminal.ConsoleEventArgs), MethodType.Constructor, typeof(string), typeof(Terminal), typeof(Terminal.ConsoleCommand))]
 public class Wrapping
 {
   static void Postfix(Terminal.ConsoleEventArgs __instance)

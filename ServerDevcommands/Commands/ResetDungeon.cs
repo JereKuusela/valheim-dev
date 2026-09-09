@@ -17,7 +17,7 @@ public class ResetDungeonCommand
       if (!dg) throw new System.Exception("No dungeon found.");
       if (Utils.DistanceXZ(dg.transform.position, player.transform.position) > 20f) throw new System.Exception("The dungeon is too far.");
       var zone = ZoneSystem.GetZone(dg.transform.position);
-      var index = ZDOMan.instance.SectorToIndex(zone);
+      var index = (int)ZoneSystem.SectorToIndex(zone).Sector;
       if (index < 0 || index >= ZDOMan.instance.m_objectsBySector.Length) throw new System.Exception("No objects found.");
       var objs = ZDOMan.instance.m_objectsBySector[index];
       var proxy = objs.FirstOrDefault(x => x.GetPrefab() == ProxyHash);
