@@ -144,7 +144,7 @@ public class TryRunCommand
       ZNet.instance.RemoteCommand(text);
       return;
     }
-    cmd.RunAction(new Terminal.ConsoleEventArgs(text, t));
+    cmd.RunAction(new Terminal.ConsoleEventArgs(text, t, cmd));
   }
 }
 

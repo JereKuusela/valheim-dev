@@ -281,18 +281,7 @@ public class BindManager
   public static void Init()
   {
     // Valheim doesn't have these keys mapped by default.
-    ZInput.s_keyCodeToKeyMap[KeyCode.F13] = UnityEngine.InputSystem.Key.F13;
-    ZInput.s_keyCodeToKeyMap[KeyCode.F14] = UnityEngine.InputSystem.Key.F14;
-    ZInput.s_keyCodeToKeyMap[KeyCode.F15] = UnityEngine.InputSystem.Key.F15;
-    ZInput.s_keyCodeToKeyMap[KeyCode.F16] = UnityEngine.InputSystem.Key.F16;
-    ZInput.s_keyCodeToKeyMap[KeyCode.F17] = UnityEngine.InputSystem.Key.F17;
-    ZInput.s_keyCodeToKeyMap[KeyCode.F18] = UnityEngine.InputSystem.Key.F18;
-    ZInput.s_keyCodeToKeyMap[KeyCode.F19] = UnityEngine.InputSystem.Key.F19;
-    ZInput.s_keyCodeToKeyMap[KeyCode.F20] = UnityEngine.InputSystem.Key.F20;
-    ZInput.s_keyCodeToKeyMap[KeyCode.F21] = UnityEngine.InputSystem.Key.F21;
-    ZInput.s_keyCodeToKeyMap[KeyCode.F22] = UnityEngine.InputSystem.Key.F22;
-    ZInput.s_keyCodeToKeyMap[KeyCode.F23] = UnityEngine.InputSystem.Key.F23;
-    ZInput.s_keyCodeToKeyMap[KeyCode.F24] = UnityEngine.InputSystem.Key.F24;
+    // ZInput mappings removed
 
     Yaml.ConsolidateDefaultFile(Paths.ConfigPath, Folder, DefaultFile);
     FromFiles();

@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using BepInEx;
 using BepInEx.Bootstrap;
 using HarmonyLib;
@@ -19,9 +19,9 @@ public class ServerDevcommands : BaseUnityPlugin
   public void Awake()
   {
     Log.Init(Logger);
+    Settings.Init(Config);
     Harmony harmony = new(GUID);
     harmony.PatchAll();
-    Settings.Init(Config);
 
     try
     {
