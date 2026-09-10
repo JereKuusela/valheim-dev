@@ -20,8 +20,7 @@ public class ServerChat
     m_name = Settings.ServerChatName,
     // Receiving chat messages requires a valid character ID.
     m_characterID = new ZDOID(ZDOMan.GetSessionID(), uint.MaxValue),
-    m_userInfo = new() { m_id = GetServerUserId(), m_displayName = Settings.ServerChatName },
-    //m_serverAssignedDisplayName = Settings.ServerChatName,
+    m_userInfo = new() { m_id = GetServerUserId(), m_displayName = Settings.ServerChatName, m_serverAssignedDisplayName = Settings.ServerChatName },
     m_publicPosition = false,
     m_position = Vector3.zero,
   };
@@ -58,7 +57,6 @@ public class ServerChat
     pkg.Write(ServerClient.m_characterID);
     pkg.Write(ServerClient.m_userInfo.m_id.ToString());
     pkg.Write(ServerClient.m_userInfo.m_displayName);
-    //pkg.Write(ServerClient.m_serverAssignedDisplayName);
     // Server position is never public.
     pkg.Write(false);
   }
