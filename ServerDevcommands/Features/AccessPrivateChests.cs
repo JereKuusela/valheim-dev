@@ -8,6 +8,6 @@ public class AccessPrivateChests
 
 
   [HarmonyPatch(nameof(Container.RPC_OpenResponse)), HarmonyPrefix]
-  static void RPC_OpenRespons(ref bool granted) => granted |= Settings.AccessPrivateChests;
+  static void RPC_OpenResponse(ref bool granted) => granted |= Settings.AccessPrivateChests;
 }
 
