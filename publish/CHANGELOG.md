@@ -1,5 +1,5 @@
 - v1.110
-  - Fixes for new game update. Thanks Haloa and others!
+  - Fixes for the new game update. Thanks Haloa, leandrogg, andrewstevenson91 and endimonan!
 
 - v1.109
   - Adds support for showing text input when `<value_title>` is used in the command.
