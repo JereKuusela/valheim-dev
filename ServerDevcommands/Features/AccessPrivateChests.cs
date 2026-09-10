@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 namespace ServerDevcommands;
 [HarmonyPatch(typeof(Container))]
 public class AccessPrivateChests

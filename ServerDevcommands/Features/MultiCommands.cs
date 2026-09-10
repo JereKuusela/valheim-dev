@@ -31,12 +31,24 @@ public class MultiCommands(Terminal terminal, string[] commands)
 
   private readonly Queue<string> Commands = new(commands);
   private readonly Terminal Terminal = terminal;
+  // Delayed commands belong to the world session that queued them.
+  // Commands queued at the menu keep their existing behavior.
+  private readonly ZNet WorldSession = ZNet.instance;
+  private readonly bool HasWorldSession = ZNet.instance;
   private float WaitTimer = 0f;
+
+  private bool CanRun() => Terminal && (!HasWorldSession ||
+    (WorldSession && WorldSession == ZNet.instance && WorldSession.enabled));
 
   public bool IsDone() => Commands.Count() == 0;
 
   public void Run(float dt)
   {
+    if (!CanRun())
+    {
+      Commands.Clear();
+      return;
+    }
     if (WaitTimer > -0.01)
       WaitTimer -= dt;
     // Another check to execute at the same frame as the timer is done.
@@ -44,6 +56,12 @@ public class MultiCommands(Terminal terminal, string[] commands)
       return;
     while (Commands.Count() > 0)
     {
+      // A command in this same group can initiate logout.
+      if (!CanRun())
+      {
+        Commands.Clear();
+        return;
+      }
       var command = Commands.Dequeue();
       if (command.StartsWith("wait ", StringComparison.InvariantCultureIgnoreCase))
       {

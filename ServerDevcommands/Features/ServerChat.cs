@@ -3,7 +3,6 @@ using System;
 using System.Reflection.Emit;
 using HarmonyLib;
 using Splatform;
-using Service;
 using UnityEngine;
 
 namespace ServerDevcommands;
@@ -45,8 +44,10 @@ public class ServerChat
     {
     }
 
-    if (ZNet.m_onlineBackend == OnlineBackendType.PlayFab)
-      return new PlatformUserID("playfab", ZPlayFabMatchmaking.m_instance.m_serverData.remotePlayerId);
+    // PlayFab may be selected while respawning locally, before matchmaking has server data.
+    var playFabId = ZPlayFabMatchmaking.m_instance?.m_serverData?.remotePlayerId;
+    if (ZNet.m_onlineBackend == OnlineBackendType.PlayFab && !string.IsNullOrEmpty(playFabId))
+      return new PlatformUserID("playfab", playFabId);
     else if (ZNet.instance.m_hostSocket == null)
       return new PlatformUserID(ZNet.instance.m_steamPlatform, "Server");
     else
@@ -56,17 +57,14 @@ public class ServerChat
   {
     pkg.Write(ServerClient.m_name);
     pkg.Write(ServerClient.m_characterID);
-    pkg.Write(ServerClient.m_userInfo.m_id.ToString());
-    pkg.Write(ServerClient.m_userInfo.m_displayName);
-    pkg.Write(ServerClient.m_userInfo.m_serverAssignedDisplayName);
-    pkg.Write(ServerClient.m_userInfo.m_playfabId ?? string.Empty);
+    ServerClient.m_userInfo.Write(pkg);
     // Server position is never public.
     pkg.Write(false);
   }
   static void Postfix(Talker.Type type, string text)
   {
     if (Player.m_localPlayer) return;
-    if (!Settings.IsServerChat) return;
+    if (!Settings.IsServerChat || !ZNet.instance || !ZNet.instance.IsServer() || ZRoutedRpc.instance == null) return;
     ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, "ChatMessage", [
       Vector3.zero,
       (int)type,
@@ -82,7 +80,7 @@ public class RecognizeServerClient
 {
   static bool Postfix(bool result, PlatformUserID platformUserID, ref ZNet.PlayerInfo playerInfo)
   {
-    if (result) return result;
+    if (result || !Settings.IsServerChat || !ZNet.instance || !ZNet.instance.IsServer()) return result;
     if (platformUserID != ServerChat.ServerClient.m_userInfo.m_id) return result;
 
     playerInfo = ServerChat.ServerClient;
@@ -90,24 +88,15 @@ public class RecognizeServerClient
   }
 }
 
-// Valheim 1.0 moved the packet writing (and the Write(count) anchor) from SendPlayerList into WritePlayerInfo.
-[HarmonyPatch(typeof(ZNet), nameof(ZNet.WritePlayerInfo))]
+[HarmonyPatch(typeof(ZNet), "WritePlayerInfo")]
 public class AddExtraPlayer
 {
   static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
   {
-    var matcher = new CodeMatcher(instructions).MatchStartForward(new CodeMatch(OpCodes.Callvirt, AccessTools.Method(typeof(ZPackage), nameof(ZPackage.Write), [typeof(int)])));
-    if (matcher.IsInvalid)
-    {
-      Log.Error("AddExtraPlayer: ZPackage.Write(int) anchor not found in ZNet.WritePlayerInfo; server chat player entry disabled.");
-      return instructions;
-    }
-    var writePos = matcher.Pos;
-    // The receiver of that Write call is the ZPackage local; clone its load instead of assuming local slot 0.
-    var loadPackage = matcher.MatchStartBackwards(new CodeMatch(i => i.IsLdloc())).Instruction.Clone();
-    return matcher.Start().Advance(writePos + 1)
+    return new CodeMatcher(instructions).MatchStartForward(new CodeMatch(OpCodes.Callvirt, AccessTools.Method(typeof(ZPackage), nameof(ZPackage.Write), [typeof(int)])))
+      .Advance(1)
       .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
-      .InsertAndAdvance(loadPackage)
+      .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_0))
       .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(AddExtraPlayer), nameof(AddServer))))
       .InstructionEnumeration();
   }
@@ -130,4 +119,14 @@ public class AddExtraPlayer
     }
   }
   static bool IsExtraPlayerAdded(ZNet net, int count) => count >= net.m_players.Count + 1;
+}
+
+// The synthetic chat player's object ID and backend identity belong to one session.
+[HarmonyPatch]
+public static class ServerChatSession
+{
+  [HarmonyPatch(typeof(ZNet), nameof(ZNet.Awake)), HarmonyPrefix]
+  private static void OnAwake() => ServerChat.RefreshPlayerInfo();
+  [HarmonyPatch(typeof(ZNet), nameof(ZNet.Shutdown)), HarmonyPrefix]
+  private static void OnShutdown() => ServerChat.RefreshPlayerInfo();
 }

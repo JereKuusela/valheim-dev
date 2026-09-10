@@ -84,7 +84,7 @@ public static class TerminalUtils
 [HarmonyPatch(typeof(Terminal), nameof(Terminal.TryRunCommand))]
 public class TryRunCommand
 {
-  static bool Prefix(Terminal __instance, ref string text, bool silentFail = false, bool skipAllowedCheck = false)
+  static bool Prefix(Terminal __instance, ref string text)
   {
     if (!Settings.ImprovedChat && __instance == Chat.instance) return true;
     RemoveWhitespacedFromHistory(__instance);
@@ -170,7 +170,8 @@ public class RunAction
       }
     }
   }
-  static void Postfix() => TerminalUtils.IsExecuting = false;
+  // Cleanup must also run when the command throws; do not suppress its exception.
+  static void Finalizer() => TerminalUtils.IsExecuting = false;
 }
 
 [HarmonyPatch(typeof(Terminal), nameof(Terminal.Awake))]
@@ -265,4 +266,3 @@ public class TerminalFix
     }
   }
 }
-

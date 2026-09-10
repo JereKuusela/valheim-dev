@@ -1,5 +1,14 @@
-- v1.110
-  - Fixes for the new game update. Thanks Haloa, leandrogg, andrewstevenson91 and endimonan!
+- v1.109.3 (Deep North prototype handoff; 2026-09-10)
+  - Move synthetic server-chat player injection to `ZNet.WritePlayerInfo`, where Deep North writes the player-list packet.
+  - Keep plugin and publish-manifest versions aligned.
+
+- v1.109.2 (Deep North prototype handoff; 2026-09-09)
+  - Update synthetic server-chat identity and packet serialization for Deep North.
+  - Refresh session-bound identity and guard unavailable server/backend state.
+
+- v1.109.1 (Deep North prototype handoff iteration 2; 2026-09-09)
+  - Cancel delayed command groups when their originating world session ends.
+  - Clear the command execution flag after exceptions as well as success.
 
 - v1.109
   - Adds support for showing text input when `<value_title>` is used in the command.
@@ -22,3 +31,6 @@
 - v1.106
   - Fixes server side remote commands returning excessive output.
   - Fixes autocomplete issue.
+
+- v1.105
+  - Fixes major performance issue in the permission system.

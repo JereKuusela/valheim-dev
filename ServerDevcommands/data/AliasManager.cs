@@ -80,14 +80,9 @@ public class AliasManager
     var plain = Aliasing.Plain(value);
     var baseCommand = plain.Split(' ').First();
     if (Terminal.commands.TryGetValue(baseCommand, out var command))
-    {
-      if (command.action != null)
-        new Terminal.ConsoleCommand(key, plain, command.action, command.IsCheat, command.IsNetwork, command.OnlyServer, command.IsSecret, command.AllowInDevBuild, command.HideBehindDevCommands, command.m_tabOptionsFetcher, command.m_alwaysRefreshTabOptions, command.RemoteCommand, command.OnlyAdmin);
-      else
-        new Terminal.ConsoleCommand(key, plain, command.actionFailable, command.IsCheat, command.IsNetwork, command.OnlyServer, command.IsSecret, command.AllowInDevBuild, command.HideBehindDevCommands, command.m_tabOptionsFetcher, command.m_alwaysRefreshTabOptions, command.RemoteCommand, command.OnlyAdmin);
-    }
+      new Terminal.ConsoleCommand(key, plain, command.action, command.IsCheat, command.IsNetwork, command.OnlyServer, command.IsSecret, command.AllowInDevBuild, command.HideBehindDevCommands, command.m_tabOptionsFetcher);
     else
-      new Terminal.ConsoleCommand(key, plain, action: (args) => { });
+      new Terminal.ConsoleCommand(key, plain, (args) => { });
   }
   public static void RemoveCommand(string key)
   {

@@ -20,7 +20,6 @@ public class ResetDungeonCommand
       var index = (int)ZoneSystem.SectorToIndex(zone).Sector;
       if (index < 0 || index >= ZDOMan.instance.m_objectsBySector.Length) throw new System.Exception("No objects found.");
       var objs = ZDOMan.instance.m_objectsBySector[index];
-      if (objs == null) throw new System.Exception("No objects found.");
       var proxy = objs.FirstOrDefault(x => x.GetPrefab() == ProxyHash);
       if (proxy != null)
       {
