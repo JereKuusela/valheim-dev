@@ -1,4 +1,4 @@
-using HarmonyLib;
+﻿using HarmonyLib;
 namespace ServerDevcommands;
 [HarmonyPatch(typeof(Container))]
 public class AccessPrivateChests
@@ -10,4 +10,3 @@ public class AccessPrivateChests
   [HarmonyPatch(nameof(Container.RPC_OpenResponse)), HarmonyPrefix]
   static void RPC_OpenResponse(ref bool granted) => granted |= Settings.AccessPrivateChests;
 }
-

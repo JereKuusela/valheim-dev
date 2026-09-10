@@ -82,7 +82,7 @@ public class AliasManager
     if (Terminal.commands.TryGetValue(baseCommand, out var command))
       new Terminal.ConsoleCommand(key, plain, command.action, command.IsCheat, command.IsNetwork, command.OnlyServer, command.IsSecret, command.AllowInDevBuild, command.HideBehindDevCommands, command.m_tabOptionsFetcher);
     else
-      new Terminal.ConsoleCommand(key, plain, (args) => { });
+      new Terminal.ConsoleCommand(key, plain, action: (args) => { });
   }
   public static void RemoveCommand(string key)
   {
