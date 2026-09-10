@@ -80,7 +80,7 @@ public class AliasManager
     var plain = Aliasing.Plain(value);
     var baseCommand = plain.Split(' ').First();
     if (Terminal.commands.TryGetValue(baseCommand, out var command))
-      new Terminal.ConsoleCommand(key, plain, command.action, command.IsCheat, command.IsNetwork, command.OnlyServer, command.IsSecret, command.AllowInDevBuild, command.m_tabOptionsFetcher);
+      new Terminal.ConsoleCommand(key, plain, command.action, command.IsCheat, command.IsNetwork, command.OnlyServer, command.IsSecret, command.AllowInDevBuild, command.HideBehindDevCommands, command.m_tabOptionsFetcher);
     else
       new Terminal.ConsoleCommand(key, plain, (args) => { });
   }
