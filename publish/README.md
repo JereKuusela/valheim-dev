@@ -4,7 +4,7 @@ Allows devcommands and utilities for server admins. Full features require server
 
 Install on the admin client and optionally on the server (modding [guide](https://youtu.be/L9ljm2eKLrk)).
 
-Check [wiki](https://valheim.fandom.com/wiki/Console_Commands) for available commands and how to use them. Remember to add your steamID64 / playfab ID to the adminlist.txt.
+Check [wiki](https://valheim.wiki/Console_Commands) for available commands and how to use them. Remember to add your steamID64 / playfab ID to the adminlist.txt.
 
 ## Usage
 
