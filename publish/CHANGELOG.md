@@ -1,3 +1,8 @@
+- v1.111
+  - Adds setting to disable cheat tracking when using commands (enabled by default).
+  - Adds `clearcheats` command to clear the character cheat status.
+  - More fixes. Thanks JPValheim!
+
 - v1.110
   - Fixes for the new game update. Thanks Haloa, leandrogg, andrewstevenson91 and endimonan!
 
@@ -18,7 +23,3 @@
   - Fixes devcommands status not being used (admin status always enabled cheat access).
   - Fixes `move_spawn` command not working for custom spawn locations.
   - Fixes `move_spawn` command causing error if no spawn was found (now attempts to make a new one).
-
-- v1.106
-  - Fixes server side remote commands returning excessive output.
-  - Fixes autocomplete issue.

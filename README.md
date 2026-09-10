@@ -43,6 +43,7 @@ See [commands.md](commands.md) for more info.
   - `broadcast center <color=red><size=20><i><b>Hello!</b></i></size></color>` broadcasts a small red message with bolding and italics.
   - Use `message` command to send messages to specific players.
 - `calm [radius=20]` calms nearby aggravated creatures.
+- `clearcheats` clears the character's cheat status.
 - `devcommands` includes an admin check to allow using on servers.
 - `dev_config [name] [value]` toggles settings.
   - `dev_config auto_fly` toggles the auto fly setting.
@@ -192,6 +193,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - Auto exec dev on (key: `auto_exec_dev_off`): Executes the given command when enabling devcommands.
 - Command aliases: Saved command aliases.
 - Command descriptions (default: `true`, key: `command_descriptions`): Shows command descriptions as autocomplete.
+- Disable cheat tracking (default: `true`, key: `disable_cheat_tracking`): Prevents commands from marking the character as having used cheats.
 - Disable debug mode keys (default: `false`, key: `disable_debug_mode_keys`): Removes debug mode key bindings for killall, removedrops, fly and no cost.
 - Disable messages (default: `false`, key: `disable_messages`): Prevents messages from commands.
 - Disabled commands (default: `dev_config disable_command`, key: `disable_command`): Command names separated by , that can't be executed. Mainly useful on the server to prevent some server-side commands.

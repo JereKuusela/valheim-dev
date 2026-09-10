@@ -31,6 +31,12 @@ public static class CommandInputResolver
     ActiveRequest.Input.ShowIfHidden();
   }
 
+  public static void Clear()
+  {
+    PendingRequests.Clear();
+    ActiveRequest = null;
+  }
+
   public static bool TryResolve(string command, Action<string> onResolved)
   {
     var matches = FindMatches(command);

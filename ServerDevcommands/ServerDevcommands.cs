@@ -13,7 +13,7 @@ public class ServerDevcommands : BaseUnityPlugin
 {
   public const string GUID = "server_devcommands";
   public const string NAME = "Server Devcommands";
-  public const string VERSION = "1.110";
+  public const string VERSION = "1.111";
   public const string COMFY_GIZMO_GUID = "bruce.valheim.comfymods.gizmo";
   public const string RELOADED_GIZMO_GUID = "m3to.mods.GizmoReloaded";
   public void Awake()
@@ -136,6 +136,19 @@ public class InitializeTerminal
     DefaultAutoComplete.Register();
     AliasManager.Init();
     BindManager.Init();
+  }
+}
+
+
+[HarmonyPatch(typeof(ZNet), nameof(ZNet.Shutdown))]
+public class CleanupOnShutdown
+{
+  static void Postfix()
+  {
+    MultiCommands.ClearGroups();
+    ServerChat.Clear();
+    CommandInputResolver.Clear();
+    UndoManager.Clear();
   }
 }
 

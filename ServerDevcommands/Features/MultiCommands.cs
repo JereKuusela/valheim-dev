@@ -56,4 +56,6 @@ public class MultiCommands(Terminal terminal, string[] commands)
       Terminal.TryRunCommand(command);
     }
   }
+
+  public static void ClearGroups() => Groups.Clear();
 }

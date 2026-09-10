@@ -17,6 +17,14 @@ public class UndoManager
   private static int Index = -1;
   private static bool Executing = false;
   public static int MaxSteps = 50;
+
+  public static void Clear()
+  {
+    History.Clear();
+    Index = -1;
+    Executing = false;
+  }
+
   public static void Add(IUndoAction action)
   {
     Add((object)action);

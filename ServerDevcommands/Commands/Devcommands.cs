@@ -83,6 +83,7 @@ public class DevcommandsCommand
   public static void Set(bool value)
   {
     SetCheats(value);
+    Settings.UpdateCheatTracking();
     Console.instance.updateCommandList();
     Chat.instance.updateCommandList();
     DisableAutoFeatures();
@@ -109,7 +110,21 @@ public class DevcommandsCommand
         Admin.ManualCheck();
       }
     });
+    new Terminal.ConsoleCommand("clearcheats", "Clears the character cheat status.", (args) =>
+    {
+      if (Game.instance == null) return;
+      Game.instance.GetPlayerProfile().m_usedCheats = false;
+      var player = Player.m_localPlayer;
+      if (player)
+      {
+        foreach (var item in player.GetInventory().GetAllItems())
+          item.m_cheated = false;
+      }
+      Achievements.m_cheatCheckFrame = -1;
+      args.Context.AddString("Character cheat status cleared.");
+    });
     AutoComplete.RegisterEmpty("devcommands");
+    AutoComplete.RegisterEmpty("clearcheats");
   }
 }
 
