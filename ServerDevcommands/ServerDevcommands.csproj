@@ -13,55 +13,55 @@
   </Target>
   <ItemGroup>
     <Reference Include="BepInEx">
-      <HintPath>..\Libs\BepinEx.dll</HintPath>
+      <HintPath>..\..\Libs\BepinEx.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\Libs\UnityEngine.dll</HintPath>
+      <HintPath>..\..\Libs\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\Libs\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>..\..\Libs\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>..\Libs\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>..\..\Libs\UnityEngine.IMGUIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>..\Libs\UnityEngine.UI.dll</HintPath>
+      <HintPath>..\..\Libs\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="Unity.InputSystem">
-      <HintPath>..\Libs\Unity.InputSystem.dll</HintPath>
+      <HintPath>..\..\Libs\Unity.InputSystem.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>..\Libs\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>..\..\Libs\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.InputLegacyModule">
-      <HintPath>..\Libs\UnityEngine.InputLegacyModule.dll</HintPath>
+      <HintPath>..\..\Libs\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>..\Libs\Unity.TextMeshPro.dll</HintPath>
+      <HintPath>..\..\Libs\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="gui_framework">
-      <HintPath>..\Libs\gui_framework.dll</HintPath>
+      <HintPath>..\..\Libs\gui_framework.dll</HintPath>
     </Reference>
     <Reference Include="0Harmony">
-      <HintPath>..\Libs\0Harmony.dll</HintPath>
+      <HintPath>..\..\Libs\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx.Harmony">
-      <HintPath>..\Libs\BepInEx.Harmony.dll</HintPath>
+      <HintPath>..\..\Libs\BepInEx.Harmony.dll</HintPath>
     </Reference>
     <Reference Include="assembly_valheim">
-      <HintPath>..\Libs\assembly_valheim.dll</HintPath>
+      <HintPath>..\..\Libs\assembly_valheim.dll</HintPath>
     </Reference>
     <Reference Include="assembly_utils">
-      <HintPath>..\Libs\assembly_utils.dll</HintPath>
+      <HintPath>..\..\Libs\assembly_utils.dll</HintPath>
     </Reference>
     <Reference Include="assembly_guiutils">
-      <HintPath>..\Libs\assembly_guiutils.dll</HintPath>
+      <HintPath>..\..\Libs\assembly_guiutils.dll</HintPath>
     </Reference>
     <Reference Include="SoftReferenceableAssets">
-      <HintPath>..\Libs\SoftReferenceableAssets.dll</HintPath>
+      <HintPath>..\..\Libs\SoftReferenceableAssets.dll</HintPath>
     </Reference>
     <Reference Include="Splatform">
-      <HintPath>..\Libs\Splatform.dll</HintPath>
+      <HintPath>..\..\Libs\Splatform.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
