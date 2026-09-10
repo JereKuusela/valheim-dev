@@ -25,8 +25,8 @@ public class MinimapTeleport
 
   [HarmonyPatch(nameof(Minimap.OnMapLeftClick)), HarmonyPrefix]
   static bool OnMapLeftClick(Minimap __instance) => !TryTeleport(__instance, KeyCode.Mouse0);
-  [HarmonyPatch(nameof(Minimap.OnOutsideMapClick)), HarmonyPrefix]
-  static bool OnOutsideMapClick(Minimap __instance) => !TryTeleport(__instance, KeyCode.Mouse1);
+  [HarmonyPatch(nameof(Minimap.RemovePinUnderPointer)), HarmonyPrefix]
+  static bool RemovePinUnderPointer(Minimap __instance) => !TryTeleport(__instance, KeyCode.Mouse1);
   [HarmonyPatch(nameof(Minimap.OnMapMiddleClick)), HarmonyPrefix]
   static bool OnMapMiddleClick(Minimap __instance)
   {
