@@ -1,9 +1,9 @@
 {
   "name": "Server_devcommands",
-  "version_number": "1.109.0",
+  "version_number": "1.110.0",
   "website_url": "https://discord.gg/VFRJcPwUdm",
   "description": "Enables devcommands and utilities for server admins.",
   "dependencies": [
-    "denikson-BepInExPack_Valheim-5.4.2333"
+    "denikson-BepInExPack_Valheim-5.4.2350"
   ]
 }

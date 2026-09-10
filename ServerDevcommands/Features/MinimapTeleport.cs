@@ -25,7 +25,6 @@ public class MinimapTeleport
 
   [HarmonyPatch(nameof(Minimap.OnMapLeftClick)), HarmonyPrefix]
   static bool OnMapLeftClick(Minimap __instance) => !TryTeleport(__instance, KeyCode.Mouse0);
-  // Valheim 1.0 removed Minimap.OnMapRightClick; right-click is now an inline lambda that only calls RemovePinUnderPointer.
   [HarmonyPatch(nameof(Minimap.RemovePinUnderPointer)), HarmonyPrefix]
   static bool RemovePinUnderPointer(Minimap __instance) => !TryTeleport(__instance, KeyCode.Mouse1);
   [HarmonyPatch(nameof(Minimap.OnMapMiddleClick)), HarmonyPrefix]

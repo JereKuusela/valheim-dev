@@ -8,7 +8,7 @@
   <Target Name="CopyDLL" AfterTargets="ILRepacker">
     <Copy
       SourceFiles="$(TargetDir)$(ProjectName).dll"
-      DestinationFolder="$(ProjectDir)\..\..\Libs" />
+      DestinationFolder="$(ProjectDir)\..\Libs" />
     <Message Text="Copied to Libs folder." Importance="High" />
   </Target>
   <ItemGroup>

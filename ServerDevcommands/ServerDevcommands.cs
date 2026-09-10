@@ -13,15 +13,15 @@ public class ServerDevcommands : BaseUnityPlugin
 {
   public const string GUID = "server_devcommands";
   public const string NAME = "Server Devcommands";
-  public const string VERSION = "1.109";
+  public const string VERSION = "1.110";
   public const string COMFY_GIZMO_GUID = "bruce.valheim.comfymods.gizmo";
   public const string RELOADED_GIZMO_GUID = "m3to.mods.GizmoReloaded";
   public void Awake()
   {
     Log.Init(Logger);
+    Settings.Init(Config);
     Harmony harmony = new(GUID);
     harmony.PatchAll();
-    Settings.Init(Config);
 
     try
     {

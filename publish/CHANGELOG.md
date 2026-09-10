@@ -1,3 +1,6 @@
+- v1.110
+  - Fixes for new game update. Thanks Haloa and others!
+
 - v1.109
   - Adds support for showing text input when `<value_title>` is used in the command.
   - Adds support for not adding commands to the console history if they start with a whitespace character (space or tab).
@@ -19,6 +22,3 @@
 - v1.106
   - Fixes server side remote commands returning excessive output.
   - Fixes autocomplete issue.
-
-- v1.105
-  - Fixes major performance issue in the permission system.

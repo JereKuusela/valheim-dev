@@ -21,7 +21,6 @@ public class ServerChat
     m_name = Settings.ServerChatName,
     // Receiving chat messages requires a valid character ID.
     m_characterID = new ZDOID(ZDOMan.GetSessionID(), uint.MaxValue),
-    // Valheim 1.0: m_serverAssignedDisplayName lives on CrossNetworkUserInfo now.
     m_userInfo = new() { m_id = GetServerUserId(), m_displayName = Settings.ServerChatName, m_serverAssignedDisplayName = Settings.ServerChatName },
     m_publicPosition = false,
     m_position = Vector3.zero,
@@ -60,7 +59,6 @@ public class ServerChat
     pkg.Write(ServerClient.m_userInfo.m_id.ToString());
     pkg.Write(ServerClient.m_userInfo.m_displayName);
     pkg.Write(ServerClient.m_userInfo.m_serverAssignedDisplayName);
-    // Valheim 1.0 added m_playfabId to the PlayerList packet, before the position flag.
     pkg.Write(ServerClient.m_userInfo.m_playfabId ?? string.Empty);
     // Server position is never public.
     pkg.Write(false);
