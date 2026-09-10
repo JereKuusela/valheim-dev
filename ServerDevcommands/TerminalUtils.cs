@@ -144,7 +144,7 @@ public class TryRunCommand
       ZNet.instance.RemoteCommand(text);
       return;
     }
-    cmd.RunAction(new Terminal.ConsoleEventArgs(text, t));
+    cmd.RunAction(new Terminal.ConsoleEventArgs(text, t, cmd));
   }
 }
 
@@ -181,7 +181,8 @@ public class UnlockCharacterLimit
     if (__instance.m_input) __instance.m_input.characterLimit = 0;
   }
 }
-[HarmonyPatch(typeof(Terminal.ConsoleEventArgs), MethodType.Constructor, typeof(string), typeof(Terminal))]
+// Valheim 1.0: the ConsoleEventArgs constructor gained a ConsoleCommand parameter.
+[HarmonyPatch(typeof(Terminal.ConsoleEventArgs), MethodType.Constructor, typeof(string), typeof(Terminal), typeof(Terminal.ConsoleCommand))]
 public class Wrapping
 {
   static void Postfix(Terminal.ConsoleEventArgs __instance)

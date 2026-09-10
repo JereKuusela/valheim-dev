@@ -3,6 +3,7 @@ using System;
 using System.Reflection.Emit;
 using HarmonyLib;
 using Splatform;
+using Service;
 using UnityEngine;
 
 namespace ServerDevcommands;
@@ -20,8 +21,8 @@ public class ServerChat
     m_name = Settings.ServerChatName,
     // Receiving chat messages requires a valid character ID.
     m_characterID = new ZDOID(ZDOMan.GetSessionID(), uint.MaxValue),
-    m_userInfo = new() { m_id = GetServerUserId(), m_displayName = Settings.ServerChatName },
-    m_serverAssignedDisplayName = Settings.ServerChatName,
+    // Valheim 1.0: m_serverAssignedDisplayName lives on CrossNetworkUserInfo now.
+    m_userInfo = new() { m_id = GetServerUserId(), m_displayName = Settings.ServerChatName, m_serverAssignedDisplayName = Settings.ServerChatName },
     m_publicPosition = false,
     m_position = Vector3.zero,
   };
@@ -58,7 +59,9 @@ public class ServerChat
     pkg.Write(ServerClient.m_characterID);
     pkg.Write(ServerClient.m_userInfo.m_id.ToString());
     pkg.Write(ServerClient.m_userInfo.m_displayName);
-    pkg.Write(ServerClient.m_serverAssignedDisplayName);
+    pkg.Write(ServerClient.m_userInfo.m_serverAssignedDisplayName);
+    // Valheim 1.0 added m_playfabId to the PlayerList packet, before the position flag.
+    pkg.Write(ServerClient.m_userInfo.m_playfabId ?? string.Empty);
     // Server position is never public.
     pkg.Write(false);
   }
@@ -89,15 +92,24 @@ public class RecognizeServerClient
   }
 }
 
-[HarmonyPatch(typeof(ZNet), nameof(ZNet.SendPlayerList))]
+// Valheim 1.0 moved the packet writing (and the Write(count) anchor) from SendPlayerList into WritePlayerInfo.
+[HarmonyPatch(typeof(ZNet), nameof(ZNet.WritePlayerInfo))]
 public class AddExtraPlayer
 {
   static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
   {
-    return new CodeMatcher(instructions).MatchStartForward(new CodeMatch(OpCodes.Callvirt, AccessTools.Method(typeof(ZPackage), nameof(ZPackage.Write), [typeof(int)])))
-      .Advance(1)
+    var matcher = new CodeMatcher(instructions).MatchStartForward(new CodeMatch(OpCodes.Callvirt, AccessTools.Method(typeof(ZPackage), nameof(ZPackage.Write), [typeof(int)])));
+    if (matcher.IsInvalid)
+    {
+      Log.Error("AddExtraPlayer: ZPackage.Write(int) anchor not found in ZNet.WritePlayerInfo; server chat player entry disabled.");
+      return instructions;
+    }
+    var writePos = matcher.Pos;
+    // The receiver of that Write call is the ZPackage local; clone its load instead of assuming local slot 0.
+    var loadPackage = matcher.MatchStartBackwards(new CodeMatch(i => i.IsLdloc())).Instruction.Clone();
+    return matcher.Start().Advance(writePos + 1)
       .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
-      .InsertAndAdvance(new CodeInstruction(OpCodes.Ldloc_0))
+      .InsertAndAdvance(loadPackage)
       .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(AddExtraPlayer), nameof(AddServer))))
       .InstructionEnumeration();
   }
