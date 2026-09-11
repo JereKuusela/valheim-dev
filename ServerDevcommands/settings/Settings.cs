@@ -119,7 +119,6 @@ public static class Settings
   public static bool ImprovedChat => configImprovedChat.Value;
   public static ConfigEntry<bool> configDisableCheatTracking;
   public static bool DisableCheatTracking => configDisableCheatTracking.Value;
-  public static void UpdateCheatTracking() => PlayerProfile.s_bypassCheatChecks = DisableCheatTracking && PermissionManager.Instance.CanCheat;
 
   public static ConfigEntry<KeyboardShortcut> configMapTeleport;
   public static KeyboardShortcut MapTeleport => configMapTeleport.Value;
@@ -235,8 +234,6 @@ public static class Settings
     configMultiCommand = config.Bind(section, "Multiple commands per line", true, "Enables multiple commands when separated with ;.");
     configImprovedChat = config.Bind(section, "Improved chat", true, "Enables alias and multicommands system for chat.");
     configDisableCheatTracking = config.Bind(section, "Disable cheat tracking", true, "Prevents commands from marking the character as having used cheats.");
-    configDisableCheatTracking.SettingChanged += (s, e) => UpdateCheatTracking();
-    UpdateCheatTracking();
     configSubstitution = config.Bind(section, "Substitution", "$$", "Enables the command parameter substitution system (substitution gets replaced with the next free parameter).");
     configWrapping = config.Bind(section, "Wrapping", "\"", "Allows using space bars in command parameters.");
     configFlyUpKeys = config.Bind(section, "Key for fly up", "Space", "Key codes separated by ,");

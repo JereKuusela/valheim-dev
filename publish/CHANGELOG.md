@@ -1,3 +1,6 @@
+- v1.112
+  - Fixed for the new update.
+
 - v1.111
   - Adds setting to disable cheat tracking when using commands (enabled by default).
   - Adds `clearcheats` command to clear the character cheat status.
@@ -16,10 +19,3 @@
 
 - v1.108
   - Fixes server side commands checking admin status of the server, instead of the player executing the command.
-
-- v1.107
-  - Adds new field `admin` to the permissions.yaml to support character specific admin status.
-  - Adds support for permissions for all characters with the same host name (character id is optional).
-  - Fixes devcommands status not being used (admin status always enabled cheat access).
-  - Fixes `move_spawn` command not working for custom spawn locations.
-  - Fixes `move_spawn` command causing error if no spawn was found (now attempts to make a new one).

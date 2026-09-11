@@ -83,7 +83,6 @@ public class DevcommandsCommand
   public static void Set(bool value)
   {
     SetCheats(value);
-    Settings.UpdateCheatTracking();
     Console.instance.updateCommandList();
     Chat.instance.updateCommandList();
     DisableAutoFeatures();
