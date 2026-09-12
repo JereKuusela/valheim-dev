@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
-using Service;
 using UnityEngine;
 namespace ServerDevcommands;
 ///<summary>Server side code to include private player positions.</summary>
@@ -16,14 +15,11 @@ public class Server_UpdatePrivatePositions
     {
       var player = __instance.m_players[i];
       if (player.m_characterID == __instance.m_characterID) continue;
+      // The fake server chat player has no peer to match against.
       if (!idToPeer.TryGetValue(player.m_characterID, out var peer))
-      {
-        Log.Error("Unable to find the peer to set private position.");
         continue;
-      }
       if (peer.m_publicRefPos) continue;
-      player.m_position = peer.m_refPos;
-      __instance.m_players[i] = player;
+      __instance.m_players[i] = player with { m_position = peer.m_refPos };
     }
   }
 }

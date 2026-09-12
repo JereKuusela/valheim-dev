@@ -1,3 +1,6 @@
+- v1.113
+  - Removes pointless error about "Unable to find the peer to set private position."
+
 - v1.112
   - Fixed for the new update.
 
@@ -16,6 +19,3 @@
   - Fixes permission check failing if done when the player spawns (affects latest Infinity Hammer).
   - Improves file loading system to support sub-folders and patterns.
   - Removes dependency from Steamworks so should now work on non-Steam hosts.
-
-- v1.108
-  - Fixes server side commands checking admin status of the server, instead of the player executing the command.
