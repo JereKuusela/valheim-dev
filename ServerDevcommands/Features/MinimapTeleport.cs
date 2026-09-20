@@ -17,7 +17,8 @@ public class MinimapTeleport
       target.y = Player.m_localPlayer.transform.position.y;
       Heightmap.GetHeight(target, out var height);
       target.y = Math.Max(0f, height);
-      Player.m_localPlayer.TeleportTo(target, Player.m_localPlayer.transform.rotation, true);
+      ZRoutedRpc.instance.InvokeRoutedRPC(0, Player.m_localPlayer.GetZDOID(), "RPC_TeleportTo",
+        [target, Player.m_localPlayer.transform.rotation, true]);
       return true;
     }
     return false;
