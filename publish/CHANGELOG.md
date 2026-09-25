@@ -1,5 +1,6 @@
 - v1.114
   - Adds alternative biome to minimap texts.
+  - Fixes bind system trying to execute invalid or missing commands (shows warning when this occurs).
   - Fixes some commands not working on single player if automatic devcommands was not enabled. Thanks kmatsumari!
 
 - v1.113
@@ -15,11 +16,3 @@
 
 - v1.110
   - Fixes for the new game update. Thanks Haloa, leandrogg, andrewstevenson91 and endimonan!
-
-- v1.109
-  - Adds support for showing text input when `<value_title>` is used in the command.
-  - Adds support for not adding commands to the console history if they start with a whitespace character (space or tab).
-  - Fixes console not being force enabled.
-  - Fixes permission check failing if done when the player spawns (affects latest Infinity Hammer).
-  - Improves file loading system to support sub-folders and patterns.
-  - Removes dependency from Steamworks so should now work on non-Steam hosts.

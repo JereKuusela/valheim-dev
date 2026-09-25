@@ -334,6 +334,7 @@ public class BindManager
   {
     var bind = FromData(data, false);
     bind.IsDefault = Yaml.IsDefaultFile(file, Folder, DefaultFile);
+    bind.Source = file;
     if (!bind.MouseWheel && bind.Required.Count == 0) return;
     if (bind.MouseWheel) WheelBinds.Add(bind);
     else Binds.Add(bind);
@@ -397,13 +398,29 @@ public class BindManager
     var mode = Mode == "" ? Player.m_localPlayer?.InPlaceMode() == true ? "build" : "" : Mode;
 
     if (!bind.MouseWheel && (bind.Required == null || bind.Required.Count == 0)) return false;
-
     if (bind.Required.Any(key => !GetKey(key))) return false;
     if (bind.Banned != null && bind.Banned.Any(GetKey)) return false;
     if (bind.RequiredState != null && bind.RequiredState.All(state => state != mode)) return false;
     if (bind.BannedState != null && bind.BannedState.Any(state => state == mode)) return false;
+    if (bind.Validity == CommandValidity.Invalid) return false;
+    if (bind.Validity == CommandValidity.Unknown)
+    {
+      bind.Validity = HasRegisteredCommand(bind.Command) ? CommandValidity.Valid : CommandValidity.Invalid;
+      if (bind.Validity == CommandValidity.Invalid)
+      {
+        var key = bind.Source + "\n" + bind.Command;
+        Log.Warning($"Tried to execute unknown bind command from '{bind.Source}': {bind.Command}");
+        return false;
+      }
+    }
     return true;
   }
+  private static bool HasRegisteredCommand(string command) =>
+    MultiCommands.Split(command)
+      .Select(Aliasing.Plain)
+      .SelectMany(MultiCommands.Split)
+      .Select(text => text.Split(' ')[0])
+      .Any(Terminal.commands.ContainsKey);
   public static bool GetKey(KeyCode key)
   {
     // Mouse 5+ are not supported by Valheim.

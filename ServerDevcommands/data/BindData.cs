@@ -18,6 +18,13 @@ public class BindData
   public string offCommand = "";
 }
 
+public enum CommandValidity
+{
+  Unknown,
+  Valid,
+  Invalid,
+}
+
 public class CommandBind
 {
   public List<KeyCode> Required = [];
@@ -31,6 +38,7 @@ public class CommandBind
   public bool WasExecuted = false;
   public string? Keys;
   public bool Temporary = false;
+  public CommandValidity Validity = CommandValidity.Unknown;
   ///<summary>True if loaded from (or added to) the default file, so saving only affects the default file.</summary>
   public bool IsDefault;
   ///<summary>Filename this bind was loaded from, used to scope saving to the default file.</summary>
