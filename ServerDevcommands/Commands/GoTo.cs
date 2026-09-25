@@ -61,7 +61,7 @@ public class GotoCommand
       ParseArgs(args, player, ref pos, ref rot);
       LastPosition = player.transform.position;
       LastRotation = player.transform.rotation;
-      player.TeleportTo(pos, rot, true);
+      ZRoutedRpc.instance.InvokeRoutedRPC(0, player.GetZDOID(), "RPC_TeleportTo", [pos, rot, true]);
       Helper.AddMessage(args.Context, $"Teleported to (X,Z,Y): {pos.x}, {pos.z}, {pos.y}.");
     });
   }
