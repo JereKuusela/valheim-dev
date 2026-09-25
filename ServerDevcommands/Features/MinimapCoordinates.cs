@@ -1,3 +1,4 @@
+using System.Linq;
 using HarmonyLib;
 using UnityEngine;
 namespace ServerDevcommands;
@@ -35,12 +36,17 @@ public class Minimap_ShowPos
       "Not available", name, id, position.x, position.y, position.z
     );
   }
-  private static string GetText(Vector3 position)
+  private static string GetText(Vector3 position, float? distance = null)
   {
     var zone = ZoneSystem.GetZone(position);
     var positionText = Format(position);
     var zoneText = "zone: " + zone.x + "/" + zone.y;
-    return $"\n{zoneText}\n{positionText}";
+    var distanceText = distance.HasValue ? $"\ndistance: {distance.Value:F0}" : "";
+    var altBiomes = WorldGenerator.instance.GetBiomeSector(position.x, position.y).AltBiomes.Select(b => b.m_name).ToList();
+    var altBiomeText = Settings.ShowAlternativeBiomes && altBiomes.Count > 0
+      ? "\n" + string.Join(", ", altBiomes)
+      : "";
+    return $"\n{zoneText}\n{positionText}{distanceText}{altBiomeText}";
   }
   private static string PreviousSmallText = "";
   private static string PreviousLargeText = "";
@@ -68,8 +74,7 @@ public class Minimap_ShowPos
     {
       position = __instance.ScreenToWorldPoint(ZInput.IsMouseActive() ? Input.mousePosition : new((Screen.width / 2f), (Screen.height / 2f)));
       position.y = WorldGenerator.instance.GetHeight(position.x, position.z);
-      var text = GetText(position);
-      text += $"\ndistance: {Utils.DistanceXZ(player.transform.position, position):F0}";
+      var text = GetText(position, Utils.DistanceXZ(player.transform.position, position));
       AddText(__instance.m_biomeNameLarge, text);
       PreviousLargeText = text;
     }

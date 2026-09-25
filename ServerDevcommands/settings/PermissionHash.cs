@@ -11,6 +11,7 @@ public static class PermissionHash
   // Map & Minimap Features
   public static readonly int MapCoordinates = "mapcoordinates".GetStableHashCode();
   public static readonly int MiniMapCoordinates = "minimapcoordinates".GetStableHashCode();
+  public static readonly int AlternativeBiomes = "alternativebiomes".GetStableHashCode();
   public static readonly int ShowPrivatePlayers = "showprivateplayers".GetStableHashCode();
 
 

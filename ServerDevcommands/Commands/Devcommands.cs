@@ -101,7 +101,7 @@ public class DevcommandsCommand
       }
       else if (ZNet.instance && ZNet.instance.IsServer())
       {
-        Set(args.Context, true);
+        Admin.OnSuccess();
       }
       else
       {

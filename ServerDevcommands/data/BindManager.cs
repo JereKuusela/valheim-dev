@@ -15,8 +15,8 @@ public class BindManager
   public static string Folder = "binds";
   public const string DefaultFile = "binds.yaml";
 
-  private static List<CommandBind> Binds = [];
-  private static List<CommandBind> WheelBinds = [];
+  private static readonly List<CommandBind> Binds = [];
+  private static readonly List<CommandBind> WheelBinds = [];
   private static readonly List<CommandBind> TemporaryBinds = [];
 
   private static string GetFolderPath()
@@ -272,7 +272,9 @@ public class BindManager
   }
   private static void ImportBinds()
   {
-    var binds = Terminal.m_bindList.Select(ToData).ToArray();
+    var binds = Terminal.m_bindList.Select(ToData)
+      // Legacy temporary binds started with underscore. Keeping those would cause double binds.
+      .Where(bind => !bind.command.StartsWith("_", StringComparison.OrdinalIgnoreCase)).ToArray();
     if (binds.Length == 0) return;
     var yaml = Yaml.Serializer().Serialize(binds);
     File.WriteAllText(Path.Combine(GetFolderPath(), DefaultFile), yaml);

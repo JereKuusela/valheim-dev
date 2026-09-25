@@ -57,7 +57,7 @@ public static class Admin
     Check();
   }
 
-  private static void OnSuccess()
+  public static void OnSuccess()
   {
     Checking = false;
     // Duplicate but must be set before IsAdmin so that proper status is notified.

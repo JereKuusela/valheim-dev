@@ -178,6 +178,7 @@ Three ways to edit the settings:
 - No weight limit with god mode (default: `false`, key: `god_no_weight_limit`): Removes the weight limit for an even godlier god mode.
 - Show map coordinates (default: `true`, key: `map_coordinates`): Shows cursor coordinates when hovering the map.
 - Show minimap coordinates (default: `false`, key: `minimap_coordinates`): Shows player coordinates on the minimap.
+- Show alternative biomes (default: `false`, key: `alternative_biomes`): Shows alternative biomes as a separate line on the map and minimap.
 - Show private players (default: `false`, key: `private_players`): Shows players on the map even if they have set their position as private. Must be enabled both client and server side to work (admins can individually keep the feature off even when enabled from the server).
 - Server chat (default: `false`, key: `server_chat`): Adds a dummy client to the server. This is required for the server to send chat messages.
   - Note: Enabling this feature causes bosses to drop one extra item.

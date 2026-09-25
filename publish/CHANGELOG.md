@@ -1,3 +1,7 @@
+- v1.114
+  - Adds alternative biome to minimap texts.
+  - Fixes some commands not working on single player if automatic devcommands was not enabled. Thanks kmatsumari!
+
 - v1.113
   - Removes pointless error about "Unable to find the peer to set private position."
 

@@ -13,6 +13,8 @@ public static class Settings
   public static bool MapCoordinates => IsEnabled(PermissionHash.MapCoordinates, configMapCoordinates.Value);
   public static ConfigEntry<bool> configMiniMapCoordinates;
   public static bool MiniMapCoordinates => IsEnabled(PermissionHash.MiniMapCoordinates, configMiniMapCoordinates.Value);
+  public static ConfigEntry<bool> configShowAlternativeBiomes;
+  public static bool ShowAlternativeBiomes => IsEnabled(PermissionHash.AlternativeBiomes, configShowAlternativeBiomes.Value);
   public static ConfigEntry<bool> configShowPrivatePlayers;
   public static bool ShowPrivatePlayers => IsEnabled(PermissionHash.ShowPrivatePlayers, configShowPrivatePlayers.Value);
   public static ConfigEntry<bool> configAutoDevcommands;
@@ -212,6 +214,7 @@ public static class Settings
     configGodModeNoMist = config.Bind(section, "No Mistlands mist with god mode", false, "");
     configMapCoordinates = config.Bind(section, "Show map coordinates", true, "The map shows coordinates on hover.");
     configMiniMapCoordinates = config.Bind(section, "Show minimap coordinates", false, "The minimap shows player coordinates.");
+    configShowAlternativeBiomes = config.Bind(section, "Show alternative biomes", false, "The map shows alternative biomes in the current zone.");
     configShowPrivatePlayers = config.Bind(section, "Show private players", false, "The map shows private players.");
     configDisableEvents = config.Bind(section, "Disable random events", false, "Disables random events (server side setting).");
     configDisableUnlockMessages = config.Bind(section, "Disable unlock messages", false, "Disables messages about new pieces and items.");
@@ -316,6 +319,7 @@ public static class Settings
     "fly_no_clip",
     "disable_command",
     "minimap_coordinates",
+    "alternative_biomes",
     "disable_global_key",
     "disable_debug_mode_keys",
     "god_always_parry",
@@ -452,6 +456,7 @@ public static class Settings
     if (key == "command_descriptions") Toggle(context, configCommandDescriptions, "Command descriptions", value);
     if (key == "map_coordinates") Toggle(context, configMapCoordinates, "Map coordinates", value);
     if (key == "minimap_coordinates") Toggle(context, configMiniMapCoordinates, "Minimap coordinates", value);
+    if (key == "alternative_biomes") Toggle(context, configShowAlternativeBiomes, "Alternative biomes", value);
     if (key == "private_players") Toggle(context, configShowPrivatePlayers, "Private players", value);
     if (key == "auto_devcommands") Toggle(context, configAutoDevcommands, "Automatic devcommands", value);
     if (key == "auto_debugmode") Toggle(context, configAutoDebugMode, "Automatic debug mode", value);
