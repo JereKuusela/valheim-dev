@@ -49,6 +49,8 @@ public static class Settings
   public static string AutoEnv => configAutoEnv.Value;
   public static ConfigEntry<bool> configDisableMessages;
   public static bool DisableMessages => configDisableMessages.Value;
+  public static ConfigEntry<bool> configDisableHelpCommand;
+  public static bool DisableHelpCommand => configDisableHelpCommand.Value;
   public static ConfigEntry<bool> configGodModeNoWeightLimit;
   public static bool GodModeNoWeightLimit => configGodModeNoWeightLimit.Value;
   public static ConfigEntry<bool> configGodModeNoStamina;
@@ -226,6 +228,7 @@ public static class Settings
     UndoManager.MaxSteps = UndoLimit;
     section = "2. Console";
     configDisableMessages = config.Bind(section, "Disable messages", false, "Prevents messages from commands.");
+    configDisableHelpCommand = config.Bind(section, "Disable help command", false, "Disables the built-in help command.");
     configMapTeleport = config.Bind(section, "Map teleport bind key", new KeyboardShortcut(KeyCode.Mouse2, KeyCode.LeftControl), "Key bind for map teleport.");
     configAutoExecBoot = config.Bind(section, "Auto exec boot", "", "Executes the given command when starting the game.");
     configAutoExecDevOn = config.Bind(section, "Auto exec dev on", "", "Executes the given command when enabling devcommands.");
@@ -331,6 +334,7 @@ public static class Settings
     "god_no_weight_limit",
     "automatic_item_pick_up",
     "disable_messages",
+    "disable_help",
     "god_no_edge",
     "no_clip_clear_environment",
     "max_undo_steps",
@@ -452,6 +456,7 @@ public static class Settings
     if (key == "access_warded_areas") Toggle(context, configAccessWardedAreas, key, value);
     if (key == "no_clip_clear_environment") Toggle(context, configNoClipClearEnvironment, key, value);
     if (key == "disable_messages") Toggle(context, configDisableMessages, "Command messages", value, true);
+    if (key == "disable_help") Toggle(context, configDisableHelpCommand, "Help command", value, true);
     if (key == "automatic_item_pick_up") Toggle(context, configAutomaticItemPickUp, "Automatic item pick up", value);
     if (key == "command_descriptions") Toggle(context, configCommandDescriptions, "Command descriptions", value);
     if (key == "map_coordinates") Toggle(context, configMapCoordinates, "Map coordinates", value);

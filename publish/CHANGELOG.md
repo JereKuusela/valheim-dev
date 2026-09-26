@@ -1,3 +1,7 @@
+- v1.115
+  - Adds new setting to disabled `help` command.
+  - Fixes alternative biome text using wrong coordinate.
+
 - v1.114
   - Adds alternative biome to minimap texts.
   - Fixes bind system trying to execute invalid or missing commands (shows warning when this occurs).

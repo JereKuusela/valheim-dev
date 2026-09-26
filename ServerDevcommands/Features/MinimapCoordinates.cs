@@ -42,9 +42,9 @@ public class Minimap_ShowPos
     var positionText = Format(position);
     var zoneText = "zone: " + zone.x + "/" + zone.y;
     var distanceText = distance.HasValue ? $"\ndistance: {distance.Value:F0}" : "";
-    var altBiomes = WorldGenerator.instance.GetBiomeSector(position.x, position.y).AltBiomes.Select(b => b.m_name).ToList();
+    var altBiomes = WorldGenerator.instance.GetBiomeSector(position.x, position.z).AltBiomes.Select(b => b.m_name).ToHashSet();
     var altBiomeText = Settings.ShowAlternativeBiomes && altBiomes.Count > 0
-      ? "\n" + string.Join(", ", altBiomes)
+      ? "\n" + string.Join("\n", altBiomes)
       : "";
     return $"\n{zoneText}\n{positionText}{distanceText}{altBiomeText}";
   }

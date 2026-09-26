@@ -128,6 +128,7 @@ public class TryRunCommand
   static void RunCommand(Terminal t, string text)
   {
     var name = text.Split(' ')[0];
+    if (Settings.DisableHelpCommand && name.Equals("help", StringComparison.OrdinalIgnoreCase)) return;
     if (!Terminal.commands.TryGetValue(name, out var cmd))
     {
       t.AddString($"Unknown command '{name}'. Type 'help' to see a list of valid commands");

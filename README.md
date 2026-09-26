@@ -196,6 +196,7 @@ Recommended to keep all features on, unless there are errors or mod conflicts.
 - Command descriptions (default: `true`, key: `command_descriptions`): Shows command descriptions as autocomplete.
 - Disable cheat tracking (default: `true`, key: `disable_cheat_tracking`): Prevents commands from marking the character as having used cheats.
 - Disable debug mode keys (default: `false`, key: `disable_debug_mode_keys`): Removes debug mode key bindings for killall, removedrops, fly and no cost.
+- Disable help command (default: `false`, key: `disable_help`): Disables the built-in help command. Controller D-pad left button automatically calls this.
 - Disable messages (default: `false`, key: `disable_messages`): Prevents messages from commands.
 - Disabled commands (default: `dev_config disable_command`, key: `disable_command`): Command names separated by , that can't be executed. Mainly useful on the server to prevent some server-side commands.
 - Fly down key (default: `leftcontrol`, key: `fly_down_key`): Changes the key command for flying down. Multiple keys are supported (see Bind section for more info).
