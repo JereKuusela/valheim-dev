@@ -86,6 +86,7 @@ public class TryRunCommand
 {
   static bool Prefix(Terminal __instance, ref string text)
   {
+    if (Settings.DisableHelpCommand && text.Split(' ')[0].Equals("help", StringComparison.OrdinalIgnoreCase)) return false;
     if (!Settings.ImprovedChat && __instance == Chat.instance) return true;
     RemoveWhitespacedFromHistory(__instance);
     // Some commands (like alias or bind) are expected to be executed as they are.
@@ -128,7 +129,6 @@ public class TryRunCommand
   static void RunCommand(Terminal t, string text)
   {
     var name = text.Split(' ')[0];
-    if (Settings.DisableHelpCommand && name.Equals("help", StringComparison.OrdinalIgnoreCase)) return;
     if (!Terminal.commands.TryGetValue(name, out var cmd))
     {
       t.AddString($"Unknown command '{name}'. Type 'help' to see a list of valid commands");
