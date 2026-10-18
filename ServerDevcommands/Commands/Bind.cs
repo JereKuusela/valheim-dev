@@ -53,6 +53,7 @@ public class BindCommand
     if (__instance.m_input.isFocused) return;
     if (ReportUser.instance != null && ReportUser.instance.IsReportUserWindowActive()) return;
     if (Console.instance && Console.instance.m_chatWindow.gameObject.activeInHierarchy) return;
+    if (ZNet.IsPasswordDialogShowing()) return;
     var binds = BindManager.GetBestKeyCommands();
     foreach (var bind in binds)
     {
