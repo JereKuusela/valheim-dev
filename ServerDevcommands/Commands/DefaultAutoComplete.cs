@@ -171,6 +171,12 @@ public static class DefaultAutoComplete
       if (index == 0) return ParameterInfo.GlobalKeys;
       return ParameterInfo.None;
     });
+    AutoComplete.Register("setworldmodifier", (index, subIndex, args) =>
+    {
+      if (index == 0) return ParameterInfo.WorldModifiers;
+      if (index == 1) return args.Length > 0 ? ParameterInfo.WorldModifierOptions(args[0]) : [];
+      return ParameterInfo.None;
+    });
     AutoComplete.RegisterDefault("setpower");
     AutoComplete.Register("spawn", index =>
     {
