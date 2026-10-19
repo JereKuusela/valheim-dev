@@ -1,4 +1,3 @@
-using SoftReferenceableAssets;
 using Splatform;
 using System;
 using System.Globalization;
@@ -96,27 +95,25 @@ public abstract class Helper
     return new(x, y, z, w);
   }
 
-  public static string[] AddPlayerPosXZ(string[] args, int count)
+  public static (string[] Parameters, Vector3 Position) AddPlayerPosXZ(string[] args, int count)
   {
-    if (args.Length < count) return args;
-    if (Player.m_localPlayer == null) return args;
-    var parameters = args.ToList();
-    var pos = Player.m_localPlayer.transform.position;
-    if (parameters.Count < count + 1)
-      parameters.Add(pos.x.ToString(CultureInfo.InvariantCulture));
-    if (parameters.Count < count + 2)
-      parameters.Add(pos.z.ToString(CultureInfo.InvariantCulture));
-    return parameters.ToArray();
+    var defaultPosition = Player.m_localPlayer ? Player.m_localPlayer.transform.position : Vector3.zero;
+    var x = args.Length > count ? Parse.Float(args[count]) : defaultPosition.x;
+    var z = args.Length > count + 1 ? Parse.Float(args[count + 1]) : defaultPosition.z;
+    var position = new Vector3(x, 0f, z);
+    var parameters = args.Take(count)
+      .Append(x.ToString("0.##", CultureInfo.InvariantCulture))
+      .Append(z.ToString("0.##", CultureInfo.InvariantCulture))
+      .Concat(args.Skip(count + 2))
+      .ToArray();
+    return (parameters, position);
   }
-  public static string[] AddPlayerPosXZY(string[] args, int count)
+  public static (string[] Parameters, Vector3 Position) AddPlayerPosXZY(string[] args, int index)
   {
-    if (args.Length < count) return args;
-    if (Player.m_localPlayer == null) return args;
-    var parameters = args.ToList();
-    var pos = Player.m_localPlayer.transform.position;
-    if (parameters.Count < count + 1)
-      parameters.Add(pos.x.ToString(CultureInfo.InvariantCulture) + "," + pos.z.ToString(CultureInfo.InvariantCulture) + "," + pos.y.ToString(CultureInfo.InvariantCulture));
-    return [.. parameters];
+    var defaultPosition = Player.m_localPlayer ? Player.m_localPlayer.transform.position : Vector3.zero;
+    var position = Parse.VectorXZY(Parse.Split(string.Join(",", args.Skip(index))), defaultPosition);
+    var parameters = args.Take(index).Append(PrintVectorXZY(position)).ToArray();
+    return (parameters, position);
   }
   public static ZNet.PlayerInfo FindPlayer(string name, bool publicOnly = false)
   {

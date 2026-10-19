@@ -10,9 +10,8 @@ public class MoveSpawn
   {
     new Terminal.ConsoleCommand("move_spawn", "[x,z,y] Moves the default spawn point to the given coordinates (player's current coordinates if not given).", (args) =>
     {
-      var player = Player.m_localPlayer;
-      if (!player) Helper.ArgsCheck(args, 2, "Missing the coordinates.");
-      var coords = Parse.VectorXZY(Parse.Split(string.Join(",", args.Args.Skip(1))), player ? player.transform.position : Vector3.zero);
+      var (parameters, coords) = Helper.AddPlayerPosXZY(args.Args, 1);
+      if (!Player.m_localPlayer) Helper.ArgsCheck(args, 2, "Missing the coordinates.");
       if (ZNet.instance.IsServer())
       {
         var zs = ZoneSystem.instance;
@@ -48,7 +47,7 @@ public class MoveSpawn
             Helper.AddMessage(args.Context, "Failed to move spawn point. Default spawn point not found in location instances.");
         }
       }
-      else ServerExecution.Send([args[0], Helper.PrintVectorXZY(coords)]);
+      else ServerExecution.Send(parameters);
     }, true, true);
     AutoComplete.Register("move_spawn", (index, subIndex) =>
     {

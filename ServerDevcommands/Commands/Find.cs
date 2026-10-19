@@ -14,12 +14,11 @@ public class FindCommand
     {
       Helper.ArgsCheck(args, 2, "Missing the search term.");
       if (args.Length < 3) args.Args = [.. args.Args, "10"];
-      var player = Player.m_localPlayer;
-      var pos = Parse.VectorXZY(Parse.Split(string.Join(",", args.Args.Skip(3))), player ? player.transform.position : Vector3.zero);
+      var (parameters, pos) = Helper.AddPlayerPosXZY(args.Args, 3);
       // Client only has surroundings which is not very useful.
       if (!ZNet.instance.IsServer())
       {
-        ServerExecution.Send([.. args.Args.Take(3), Helper.PrintVectorXZY(pos)]);
+        ServerExecution.Send(parameters);
         return;
       }
       // First priority is exact matches (from both prefabs and locations).

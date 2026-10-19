@@ -1,3 +1,11 @@
+- v1.116
+  - Adds pin type to `resetpins` commands for specifying which pins to reset. Thanks Zeall!
+  - Adds support for showing better autocomplete automatically for vanilla commands. Thanks Zeall!
+  - Adds better autocomplete for `setkey`, `removekey` and `setworldmodifier` commands. Thanks Zeall!
+  - Fixes `find` and `move_spawn` commands not using player position as default on single player. Thanks Zeall!
+  - Fixes wildcard matching dropping last character from search input. Thanks Zeall!
+  - Fixes key binds executing while in password dialog. Thanks Zeall!
+
 - v1.115
   - Adds new setting to disabled `help` command.
   - Fixes alternative biome text using wrong coordinate.
@@ -17,6 +25,3 @@
   - Adds setting to disable cheat tracking when using commands (enabled by default).
   - Adds `clearcheats` command to clear the character cheat status.
   - More fixes. Thanks JPValheim!
-
-- v1.110
-  - Fixes for the new game update. Thanks Haloa, leandrogg, andrewstevenson91 and endimonan!
