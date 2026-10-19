@@ -17,11 +17,23 @@ public partial class ParameterInfo
       return components;
     }
   }
-  private static readonly List<string> globalKeys = [.. Enum.GetNames(typeof(GlobalKeys)).Select(s => s.ToLowerInvariant())];
+  private static readonly List<string> enumGlobalKeys = [.. Enum.GetNames(typeof(GlobalKeys)).Select(s => s.ToLowerInvariant())];
+  private static List<string> globalKeys = enumGlobalKeys;
+  private static int globalKeyPrefabs = -1;
   public static List<string> GlobalKeys
   {
     get
     {
+      if (ZNetScene.instance && ZNetScene.instance.m_namedPrefabs.Count != globalKeyPrefabs)
+      {
+        globalKeyPrefabs = ZNetScene.instance.m_namedPrefabs.Count;
+        var defeatKeys = ZNetScene.instance.m_namedPrefabs.Values
+          .Select(prefab => prefab.GetComponent<Character>()?.m_defeatSetGlobalKey)
+          .Where(key => !string.IsNullOrEmpty(key))
+          .Select(key => key!.ToLowerInvariant());
+        globalKeys = [.. enumGlobalKeys.Union(defeatKeys)];
+        globalKeys.Sort();
+      }
       return globalKeys;
     }
   }
@@ -30,6 +42,14 @@ public partial class ParameterInfo
   public static List<string> WorldModifierOptions(string modifier) => [.. WorldModifierSliders
     .Where(slider => slider.m_modifier.ToString().Equals(modifier, StringComparison.OrdinalIgnoreCase))
     .SelectMany(slider => slider.m_settings.Select(setting => setting.m_modifierValue.ToString()))];
+  public static List<string> ActiveGlobalKeys
+  {
+    get
+    {
+      if (!ZoneSystem.instance) return [];
+      return ZoneSystem.instance.GetGlobalKeys();
+    }
+  }
   private static List<string> ids = [];
   public static List<string> Ids
   {

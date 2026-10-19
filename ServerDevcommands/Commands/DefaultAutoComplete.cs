@@ -163,7 +163,7 @@ public static class DefaultAutoComplete
     AutoComplete.RegisterEmpty("resetwind");
     AutoComplete.Register("removekey", index =>
     {
-      if (index == 0) return ParameterInfo.GlobalKeys;
+      if (index == 0) return ParameterInfo.ActiveGlobalKeys;
       return ParameterInfo.None;
     });
     AutoComplete.Register("setkey", index =>
