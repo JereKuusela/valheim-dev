@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using GUIFramework;
 using HarmonyLib;
 using UnityEngine;
@@ -40,7 +41,12 @@ public static class AutoComplete
     }
     if (OptionsFetchers.ContainsKey(command)) return OptionsFetchers[command](index, subIndex, args) ?? ParameterInfo.None;
     if (Terminal.commands.TryGetValue(command, out var cmd) && cmd.m_tabOptionsFetcher != null)
-      return cmd.m_tabOptionsFetcher() ?? ParameterInfo.Missing;
+    {
+      if (index == 0) return cmd.m_tabOptionsFetcher() ?? ParameterInfo.Missing;
+      var names = Regex.Match(cmd.Description ?? "", @"^(?:\s*\[([^\]]+)\])+").Groups[1].Captures;
+      if (names.Count == 0) return ParameterInfo.Missing;
+      return index < names.Count ? ParameterInfo.Create(names[index].Value) : ParameterInfo.None;
+    }
     return ParameterInfo.Missing;
   }
   public static void Register(string command, OptionsArgsFetcher fetcher, NamedOptionsFetchers namedFetchers)
