@@ -37,6 +37,14 @@ public partial class ParameterInfo
       return globalKeys;
     }
   }
+  public static List<string> ActiveGlobalKeys
+  {
+    get
+    {
+      if (!ZoneSystem.instance) return [];
+      return ZoneSystem.instance.GetGlobalKeys();
+    }
+  }
   private static List<string> ids = [];
   public static List<string> Ids
   {
