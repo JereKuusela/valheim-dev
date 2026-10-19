@@ -10,12 +10,13 @@ public class MoveSpawn
   {
     new Terminal.ConsoleCommand("move_spawn", "[x,z,y] Moves the default spawn point to the given coordinates (player's current coordinates if not given).", (args) =>
     {
-      var parameters = Helper.AddPlayerPosXZY(args.Args, 1);
+      var player = Player.m_localPlayer;
+      if (!player) Helper.ArgsCheck(args, 2, "Missing the coordinates.");
+      var coords = Parse.VectorXZY(Parse.Split(string.Join(",", args.Args.Skip(1))), player ? player.transform.position : Vector3.zero);
       if (ZNet.instance.IsServer())
       {
         var zs = ZoneSystem.instance;
         if (!zs) return;
-        var coords = Parse.VectorXZY(Parse.Split(parameters[1]));
 
         // Spawn is based on the location icon. Other mods can alter this so the safest way is to use the icon data.
         zs.tempIconList.Clear();
@@ -27,7 +28,7 @@ public class MoveSpawn
           Helper.AddMessage(args.Context, "Default spawn point not found. Creating a new one.");
           if (CreateSpawnLocation(coords))
           {
-            Helper.AddMessage(args.Context, $"Spawn created at {coords:F0}");
+            Helper.AddMessage(args.Context, $"Spawn created at {Helper.PrintVectorXZY(coords)}");
             zs.SendLocationIcons(ZRoutedRpc.Everybody);
           }
           else
@@ -40,14 +41,14 @@ public class MoveSpawn
 
           if (MoveSpawnLocation(spawns[0], coords))
           {
-            Helper.AddMessage(args.Context, $"Spawn moved to {coords:F0}");
+            Helper.AddMessage(args.Context, $"Spawn moved to {Helper.PrintVectorXZY(coords)}");
             zs.SendLocationIcons(ZRoutedRpc.Everybody);
           }
           else
             Helper.AddMessage(args.Context, "Failed to move spawn point. Default spawn point not found in location instances.");
         }
       }
-      else ServerExecution.Send(parameters);
+      else ServerExecution.Send([args[0], Helper.PrintVectorXZY(coords)]);
     }, true, true);
     AutoComplete.Register("move_spawn", (index, subIndex) =>
     {
