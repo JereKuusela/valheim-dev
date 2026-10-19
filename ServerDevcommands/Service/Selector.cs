@@ -122,9 +122,9 @@ public static class Selector
   private static bool IsIncluded(string id, string name)
   {
     if (id.StartsWith("*", StringComparison.Ordinal) && id.EndsWith("*", StringComparison.Ordinal))
-      return name.Contains(id.Substring(1, id.Length - 3));
+      return name.Contains(id.Substring(1, id.Length - 2));
     if (id.StartsWith("*", StringComparison.Ordinal)) return name.EndsWith(id.Substring(1), StringComparison.Ordinal);
-    if (id.EndsWith("*", StringComparison.Ordinal)) return name.StartsWith(id.Substring(0, id.Length - 2), StringComparison.Ordinal);
+    if (id.EndsWith("*", StringComparison.Ordinal)) return name.StartsWith(id.Substring(0, id.Length - 1), StringComparison.Ordinal);
     return id == name;
   }
 
