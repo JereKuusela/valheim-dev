@@ -37,6 +37,11 @@ public partial class ParameterInfo
       return globalKeys;
     }
   }
+  private static IEnumerable<KeySlider> WorldModifierSliders => ServerOptionsGUI.m_modifiers?.OfType<KeySlider>() ?? [];
+  public static List<string> WorldModifiers => [.. WorldModifierSliders.Select(slider => slider.m_modifier.ToString())];
+  public static List<string> WorldModifierOptions(string modifier) => [.. WorldModifierSliders
+    .Where(slider => slider.m_modifier.ToString().Equals(modifier, StringComparison.OrdinalIgnoreCase))
+    .SelectMany(slider => slider.m_settings.Select(setting => setting.m_modifierValue.ToString()))];
   public static List<string> ActiveGlobalKeys
   {
     get
