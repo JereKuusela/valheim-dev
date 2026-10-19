@@ -1,37 +1,40 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 namespace ServerDevcommands;
 public class MappingCommand
 {
-  private static bool ParseArgs(Terminal.ConsoleEventArgs args, out float x, out float z, out float radius)
+  private static bool ParseArgs(Terminal.ConsoleEventArgs args, out float x, out float z, out float radius, int offset = 0)
   {
     x = 0;
     z = 0;
     radius = 0;
-    if (args.Length < 2)
+    if (args.Length < 2 + offset)
     {
       args.Context.AddString("Error: Missing coordinate X");
       return false;
     }
-    if (args.Length < 3)
+    if (args.Length < 3 + offset)
     {
       args.Context.AddString("Error: Missing coordinate Z");
       return false;
     }
-    x = Parse.Float(args[1], float.MinValue);
+    x = Parse.Float(args[1 + offset], float.MinValue);
     if (x == float.MinValue)
     {
       args.Context.AddString("Error: Invalid format for X coordinate.");
       return false;
     }
-    z = Parse.Float(args[2], float.MinValue);
+    z = Parse.Float(args[2 + offset], float.MinValue);
     if (z == float.MinValue)
     {
       args.Context.AddString("Error: Invalid format for Z coordinate.");
       return false;
     }
-    if (args.Length > 3)
+    if (args.Length > 3 + offset)
     {
-      radius = Parse.Float(args[3], float.MinValue);
+      radius = Parse.Float(args[3 + offset], float.MinValue);
       if (radius == float.MinValue)
       {
         args.Context.AddString("Error: Invalid format for radius.");
@@ -39,6 +42,16 @@ public class MappingCommand
       }
     }
     return true;
+  }
+  private static bool TryParsePinTypes(string arg, out List<Minimap.PinType> types)
+  {
+    types = [];
+    foreach (var name in Parse.Split(arg))
+    {
+      if (Parse.TryFloat(name, out _) || !Enum.TryParse(name, true, out Minimap.PinType type)) return false;
+      types.Add(type);
+    }
+    return types.Count > 0;
   }
   private static void Register(string command)
   {
@@ -84,14 +97,37 @@ public class MappingCommand
   }
   public MappingCommand()
   {
-    Register("resetpins");
-    new Terminal.ConsoleCommand("resetpins", "[x] [z] [radius=0] - Removes pins from the map at a given position with a given radius.", (args) =>
+    AutoComplete.Register("resetpins", (index, subIndex, args) =>
     {
-      if (!ParseArgs(args, out var x, out var z, out var radius)) return;
+      if (index == 0) return [.. Enum.GetNames(typeof(Minimap.PinType))];
+      if (args.Length > 0 && TryParsePinTypes(args[0], out _)) index--;
+      if (index == 0) return ParameterInfo.Create("X coordinate.");
+      if (index == 1) return ParameterInfo.Create("Z coordinate.");
+      if (index == 2) return ParameterInfo.Create("Radius (default 0).");
+      return ParameterInfo.None;
+    });
+    new Terminal.ConsoleCommand("resetpins", "[types] [x] [z] [radius=0] - Removes pins from the map. Needs the types (comma separated), the position or both.", (args) =>
+    {
+      if (args.Length < 2)
+      {
+        args.Context.AddString("Error: Missing the types or the position.");
+        return;
+      }
+      var types = new List<Minimap.PinType>();
+      var offset = TryParsePinTypes(args[1], out types) ? 1 : 0;
+      var filterPosition = args.Length > 1 + offset;
+      float x = 0, z = 0, radius = 0;
+      if (filterPosition && !ParseArgs(args, out x, out z, out radius, offset)) return;
       Vector3 position = new(x, 0, z);
       var removed = 0;
-      while (Minimap.instance.RemovePin(position, radius))
+      foreach (var pin in Minimap.instance.m_pins.ToList())
+      {
+        if (!pin.m_save) continue;
+        if (offset > 0 && !types.Contains(pin.m_type)) continue;
+        if (filterPosition && Utils.DistanceXZ(position, pin.m_pos) > radius) continue;
+        Minimap.instance.RemovePin(pin);
         removed++;
+      }
       Helper.AddMessage(args.Context, removed + " pins removed.");
     });
     Register("exploremap");

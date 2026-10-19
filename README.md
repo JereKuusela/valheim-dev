@@ -92,7 +92,7 @@ See [commands.md](commands.md) for more info.
 - `resetdungeon` resets the nearest camp or dungeon within 20 meters.
   - This will remove everything inside the camp or dungeon. Use at your own risk!
 - `resetmap [x] [z] [radius]` allows hiding only a part of the map.
-- `resetpins [x] [z] [radius]` allows removing pins from the map.
+- `resetpins [types] [x] [z] [radius]` allows removing pins from the map.
 - `resolution` prints the screen properties.
 - `resolution [mode] [width] [height] [refresh rate]` sets the screen properties.
   - `resolution exclusive` sets to full screen with the maximum supported resolution and refresh rate.
