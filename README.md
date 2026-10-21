@@ -11,6 +11,7 @@ Check [wiki](https://valheim.wiki/Console_Commands) for available commands and h
 - Console is enabled without having to set the start parameter.
 - Cheat commands can also be used from the chat window (with autocomplete).
 - Autocomplete works for every parameter, always providing some information.
+- Console can be scrolled with the mouse wheel, the scroll bar or `PageUp` / `PageDown` (`Shift` scrolls a page, `Ctrl` jumps to the top or bottom).
 - Multiple commands can be executed at the same time (when separated with `;`).
 - New commands can be created with `alias` command.
 - Modifier keys work when binding commands to keys.
