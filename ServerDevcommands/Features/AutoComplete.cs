@@ -289,7 +289,7 @@ public class UpdateSearchWithImprovedAutoComplete
     if (!Settings.ImprovedAutoComplete || options == null || !__instance.m_search || __instance == Chat.instance) return;
     if (Settings.CommandDescriptions && options == __instance.m_commandList)
     {
-      if (Terminal.commands.TryGetValue(word, out var command))
+      if (Terminal.commands.TryGetValue(word, out var command) && command.ShowCommand(__instance))
         options = ParameterInfo.Create(command.Description);
     }
     var helpText = options.All(option => option.StartsWith("?"));
