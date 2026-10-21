@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
@@ -95,14 +96,15 @@ public class ServerExecution
 
   public static void RPC_Do_Pins(ZRpc? rpc, string data)
   {
-    var pins = Parse.Split(data, '|').Select(Parse.VectorXZY).ToArray();
+    var pins = Parse.Split(data, '|').Select(s => Parse.Split(s)).ToArray();
     var findPins = Console.instance.m_findPins;
     foreach (var pin in findPins)
       Minimap.instance?.RemovePin(pin);
     findPins.Clear();
-    foreach (var pos in pins)
+    foreach (var args in pins)
     {
-      var pin = Minimap.instance?.AddPin(pos, Minimap.PinType.Icon3, "", false, false, Player.m_localPlayer.GetPlayerID());
+      var type = args.Length > 3 && Enum.TryParse(args[3], true, out Minimap.PinType parsed) ? parsed : Minimap.PinType.Icon3;
+      var pin = Minimap.instance?.AddPin(Parse.VectorXZY(args), type, "", false, false, Player.m_localPlayer.GetPlayerID());
       if (pin != null)
         findPins.Add(pin);
     }
