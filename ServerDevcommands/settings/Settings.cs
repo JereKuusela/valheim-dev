@@ -31,8 +31,14 @@ public static class Settings
   public static bool DisableNoMap => IsEnabled(PermissionHash.IgnoreNoMap, configDisableNoMap.Value);
   public static ConfigEntry<bool> configAutoGhostMode;
   public static bool AutoGhostMode => configAutoGhostMode.Value;
-  public static ConfigEntry<bool> configAutomaticItemPickUp;
-  public static bool AutomaticItemPickUp => configAutomaticItemPickUp.Value;
+  public enum PickUpMode { Default, On, Off }
+  public static ConfigEntry<PickUpMode> configAutomaticItemPickUp;
+  public static bool AutomaticItemPickUp(bool current) => configAutomaticItemPickUp.Value switch
+  {
+    PickUpMode.On => true,
+    PickUpMode.Off => false,
+    _ => current,
+  };
   public static ConfigEntry<bool> configAutoNoCost;
   public static bool AutoNoCost => configAutoNoCost.Value;
   public static ConfigEntry<bool> configDisableEvents;
@@ -186,10 +192,10 @@ public static class Settings
     configAutoNoCost = config.Bind(section, "Automatic no cost mode", false, "Automatically enables no cost mode when enabling devcommands.");
     configAutoGodMode = config.Bind(section, "Automatic god mode", false, "Automatically enables god mode when enabling devcommands.");
     configAutoGhostMode = config.Bind(section, "Automatic ghost mode", false, "Automatically enables ghost mode when enabling devcommands.");
-    configAutomaticItemPickUp = config.Bind(section, "Automatic item pick up", true, "Sets the default value for the automatic item pick up feature.");
+    configAutomaticItemPickUp = config.Bind(section, "Automatic item pick up", PickUpMode.Default, "Sets the automatic item pick up feature. Default keeps the game's current value.");
     configAutomaticItemPickUp.SettingChanged += (s, e) =>
     {
-      if (Player.m_localPlayer) Player.m_enableAutoPickup = AutomaticItemPickUp;
+      if (Player.m_localPlayer) Player.m_enableAutoPickup = AutomaticItemPickUp(Player.m_enableAutoPickup);
     };
     configAutoDevcommands = config.Bind(section, "Automatic devcommands", true, "Automatically enables devcommands when joining servers.");
     configDebugModeFastTeleport = config.Bind(section, "Debug mode fast teleport", true, "All teleporting is much faster with the debug mode.");
@@ -423,17 +429,13 @@ public static class Settings
     setting.Value = value;
     Helper.AddMessage(context, $"{name} set to {value}.");
   }
-  private static void SetKey(Terminal context, ConfigEntry<KeyboardShortcut> setting, string name, string value)
+  private static void SetPickUp(Terminal context, string value)
   {
-    if (value == "")
-    {
-      Helper.AddMessage(context, $"{name}: {setting.Value}.");
-      return;
-    }
-    if (!Enum.TryParse<KeyCode>(value, true, out var keyCode))
-      throw new InvalidOperationException("'" + value + "' is not a valid UnityEngine.KeyCode.");
-    setting.Value = new(keyCode);
-    Helper.AddMessage(context, $"{name} set to {value}.");
+    if (value == "") configAutomaticItemPickUp.Value = Player.m_enableAutoPickup ? PickUpMode.Off : PickUpMode.On;
+    else if (IsTruthy(value)) configAutomaticItemPickUp.Value = PickUpMode.On;
+    else if (IsFalsy(value)) configAutomaticItemPickUp.Value = PickUpMode.Off;
+    else if (Enum.TryParse<PickUpMode>(value, true, out var mode)) configAutomaticItemPickUp.Value = mode;
+    Helper.AddMessage(context, $"Automatic item pick up: {configAutomaticItemPickUp.Value}.");
   }
   public static void UpdateValue(Terminal context, string key, string value)
   {
@@ -457,7 +459,7 @@ public static class Settings
     if (key == "no_clip_clear_environment") Toggle(context, configNoClipClearEnvironment, key, value);
     if (key == "disable_messages") Toggle(context, configDisableMessages, "Command messages", value, true);
     if (key == "disable_help") Toggle(context, configDisableHelpCommand, "Help command", value, true);
-    if (key == "automatic_item_pick_up") Toggle(context, configAutomaticItemPickUp, "Automatic item pick up", value);
+    if (key == "automatic_item_pick_up") SetPickUp(context, value);
     if (key == "command_descriptions") Toggle(context, configCommandDescriptions, "Command descriptions", value);
     if (key == "map_coordinates") Toggle(context, configMapCoordinates, "Map coordinates", value);
     if (key == "minimap_coordinates") Toggle(context, configMiniMapCoordinates, "Minimap coordinates", value);

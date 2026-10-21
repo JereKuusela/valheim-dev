@@ -3,5 +3,5 @@ namespace ServerDevcommands;
 [HarmonyPatch(typeof(Player), nameof(Player.Awake))]
 public class AutomaticPickUp
 {
-  static void Postfix() => Player.m_enableAutoPickup = Settings.AutomaticItemPickUp;
+  static void Postfix() => Player.m_enableAutoPickup = Settings.AutomaticItemPickUp(Player.m_enableAutoPickup);
 }

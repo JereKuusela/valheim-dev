@@ -147,7 +147,7 @@ Three ways to edit the settings:
 - Automatic fly mode (default: `false`, key: `auto_fly`): Automatically turns fly mode on/off when devcommands are enabled or disabled.
 - Automatic ghost mode (default: `false`, key: `auto_ghost`): Automatically turns ghost mode on/off when devcommands are enabled or disabled.
 - Automatic god mode (default: `false`, key: `auto_god`): Automatically turns god mode on/off when devcommands are enabled or disabled.
-- Automatic item pick up (default: `true`, key: `automatic_item_pick_up`): Sets the default value for the automatic item pick up feature.
+- Automatic item pick up (default: `Default`, key: `automatic_item_pick_up`): Sets the default value for the automatic item pick up feature.
 - Automatic no cost mode (default: `false`, key: `auto_nocost`): Automatically turns no cost mode on/off when devcommands are enabled or disabled.
 - Debug mode fast teleport (default: `true`, key: `debug_fast_teleport`): Makes teleporting much faster.
 - Disabled global keys (default: ``, key: `disable_global_key`): Global keys separated by , that can't be set (server side).

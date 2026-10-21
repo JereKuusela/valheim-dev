@@ -3,6 +3,7 @@
   - Adds pin type to `resetpins` commands for specifying which pins to reset. Thanks Zeall!
   - Adds support for showing better autocomplete automatically for vanilla commands. Thanks Zeall!
   - Adds better autocomplete for `setkey`, `removekey` and `setworldmodifier` commands. Thanks Zeall!
+  - Changes "Automatic item pick up" setting to not do anything by default.
   - Fixes `find` and `move_spawn` commands not using player position as default on single player. Thanks Zeall!
   - Fixes wildcard matching dropping last character from search input. Thanks Zeall!
   - Fixes key binds executing while in password dialog. Thanks Zeall!
