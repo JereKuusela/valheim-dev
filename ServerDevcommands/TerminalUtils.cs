@@ -76,6 +76,7 @@ public static class TerminalUtils
     return alias + " " + string.Join(" ", substitutions);
 
   }
+  public static bool IsBlockedHelp(string command) => Settings.DisableHelpCommand && command.Split(' ')[0].Equals("help", StringComparison.OrdinalIgnoreCase);
   public static bool SkipProcessing(string command) => AutoComplete.Offsets.Any(kvp => command.StartsWith($"{kvp.Key} ", StringComparison.OrdinalIgnoreCase));
 
   public static bool IsExecuting = false;
@@ -86,7 +87,7 @@ public class TryRunCommand
 {
   static bool Prefix(Terminal __instance, ref string text)
   {
-    if (Settings.DisableHelpCommand && text.Split(' ')[0].Equals("help", StringComparison.OrdinalIgnoreCase)) return false;
+    if (TerminalUtils.IsBlockedHelp(text)) return false;
     if (!Settings.ImprovedChat && __instance == Chat.instance) return true;
     RemoveWhitespacedFromHistory(__instance);
     // Some commands (like alias or bind) are expected to be executed as they are.
