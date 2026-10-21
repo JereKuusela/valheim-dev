@@ -6,6 +6,7 @@ public class LogCommand
 {
   static void Postfix(string text)
   {
+    if (TerminalUtils.IsBlockedHelp(text)) return;
     if (!ZNet.instance) return;
     if (ZNet.instance.IsServer()) return;
     var server = ZNet.instance.GetServerRPC();
