@@ -18,25 +18,18 @@ public partial class ParameterInfo
     }
   }
   private static readonly List<string> enumGlobalKeys = [.. Enum.GetNames(typeof(GlobalKeys)).Select(s => s.ToLowerInvariant())];
-  private static List<string> globalKeys = enumGlobalKeys;
-  private static int globalKeyPrefabs = -1;
-  public static List<string> GlobalKeys
+  private static readonly TimedCache globalKeys = new(() =>
   {
-    get
-    {
-      if (ZNetScene.instance && ZNetScene.instance.m_namedPrefabs.Count != globalKeyPrefabs)
-      {
-        globalKeyPrefabs = ZNetScene.instance.m_namedPrefabs.Count;
-        var defeatKeys = ZNetScene.instance.m_namedPrefabs.Values
-          .Select(prefab => prefab.GetComponent<Character>()?.m_defeatSetGlobalKey)
-          .Where(key => !string.IsNullOrEmpty(key))
-          .Select(key => key!.ToLowerInvariant());
-        globalKeys = [.. enumGlobalKeys.Union(defeatKeys)];
-        globalKeys.Sort();
-      }
-      return globalKeys;
-    }
-  }
+    if (!ZNetScene.instance) return null;
+    var defeatKeys = ZNetScene.instance.m_namedPrefabs.Values
+      .Select(prefab => prefab.GetComponent<Character>()?.m_defeatSetGlobalKey)
+      .Where(key => !string.IsNullOrEmpty(key))
+      .Select(key => key!.ToLowerInvariant());
+    var keys = enumGlobalKeys.Union(defeatKeys).ToList();
+    keys.Sort();
+    return keys;
+  }, enumGlobalKeys);
+  public static List<string> GlobalKeys => globalKeys.Get();
   private static IEnumerable<KeySlider> WorldModifierSliders => ServerOptionsGUI.m_modifiers?.OfType<KeySlider>() ?? [];
   public static List<string> WorldModifiers => [.. WorldModifierSliders.Select(slider => slider.m_modifier.ToString())];
   public static List<string> WorldModifierOptions(string modifier) => [.. WorldModifierSliders
@@ -50,32 +43,21 @@ public partial class ParameterInfo
       return ZoneSystem.instance.GetGlobalKeys();
     }
   }
-  private static List<string> ids = [];
-  public static List<string> Ids
+  private static readonly TimedCache ids = new(() =>
   {
-    get
-    {
-      if (ObjectIds.Count + LocationIds.Count != objectIds.Count)
-      {
-        ids = [.. ObjectIds, .. LocationIds];
-        ids.Sort();
-      }
-      return ids;
-    }
-  }
-  private static List<string> environments = [];
-  public static List<string> Environments
+    var all = ObjectIds.Concat(LocationIds).ToList();
+    all.Sort();
+    return all;
+  });
+  public static List<string> Ids => ids.Get();
+  private static readonly TimedCache environments = new(() =>
   {
-    get
-    {
-      if (EnvMan.instance && EnvMan.instance.m_environments.Count != environments.Count)
-      {
-        environments = [.. EnvMan.instance.m_environments.Select(env => env.m_name.Replace(" ", "_"))];
-        environments.Sort();
-      }
-      return environments;
-    }
-  }
+    if (!EnvMan.instance) return null;
+    var names = EnvMan.instance.m_environments.Select(env => env.m_name.Replace(" ", "_")).ToList();
+    names.Sort();
+    return names;
+  });
+  public static List<string> Environments => environments.Get();
   private static readonly List<string> colors = [
     "#rrggbbaa",
     "aqua",
@@ -108,26 +90,10 @@ public partial class ParameterInfo
       return colors;
     }
   }
-  private static List<string> objectIds = [];
-  public static List<string> ObjectIds
-  {
-    get
-    {
-      if (ZNetScene.instance && ZNetScene.instance.m_namedPrefabs.Count != objectIds.Count)
-        objectIds = ZNetScene.instance.GetPrefabNames();
-      return objectIds;
-    }
-  }
-  private static List<string> roomIds = [];
-  public static List<string> RoomIds
-  {
-    get
-    {
-      if (DungeonDB.instance && DungeonDB.instance.m_rooms.Count != roomIds.Count)
-        roomIds = [.. DungeonDB.instance.m_rooms.Select(room => room.m_prefab.Name)];
-      return roomIds;
-    }
-  }
+  private static readonly TimedCache objectIds = new(() => ZNetScene.instance ? ZNetScene.instance.GetPrefabNames() : null);
+  public static List<string> ObjectIds => objectIds.Get();
+  private static readonly TimedCache roomIds = new(() => DungeonDB.instance ? DungeonDB.instance.m_rooms.Select(room => room.m_prefab.Name).ToList() : null);
+  public static List<string> RoomIds => roomIds.Get();
   public static List<string> LocationIds
   {
     get
@@ -184,16 +150,8 @@ public partial class ParameterInfo
       return [.. RandEventSystem.instance.m_events.Select(ev => ev.m_name)];
     }
   }
-  private static List<string> statusEffects = [];
-  public static List<string> StatusEffects
-  {
-    get
-    {
-      if (ObjectDB.instance && ObjectDB.instance.m_StatusEffects.Count != statusEffects.Count)
-        statusEffects = [.. ObjectDB.instance.m_StatusEffects.Select(se => se.name)];
-      return statusEffects;
-    }
-  }
+  private static readonly TimedCache statusEffects = new(() => ObjectDB.instance ? ObjectDB.instance.m_StatusEffects.Select(se => se.name).ToList() : null);
+  public static List<string> StatusEffects => statusEffects.Get();
   public static List<string> EffectAreas
   {
     get
@@ -201,16 +159,8 @@ public partial class ParameterInfo
       return [.. Enum.GetNames(typeof(EffectArea.Type))];
     }
   }
-  private static List<string> itemIds = [];
-  public static List<string> ItemIds
-  {
-    get
-    {
-      if (ObjectDB.instance && ObjectDB.instance.m_items.Count != itemIds.Count)
-        itemIds = [.. ObjectDB.instance.m_items.Select(item => item.name)];
-      return itemIds;
-    }
-  }
+  private static readonly TimedCache itemIds = new(() => ObjectDB.instance ? ObjectDB.instance.m_items.Select(item => item.name).ToList() : null);
+  public static List<string> ItemIds => itemIds.Get();
   public static List<string> PlayerNames
   {
     get => ZNet.instance?.m_players.Select(player => player.m_name.Contains(" ") ? $"\"{player.m_name}\"" : player.m_name).ToList() ?? ["No players found!"];
@@ -219,28 +169,10 @@ public partial class ParameterInfo
   {
     get => ZNet.instance?.m_players.Where(player => player.m_publicPosition).Select(player => player.m_name.Contains(" ") ? $"\"{player.m_name}\"" : player.m_name).ToList() ?? ["No public players found!"];
   }
-  private static List<string> hairs = [];
-  public static List<string> Hairs
-  {
-    get
-    {
-      // Missing proper caching.
-      if (ObjectDB.instance)
-        hairs = [.. ObjectDB.instance.GetAllItems(ItemDrop.ItemData.ItemType.Customization, "Hair").Select(item => item.name)];
-      return hairs;
-    }
-  }
-  private static List<string> beards = [];
-  public static List<string> Beards
-  {
-    get
-    {
-      // Missing proper caching.
-      if (ObjectDB.instance)
-        beards = [.. ObjectDB.instance.GetAllItems(ItemDrop.ItemData.ItemType.Customization, "Beard").Select(item => item.name)];
-      return beards;
-    }
-  }
+  private static readonly TimedCache hairs = new(() => ObjectDB.instance ? ObjectDB.instance.GetAllItems(ItemDrop.ItemData.ItemType.Customization, "Hair").Select(item => item.name).ToList() : null);
+  public static List<string> Hairs => hairs.Get();
+  private static readonly TimedCache beards = new(() => ObjectDB.instance ? ObjectDB.instance.GetAllItems(ItemDrop.ItemData.ItemType.Customization, "Beard").Select(item => item.name).ToList() : null);
+  public static List<string> Beards => beards.Get();
   private static List<string> keyCodes = [];
   public static List<string> KeyCodes
   {
