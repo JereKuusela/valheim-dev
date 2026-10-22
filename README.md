@@ -100,9 +100,10 @@ See [commands.md](commands.md) for more info.
   - `resolution max` sets to maximized window with the maximum supported resolution.
   - `resolution full` sets to full screen window with the maximum supported resolution.
   - `resolution window 1920 1080`sets to windowed with HD resolution.
-- `search_id [term] [max_lines=5]` allows searching the object ID list.
+- `search_id [term] [log]` allows searching the object ID list.
   - `search_id wolf` prints all object IDs that contain word "wolf".
-  - `search_id fx_ 10` prints all object IDs that contain word "fx_" on up to 10 lines.
+  - `search_id *` prints all object IDs.
+  - `search_id fx_ log` writes all object IDs that contain word "fx_" to the log file instead of the console.
 - `seed` prints the world seed.
 - `server [command]` executes given command on the server.
   - `server dev_config disable_command event` disables usage of `event` command for non-root users.
