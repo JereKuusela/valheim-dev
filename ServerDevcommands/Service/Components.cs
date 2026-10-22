@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using BepInEx.Bootstrap;
 using Service;
+using SoftReferenceableAssets;
 using UnityEngine;
 
 namespace ServerDevcommands;
@@ -86,6 +87,53 @@ public class ComponentInfo
       var fieldValue = fieldInfo.GetValue(component);
       return fieldValue?.ToString() == value;
     })];
+  }
+  private static readonly Dictionary<string, HashSet<string>> locationPrefabComponents = [];
+  private static bool loadingLocations;
+  private static List<SoftReference<GameObject>> UnreadLocationPrefabs() => [.. ZoneSystem.instance.m_locations.Where(Helper.IsValid)
+    .Select(location => location.m_prefab)
+    .Where(prefab => !locationPrefabComponents.ContainsKey(prefab.Name))
+    .GroupBy(prefab => prefab.Name).Select(group => group.First())];
+  public static void LocationsByComponent(Terminal context, string component, Action<string[]> done)
+  {
+    if (loadingLocations) throw new InvalidOperationException("Locations are still loading. Try again in a moment.");
+    loadingLocations = true;
+    Console.instance.StartCoroutine(LoadLocations(context, component, done));
+  }
+  private static string[] FilterLocations(string component) => [.. ZoneSystem.instance.m_locations.Where(Helper.IsValid)
+    .Select(location => location.m_prefab.Name)
+    .Where(name => locationPrefabComponents.TryGetValue(name, out var components) && components.Contains(component))
+    .Distinct()];
+  private static System.Collections.IEnumerator LoadLocations(Terminal context, string component, Action<string[]> done)
+  {
+    var unread = UnreadLocationPrefabs();
+    var progress = "";
+    var slice = System.Diagnostics.Stopwatch.StartNew();
+    try
+    {
+      for (var i = 0; i < unread.Count; i++)
+      {
+        if (i == 0 || slice.ElapsedMilliseconds >= 8)
+        {
+          context.m_chatBuffer.Remove(progress);
+          progress = $"Reading location prefabs, {unread.Count - i}/{unread.Count} remaining, the result follows.";
+          context.AddString(progress);
+          yield return null;
+          slice.Restart();
+        }
+        var prefab = unread[i];
+        prefab.Load();
+        prefab.Asset.GetComponentsInChildren(ZNetView.m_tempComponents);
+        locationPrefabComponents[prefab.Name] = [.. ZNetView.m_tempComponents.Where(s => s).Select(s => s.GetType().Name.ToLowerInvariant())];
+        prefab.Release();
+      }
+    }
+    finally
+    {
+      loadingLocations = false;
+      context.m_chatBuffer.Remove(progress);
+    }
+    done(FilterLocations(component));
   }
   public static string[] Get(ZNetView view)
   {

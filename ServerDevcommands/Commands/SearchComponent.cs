@@ -8,56 +8,55 @@ public class SearchComponentCommand
 {
   public SearchComponentCommand()
   {
-    Helper.Command("search_component", "[object/location] [component] [max_lines=5] - Prints object or location ids having the component.", (args) =>
+    Helper.Command("search_component", "[object/location] [component] [log] - Prints object or location ids having the component. For objects, component,field,value also matches the field value. The flag log writes the result to the client log file instead of the console.", (args) =>
     {
       Helper.ArgsCheck(args, 2, "Missing the object/location");
       Helper.ArgsCheck(args, 3, "Missing the component");
-      var component = args[2].ToLowerInvariant();
-      var field = "";
-      var value = "";
-      var split = component.Split(',');
-      if (split.Length == 3)
+      var values = args.Args.Skip(1).ToArray();
+      var log = SearchOutput.TakeLog(ref values, 2);
+      var kind = values[0].ToLowerInvariant();
+      if (kind != "object" && kind != "location") throw new InvalidOperationException("The first argument must be \"object\" or \"location\".");
+      if (!ZNetScene.instance || !ZoneSystem.instance) throw new InvalidOperationException("Join a world first.");
+      var split = values[1].Split(',');
+      if (split.Length == 2) throw new InvalidOperationException("Use \"component,field,value\".");
+      if (split.Length > 3) throw new InvalidOperationException("Too many parts in the component. Use \"component,field,value\".");
+      var component = split[0].ToLowerInvariant();
+      var type = ComponentInfo.Types.FirstOrDefault(t => t.Name.ToLowerInvariant() == component);
+      if (type == null) throw new InvalidOperationException($"Unknown component \"{split[0]}\".");
+      var empty = split.Length == 3 ? null : $"No {kind} has the component \"{type.Name}\".";
+      void print(string[] result) => SearchOutput.Print(args.Context, "search_component", $"\"{values[1]}\"", result, log, empty);
+      if (kind == "location")
       {
-        component = split[0];
-        field = split[1];
-        value = split[2];
-      }
-      var maxLines = args.TryParameterInt(2, 5);
-      var locations = ZoneSystem.instance.m_locations.Where(Helper.IsValid).Where(l =>
-      {
-        l.m_prefab.Load();
-        l.m_prefab.Asset.GetComponentsInChildren(ZNetView.m_tempComponents);
-        l.m_prefab.Release();
-        return ZNetView.m_tempComponents.Any(s => s.GetType().Name.ToLowerInvariant() == component);
-      }).Select(l => l.m_prefab.Name);
-      var result = args[1] == "location" ? locations.ToArray() : field == "" ? ComponentInfo.PrefabsByComponent(component) : ComponentInfo.PrefabsByField(component, field, value);
-      if (result.Length > 100)
-      {
-        args.Context.AddString("Over 100 results, printing to the log file.");
-        ZLog.Log("\n" + string.Join("\n", result));
+        if (split.Length == 3) throw new InvalidOperationException("Locations support only the component name.");
+        ComponentInfo.LocationsByComponent(args.Context, component, print);
         return;
       }
-      var bufferSize = (int)Math.Ceiling((float)result.Length / maxLines);
-      var buffer = new string[bufferSize];
-      for (int i = 0; i < result.Length; i += bufferSize)
+      if (split.Length == 3)
       {
-        if (result.Length - i < bufferSize)
-        {
-          bufferSize = result.Length - i;
-          buffer = new string[bufferSize];
-        }
-        Array.Copy(result, i, buffer, 0, bufferSize);
-        args.Context.AddString(string.Join(", ", buffer));
+        if (type.GetField(split[1]) == null) throw new InvalidOperationException($"Component {type.Name} has no field \"{split[1]}\".");
+        print(ComponentInfo.PrefabsByField(component, split[1], split[2]));
       }
+      else print(ComponentInfo.PrefabsByComponent(component));
     });
-    AutoComplete.Register("search_component", index =>
+    AutoComplete.Register("search_component", (index, subIndex, args) =>
     {
       if (index == 0) return ["object", "location"];
-      if (index == 1) return ParameterInfo.Create("Search component");
-      if (index == 2) return ParameterInfo.Create("Max lines", "number (default 5)");
+      if (index == 1)
+      {
+        if (subIndex == 0) return ParameterInfo.Components;
+        if (subIndex == 1) return ComponentFields(args.Length > 1 ? args[1].Split(',')[0] : "");
+        if (subIndex == 2) return ParameterInfo.Create("Value");
+        return ParameterInfo.None;
+      }
+      if (index == 2) return ParameterInfo.Create("log", "Write the result to the client log file instead of the console.");
       return ParameterInfo.None;
     });
-
+  }
+  private static List<string> ComponentFields(string component)
+  {
+    var type = ComponentInfo.Types.FirstOrDefault(t => t.Name.ToLowerInvariant() == component.ToLowerInvariant());
+    if (type == null) return ParameterInfo.Create("Field");
+    return [.. type.GetFields(BindingFlags.Instance | BindingFlags.Public).Where(f => f.FieldType.IsPrimitive || f.FieldType == typeof(string) || f.FieldType.IsEnum).Select(f => f.Name)];
   }
 }
 
@@ -66,36 +65,28 @@ public class SearchItemCommand
 {
   public SearchItemCommand()
   {
-    Helper.Command("search_item", "[field,value] [field,value] ...  - Searches items.", (args) =>
+    Helper.Command("search_item", "[field,value] [field,value] ... [log] - Prints items having the field values. The flag log writes the result to the client log file instead of the console.", (args) =>
     {
       Helper.ArgsCheck(args, 2, "Missing the search term");
+      var terms = args.Args.Skip(1).ToArray();
+      var log = SearchOutput.TakeLog(ref terms, 1, true);
+      if (!ObjectDB.instance) throw new InvalidOperationException("Join a world first.");
       var items = ObjectDB.instance.m_items;
-      for (int i = 1; i < args.Length; i++)
+      foreach (var term in terms)
       {
-        var split = args[i].Split(',');
-        if (split.Length != 2)
-        {
-          args.Context.AddString("Invalid search term: " + args[i]);
-          continue;
-        }
-        var field = split[0];
-        var value = split[1].ToLowerInvariant();
-        items = ItemDropsByField(items, field, value);
+        var split = term.Split(',');
+        if (split.Length != 2) throw new InvalidOperationException($"Invalid search term \"{term}\". Use \"field,value\".");
+        if (typeof(ItemDrop.ItemData.SharedData).GetField(split[0], BindingFlags.Instance | BindingFlags.Public) == null)
+          throw new InvalidOperationException($"Unknown item field \"{split[0]}\".");
+        items = ItemDropsByField(items, split[0], split[1].ToLowerInvariant());
       }
-      var names = items.Select(item => item.name).ToList();
-      if (names.Count > 50)
-      {
-        args.Context.AddString("Over 50 results, printing to the log file.");
-        Debug.Log("Search item results:\n" + string.Join("\n", names));
-        return;
-      }
-      foreach (var item in names) args.Context.AddString(item);
+      SearchOutput.Print(args.Context, "search_item", $"\"{string.Join(" ", terms)}\"", items.Select(item => item.name).ToList(), log);
     });
     List<string> itemFields = [];
     AutoComplete.Register("search_item", (index, subIndex) =>
     {
       if (itemFields.Count == 0) itemFields = GenerateAutocomplete();
-      if (subIndex == 0) return itemFields;
+      if (subIndex == 0) return [.. itemFields, "log"];
       if (subIndex == 1) return ParameterInfo.Create("Value");
       return ParameterInfo.None;
     });
