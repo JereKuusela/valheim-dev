@@ -348,7 +348,7 @@ public class PlainInputForAutoComplete
     Aliasing.RestoreAlias(input);
     RestorePreviousCommands(input);
     // Modifies the input and removes selection, so don't set it back.
-    if (ZInput.GetKeyDown(KeyCode.Tab))
+    if (HoldTabToCycle.IsTabPressed())
     {
       input.selectionAnchorPosition = input.text.Length;
       input.selectionFocusPosition = input.text.Length;

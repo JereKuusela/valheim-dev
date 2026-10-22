@@ -23,8 +23,8 @@ public class ConsoleWheelScroll
       ConsoleScrollBar.Scroll(__instance, __instance.m_scrollHeight + (wheel > 0f ? step : -step));
       return;
     }
-    var up = ZInput.GetKeyDown(KeyCode.PageUp);
-    if (!up && !ZInput.GetKeyDown(KeyCode.PageDown)) return;
+    var up = ZInput.GetButtonDown("ScrollChatUp");
+    if (!up && !ZInput.GetButtonDown("ScrollChatDown")) return;
     if (ctrl) ConsoleScrollBar.Scroll(__instance, up ? int.MaxValue : 0);
     else if (shift) ConsoleScrollBar.Scroll(__instance, __state + (up ? page : -page));
   }
