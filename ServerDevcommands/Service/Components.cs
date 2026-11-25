@@ -92,8 +92,8 @@ public class ComponentInfo
   private static bool loadingLocations;
   private static List<SoftReference<GameObject>> UnreadLocationPrefabs() => [.. ZoneSystem.instance.m_locations.Where(Helper.IsValid)
     .Select(location => location.m_prefab)
-    .Where(prefab => !locationPrefabComponents.ContainsKey(prefab.Name))
-    .GroupBy(prefab => prefab.Name).Select(group => group.First())];
+    .Where(prefab => !locationPrefabComponents.ContainsKey(prefab.name))
+    .GroupBy(prefab => prefab.name).Select(group => group.First())];
   public static void LocationsByComponent(Terminal context, string component, Action<string[]> done)
   {
     if (loadingLocations) throw new InvalidOperationException("Locations are still loading. Try again in a moment.");
@@ -101,7 +101,7 @@ public class ComponentInfo
     Console.instance.StartCoroutine(LoadLocations(context, component, done));
   }
   private static string[] FilterLocations(string component) => [.. ZoneSystem.instance.m_locations.Where(Helper.IsValid)
-    .Select(location => location.m_prefab.Name)
+    .Select(location => location.m_prefab.name)
     .Where(name => locationPrefabComponents.TryGetValue(name, out var components) && components.Contains(component))
     .Distinct()];
   private static System.Collections.IEnumerator LoadLocations(Terminal context, string component, Action<string[]> done)
@@ -124,7 +124,7 @@ public class ComponentInfo
         var prefab = unread[i];
         prefab.Load();
         prefab.Asset.GetComponentsInChildren(ZNetView.m_tempComponents);
-        locationPrefabComponents[prefab.Name] = [.. ZNetView.m_tempComponents.Where(s => s).Select(s => s.GetType().Name.ToLowerInvariant())];
+        locationPrefabComponents[prefab.name] = [.. ZNetView.m_tempComponents.Where(s => s).Select(s => s.GetType().Name.ToLowerInvariant())];
         prefab.Release();
       }
     }
