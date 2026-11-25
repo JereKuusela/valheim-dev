@@ -23,15 +23,15 @@ public class FindCommand
       }
       // First priority is exact matches (from both prefabs and locations).
       var prefabs = Selector.GetAllPrefabs([args[1]]);
-      var locations = ZoneSystem.instance.GetLocationList().Where(l => Helper.IsValid(l.m_location) && l.m_location.m_prefab.Name == args[1]).ToList();
+      var locations = ZoneSystem.instance.GetLocationList().Where(l => Helper.IsValid(l.m_location) && l.m_location.m_prefab.name == args[1]).ToList();
       var anyMatches = prefabs.Count > 0 || locations.Count > 0;
       if (!anyMatches)
       {
         var lower = args[1].ToLower();
-        locations = ZoneSystem.instance.GetLocationList().Where(l => Helper.IsValid(l.m_location) && l.m_location.m_prefab.Name.ToLower().Contains(lower)).ToList();
+        locations = ZoneSystem.instance.GetLocationList().Where(l => Helper.IsValid(l.m_location) && l.m_location.m_prefab.name.ToLower().Contains(lower)).ToList();
         prefabs = Selector.GetAllPrefabs(["*" + args[1] + "*"]);
       }
-      var list = locations.Select(l => Tuple.Create(l.m_location.m_prefab.Name, l.m_position)).ToList();
+      var list = locations.Select(l => Tuple.Create(l.m_location.m_prefab.name, l.m_position)).ToList();
       var zdos = ZDOMan.instance.m_objectsByID.Values.Where(zdo => zdo.IsValid() && prefabs.Contains(zdo.GetPrefab()));
       list.AddRange(zdos.Select(zdo => Tuple.Create(ZNetScene.instance.GetPrefab(zdo.m_prefab).name, zdo.GetPosition())));
       list.Sort((a, b) => Vector3.Distance(a.Item2, pos).CompareTo(Vector3.Distance(b.Item2, pos)));

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 namespace ServerDevcommands;
+
 public class SearchComponentCommand
 {
   public SearchComponentCommand()

@@ -1,3 +1,6 @@
+- v1.117
+  - Fixed for the new update.
+
 - v1.116
   - Adds mouse scrolling and scroll bar to the console window. Thanks Zeall!
   - Adds pin type to `resetpins` commands for specifying which pins to reset. Thanks Zeall!
@@ -22,11 +25,3 @@
 
 - v1.113
   - Removes pointless error about "Unable to find the peer to set private position."
-
-- v1.112
-  - Fixed for the new update.
-
-- v1.111
-  - Adds setting to disable cheat tracking when using commands (enabled by default).
-  - Adds `clearcheats` command to clear the character cheat status.
-  - More fixes. Thanks JPValheim!

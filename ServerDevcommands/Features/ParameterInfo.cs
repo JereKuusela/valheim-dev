@@ -92,7 +92,7 @@ public partial class ParameterInfo
   }
   private static readonly TimedCache objectIds = new(() => ZNetScene.instance ? ZNetScene.instance.GetPrefabNames() : null);
   public static List<string> ObjectIds => objectIds.Get();
-  private static readonly TimedCache roomIds = new(() => DungeonDB.instance ? DungeonDB.instance.m_rooms.Select(room => room.m_prefab.Name).ToList() : null);
+  private static readonly TimedCache roomIds = new(() => DungeonDB.instance ? DungeonDB.instance.m_rooms.Select(room => room.m_prefab.name).ToList() : null);
   public static List<string> RoomIds => roomIds.Get();
   public static List<string> LocationIds
   {
@@ -104,7 +104,7 @@ public partial class ParameterInfo
       if (LocationDataCache != ZoneSystem.instance.m_locations)
         LocationIdsCache = null;
       if (LocationIdsCache == null)
-        LocationIdsCache = [.. ZoneSystem.instance.m_locations.Where(Helper.IsValid).Select(l => l.m_prefab.Name).Distinct()];
+        LocationIdsCache = [.. ZoneSystem.instance.m_locations.Where(Helper.IsValid).Select(l => l.m_prefab.name).Distinct()];
       LocationDataCache = ZoneSystem.instance.m_locations;
       return LocationIdsCache;
     }

@@ -18,10 +18,10 @@
 
   <ItemGroup>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\Libs\UnityEngine.dll</HintPath>
+      <HintPath>$(ManagedDir)\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\Libs\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>$(ManagedDir)\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
   </ItemGroup>
 
